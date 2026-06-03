@@ -24,16 +24,14 @@ One step = one focused unit of work + (usually) one commit. We do not skip ahead
 
 **Done ✅**
 - All planning docs written (`docs/planning/`: ARCHITECTURE, DB_SCHEMA, DOMAIN_MODEL, INGESTION_PIPELINE, MVP_PLAN, PRODUCT_DIRECTIONS, REQUESTS_SOURCING, SCHEMA_DELTA, DESIGN_DIRECTION) + 2 golden fixtures in `docs/planning/examples/`.
-- git initialized; private repo `github.com/lindwerg/simplecargo` created; planning pushed (3 commits).
+- git initialized; private repo `github.com/lindwerg/simplecargo` created; planning pushed.
 - `.gitignore` excludes real data.
+- **INFRA-1 ✅** — Railway project `simplecargo` (`production`) provisioned: Postgres + Redis (both SUCCESS, internal `*.railway.internal` URLs) + `web` service bound to `lindwerg/simplecargo`@`main` with public domain + all 7 reference vars wired. Daily backups + documented test-restore deferred to P0-12.
+- **P0-1 ✅** — Next.js 15.5 scaffold + first-commit config on branch `p0-scaffold` (`build` + `type-check` + `lint` clean). **Not yet merged to `main`.**
 
-**Unblocked ✅** — Railway MCP reconnected + authenticated (`mishanikhinkirill97@gmail.com`, workspace "lindwerg's Projects"). INFRA-1 is now ready to run.
+**👉 NEXT — P0-2** · Env Validation + DB Client + Migrate Script. Unblocked now (live Postgres exists; `DATABASE_URL` / `DATABASE_URL_DIRECT` wired).
 
-**👉 NEXT — two parallel-able entry points (operator picks):**
-- **INFRA-1** — provision Railway project `simplecargo` + Postgres + Redis + web (+ reference vars). Ready now.
-- **P0-1** — Repo Scaffold + Config Files. No dependency; can start immediately, in parallel with INFRA-1.
-
-Only P0 steps needing a live DB/URL (P0-2 migrate, later validation) hard-block on INFRA-1.
+> `web`'s first real deploy stays held until `p0-scaffold` merges to `main` — it needs `/api/health` + the migrate script, which land across P0-2…P0-9. End-to-end live validation = P0-12.
 
 ---
 
@@ -42,7 +40,8 @@ Only P0 steps needing a live DB/URL (P0-2 migrate, later validation) hard-block 
 ### ✅ INFRA-0 · Planning + Repo Bootstrap
 Planning docs, git, private GitHub repo, `.gitignore`. **Done.**
 
-### 👉 INFRA-1 · Railway Project + Services
+### ✅ INFRA-1 · Railway Project + Services
+> Provisioned via Railway MCP. project `simplecargo` id `9e29a123-2b94-445c-904a-5f3c9e37b95b`, env `production` id `f96f453a-b070-4d09-8f7b-881f1fad8cc6`. Services: Postgres `ac8b5894…`, Redis `199ac8f8…`, web `5677490b…` (domain `web-production-b893f.up.railway.app`). 7 reference vars set on web. **Open:** enable Postgres daily backups (dashboard) + documented test-restore → P0-12.
 - **Goal:** Provision Railway project, Postgres, Redis, web service with all reference vars wired.
 - **Deliverables:** project `simplecargo` (`production` env); Postgres + Redis; `web` service → `lindwerg/simplecargo` `main`; reference vars `DATABASE_URL`, `DATABASE_URL_DIRECT`, `REDIS_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `NODE_ENV`; Postgres daily backups + one documented test restore.
 - **Acceptance:** `railway status` all green; DB/Redis use `*.railway.internal` private URLs; every secret uses `${{Service.VAR}}` reference syntax (no literals).
@@ -53,14 +52,15 @@ Planning docs, git, private GitHub repo, `.gitignore`. **Done.**
 
 # Milestone: P0 — Auth + Two-Tab Dashboard Shell
 
-### 👉 P0-1 · Repo Scaffold + Config Files
+### ✅ P0-1 · Repo Scaffold + Config Files
+> On branch `p0-scaffold` (commit `4e7dfb1`). Next 15.5.19 pinned (D6). `build`/`type-check`/`lint` clean, `.next/standalone/server.js` emitted. Layout uses MVP_PLAN paths (`src/lib/db/`, route-groups). ESLint via legacy `.eslintrc.json` (`next lint`). Tailwind deferred to P0-6.
 - **Goal:** Init Next.js 15 app with all first-commit config.
 - **Deliverables:** `create-next-app` (TS, App Router, `src/`); `next.config.ts` (`output:"standalone"`, 5 security headers, no PPR); `tsconfig` (`strict`, `exactOptionalPropertyTypes`, `moduleResolution:"bundler"`); `.npmrc` `node-linker=isolated`; scripts `dev/build/start/type-check/test/db:generate/db:migrate/db:seed`, `tsx` in deps, pinned versions; `pnpm-lock.yaml`; `.env.example` (names only); `railway.json` (Railpack, standalone, `preDeployCommand: pnpm db:migrate`, healthcheck `/api/health`, ON_FAILURE x3).
 - **Acceptance:** `pnpm build` + `pnpm type-check` clean from fresh checkout; no PPR, no Serwist wrapper.
 - **Depends on:** none.
 - **Read:** MVP_PLAN §0.1, §0.2 steps 1-2, First Commit Checklist; ARCHITECTURE §3.1, §13.1-13.2.
 
-### ⬜ P0-2 · Env Validation + DB Client + Migrate Script
+### 👉 P0-2 · Env Validation + DB Client + Migrate Script
 - **Goal:** Fail-fast env at boot; DB pool; migration script that refuses pooler URLs.
 - **Deliverables:** `src/lib/env.ts` (Zod, `process.exit(1)` on fail); `src/lib/db/client.ts` (`pg.Pool`, `max:5`, `DATABASE_URL`); `src/lib/db/migrate.ts` (opens `DATABASE_URL_DIRECT`, regex-asserts not pooler, runs drizzle migrate); `drizzle.config.ts` (postgresql, `url:DATABASE_URL_DIRECT`, `strict`).
 - **Acceptance:** pooler URL → throws+exit 1 (unit-testable); `db:migrate` idempotent; missing env crashes at import with clear message.
