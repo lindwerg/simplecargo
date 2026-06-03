@@ -28,8 +28,9 @@ One step = one focused unit of work + (usually) one commit. We do not skip ahead
 - `.gitignore` excludes real data.
 - **INFRA-1 ✅** — Railway project `simplecargo` (`production`) provisioned: Postgres + Redis (both SUCCESS, internal `*.railway.internal` URLs) + `web` service bound to `lindwerg/simplecargo`@`main` with public domain + all 7 reference vars wired. Daily backups + documented test-restore deferred to P0-12.
 - **P0-1 ✅** — Next.js 15.5 scaffold + first-commit config on branch `p0-scaffold` (`build` + `type-check` + `lint` clean). **Not yet merged to `main`.**
+- **P0-2 ✅** — Env validation (`env-schema.ts` + eager `env.ts`), DB client (`pg.Pool` max:5), migrate script (refuses pooler URLs), `drizzle.config.ts`, empty migrations journal. `test`/`type-check`/`lint`/`build` clean; pooler URL → exit 1. On branch `p0-scaffold`.
 
-**👉 NEXT — P0-2** · Env Validation + DB Client + Migrate Script. Unblocked now (live Postgres exists; `DATABASE_URL` / `DATABASE_URL_DIRECT` wired).
+**👉 NEXT — P0-3** · Canonical DB Schema (empty tables). Defines all domain tables as Drizzle schemas + generates the first migration (which fills the empty journal scaffolded in P0-2).
 
 > `web`'s first real deploy stays held until `p0-scaffold` merges to `main` — it needs `/api/health` + the migrate script, which land across P0-2…P0-9. End-to-end live validation = P0-12.
 
@@ -60,14 +61,15 @@ Planning docs, git, private GitHub repo, `.gitignore`. **Done.**
 - **Depends on:** none.
 - **Read:** MVP_PLAN §0.1, §0.2 steps 1-2, First Commit Checklist; ARCHITECTURE §3.1, §13.1-13.2.
 
-### 👉 P0-2 · Env Validation + DB Client + Migrate Script
+### ✅ P0-2 · Env Validation + DB Client + Migrate Script
+> Delivered on `p0-scaffold`. `src/lib/env-schema.ts` (side-effect-free Zod contract + `loadEnv`) + `src/lib/env.ts` (eager `env = loadEnv()`, `process.exit(1)` on fail); `src/lib/db/client.ts` (`pg.Pool` max:5 on `DATABASE_URL` + drizzle); `src/lib/db/assert-direct-url.ts` (pooler-refusal guard, unit-tested) + `migrate.ts`; `drizzle.config.ts`; `drizzle/migrations/meta/_journal.json` empty journal; `vitest.config.ts` (`@` alias). 6 unit tests pass; pooler URL → exit 1. Full idempotent migrate-apply validated at P0-3 (first real migration) / P0-12 (live).
 - **Goal:** Fail-fast env at boot; DB pool; migration script that refuses pooler URLs.
 - **Deliverables:** `src/lib/env.ts` (Zod, `process.exit(1)` on fail); `src/lib/db/client.ts` (`pg.Pool`, `max:5`, `DATABASE_URL`); `src/lib/db/migrate.ts` (opens `DATABASE_URL_DIRECT`, regex-asserts not pooler, runs drizzle migrate); `drizzle.config.ts` (postgresql, `url:DATABASE_URL_DIRECT`, `strict`).
 - **Acceptance:** pooler URL → throws+exit 1 (unit-testable); `db:migrate` idempotent; missing env crashes at import with clear message.
 - **Depends on:** P0-1.
 - **Read:** MVP_PLAN §0.2 steps 3-4; ARCHITECTURE §4, §13.3.
 
-### ⬜ P0-3 · Canonical DB Schema (empty tables)
+### 👉 P0-3 · Canonical DB Schema (empty tables)
 - **Goal:** Define all domain tables as empty Drizzle schemas; generate + commit first migration.
 - **Deliverables:** Better Auth tables (`@better-auth/cli generate` → `schema/auth.ts`); `schema/{stations,wagons,movements,deals,files,counterparties}.ts`; `wagon_movements.fingerprint` UNIQUE + `event_key` plain index + `is_primary`/`needs_review`/`turnover_provisional`/`superseded_by`; `deals.margin` as generated col `revenue_ua - cost_owner`; partial indexes (`idx_wm_load_event`, `idx_deals_pending`, `idx_wm_review`, `idx_quarantine_unresolved`); first migration `.sql` committed.
 - **Acceptance:** `db:migrate` builds all tables on fresh PG, re-run is no-op; `margin` generated (not app-computed); `fingerprint` UNIQUE.
