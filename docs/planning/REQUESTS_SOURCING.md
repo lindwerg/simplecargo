@@ -739,3 +739,31 @@ pending from the operator — once provided, add to `examples/` and pin the expl
 Manual request entry + by-client board ship first (P1.6/P1.7, with ADR-RFQ-1). The drag-drop
 `client_request` extraction lands with the other doc-extraction (ПСЦ/заявка) in **P5** — it is the same
 worker+LLM lane. Until then, operator enters request lines manually or pastes a table.
+
+---
+
+## 12. COST MODEL — `tech_trip` vs `rental` (resolves OQ-1, operator-confirmed)
+
+> Operator answer to the empty-run question: there is **no single answer** — owner cost and who bears the
+> порожний пробег depend on the **deal cost model**. This is a first-class dimension on every owner quote
+> and on the converted Direction/Deal. It drives the honest-margin math (§3).
+
+### 12.1 The two models
+| `cost_model` | What РНС pays the owner | Порожний пробег (empty run) | Provozная плата РЖД | Margin formula (per wagon, net) |
+|---|---|---|---|---|
+| **`tech_trip`** (технический рейс) | **тариф + предоставление** (provision fee, per trip) | **NOT РНС's separate cost** — covered in the owner's tariff / borne by owner | per the deal (typically РНС via ЕЛС on the loaded leg) | `client_rate − (provision + provozn_loaded_if_rns)` |
+| **`rental`** (аренда) | **арендная ставка** (rent, руб/вагон/**сутки**) × turnover days | **РНС BEARS IT** — РНС organizes & moves the empty wagon onward | **РНС pays loaded AND empty legs** | `client_rate − (rent_per_day × turnover_days + provozn_loaded + provozn_empty + repositioning)` |
+
+### 12.2 Why this matters
+- **Empty-run allocation is derived from `cost_model`**, not asked per quote: `tech_trip` ⇒ empty-run cost = 0 to РНС; `rental` ⇒ empty-run + onward repositioning = РНС cost. (Replaces the standalone `empty_return_party` guess.)
+- **Under `rental`, turnover (оборот) is a direct cost driver:** cost rises with every day the wagon is held (rent × days). This ties the verified `оборот` KPI straight to money — faster turnover = fewer rent-days = more margin. The projected-margin view for a rental quote MUST take an expected-turnover input (days), or it is meaningless.
+- **Under `tech_trip`,** margin is per-trip and turnover affects only how many trips/month the wagon can do (throughput), not the per-trip cost.
+
+### 12.3 Schema impact (additive)
+- `request_owner_quotes` + `directions`/`deals` gain `cost_model` enum `('tech_trip','rental')`.
+- `tech_trip` fields: `provision_fee` (предоставление, per wagon/trip), `tariff_payer` ('rns'|'client').
+- `rental` fields: `rent_per_wagon_day`, `expected_turnover_days` (for the quote estimate; actuals from `оборот`), `empty_run_cost_estimate`, `provozn_loaded`, `provozn_empty`, `repositioning_cost`, all net + VAT-tagged.
+- The §3 `projected_margin` computation branches on `cost_model`; the "excluded terms" warning stays, but for `rental` the empty-run/provozn are REQUIRED inputs (not optional) before a green margin shows.
+
+### 12.4 Open micro-confirm (low impact)
+- In `tech_trip`, is **«тариф»** the РЖД provozная (paid to РЖД via ЕЛС) bundled with **предоставление** as one owner invoice, or two separate payables? Affects only AR/invoice line splitting (P4), not the margin number.
