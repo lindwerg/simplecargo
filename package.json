@@ -15,7 +15,8 @@
     "test": "vitest run --passWithNoTests",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx src/lib/db/migrate.ts",
-    "db:seed": "tsx src/lib/db/seed/stations.ts"
+    "db:seed": "tsx src/lib/db/seed/stations.ts",
+    "db:seed:user": "tsx src/lib/db/seed-user.ts"
   },
   "dependencies": {
     "better-auth": "^1.6.14",
@@ -42,6 +43,9 @@
     "vitest": "^4.1.8"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["esbuild", "sharp", "unrs-resolver"]
+    "onlyBuiltDependencies": ["esbuild", "sharp", "unrs-resolver"],
+    "overrides": {
+      "kysely": "0.28.17"
+    }
   }
 }

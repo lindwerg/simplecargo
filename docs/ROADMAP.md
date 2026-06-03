@@ -30,8 +30,9 @@ One step = one focused unit of work + (usually) one commit. We do not skip ahead
 - **P0-1 ✅** — Next.js 15.5 scaffold + first-commit config on branch `p0-scaffold` (`build` + `type-check` + `lint` clean). **Not yet merged to `main`.**
 - **P0-2 ✅** — Env validation (`env-schema.ts` + eager `env.ts`), DB client (`pg.Pool` max:5), migrate script (refuses pooler URLs), `drizzle.config.ts`, empty migrations journal. `test`/`type-check`/`lint`/`build` clean; pooler URL → exit 1. On branch `p0-scaffold`.
 - **P0-3 ✅** — All 15 canonical tables as Drizzle schemas in `src/lib/db/schema/` (DB_SCHEMA §1–§10: auth ×4, geo ×3, counterparties, wagons, ingested_files, wagon_movements, deals, contract_prices, report_rows, quarantine_rows) + first migration `0000_outgoing_zaladane.sql`. `deals.margin` = generated STORED col (operator-confirmed; DB_SCHEMA §7/D7 synced). Verified on fresh Docker Postgres: migrate builds all 15 tables, re-run no-op, margin computes/NULLs, CHECKs enforce. On branch `p0-scaffold`.
+- **P0-4 ✅** — Better Auth on the P0-3 tables: email/password, Postgres sessions, first operator seeded as admin. `src/lib/auth.ts`, `auth-client.ts`, `app/api/auth/[...all]/route.ts`, `seed-user.ts` (+ `db:seed:user`). pnpm override `kysely@0.28.17` fixes a transitive better-auth bundling break. Verified on Docker `postgres:16`: seed twice = 1 admin user (UUID id), wrong pw→401, correct→200 + session row + HttpOnly cookie, signup disabled→400. On branch `p0-scaffold`. **Build now imports `env`** (auth route) so it needs the 4 env vars present — CI build (P0-10) must provide them.
 
-**👉 NEXT — P0-4** · Better Auth + Seed-User Script. Email/password auth with Postgres sessions; first operator seeded. Better Auth instance configured to map onto the P0-3 `users/sessions/accounts/verifications` tables.
+**👉 NEXT — P0-5** · Middleware (optimistic cookie) + CSP Nonce. Cookie-presence route guard (no DB hit) + per-request CSP nonce wired into `layout.tsx`.
 
 > `web`'s first real deploy stays held until `p0-scaffold` merges to `main` — it needs `/api/health` + the migrate script, which land across P0-2…P0-9. End-to-end live validation = P0-12.
 
@@ -78,14 +79,15 @@ Planning docs, git, private GitHub repo, `.gitignore`. **Done.**
 - **Depends on:** P0-2.
 - **Read:** MVP_PLAN §0.2 step 3, §0.3; ARCHITECTURE §4.2, §10; DB_SCHEMA §1-§10, §12.
 
-### 👉 P0-4 · Better Auth + Seed-User Script
+### ✅ P0-4 · Better Auth + Seed-User Script
+> Delivered on `p0-scaffold`. `src/lib/auth.ts` — `drizzleAdapter` maps the plural P0-3 tables onto Better Auth's singular models (`user/session/account/verification`); `emailAndPassword` {enabled, `disableSignUp:true`, `requireEmailVerification:false`, `minPasswordLength:10`}; `role` as `additionalFields` (`input:false`, enum admin/operator/viewer); `advanced.database.generateId:false` so uuid PKs use `gen_random_uuid()` instead of BA's string ids; `advanced.trustedProxyHeaders:true` (Railway); dev-only `localhost:3000` trustedOrigin. `auth-client.ts` (`createAuthClient`); `app/api/auth/[...all]/route.ts` (`toNextJsHandler`, renders dynamic ƒ). `seed-user.ts` reads `SEED_USER_*` from `process.env` directly (not the global eager env), idempotent via `auth.$context` (`findUserByEmail` → `password.hash` + `internalAdapter.createUser`/`linkAccount`), first user `role='admin'`; `db:seed:user` script (left `db:seed` for P3-1 stations). Transitive fix: pnpm override `kysely@0.28.17` — better-auth bundles `@better-auth/kysely-adapter` which imports root `DEFAULT_MIGRATION_*` exports dropped in kysely 0.29 (the adapter is unused; we use drizzle). Verified on Docker `postgres:16`: migrate→15 tables, seed twice = 1 admin user (UUID id), wrong pw→401, correct→200 + `sessions` row + HttpOnly SameSite=Lax cookie + `role:"admin"` in payload, signup→400 no user. `type-check`/`lint`/`build`(NODE_ENV=production)/`test`(6) clean. Note: the auth route imports `env`, so `pnpm build` now requires the 4 env vars present (provide in CI build at P0-10).
 - **Goal:** Email/password auth with Postgres sessions; first operator seeded.
 - **Deliverables:** `src/lib/auth.ts` (pg pool adapter, `emailAndPassword`, `requireEmailVerification:false`, `minPasswordLength:10`, `trustedOrigins:[BETTER_AUTH_URL]`, `trustedProxyHeaders`); `auth-client.ts`; `app/api/auth/[...all]/route.ts` (`toNextJsHandler`); `seed-user.ts` (env-driven, idempotent, `role='admin'`).
 - **Acceptance:** wrong creds → 401, right creds → PG session row; seed run twice = one user.
 - **Depends on:** P0-3.
 - **Read:** MVP_PLAN §0.2 step 5; ARCHITECTURE §1, §6.
 
-### ⬜ P0-5 · Middleware (optimistic cookie) + CSP Nonce
+### 👉 P0-5 · Middleware (optimistic cookie) + CSP Nonce
 - **Goal:** Route-guard middleware (cookie presence only); per-request CSP nonce.
 - **Deliverables:** `src/middleware.ts` (cookie check → redirect `/login`, `matcher:["/dashboard/:path*"]` / app routes); per-request nonce → `layout.tsx`, `script-src 'self' 'nonce-…'`, no `unsafe-inline`.
 - **Acceptance:** unauth `/dashboard` → 307 `/login`; CSP header has nonce, no `unsafe-inline`; middleware never calls `getSession()` or DB.
