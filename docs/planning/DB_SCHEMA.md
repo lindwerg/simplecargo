@@ -21,7 +21,7 @@ These resolve the contradictions flagged in the adversarial critiques. They are 
 | D4 | **ESR code is the canonical station identity.** Source A carries ESR inline (`"ДОБРЯТИНО (243309)"`) — trust the file, never hardcode ESR literals. Human names live in `station_aliases`. | Removes the invented/contradictory ESR literals across the research findings. |
 | D5 | **Turnover (`оборот, сут`) = cycle turnover**: `next_loading_event_ts − this_loading_event_ts` for the same wagon (loading event = transition to ГРУЖ at the loading station, i.e. `дата прибытия на станцию погрузки`). Computed **cross-row** in the matching/lifecycle layer, then written to `deals.turnover_days`. A single-trip fallback (`trip_end − arrive_loading`) is allowed only with `turnover_provisional=TRUE` and is excluded from KPI averages. | The brief's verified definition. Trip-duration would undercount by the whole empty-return leg (~30–50%). |
 | D6 | **Dedup is layered:** `ingested_files.content_sha256` (file), `wagon_movements.fingerprint` (row), and a **cross-source canonical event key** `event_key = (wagon_number, operation_code, operation_ts rounded to 15 min)` to collapse the same physical event seen in Source A (full export) and Source C/B/D (subsets). | The same movement in two sources has different file/row hashes but is one event; this prevents double-counting margin. |
-| D7 | **Money** = `NUMERIC(14,2)`. **Margin is NOT a stored generated column**; it is derived only on the report-export path, gated by `revenue_ua IS NOT NULL AND cost_owner IS NOT NULL`. | A half-filled deal must never emit a misleading margin. |
+| D7 | **Money** = `NUMERIC(14,2)`. **`deals.margin` is a generated STORED column** `revenue_ua - cost_owner` (operator-confirmed P0-3, per ROADMAP P0-3 + ARCHITECTURE §4.2). Postgres yields `NULL` whenever either input is `NULL`, so a half-filled deal never carries a misleading margin. The report-export path additionally gates on `revenue_ua IS NOT NULL AND cost_owner IS NOT NULL`; `report_rows.margin` is a plain projected column. | A half-filled deal must never emit a misleading margin — `NULL` propagation enforces this at the column level. |
 | D8 | **Source priority for field merge:** A > C > B > D < operator-manual (manual always wins). Stored per-field via provenance where it matters. | Source B has the column-shift risk; D is legacy; A is the official ЭТРАН export. |
 | D9 | Soft enums use Postgres `TEXT` + `CHECK` (not native `pgEnum`) so new values from messy sources do not require a migration to ingest-then-quarantine. | Resilience to source drift. |
 | D10 | UUID PKs (`uuid` default `gen_random_uuid()`) for domain entities; `bigserial` for high-volume append-only logs (`wagon_movements`, `quarantine_rows`). | Domain rows are referenced/shared; log rows are sequential and internal. |
@@ -577,6 +577,7 @@ import {
   pgTable, uuid, char, varchar, text, numeric, integer, boolean,
   date, timestamp, bigint, jsonb, index,
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 import { wagons } from "./wagons";
 import { counterparties } from "./counterparties";
 
@@ -598,9 +599,11 @@ export const deals = pgTable("deals", {
   cargoName:        text("cargo_name"),
   wagonType:        varchar("wagon_type", { length: 20 }).default("ПВ"),
 
-  // financials (D7: margin derived on export only, gated on both present)
+  // financials (D7: margin = generated STORED col, NULL unless both inputs present)
   revenueUa:     numeric("revenue_ua", { precision: 14, scale: 2 }),   // Сумма УА
   costOwner:     numeric("cost_owner", { precision: 14, scale: 2 }),   // Сумма от Поставщика
+  margin:        numeric("margin", { precision: 14, scale: 2 })
+                   .generatedAlwaysAs(sql`revenue_ua - cost_owner`),   // STORED; NULL if either NULL
   revenueSource: text("revenue_source"),  // manual | contract
   costSource:    text("cost_source"),     // manual | contract
 
@@ -656,6 +659,7 @@ CREATE TABLE deals (
 
   revenue_ua               NUMERIC(14,2),
   cost_owner               NUMERIC(14,2),
+  margin                   NUMERIC(14,2) GENERATED ALWAYS AS (revenue_ua - cost_owner) STORED,
   revenue_source           TEXT CHECK (revenue_source IN ('manual','contract')),
   cost_source              TEXT CHECK (cost_source   IN ('manual','contract')),
 

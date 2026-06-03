@@ -29,8 +29,9 @@ One step = one focused unit of work + (usually) one commit. We do not skip ahead
 - **INFRA-1 ✅** — Railway project `simplecargo` (`production`) provisioned: Postgres + Redis (both SUCCESS, internal `*.railway.internal` URLs) + `web` service bound to `lindwerg/simplecargo`@`main` with public domain + all 7 reference vars wired. Daily backups + documented test-restore deferred to P0-12.
 - **P0-1 ✅** — Next.js 15.5 scaffold + first-commit config on branch `p0-scaffold` (`build` + `type-check` + `lint` clean). **Not yet merged to `main`.**
 - **P0-2 ✅** — Env validation (`env-schema.ts` + eager `env.ts`), DB client (`pg.Pool` max:5), migrate script (refuses pooler URLs), `drizzle.config.ts`, empty migrations journal. `test`/`type-check`/`lint`/`build` clean; pooler URL → exit 1. On branch `p0-scaffold`.
+- **P0-3 ✅** — All 15 canonical tables as Drizzle schemas in `src/lib/db/schema/` (DB_SCHEMA §1–§10: auth ×4, geo ×3, counterparties, wagons, ingested_files, wagon_movements, deals, contract_prices, report_rows, quarantine_rows) + first migration `0000_outgoing_zaladane.sql`. `deals.margin` = generated STORED col (operator-confirmed; DB_SCHEMA §7/D7 synced). Verified on fresh Docker Postgres: migrate builds all 15 tables, re-run no-op, margin computes/NULLs, CHECKs enforce. On branch `p0-scaffold`.
 
-**👉 NEXT — P0-3** · Canonical DB Schema (empty tables). Defines all domain tables as Drizzle schemas + generates the first migration (which fills the empty journal scaffolded in P0-2).
+**👉 NEXT — P0-4** · Better Auth + Seed-User Script. Email/password auth with Postgres sessions; first operator seeded. Better Auth instance configured to map onto the P0-3 `users/sessions/accounts/verifications` tables.
 
 > `web`'s first real deploy stays held until `p0-scaffold` merges to `main` — it needs `/api/health` + the migrate script, which land across P0-2…P0-9. End-to-end live validation = P0-12.
 
@@ -69,14 +70,15 @@ Planning docs, git, private GitHub repo, `.gitignore`. **Done.**
 - **Depends on:** P0-1.
 - **Read:** MVP_PLAN §0.2 steps 3-4; ARCHITECTURE §4, §13.3.
 
-### 👉 P0-3 · Canonical DB Schema (empty tables)
+### ✅ P0-3 · Canonical DB Schema (empty tables)
+> Delivered on `p0-scaffold`. 11 schema modules in `src/lib/db/schema/` (auth, geo, counterparties, wagons, ingest, movements, deals, contracts, report, quarantine + index barrel) = 15 tables, CHECK constraints transcribed from the SQL DDL, 4 partial indexes (`idx_wm_load_event`, `idx_wm_review`, `idx_deals_pending`, `idx_quarantine_unresolved`), `ux_wm_fingerprint` UNIQUE, self-FK `wagon_movements.superseded_by`. `deals.margin` = `GENERATED ALWAYS AS (revenue_ua - cost_owner) STORED` (operator decision over DB_SCHEMA §7-omission; DB_SCHEMA D7/§7 updated to match). First migration `drizzle/migrations/0000_outgoing_zaladane.sql` committed. `client.ts` now `drizzle(pool, { schema })`. Verified on ephemeral Docker `postgres:16`: 15 tables built, re-migrate no-op, margin computes (30000) / NULLs on missing input, CHECK + generated-write rejection enforced. `type-check`/`lint`/`build`/`test` clean.
 - **Goal:** Define all domain tables as empty Drizzle schemas; generate + commit first migration.
 - **Deliverables:** Better Auth tables (`@better-auth/cli generate` → `schema/auth.ts`); `schema/{stations,wagons,movements,deals,files,counterparties}.ts`; `wagon_movements.fingerprint` UNIQUE + `event_key` plain index + `is_primary`/`needs_review`/`turnover_provisional`/`superseded_by`; `deals.margin` as generated col `revenue_ua - cost_owner`; partial indexes (`idx_wm_load_event`, `idx_deals_pending`, `idx_wm_review`, `idx_quarantine_unresolved`); first migration `.sql` committed.
 - **Acceptance:** `db:migrate` builds all tables on fresh PG, re-run is no-op; `margin` generated (not app-computed); `fingerprint` UNIQUE.
 - **Depends on:** P0-2.
 - **Read:** MVP_PLAN §0.2 step 3, §0.3; ARCHITECTURE §4.2, §10; DB_SCHEMA §1-§10, §12.
 
-### ⬜ P0-4 · Better Auth + Seed-User Script
+### 👉 P0-4 · Better Auth + Seed-User Script
 - **Goal:** Email/password auth with Postgres sessions; first operator seeded.
 - **Deliverables:** `src/lib/auth.ts` (pg pool adapter, `emailAndPassword`, `requireEmailVerification:false`, `minPasswordLength:10`, `trustedOrigins:[BETTER_AUTH_URL]`, `trustedProxyHeaders`); `auth-client.ts`; `app/api/auth/[...all]/route.ts` (`toNextJsHandler`); `seed-user.ts` (env-driven, idempotent, `role='admin'`).
 - **Acceptance:** wrong creds → 401, right creds → PG session row; seed run twice = one user.
