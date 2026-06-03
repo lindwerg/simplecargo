@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Next.js / build
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+next-env.d.ts
+
+# Env & secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Test / coverage
+coverage/
+playwright-report/
+test-results/
+
+# Local data (do NOT commit real dislocations / reports / ПСЦ / заявки)
+/data/
+*.xls
+*.xlsx
+*.pdf
