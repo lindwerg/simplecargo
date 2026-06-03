@@ -1,16 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { cookies } from "next/headers";
+
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "SimpleCargo",
@@ -25,13 +16,45 @@ export const metadata: Metadata = {
 // is a behind-auth dynamic dashboard, no static marketing pages.
 export const dynamic = "force-dynamic";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Dark is the default (ADR-D19). Reading the persisted choice server-side means
+  // returning light-theme users get the right theme in the first paint — no FOUC,
+  // and no inline theme script (which would need the CSP nonce).
+  const theme =
+    (await cookies()).get("theme")?.value === "light" ? "light" : "dark";
+
   return (
-    <html lang="ru" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="ru" data-theme={theme}>
+      <head>
+        {/* Preload the money typeface (Geist Mono) — its swap is the CLS risk the
+            design budget guards (fix L3) — plus the primary UI subsets (Cyrillic
+            first: the UI is Russian). */}
+        <link
+          rel="preload"
+          href="/fonts/GeistMono.var.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/inter-cyrillic.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/inter-latin.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body>{children}</body>
     </html>
   );
