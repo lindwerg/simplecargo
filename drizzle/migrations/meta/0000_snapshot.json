@@ -1,0 +1,2405 @@
+{
+  "id": "dee4b05e-38ba-4ebd-9c80-4ecb6f13a97c",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.accounts": {
+      "name": "accounts",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "account_id": {
+          "name": "account_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "provider_id": {
+          "name": "provider_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "access_token": {
+          "name": "access_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "refresh_token": {
+          "name": "refresh_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "access_token_expires_at": {
+          "name": "access_token_expires_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "idx_accounts_user": {
+          "name": "idx_accounts_user",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "accounts_user_id_users_id_fk": {
+          "name": "accounts_user_id_users_id_fk",
+          "tableFrom": "accounts",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.sessions": {
+      "name": "sessions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token": {
+          "name": "token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ip_address": {
+          "name": "ip_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_agent": {
+          "name": "user_agent",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "idx_sessions_user": {
+          "name": "idx_sessions_user",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_sessions_expires": {
+          "name": "idx_sessions_expires",
+          "columns": [
+            {
+              "expression": "expires_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "sessions_user_id_users_id_fk": {
+          "name": "sessions_user_id_users_id_fk",
+          "tableFrom": "sessions",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "sessions_token_unique": {
+          "name": "sessions_token_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "token"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email_verified": {
+          "name": "email_verified",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image": {
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'operator'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "ck_users_role": {
+          "name": "ck_users_role",
+          "value": "\"users\".\"role\" IN ('admin','operator','viewer')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.verifications": {
+      "name": "verifications",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "identifier": {
+          "name": "identifier",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.roads": {
+      "name": "roads",
+      "schema": "",
+      "columns": {
+        "rzd_code": {
+          "name": "rzd_code",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "short_code": {
+          "name": "short_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "full_name_ru": {
+          "name": "full_name_ru",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "full_name_translit": {
+          "name": "full_name_translit",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "idx_roads_short": {
+          "name": "idx_roads_short",
+          "columns": [
+            {
+              "expression": "short_code",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.station_aliases": {
+      "name": "station_aliases",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "esr_code": {
+          "name": "esr_code",
+          "type": "char(6)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "alias": {
+          "name": "alias",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "alias_normalized": {
+          "name": "alias_normalized",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'manual'"
+        },
+        "confidence": {
+          "name": "confidence",
+          "type": "numeric(4, 3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "idx_alias_esr": {
+          "name": "idx_alias_esr",
+          "columns": [
+            {
+              "expression": "esr_code",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "station_aliases_esr_code_stations_esr_code_fk": {
+          "name": "station_aliases_esr_code_stations_esr_code_fk",
+          "tableFrom": "station_aliases",
+          "tableTo": "stations",
+          "columnsFrom": [
+            "esr_code"
+          ],
+          "columnsTo": [
+            "esr_code"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "station_aliases_alias_normalized_unique": {
+          "name": "station_aliases_alias_normalized_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "alias_normalized"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "ck_alias_source": {
+          "name": "ck_alias_source",
+          "value": "\"station_aliases\".\"source\" IN ('report','manual','fuzzy_confirmed')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.stations": {
+      "name": "stations",
+      "schema": "",
+      "columns": {
+        "esr_code": {
+          "name": "esr_code",
+          "type": "char(6)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name_etran": {
+          "name": "name_etran",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name_normalized": {
+          "name": "name_normalized",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "road_code": {
+          "name": "road_code",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "region": {
+          "name": "region",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lat": {
+          "name": "lat",
+          "type": "numeric(9, 6)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lon": {
+          "name": "lon",
+          "type": "numeric(9, 6)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_quarantined": {
+          "name": "is_quarantined",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "idx_stations_name_norm": {
+          "name": "idx_stations_name_norm",
+          "columns": [
+            {
+              "expression": "name_normalized",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_stations_road": {
+          "name": "idx_stations_road",
+          "columns": [
+            {
+              "expression": "road_code",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "stations_road_code_roads_rzd_code_fk": {
+          "name": "stations_road_code_roads_rzd_code_fk",
+          "tableFrom": "stations",
+          "tableTo": "roads",
+          "columnsFrom": [
+            "road_code"
+          ],
+          "columnsTo": [
+            "rzd_code"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.counterparties": {
+      "name": "counterparties",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name_canonical": {
+          "name": "name_canonical",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name_raw_variants": {
+          "name": "name_raw_variants",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "roles": {
+          "name": "roles",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'"
+        },
+        "inn": {
+          "name": "inn",
+          "type": "varchar(12)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "idx_counterparty_inn": {
+          "name": "idx_counterparty_inn",
+          "columns": [
+            {
+              "expression": "inn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "counterparties_name_canonical_unique": {
+          "name": "counterparties_name_canonical_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name_canonical"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.wagons": {
+      "name": "wagons",
+      "schema": "",
+      "columns": {
+        "wagon_number": {
+          "name": "wagon_number",
+          "type": "char(8)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "wagon_type": {
+          "name": "wagon_type",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "wagon_subtype_raw": {
+          "name": "wagon_subtype_raw",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "model": {
+          "name": "model",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "volume_m3": {
+          "name": "volume_m3",
+          "type": "numeric(8, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "capacity_tonnes": {
+          "name": "capacity_tonnes",
+          "type": "numeric(8, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "owner_administration": {
+          "name": "owner_administration",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "build_date": {
+          "name": "build_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "next_planned_repair_date": {
+          "name": "next_planned_repair_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "current_mileage_km": {
+          "name": "current_mileage_km",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "checksum_valid": {
+          "name": "checksum_valid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_wagons_checksum": {
+          "name": "ck_wagons_checksum",
+          "value": "\"wagons\".\"checksum_valid\" IN ('ok','fail','unknown')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.ingested_files": {
+      "name": "ingested_files",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "content_sha256": {
+          "name": "content_sha256",
+          "type": "char(64)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "filename": {
+          "name": "filename",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "source_type": {
+          "name": "source_type",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sender_email": {
+          "name": "sender_email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gmail_message_id": {
+          "name": "gmail_message_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "storage_key": {
+          "name": "storage_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "header_row": {
+          "name": "header_row",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "column_shift": {
+          "name": "column_shift",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "row_count": {
+          "name": "row_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'pending'"
+        },
+        "quarantined": {
+          "name": "quarantined",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "error_detail": {
+          "name": "error_detail",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "agent_run_id": {
+          "name": "agent_run_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "received_at": {
+          "name": "received_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ingested_at": {
+          "name": "ingested_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "idx_files_status": {
+          "name": "idx_files_status",
+          "columns": [
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_files_source": {
+          "name": "idx_files_source",
+          "columns": [
+            {
+              "expression": "source_type",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "ingested_files_content_sha256_unique": {
+          "name": "ingested_files_content_sha256_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "content_sha256"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "ck_files_status": {
+          "name": "ck_files_status",
+          "value": "\"ingested_files\".\"status\" IN ('pending','processing','normalized','quarantined','committed')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.wagon_movements": {
+      "name": "wagon_movements",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "fingerprint": {
+          "name": "fingerprint",
+          "type": "char(64)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "event_key": {
+          "name": "event_key",
+          "type": "char(64)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "source_file_id": {
+          "name": "source_file_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "source_type": {
+          "name": "source_type",
+          "type": "char(1)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_primary": {
+          "name": "is_primary",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "superseded_by": {
+          "name": "superseded_by",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "needs_review": {
+          "name": "needs_review",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "wagon_number": {
+          "name": "wagon_number",
+          "type": "char(8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "waybill_number": {
+          "name": "waybill_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "shipment_id": {
+          "name": "shipment_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "operation_code": {
+          "name": "operation_code",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "operation_name": {
+          "name": "operation_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "operation_ts": {
+          "name": "operation_ts",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "load_state": {
+          "name": "load_state",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "trip_start_ts": {
+          "name": "trip_start_ts",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "depart_ts": {
+          "name": "depart_ts",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "arrive_ts": {
+          "name": "arrive_ts",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "est_arrival_ts": {
+          "name": "est_arrival_ts",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delivery_deadline_ts": {
+          "name": "delivery_deadline_ts",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "station_depart_esr": {
+          "name": "station_depart_esr",
+          "type": "char(6)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "station_depart_raw": {
+          "name": "station_depart_raw",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "road_depart_raw": {
+          "name": "road_depart_raw",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "station_current_esr": {
+          "name": "station_current_esr",
+          "type": "char(6)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "station_current_raw": {
+          "name": "station_current_raw",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "road_current_raw": {
+          "name": "road_current_raw",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "station_dest_esr": {
+          "name": "station_dest_esr",
+          "type": "char(6)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "station_dest_raw": {
+          "name": "station_dest_raw",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "road_dest_raw": {
+          "name": "road_dest_raw",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cargo_name": {
+          "name": "cargo_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cargo_code_etsng": {
+          "name": "cargo_code_etsng",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cargo_weight_kg": {
+          "name": "cargo_weight_kg",
+          "type": "numeric(12, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "shipper_raw": {
+          "name": "shipper_raw",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "consignee_raw": {
+          "name": "consignee_raw",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "idle_days_station": {
+          "name": "idle_days_station",
+          "type": "numeric(6, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "idle_days_operation": {
+          "name": "idle_days_operation",
+          "type": "numeric(6, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "days_no_operation": {
+          "name": "days_no_operation",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "days_no_movement": {
+          "name": "days_no_movement",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dist_remaining_km": {
+          "name": "dist_remaining_km",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dist_traveled_km": {
+          "name": "dist_traveled_km",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dist_total_km": {
+          "name": "dist_total_km",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "train_index": {
+          "name": "train_index",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "park_type_raw": {
+          "name": "park_type_raw",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "raw_json": {
+          "name": "raw_json",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ingested_at": {
+          "name": "ingested_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "ux_wm_fingerprint": {
+          "name": "ux_wm_fingerprint",
+          "columns": [
+            {
+              "expression": "fingerprint",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_wm_wagon": {
+          "name": "idx_wm_wagon",
+          "columns": [
+            {
+              "expression": "wagon_number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_wm_waybill": {
+          "name": "idx_wm_waybill",
+          "columns": [
+            {
+              "expression": "waybill_number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_wm_event": {
+          "name": "idx_wm_event",
+          "columns": [
+            {
+              "expression": "event_key",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_wm_wagon_ts": {
+          "name": "idx_wm_wagon_ts",
+          "columns": [
+            {
+              "expression": "wagon_number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "operation_ts",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_wm_load_event": {
+          "name": "idx_wm_load_event",
+          "columns": [
+            {
+              "expression": "wagon_number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "operation_ts",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"wagon_movements\".\"load_state\" = 'ГРУЖ'",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_wm_match": {
+          "name": "idx_wm_match",
+          "columns": [
+            {
+              "expression": "wagon_number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "waybill_number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "operation_ts",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_wm_review": {
+          "name": "idx_wm_review",
+          "columns": [
+            {
+              "expression": "needs_review",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"wagon_movements\".\"needs_review\" = TRUE",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "wagon_movements_source_file_id_ingested_files_id_fk": {
+          "name": "wagon_movements_source_file_id_ingested_files_id_fk",
+          "tableFrom": "wagon_movements",
+          "tableTo": "ingested_files",
+          "columnsFrom": [
+            "source_file_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "wagon_movements_superseded_by_wagon_movements_id_fk": {
+          "name": "wagon_movements_superseded_by_wagon_movements_id_fk",
+          "tableFrom": "wagon_movements",
+          "tableTo": "wagon_movements",
+          "columnsFrom": [
+            "superseded_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "wagon_movements_wagon_number_wagons_wagon_number_fk": {
+          "name": "wagon_movements_wagon_number_wagons_wagon_number_fk",
+          "tableFrom": "wagon_movements",
+          "tableTo": "wagons",
+          "columnsFrom": [
+            "wagon_number"
+          ],
+          "columnsTo": [
+            "wagon_number"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_wm_load_state": {
+          "name": "ck_wm_load_state",
+          "value": "\"wagon_movements\".\"load_state\" IN ('ГРУЖ','ПОР','UNKNOWN')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.deals": {
+      "name": "deals",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "wagon_number": {
+          "name": "wagon_number",
+          "type": "char(8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "waybill_number": {
+          "name": "waybill_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "report_month": {
+          "name": "report_month",
+          "type": "char(7)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "client_id": {
+          "name": "client_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "owner_id": {
+          "name": "owner_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "carrier_raw": {
+          "name": "carrier_raw",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "company_raw": {
+          "name": "company_raw",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Приоритет Логистика'"
+        },
+        "station_origin_esr": {
+          "name": "station_origin_esr",
+          "type": "char(6)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "station_dest_esr": {
+          "name": "station_dest_esr",
+          "type": "char(6)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cargo_name": {
+          "name": "cargo_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "wagon_type": {
+          "name": "wagon_type",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'ПВ'"
+        },
+        "revenue_ua": {
+          "name": "revenue_ua",
+          "type": "numeric(14, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cost_owner": {
+          "name": "cost_owner",
+          "type": "numeric(14, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "margin": {
+          "name": "margin",
+          "type": "numeric(14, 2)",
+          "primaryKey": false,
+          "notNull": false,
+          "generated": {
+            "as": "revenue_ua - cost_owner",
+            "type": "stored"
+          }
+        },
+        "revenue_source": {
+          "name": "revenue_source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cost_source": {
+          "name": "cost_source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date_trip_end_ts": {
+          "name": "date_trip_end_ts",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date_arrived_loading_ts": {
+          "name": "date_arrived_loading_ts",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date_dispatched_ts": {
+          "name": "date_dispatched_ts",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "turnover_days": {
+          "name": "turnover_days",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "turnover_provisional": {
+          "name": "turnover_provisional",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "invoice_number": {
+          "name": "invoice_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'OPEN'"
+        },
+        "source_movement_ids": {
+          "name": "source_movement_ids",
+          "type": "bigint[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "conflict_flags": {
+          "name": "conflict_flags",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "idx_deals_wagon": {
+          "name": "idx_deals_wagon",
+          "columns": [
+            {
+              "expression": "wagon_number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_deals_waybill": {
+          "name": "idx_deals_waybill",
+          "columns": [
+            {
+              "expression": "waybill_number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_deals_month": {
+          "name": "idx_deals_month",
+          "columns": [
+            {
+              "expression": "report_month",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_deals_status": {
+          "name": "idx_deals_status",
+          "columns": [
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_deals_client": {
+          "name": "idx_deals_client",
+          "columns": [
+            {
+              "expression": "client_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_deals_month_end": {
+          "name": "idx_deals_month_end",
+          "columns": [
+            {
+              "expression": "report_month",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "date_trip_end_ts",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_deals_match": {
+          "name": "idx_deals_match",
+          "columns": [
+            {
+              "expression": "wagon_number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "date_dispatched_ts",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_deals_pending": {
+          "name": "idx_deals_pending",
+          "columns": [
+            {
+              "expression": "report_month",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"deals\".\"status\" = 'COMPLETE' AND (\"deals\".\"revenue_ua\" IS NULL OR \"deals\".\"cost_owner\" IS NULL)",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "deals_wagon_number_wagons_wagon_number_fk": {
+          "name": "deals_wagon_number_wagons_wagon_number_fk",
+          "tableFrom": "deals",
+          "tableTo": "wagons",
+          "columnsFrom": [
+            "wagon_number"
+          ],
+          "columnsTo": [
+            "wagon_number"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "deals_client_id_counterparties_id_fk": {
+          "name": "deals_client_id_counterparties_id_fk",
+          "tableFrom": "deals",
+          "tableTo": "counterparties",
+          "columnsFrom": [
+            "client_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "deals_owner_id_counterparties_id_fk": {
+          "name": "deals_owner_id_counterparties_id_fk",
+          "tableFrom": "deals",
+          "tableTo": "counterparties",
+          "columnsFrom": [
+            "owner_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_deals_status": {
+          "name": "ck_deals_status",
+          "value": "\"deals\".\"status\" IN ('OPEN','ACTIVE','COMPLETE','CONFLICT','ABANDONED')"
+        },
+        "ck_deals_revenue_source": {
+          "name": "ck_deals_revenue_source",
+          "value": "\"deals\".\"revenue_source\" IN ('manual','contract')"
+        },
+        "ck_deals_cost_source": {
+          "name": "ck_deals_cost_source",
+          "value": "\"deals\".\"cost_source\" IN ('manual','contract')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.contract_prices": {
+      "name": "contract_prices",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "counterparty_id": {
+          "name": "counterparty_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "counterparty_type": {
+          "name": "counterparty_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "wagon_type": {
+          "name": "wagon_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "route_origin_esr": {
+          "name": "route_origin_esr",
+          "type": "char(6)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "route_dest_esr": {
+          "name": "route_dest_esr",
+          "type": "char(6)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rate_rub": {
+          "name": "rate_rub",
+          "type": "numeric(14, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rate_basis": {
+          "name": "rate_basis",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "valid_from": {
+          "name": "valid_from",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "valid_to": {
+          "name": "valid_to",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "idx_contract_lookup": {
+          "name": "idx_contract_lookup",
+          "columns": [
+            {
+              "expression": "counterparty_type",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "wagon_type",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "route_origin_esr",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "route_dest_esr",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "valid_from",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "valid_to",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_contract_cp": {
+          "name": "idx_contract_cp",
+          "columns": [
+            {
+              "expression": "counterparty_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "contract_prices_counterparty_id_counterparties_id_fk": {
+          "name": "contract_prices_counterparty_id_counterparties_id_fk",
+          "tableFrom": "contract_prices",
+          "tableTo": "counterparties",
+          "columnsFrom": [
+            "counterparty_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_contract_cp_type": {
+          "name": "ck_contract_cp_type",
+          "value": "\"contract_prices\".\"counterparty_type\" IN ('CLIENT','OWNER')"
+        },
+        "ck_contract_rate_basis": {
+          "name": "ck_contract_rate_basis",
+          "value": "\"contract_prices\".\"rate_basis\" IN ('PER_TRIP','PER_TON','PER_DAY')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.report_rows": {
+      "name": "report_rows",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "generation_id": {
+          "name": "generation_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "deal_id": {
+          "name": "deal_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "report_month": {
+          "name": "report_month",
+          "type": "char(7)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "client": {
+          "name": "client",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "origin": {
+          "name": "origin",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "destination": {
+          "name": "destination",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "revenue_ua": {
+          "name": "revenue_ua",
+          "type": "numeric(14, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date_trip_end": {
+          "name": "date_trip_end",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date_arrived_loading": {
+          "name": "date_arrived_loading",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "turnover_days": {
+          "name": "turnover_days",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cost_owner": {
+          "name": "cost_owner",
+          "type": "numeric(14, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "margin": {
+          "name": "margin",
+          "type": "numeric(14, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date_dispatched": {
+          "name": "date_dispatched",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "wagon_type": {
+          "name": "wagon_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "wagon_number": {
+          "name": "wagon_number",
+          "type": "char(8)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "waybill_number": {
+          "name": "waybill_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cargo_name": {
+          "name": "cargo_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "invoice_number": {
+          "name": "invoice_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "carrier": {
+          "name": "carrier",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "company": {
+          "name": "company",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "idx_report_month_gen": {
+          "name": "idx_report_month_gen",
+          "columns": [
+            {
+              "expression": "report_month",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "generation_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "date_trip_end",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_report_deal": {
+          "name": "idx_report_deal",
+          "columns": [
+            {
+              "expression": "deal_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_report_gen": {
+          "name": "idx_report_gen",
+          "columns": [
+            {
+              "expression": "generation_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "report_rows_deal_id_deals_id_fk": {
+          "name": "report_rows_deal_id_deals_id_fk",
+          "tableFrom": "report_rows",
+          "tableTo": "deals",
+          "columnsFrom": [
+            "deal_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.quarantine_rows": {
+      "name": "quarantine_rows",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "source_file_id": {
+          "name": "source_file_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "row_index": {
+          "name": "row_index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tier": {
+          "name": "tier",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "severity": {
+          "name": "severity",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rule_id": {
+          "name": "rule_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reason_code": {
+          "name": "reason_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "field_name": {
+          "name": "field_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "raw_value": {
+          "name": "raw_value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "raw_row_json": {
+          "name": "raw_row_json",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "agent_reason": {
+          "name": "agent_reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "resolved": {
+          "name": "resolved",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "resolved_esr": {
+          "name": "resolved_esr",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "review_action": {
+          "name": "review_action",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "resolved_by": {
+          "name": "resolved_by",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "resolved_at": {
+          "name": "resolved_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "idx_quarantine_unresolved": {
+          "name": "idx_quarantine_unresolved",
+          "columns": [
+            {
+              "expression": "resolved",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"quarantine_rows\".\"resolved\" = FALSE",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_quarantine_file": {
+          "name": "idx_quarantine_file",
+          "columns": [
+            {
+              "expression": "source_file_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_quarantine_reason": {
+          "name": "idx_quarantine_reason",
+          "columns": [
+            {
+              "expression": "reason_code",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "quarantine_rows_source_file_id_ingested_files_id_fk": {
+          "name": "quarantine_rows_source_file_id_ingested_files_id_fk",
+          "tableFrom": "quarantine_rows",
+          "tableTo": "ingested_files",
+          "columnsFrom": [
+            "source_file_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "ck_quarantine_tier": {
+          "name": "ck_quarantine_tier",
+          "value": "\"quarantine_rows\".\"tier\" IN ('fatal','recoverable','row_warning')"
+        },
+        "ck_quarantine_severity": {
+          "name": "ck_quarantine_severity",
+          "value": "\"quarantine_rows\".\"severity\" IN ('CRITICAL','ERROR','WARNING','INFO')"
+        },
+        "ck_quarantine_review_action": {
+          "name": "ck_quarantine_review_action",
+          "value": "\"quarantine_rows\".\"review_action\" IN ('approved','rejected','reprocessed')"
+        }
+      },
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
