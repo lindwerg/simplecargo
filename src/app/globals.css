@@ -126,6 +126,16 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
 
+  /* ── Type scale (map tokens.css → Tailwind text-* utilities; `inline` emits var()) ── */
+  --text-2xs: var(--text-2xs);
+  --text-xs: var(--text-xs);
+  --text-sm: var(--text-sm);
+  --text-base: var(--text-base);
+  --text-md: var(--text-md);
+  --text-lg: var(--text-lg);
+  --text-xl: var(--text-xl);
+  --text-display: var(--text-display);
+
   /* ── Radii (override Tailwind defaults with the Linear-ish family) ── */
   --radius-xs: var(--radius-xs);
   --radius-sm: var(--radius-sm);
@@ -133,6 +143,45 @@
   --radius-lg: var(--radius-lg);
   --radius-xl: var(--radius-xl);
   --radius-pill: var(--radius-pill);
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   Component animations (P0-7) — compositor-only (opacity / transform).
+   `.status-dot--pulse` is overridden to `animation: none` under reduced motion
+   in tokens.css; `.skeleton-shimmer` gets its own reduced-motion kill below.
+   ════════════════════════════════════════════════════════════════════════ */
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.4; transform: scale(0.8); }
+}
+.status-dot--pulse {
+  animation: status-pulse 2s var(--ease-standard) infinite;
+}
+
+@keyframes shimmer {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%); }
+}
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-surface-2);
+}
+.skeleton-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-surface-3),
+    transparent
+  );
+  animation: shimmer 1.6s var(--ease-standard) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer::after { animation: none; }
 }
 
 /* Base reset kept minimal — typography.css owns body; tokens own color. */
