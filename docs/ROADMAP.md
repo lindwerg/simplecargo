@@ -43,9 +43,11 @@ One step = one focused unit of work + (usually) one commit. We do not skip ahead
 
 - **P0-11 ✅ (partial)** — Contrast audit + a11y harness + optimistic hook. `src/styles/contrast-audit.ts` (culori) parses tokens.css → WCAG both themes, **gated in CI** via `contrast.test.ts` (body/money ≥4.5:1, large/UI ≥3:1); `pnpm contrast:audit` prints the table. **tokens.css fixes:** light `text-tertiary` 58%→53% (caps-labels AA), light `text-inverse` 99%→20% dark (amber CTA label was 3.68:1) — all required pairs pass. `src/hooks/useOptimisticStatus.ts` self-contained (no TanStack yet), atomic reducer (rollback reverts+errors in one render) + unit tests. **Playwright + @axe-core** `e2e/a11y.spec.ts` axes `/dashboard`+`/requests`+`/login` both themes → 0 WCAG AA violations (local). **DEFERRED to P1.5:** the heavy axe-on-CI job (Postgres service + seed + auth) — today's placeholder pages are low-signal; INP<200ms + no-full-table-rerender acceptance also lands when the real board exists. On `p0-scaffold`.
 
-**👉 NEXT — P0-12** · Phase 0 End-to-End Validation. Merge PR #1 → main (triggers first Railway deploy), then smoke all 12 MVP_PLAN §0.4 items live; enable PG daily backups + a tested restore documented in `docs/ops/backup-restore.md`; dashboard LCP < 2.5s + JS bundle < 150kb gz. **This is the milestone that takes `web` live.**
+- **P0-12 ✅ (web LIVE; 2 operator items open)** — Merged PR #1 → main → first Railway deploy. **Incident+fix:** first deploy FAILED healthcheck (no HTTP logs) — Next standalone `server.js` binds `process.env.HOSTNAME`, which Linux containers set to the container id → unreachable. Fixed by `HOSTNAME=0.0.0.0` (Railway var + baked into `railway.json` startCommand, PR #2). Seeded prod operator via `railway ssh … pnpm db:seed:user`. **Live §0.4 green:** health 200, ready 200 (applied=1), `/dashboard` unauth→307 `/login`, operator login→200 / wrong→401 / logout (CSRF-guarded)→session cleared, all security headers + nonce CSP, migrate ran in preDeploy + idempotent on redeploy, **dashboard LCP 1220ms** (<2.5s), bundle 102kB gz (<150kb). **OPEN (operator, before real users):** enable PG daily backups + one tested restore (`docs/ops/backup-restore.md`); PWA install-on-phone check (manifest installable verified). `web-production-b893f.up.railway.app`.
 
-> `web`'s first real deploy stays held: PR #1 is green but NOT merged. `/api/health` now exists, so the deploy blocker is cleared — merge-to-main + Railway deploy + PG backup/tested-restore + LCP/bundle checks are all done together at **P0-12** (end-to-end live validation).
+**👉 NEXT — P15-1** · Pricing + Direction Migrations (Milestone P1.5). First card of the historical-import / Direction-CRUD / ПСЦ-rates milestone — see the P1.5 section below.
+
+> **Phase 0 COMPLETE — `web` is live in production.** main auto-deploys on push (CI gate + ruleset). Remaining P0 chores are operator-only and non-blocking for starting P1.5: daily backups + tested restore, and a phone PWA install check. P1.5 work branches from `main`.
 
 ---
 
@@ -151,7 +153,7 @@ Planning docs, git, private GitHub repo, `.gitignore`. **Done.**
 - **Depends on:** P0-6, P0-8.
 - **Read:** DESIGN_DIRECTION §3, §6, §7.
 
-### 👉 P0-12 · Phase 0 End-to-End Validation
+### ✅ P0-12 · Phase 0 End-to-End Validation
 - **Goal:** Smoke every P0 acceptance criterion against the live Railway deploy.
 - **Deliverables:** manual run of all 12 items in MVP_PLAN §0.4; Postgres backup test-restore documented in `docs/ops/backup-restore.md`; dashboard LCP < 2.5s; dashboard JS bundle < 150kb gz.
 - **Acceptance:** all 12 §0.4 items green; restore documented.
