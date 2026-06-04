@@ -11,7 +11,15 @@ async function main(): Promise<void> {
   const url = assertDirectMigrationUrl(process.env.DATABASE_URL_DIRECT);
   const pool = new Pool({ connectionString: url });
   try {
-    await migrate(drizzle(pool), { migrationsFolder: "drizzle/migrations" });
+    // Pin the bookkeeping table explicitly. The runtime migrator otherwise
+    // defaults to drizzle.__drizzle_migrations, which would disagree with
+    // drizzle.config.ts (public) and the /api/ready readiness probe that counts
+    // applied rows. Keep all three on public.__drizzle_migrations.
+    await migrate(drizzle(pool), {
+      migrationsFolder: "drizzle/migrations",
+      migrationsTable: "__drizzle_migrations",
+      migrationsSchema: "public",
+    });
   } finally {
     await pool.end();
   }

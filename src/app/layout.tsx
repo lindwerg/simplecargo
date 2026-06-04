@@ -7,9 +7,16 @@ export const metadata: Metadata = {
   title: { default: "SimpleCargo", template: "%s · SimpleCargo" },
   description: "Учёт вагонных перевозок — Приоритет Логистика",
   applicationName: "SimpleCargo",
-  // Installed-app behaviour. The manifest link + real icon files (apple-touch 180,
-  // 192/512 maskable) land in P0-9; here we only ship asset-free head meta.
+  // Installed-app behaviour. The manifest link is auto-injected by app/manifest.ts;
+  // real icon files (apple-touch 180, 192/512 maskable) ship from public/icons (P0-9).
   appleWebApp: { capable: true, title: "SimpleCargo", statusBarStyle: "default" },
+  icons: {
+    icon: [
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: { url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+  },
   formatDetection: { telephone: false },
 };
 
