@@ -1,0 +1,66 @@
+name: CI
+
+# Merge gate for main (P0-10, ARCHITECTURE §8). A financial-margin tool must not
+# auto-deploy main with zero CI, so this runs on every PR into main (and on main
+# itself as a post-merge safety net). Railway handles deploys separately.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# Cancel superseded runs on the same ref to save minutes.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Lockfile is pnpm-10-generated; pin pnpm 10 so --frozen-lockfile validates it.
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+
+      - name: Type-check
+        run: pnpm type-check
+
+      - name: Lint
+        run: pnpm lint
+
+      # Load-bearing correctness tests (money/VAT, schema readiness, migration URL).
+      - name: Test
+        run: pnpm test
+
+      # `next build` imports env (auth route) so it fail-fasts without the 4 vars,
+      # and dev NODE_ENV breaks the /404 prerender. Scope these to the build step
+      # ONLY — setting NODE_ENV=production job-wide would make install drop the
+      # devDependencies the steps above need. Values are dummy build-time inputs
+      # (build never connects to the DB), so no GitHub secrets are required.
+      - name: Build
+        run: pnpm build
+        env:
+          NODE_ENV: production
+          DATABASE_URL: postgresql://ci:ci@localhost:5432/simplecargo
+          DATABASE_URL_DIRECT: postgresql://ci:ci@localhost:5432/simplecargo
+          BETTER_AUTH_SECRET: 0000000000000000000000000000000000000000000000000000000000000000
+          BETTER_AUTH_URL: https://ci.invalid
+          APP_TZ_DISPLAY: Europe/Moscow
