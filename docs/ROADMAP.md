@@ -38,9 +38,12 @@ One step = one focused unit of work + (usually) one commit. We do not skip ahead
 
 - **P0-8 ✅** — Funnel nav shell + designed login + gated dashboard. **ADR-D12 confirmed → funnel** (`/`→`/requests`, Запросы→Направления→Отчётность). `nav/FunnelNav.tsx` (desktop rail ≥768 + amber scaleX underline / mobile bottom bar) + `UserMenu.tsx`; `(app)/layout.tsx` (server getSession gate + MSK month) wrapping `dashboard` (email + zeroed StatTiles + empty-state) and three gated placeholder tabs; `(auth)/login` (anti-template split, RU errors); `/`→`/requests`; PWA meta in root layout; middleware guards all four app routes. Verified on Docker pg + seeded operator via `next start` (prod): full auth flow, nav, sign-out, no overflow 320–1440, 17/17 scripts nonced, both themes. On branch `p0-scaffold`.
 
-**👉 NEXT — P0-9** · PWA Manifest + Health/Ready Endpoints. `app/manifest.ts` + icons (192/512 maskable + 180 apple-touch), `api/health` (`SELECT 1`→200/503, Railway healthcheck), `api/ready` (schema-version check). **Unblocks the first `main` deploy** (the held `web` service needs `/api/health`).
+- **P0-9 ✅** — PWA manifest + generated icons + health/ready. `app/manifest.ts` (standalone, ru, theme/bg `#15161a`, 192/512 any+maskable); `scripts/generate-icons.ts` (`pnpm icons:generate`, sharp added as devDep) rasterizes an SC monogram → committed `public/icons/*`; `api/health` (`SELECT 1` raced w/ 5s timeout → 200/503); `api/ready` (applied vs `public.__drizzle_migrations` count vs journal); `migrate.ts` pins migrations table to `public`; pure `isSchemaReady` + tests; layout icon meta. Verified live (local PG): health/ready 200, manifest+links served, 503-on-DB-down in 0.63s. On `p0-scaffold`.
+- **P0-10 ✅** — GitHub Actions merge gate `.github/workflows/ci.yml` (PR→main + push main): `install --frozen-lockfile` → `type-check` → `lint` → `test` → `build`; pnpm 10 + node 22; build-env scoped to the build step (dummy non-secret vars; NODE_ENV=production job-wide would drop devDeps). **PR #1** (`p0-scaffold`→`main`) opened — CI **green**, intentionally NOT merged. Required-check enforcement needs branch protection, which is gated behind GitHub Pro on private repos → **repo made public** (secret-scanned clean first) + **ruleset "Protect main"** (required check `build` strict + no-deletion + non-fast-forward). On `p0-scaffold`.
 
-> `web`'s first real deploy stays held until `p0-scaffold` merges to `main` — it needs `/api/health` + the migrate script, which land across P0-2…P0-9. End-to-end live validation = P0-12.
+**👉 NEXT — P0-11** · Contrast + A11y Audit + Optimistic Physics Hook. Contrast audit all token pairs both themes (body/money ≥4.5:1, large/UI ≥3:1) + fixes; Playwright axe on `/requests`+`/dashboard`; `hooks/useOptimisticStatus.ts` (snapshot→apply→mutate→rollback).
+
+> `web`'s first real deploy stays held: PR #1 is green but NOT merged. `/api/health` now exists, so the deploy blocker is cleared — merge-to-main + Railway deploy + PG backup/tested-restore + LCP/bundle checks are all done together at **P0-12** (end-to-end live validation).
 
 ---
 
@@ -125,21 +128,21 @@ Planning docs, git, private GitHub repo, `.gitignore`. **Done.**
 - **Depends on:** P0-4, P0-5, P0-7.
 - **Read:** MVP_PLAN §0.2 steps 7-8; ARCHITECTURE §6; DESIGN_DIRECTION §4.1; PRODUCT_DIRECTIONS §5.1; REQUESTS_SOURCING §8 (ADR-D12); ECC web/design-quality.md.
 
-### 👉 P0-9 · PWA Manifest + Health/Ready Endpoints
+### ✅ P0-9 · PWA Manifest + Health/Ready Endpoints
 - **Goal:** Valid PWA manifest; liveness + readiness routes.
 - **Deliverables:** `app/manifest.ts` (standalone, theme/bg, icons 192+512 maskable + 180 apple-touch); `public/icons/`; `api/health/route.ts` (`SELECT 1` → 200/503, Railway healthcheck); `api/ready/route.ts` (schema-version check vs `__drizzle_migrations`).
 - **Acceptance:** Lighthouse PWA installable; `/api/health` 200 when DB reachable, 503 on fail; healthcheck wired with 60s timeout.
 - **Depends on:** P0-1, P0-3.
 - **Read:** MVP_PLAN §0.2 steps 9-10; ARCHITECTURE §9.
 
-### ⬜ P0-10 · GitHub CI Gate
+### ✅ P0-10 · GitHub CI Gate
 - **Goal:** Block merges to `main` without typecheck + lint + build.
 - **Deliverables:** `.github/workflows/ci.yml` (PR→main: `install --frozen-lockfile`, `type-check`, `lint`, `build`); first PR from feature branch; required status check in branch protection.
 - **Acceptance:** TS error / lint violation fails CI; `main` requires the check.
 - **Depends on:** P0-1.
 - **Read:** MVP_PLAN §0.2 step 12; ARCHITECTURE §8.
 
-### ⬜ P0-11 · Contrast + A11y Audit + Optimistic Physics Hook (DS-14/15)
+### 👉 P0-11 · Contrast + A11y Audit + Optimistic Physics Hook (DS-14/15)
 - **Goal:** Gate before real sessions: contrast in both themes + reusable optimistic-status hook.
 - **Deliverables:** contrast audit all token pairs (body/money ≥4.5:1, large/UI ≥3:1) dark+light; fixes applied to tokens.css; Playwright axe script on `/requests`+`/dashboard` both themes; `hooks/useOptimisticStatus.ts` (snapshot→apply→mutate→rollback, transform/opacity flip, visible error feedback).
 - **Acceptance:** zero WCAG AA failures both themes; axe clean on CI; lane advance < 200ms INP @4× throttle; rollback reverts row + shows error in one render cycle; no full-table re-render on flip.
