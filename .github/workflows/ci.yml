@@ -61,6 +61,8 @@ jobs:
           NODE_ENV: production
           DATABASE_URL: postgresql://ci:ci@localhost:5432/simplecargo
           DATABASE_URL_DIRECT: postgresql://ci:ci@localhost:5432/simplecargo
-          BETTER_AUTH_SECRET: 0000000000000000000000000000000000000000000000000000000000000000
+          # Quoted: an all-digit value would be parsed as the number 0 by YAML and
+          # fail the >=32-char check. 64-char hex, dummy build-time only.
+          BETTER_AUTH_SECRET: "deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
           BETTER_AUTH_URL: https://ci.invalid
           APP_TZ_DISPLAY: Europe/Moscow
