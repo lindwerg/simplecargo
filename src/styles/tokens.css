@@ -75,9 +75,12 @@
 
   --color-text:           oklch(22% 0.012 260);
   --color-text-secondary: oklch(45% 0.012 260);
-  --color-text-tertiary:  oklch(58% 0.012 260);
+  --color-text-tertiary:  oklch(53% 0.012 260);  /* darkened from 58%: AA ≥4.5:1 for caps-labels/captions on white (P0-11) */
   --color-text-disabled:  oklch(72% 0.010 260);
-  --color-text-inverse:   oklch(99% 0.003 260);
+  /* Dark text for amber fills (matches the dark theme's inverse role, DESIGN §6:
+     "dark text on amber"). The previous near-white (99%) failed AA on the 62%
+     amber CTA (3.68:1) — amber is light, so its label must be dark in both themes. */
+  --color-text-inverse:   oklch(20% 0.013 260);
 
   /* darker amber for AA when used as a fill/CTA with dark text on it */
   --color-accent:         oklch(62% 0.165 70);

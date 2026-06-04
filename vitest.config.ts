@@ -12,5 +12,9 @@ export default defineConfig({
   },
   test: {
     environment: "node",
+    // Unit/integration tests live next to source as *.test.ts. The Playwright a11y
+    // specs under e2e/ use the @playwright/test runner, not vitest — keep them out.
+    include: ["src/**/*.test.ts"],
+    exclude: ["e2e/**", "node_modules/**"],
   },
 });
