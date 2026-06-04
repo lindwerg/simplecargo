@@ -3,7 +3,7 @@ import { getSessionCookie } from "better-auth/cookies";
 
 // Route segments behind auth. The check here is OPTIMISTIC only (cookie presence);
 // the authoritative getSession() runs in the Server Component (P0-8). D5.
-const PROTECTED_PREFIXES = ["/dashboard"];
+const PROTECTED_PREFIXES = ["/dashboard", "/requests", "/directions", "/reports"];
 
 // Per-request Content-Security-Policy. script-src is nonce-based with NO
 // unsafe-inline/unsafe-eval (ARCHITECTURE §6). style-src keeps 'unsafe-inline'

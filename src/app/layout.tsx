@@ -1,11 +1,25 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
 
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SimpleCargo",
+  title: { default: "SimpleCargo", template: "%s · SimpleCargo" },
   description: "Учёт вагонных перевозок — Приоритет Логистика",
+  applicationName: "SimpleCargo",
+  // Installed-app behaviour. The manifest link + real icon files (apple-touch 180,
+  // 192/512 maskable) land in P0-9; here we only ship asset-free head meta.
+  appleWebApp: { capable: true, title: "SimpleCargo", statusBarStyle: "default" },
+  formatDetection: { telephone: false },
+};
+
+// theme-color tracks --color-bg per theme (approx hex; oklch isn't universally
+// honored in the meta tag). Dark is the product default (ADR-D19).
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fafbfc" },
+    { media: "(prefers-color-scheme: dark)", color: "#15161a" },
+  ],
 };
 
 // The per-request CSP nonce (set by src/middleware.ts) can only be injected into
