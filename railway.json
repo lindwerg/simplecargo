@@ -2,7 +2,7 @@
   "$schema": "https://railway.com/railway.schema.json",
   "build": { "builder": "RAILPACK" },
   "deploy": {
-    "startCommand": "node .next/standalone/server.js",
+    "startCommand": "HOSTNAME=0.0.0.0 node .next/standalone/server.js",
     "preDeployCommand": ["pnpm db:migrate"],
     "healthcheckPath": "/api/health",
     "healthcheckTimeout": 60,
