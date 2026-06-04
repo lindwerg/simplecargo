@@ -41,7 +41,9 @@ One step = one focused unit of work + (usually) one commit. We do not skip ahead
 - **P0-9 ✅** — PWA manifest + generated icons + health/ready. `app/manifest.ts` (standalone, ru, theme/bg `#15161a`, 192/512 any+maskable); `scripts/generate-icons.ts` (`pnpm icons:generate`, sharp added as devDep) rasterizes an SC monogram → committed `public/icons/*`; `api/health` (`SELECT 1` raced w/ 5s timeout → 200/503); `api/ready` (applied vs `public.__drizzle_migrations` count vs journal); `migrate.ts` pins migrations table to `public`; pure `isSchemaReady` + tests; layout icon meta. Verified live (local PG): health/ready 200, manifest+links served, 503-on-DB-down in 0.63s. On `p0-scaffold`.
 - **P0-10 ✅** — GitHub Actions merge gate `.github/workflows/ci.yml` (PR→main + push main): `install --frozen-lockfile` → `type-check` → `lint` → `test` → `build`; pnpm 10 + node 22; build-env scoped to the build step (dummy non-secret vars; NODE_ENV=production job-wide would drop devDeps). **PR #1** (`p0-scaffold`→`main`) opened — CI **green**, intentionally NOT merged. Required-check enforcement needs branch protection, which is gated behind GitHub Pro on private repos → **repo made public** (secret-scanned clean first) + **ruleset "Protect main"** (required check `build` strict + no-deletion + non-fast-forward). On `p0-scaffold`.
 
-**👉 NEXT — P0-11** · Contrast + A11y Audit + Optimistic Physics Hook. Contrast audit all token pairs both themes (body/money ≥4.5:1, large/UI ≥3:1) + fixes; Playwright axe on `/requests`+`/dashboard`; `hooks/useOptimisticStatus.ts` (snapshot→apply→mutate→rollback).
+- **P0-11 ✅ (partial)** — Contrast audit + a11y harness + optimistic hook. `src/styles/contrast-audit.ts` (culori) parses tokens.css → WCAG both themes, **gated in CI** via `contrast.test.ts` (body/money ≥4.5:1, large/UI ≥3:1); `pnpm contrast:audit` prints the table. **tokens.css fixes:** light `text-tertiary` 58%→53% (caps-labels AA), light `text-inverse` 99%→20% dark (amber CTA label was 3.68:1) — all required pairs pass. `src/hooks/useOptimisticStatus.ts` self-contained (no TanStack yet), atomic reducer (rollback reverts+errors in one render) + unit tests. **Playwright + @axe-core** `e2e/a11y.spec.ts` axes `/dashboard`+`/requests`+`/login` both themes → 0 WCAG AA violations (local). **DEFERRED to P1.5:** the heavy axe-on-CI job (Postgres service + seed + auth) — today's placeholder pages are low-signal; INP<200ms + no-full-table-rerender acceptance also lands when the real board exists. On `p0-scaffold`.
+
+**👉 NEXT — P0-12** · Phase 0 End-to-End Validation. Merge PR #1 → main (triggers first Railway deploy), then smoke all 12 MVP_PLAN §0.4 items live; enable PG daily backups + a tested restore documented in `docs/ops/backup-restore.md`; dashboard LCP < 2.5s + JS bundle < 150kb gz. **This is the milestone that takes `web` live.**
 
 > `web`'s first real deploy stays held: PR #1 is green but NOT merged. `/api/health` now exists, so the deploy blocker is cleared — merge-to-main + Railway deploy + PG backup/tested-restore + LCP/bundle checks are all done together at **P0-12** (end-to-end live validation).
 
@@ -142,14 +144,14 @@ Planning docs, git, private GitHub repo, `.gitignore`. **Done.**
 - **Depends on:** P0-1.
 - **Read:** MVP_PLAN §0.2 step 12; ARCHITECTURE §8.
 
-### 👉 P0-11 · Contrast + A11y Audit + Optimistic Physics Hook (DS-14/15)
+### ✅ P0-11 · Contrast + A11y Audit + Optimistic Physics Hook (DS-14/15)
 - **Goal:** Gate before real sessions: contrast in both themes + reusable optimistic-status hook.
 - **Deliverables:** contrast audit all token pairs (body/money ≥4.5:1, large/UI ≥3:1) dark+light; fixes applied to tokens.css; Playwright axe script on `/requests`+`/dashboard` both themes; `hooks/useOptimisticStatus.ts` (snapshot→apply→mutate→rollback, transform/opacity flip, visible error feedback).
 - **Acceptance:** zero WCAG AA failures both themes; axe clean on CI; lane advance < 200ms INP @4× throttle; rollback reverts row + shows error in one render cycle; no full-table re-render on flip.
 - **Depends on:** P0-6, P0-8.
 - **Read:** DESIGN_DIRECTION §3, §6, §7.
 
-### ⬜ P0-12 · Phase 0 End-to-End Validation
+### 👉 P0-12 · Phase 0 End-to-End Validation
 - **Goal:** Smoke every P0 acceptance criterion against the live Railway deploy.
 - **Deliverables:** manual run of all 12 items in MVP_PLAN §0.4; Postgres backup test-restore documented in `docs/ops/backup-restore.md`; dashboard LCP < 2.5s; dashboard JS bundle < 150kb gz.
 - **Acceptance:** all 12 §0.4 items green; restore documented.
