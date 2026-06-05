@@ -8,6 +8,13 @@
       "when": 1780510911367,
       "tag": "0000_outgoing_zaladane",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1780646065484,
+      "tag": "0001_abandoned_captain_flint",
+      "breakpoints": true
     }
   ]
 }
