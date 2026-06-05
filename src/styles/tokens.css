@@ -59,6 +59,10 @@
   --elev-2: 0 1px 2px -1px oklch(0% 0 0 / 0.5), 0 0 0 1px var(--color-border);
   --elev-3: 0 8px 24px -8px oklch(0% 0 0 / 0.55), 0 0 0 1px var(--color-border-strong);
   --ring-focus: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-accent);
+
+  /* ── Glass (floating nav surfaces: rail + mobile bar). Translucent for backdrop-blur. ── */
+  --glass-surface: oklch(15% 0.013 260 / 0.72);
+  --glass-border:  oklch(36% 0.014 260 / 0.55);
 }
 
 [data-theme="light"] {
@@ -112,6 +116,10 @@
   --elev-2: 0 1px 2px -1px oklch(0% 0 0 / 0.10), 0 0 0 1px var(--color-border);
   --elev-3: 0 12px 28px -10px oklch(0% 0 0 / 0.16), 0 0 0 1px var(--color-border-strong);
   --ring-focus: 0 0 0 2px var(--color-surface-1), 0 0 0 4px var(--color-accent);
+
+  /* ── Glass (light): near-white translucent so blur reads as frosted, not flat ── */
+  --glass-surface: oklch(100% 0 0 / 0.68);
+  --glass-border:  oklch(83% 0.008 260 / 0.7);
 }
 
 :root {
