@@ -1,0 +1,59 @@
+/* Запросы board — marketplace product-catalog grid + direction card.
+   Colors come from tokens.css var()s only (no raw literals here). */
+
+/* Responsive auto-fill grid — cards flow & wrap like a product catalog. */
+.direction-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  gap: var(--space-4);
+  align-items: stretch;
+}
+
+/* The card itself — base surface + compositor-only hover lift. */
+.direction-card {
+  position: relative;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-left-width: 3px;
+  box-shadow: var(--elev-2);
+  transition:
+    transform var(--duration-fast) var(--ease-out-quad),
+    box-shadow var(--duration-fast) var(--ease-out-quad);
+}
+.direction-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--elev-3);
+}
+.direction-card:active {
+  transform: translateY(0);
+}
+.direction-card:focus-within {
+  box-shadow: var(--ring-focus);
+}
+
+/* Status rail (left edge color). Reinforced by the StatusPill text+glyph (1.4.1). */
+.direction-card--new { border-left-color: var(--color-info); }
+.direction-card--sourcing { border-left-color: var(--color-warn); }
+.direction-card--quoted { border-left-color: var(--color-info); }
+.direction-card--won { border-left-color: var(--color-success); }
+.direction-card--lost { border-left-color: var(--color-danger); }
+.direction-card--no_bid,
+.direction-card--expired,
+.direction-card--cancelled { border-left-color: var(--color-border-strong); }
+
+/* Archive cards read quieter. */
+.direction-card--archived { opacity: 0.82; }
+
+@media (prefers-reduced-motion: reduce) {
+  .direction-card {
+    transition: box-shadow var(--duration-fast) linear;
+  }
+  .direction-card:hover { transform: none; }
+}
+
+/* Intake drop zone drag state pulse uses opacity only (compositor-safe). */
+.intake-dropzone--drag {
+  border-color: var(--color-accent);
+  background: var(--color-accent-quiet);
+}

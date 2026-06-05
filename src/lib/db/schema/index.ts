@@ -9,6 +9,7 @@ export * from "./movements";
 export * from "./orders";
 export * from "./directions";
 export * from "./directionBindings";
+export * from "./requests";
 export * from "./pricing";
 export * from "./deals";
 export * from "./contracts";
