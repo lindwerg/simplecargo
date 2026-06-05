@@ -18,11 +18,23 @@ export const metadata: Metadata = {
     apple: { url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
   },
   formatDetection: { telephone: false },
+  // iOS launches a home-screen icon in fullscreen STANDALONE only when this
+  // apple-prefixed meta is present. Next's `appleWebApp.capable` does NOT emit it
+  // on this version (only the standardized `mobile-web-app-capable` for Android),
+  // so set it explicitly — without it iOS opens the icon as a normal Safari tab.
+  other: { "apple-mobile-web-app-capable": "yes" },
 };
 
 // theme-color tracks --color-bg per theme (approx hex; oklch isn't universally
 // honored in the meta tag). Dark is the product default (ADR-D19).
 export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  // App-like behaviour: lock zoom (no pinch / double-tap zoom) and let content
+  // extend under the notch / Dynamic Island so env(safe-area-inset-*) is non-zero.
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#fafbfc" },
     { media: "(prefers-color-scheme: dark)", color: "#15161a" },
