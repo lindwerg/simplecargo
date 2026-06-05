@@ -45,7 +45,7 @@ One step = one focused unit of work + (usually) one commit. We do not skip ahead
 
 - **P0-12 ✅ (web LIVE; 2 operator items open)** — Merged PR #1 → main → first Railway deploy. **Incident+fix:** first deploy FAILED healthcheck (no HTTP logs) — Next standalone `server.js` binds `process.env.HOSTNAME`, which Linux containers set to the container id → unreachable. Fixed by `HOSTNAME=0.0.0.0` (Railway var + baked into `railway.json` startCommand, PR #2). Seeded prod operator via `railway ssh … pnpm db:seed:user`. **Live §0.4 green:** health 200, ready 200 (applied=1), `/dashboard` unauth→307 `/login`, operator login→200 / wrong→401 / logout (CSRF-guarded)→session cleared, all security headers + nonce CSP, migrate ran in preDeploy + idempotent on redeploy, **dashboard LCP 1220ms** (<2.5s), bundle 102kB gz (<150kb). **OPEN (operator, before real users):** enable PG daily backups + one tested restore (`docs/ops/backup-restore.md`); PWA install-on-phone check (manifest installable verified). `web-production-b893f.up.railway.app`.
 
-**👉 NEXT — P15-1** · Pricing + Direction Migrations (Milestone P1.5). First card of the historical-import / Direction-CRUD / ПСЦ-rates milestone — see the P1.5 section below.
+**👉 NEXT — P15-2** · Manual ПСЦ Rate-Table Entry UI (Milestone P1.5). Schema for the price-book + Direction layer is now in place (P15-1) — next is the operator UI to hand-enter ПСЦ rate tables.
 
 > **Phase 0 COMPLETE — `web` is live in production.** main auto-deploys on push (CI gate + ruleset). Remaining P0 chores are operator-only and non-blocking for starting P1.5: daily backups + tested restore, and a phone PWA install check. P1.5 work branches from `main`.
 
@@ -164,10 +164,11 @@ Planning docs, git, private GitHub repo, `.gitignore`. **Done.**
 
 # Milestone: P1.5 — Historical Import + Direction CRUD + ПСЦ Rates
 
-### ⬜ P15-1 · Pricing + Direction Migrations
+### ✅ P15-1 · Pricing + Direction Migrations
 - **Goal:** Create `directions`, price-book tables, and `deals.direction_id` alter in one wave.
-- **Deliverables:** `directions` (rates nullable, `order_id` nullable, `is_synthetic`, `rate_model`, `direction_status` enum, indexes on status / route / order_id); `deals` ALTER + `direction_id` + `direction_match_method` (nullable FK) + `idx_deals_direction`; `counterparty_contracts`, `price_protocols` (`supersededBy` self-FK), `price_protocol_rates` (route index); `psc_side` enum.
-- **Acceptance:** `drizzle-kit migrate` clean; legacy deals without `direction_id` still valid; rate line queryable by `(protocolId, originRaw, destRaw, wagonType)`; supersede chain queryable.
+- **Deliverables:** `directions` (rates nullable, `order_id` nullable, `is_synthetic`, `rate_model`, indexes on status / route / order_id); `deals` ALTER + `direction_id` + `direction_match_method` (nullable FK) + `idx_deals_direction`; `counterparty_contracts`, `price_protocols` (`superseded_by` self-FK), `price_protocol_rates` (route index). **`orders` scaffolded empty** so `directions.order_id` FK resolves (P5 populates it).
+- **Acceptance:** `drizzle-kit migrate` clean; legacy deals without `direction_id` still valid; rate line queryable by `(protocolId, originRaw, destRaw, wagonType)`; supersede chain queryable. **All verified on local PG.**
+- **Done:** migration `0001_abandoned_captain_flint.sql`. Schema files `orders.ts` / `directions.ts` / `pricing.ts`; `deals.ts` altered; barrel updated. **House convention chosen over spec's `pgEnum`:** enums encoded as `text` + `CHECK` (matches `deals.status`/`users.role`/`contracts.*`; no `pgEnum` in codebase). FKs to P5 tables (`seeded_from_extracted_price_id`, `source_document_id`) left as bare uuid + comment, per §3.2's own pattern. `direction_status` values from SCHEMA_DELTA §2 (`draft/open/active/paused/completed/cancelled`). Migrate clean; `EXPLAIN` confirms `idx_psc_rate_route` Index Scan; recursive supersede query + 33 unit tests green; type-check clean.
 - **Depends on:** P0-3.
 - **Read:** SCHEMA_DELTA §3.2, §4.1, §9.2, §9.4; PRODUCT_DIRECTIONS §1.2, §10.
 

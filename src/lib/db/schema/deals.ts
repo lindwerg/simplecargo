@@ -16,6 +16,7 @@ import {
 import { sql } from "drizzle-orm";
 
 import { counterparties } from "./counterparties";
+import { directions } from "./directions";
 import { wagons } from "./wagons";
 
 // One completed trip = one report row (DB_SCHEMA §7). Unit of margin and turnover.
@@ -65,6 +66,11 @@ export const deals = pgTable(
 
     invoiceNumber: text("invoice_number"), // Счет фактура [14]
 
+    // Direction binding at TRIP grain (R1). Nullable for legacy/historical deals;
+    // wagon_movements is deliberately NOT given a direction_id.
+    directionId: uuid("direction_id").references(() => directions.id, { onDelete: "set null" }),
+    directionMatchMethod: text("direction_match_method"), // email_scope | manual | historical_import
+
     status: text("status").notNull().default("OPEN"), // OPEN|ACTIVE|COMPLETE|CONFLICT|ABANDONED
     sourceMovementIds: bigint("source_movement_ids", { mode: "number" }).array(),
     conflictFlags: jsonb("conflict_flags"), // field-level disagreements
@@ -77,6 +83,8 @@ export const deals = pgTable(
     index("idx_deals_month").on(t.reportMonth),
     index("idx_deals_status").on(t.status),
     index("idx_deals_client").on(t.clientId),
+    // KPI aggregation at trip grain (R1)
+    index("idx_deals_direction").on(t.directionId),
     // report query: a month's completed deals ordered by trip end
     index("idx_deals_month_end").on(t.reportMonth, t.dateTripEndTs),
     // matching open deals by wagon + dispatch-time window
@@ -88,5 +96,9 @@ export const deals = pgTable(
     check("ck_deals_status", sql`${t.status} IN ('OPEN','ACTIVE','COMPLETE','CONFLICT','ABANDONED')`),
     check("ck_deals_revenue_source", sql`${t.revenueSource} IN ('manual','contract')`),
     check("ck_deals_cost_source", sql`${t.costSource} IN ('manual','contract')`),
+    check(
+      "ck_deals_direction_match_method",
+      sql`${t.directionMatchMethod} IS NULL OR ${t.directionMatchMethod} IN ('email_scope','manual','historical_import')`,
+    ),
   ],
 );
