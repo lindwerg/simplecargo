@@ -4,6 +4,7 @@ import { sql } from "drizzle-orm";
 import { orders } from "./orders";
 import { stations } from "./geo";
 import { users } from "./auth";
+import { counterparties } from "./counterparties";
 
 // Direction (Направление) — the operator-facing operational hub: one route + rate
 // card that accumulates Deals (SCHEMA_DELTA §3.2, PRODUCT_DIRECTIONS §1.2).
@@ -22,6 +23,11 @@ export const directions = pgTable(
     orderId: uuid("order_id").references(() => orders.id, { onDelete: "set null" }),
     displayName: text("display_name"), // "Асбест → Голышманово / Июнь 2025"
     status: text("status").notNull().default("draft"), // draft|open|active|paused|completed|cancelled
+    // status audit (PRODUCT_DIRECTIONS §1.2) — who flipped the lifecycle state and when.
+    statusChangedAt: timestamp("status_changed_at", { withTimezone: true }).notNull().defaultNow(),
+    statusChangedBy: uuid("status_changed_by")
+      .notNull()
+      .references(() => users.id),
 
     // route — ESR resolved (D15); raw preserved when unresolved
     stationOriginEsr: char("station_origin_esr", { length: 6 }).references(() => stations.esrCode, {
@@ -50,6 +56,16 @@ export const directions = pgTable(
     validFrom: timestamp("valid_from", { withTimezone: true }),
     validTo: timestamp("valid_to", { withTimezone: true }),
 
+    // parties — operator-confirmed (D16: client never auto-filled). NULLABLE in draft.
+    clientCounterpartyId: uuid("client_counterparty_id").references(() => counterparties.id, {
+      onDelete: "set null",
+    }),
+    // primary owner for the rate card + ПСЦ owner-rate resolution (manual single-owner case).
+    // P3 direction_owner_bindings add per-mailbox routing on top of this.
+    ownerCounterpartyId: uuid("owner_counterparty_id").references(() => counterparties.id, {
+      onDelete: "set null",
+    }),
+
     // TRUE = historical-aggregation direction with no Order/mailbox/ПСЦ (M3)
     isSynthetic: boolean("is_synthetic").notNull().default(false),
 
@@ -65,6 +81,7 @@ export const directions = pgTable(
     index("idx_directions_order").on(t.orderId),
     index("idx_directions_status").on(t.status),
     index("idx_directions_route").on(t.stationOriginEsr, t.stationDestEsr),
+    index("idx_directions_client").on(t.clientCounterpartyId),
     check(
       "ck_directions_status",
       sql`${t.status} IN ('draft','open','active','paused','completed','cancelled')`,

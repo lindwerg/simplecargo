@@ -8,6 +8,7 @@ export * from "./ingest";
 export * from "./movements";
 export * from "./orders";
 export * from "./directions";
+export * from "./directionBindings";
 export * from "./pricing";
 export * from "./deals";
 export * from "./contracts";
