@@ -45,7 +45,7 @@ One step = one focused unit of work + (usually) one commit. We do not skip ahead
 
 - **P0-12 ✅ (web LIVE; 2 operator items open)** — Merged PR #1 → main → first Railway deploy. **Incident+fix:** first deploy FAILED healthcheck (no HTTP logs) — Next standalone `server.js` binds `process.env.HOSTNAME`, which Linux containers set to the container id → unreachable. Fixed by `HOSTNAME=0.0.0.0` (Railway var + baked into `railway.json` startCommand, PR #2). Seeded prod operator via `railway ssh … pnpm db:seed:user`. **Live §0.4 green:** health 200, ready 200 (applied=1), `/dashboard` unauth→307 `/login`, operator login→200 / wrong→401 / logout (CSRF-guarded)→session cleared, all security headers + nonce CSP, migrate ran in preDeploy + idempotent on redeploy, **dashboard LCP 1220ms** (<2.5s), bundle 102kB gz (<150kb). **OPEN (operator, before real users):** enable PG daily backups + one tested restore (`docs/ops/backup-restore.md`); PWA install-on-phone check (manifest installable verified). `web-production-b893f.up.railway.app`.
 
-**👉 NEXT — P15-2** · Manual ПСЦ Rate-Table Entry UI (Milestone P1.5). Schema for the price-book + Direction layer is now in place (P15-1) — next is the operator UI to hand-enter ПСЦ rate tables.
+**👉 NEXT — P15-3** · Manual Direction CRUD API + Form (Milestone P1.5). ПСЦ rate-entry is live (P15-2, `/directions/pricing`) — next is the Direction CRUD + lifecycle, resolving its cost/revenue against the ПСЦ price-book.
 
 > **Phase 0 COMPLETE — `web` is live in production.** main auto-deploys on push (CI gate + ruleset). Remaining P0 chores are operator-only and non-blocking for starting P1.5: daily backups + tested restore, and a phone PWA install check. P1.5 work branches from `main`.
 
@@ -172,10 +172,11 @@ Planning docs, git, private GitHub repo, `.gitignore`. **Done.**
 - **Depends on:** P0-3.
 - **Read:** SCHEMA_DELTA §3.2, §4.1, §9.2, §9.4; PRODUCT_DIRECTIONS §1.2, §10.
 
-### ⬜ P15-2 · Manual ПСЦ Rate-Table Entry UI
+### ✅ P15-2 · Manual ПСЦ Rate-Table Entry UI
 - **Goal:** Operator hand-enters a price protocol so directions can resolve rates.
-- **Deliverables:** `POST /api/price-protocols` + `/api/price-protocol-rates`; form: contract ref, counterparty, side (auto from РНС role), VAT (22% inclusive default), validity; rate-line list (origin raw, dest raw, wagon type, rate/wagon).
-- **Acceptance:** protocol with 2+ lines saves; direction can look up snapshot rate; new приложение marks old `superseded`.
+- **Deliverables:** `POST /api/price-protocols` (header + nested rates, transactional) + `POST /api/price-protocol-rates` (append); form: РНС role → derived side, counterparty (select + inline-create), contract ref, VAT (22% inclusive default), validity, optional «supersedes»; dynamic rate-line list (origin raw, dest raw, wagon type, rate/wagon).
+- **Acceptance:** protocol with 2+ lines saves; direction can look up snapshot rate; new приложение marks old `superseded`. **All verified** (real DB path + live HTTP stack).
+- **Done:** Surface lives **under Направления** (`/directions/pricing` registry + `/new` form) per operator IA — ПСЦ is a shared rate registry (often road-to-road, СВР→ГРК, one protocol → many directions). Side **derived from РНС role** (Заказчик→`owner_cost` / Исполнитель→`client_revenue`), never asked. **First write-feature** — established reusable conventions: `src/lib/api/response.ts` (envelope), `src/lib/api/session.ts` (`requireWriter`, viewer=read-only), and the drizzle insert/transaction idiom (`src/lib/pricing/repository.ts`). Pure domain logic `src/lib/pricing/` (`deriveSide`, zod `schema.ts`, pure `resolve.ts` selector + db `lookup.ts` resolver — split so tests need no PG). Reused `fieldClass`/`Button`/`ErrorState`/`EmptyState`. 16 new pure tests; type-check/lint/build green; live HTTP: 401 unauth / 400 bad / 201 create / list renders. Counterparty find-or-create by `nameCanonical`. Road-level resolution fallback deferred to P15-3.
 - **Depends on:** P15-1.
 - **Read:** SCHEMA_DELTA §9.2, §9.3; PRODUCT_DIRECTIONS §10 items 3-4.
 
