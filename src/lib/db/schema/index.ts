@@ -11,6 +11,7 @@ export * from "./directions";
 export * from "./directionBindings";
 export * from "./requests";
 export * from "./pricing";
+export * from "./tariffs";
 export * from "./deals";
 export * from "./contracts";
 export * from "./report";

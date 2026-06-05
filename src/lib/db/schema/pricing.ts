@@ -5,6 +5,7 @@ import {
   index,
   numeric,
   pgTable,
+  smallint,
   text,
   timestamp,
   uuid,
@@ -84,11 +85,30 @@ export const priceProtocolRates = pgTable(
     originRaw: text("origin_raw").notNull(), // "ДОБРЯТИНО" (ПСЦ has bare names, no ESR)
     destRaw: text("dest_raw").notNull(), // "НОГИНСК"
     wagonType: text("wagon_type").notNull(), // "Полувагон"
-    rate: numeric("rate", { precision: 14, scale: 2 }).notNull(), // 19000
+    rate: numeric("rate", { precision: 14, scale: 2 }).notNull(), // 19000 (resolved ₽/wagon)
     currency: char("currency", { length: 3 }).notNull().default("RUB"),
     rateBasis: text("rate_basis").notNull().default("per_wagon"),
     vatInclusive: text("vat_inclusive").notNull().default("yes"),
+
+    // RFQ upgrade — rate expression (Goal 4). flat_rub: `rate` is the entered ₽.
+    // tariff_indicative / tariff_plus_markup: `rate` is the RESOLVED snapshot, while
+    // markupPct + tariffClass keep the expression so a repeat route recomputes from a
+    // refreshed/indexed tariff base (src/lib/pricing/resolve.resolveAmount).
+    rateKind: text("rate_kind").notNull().default("flat_rub"),
+    markupPct: numeric("markup_pct", { precision: 6, scale: 3 }), // +10.000 % over tariff
+    tariffClass: smallint("tariff_class"), // 1|2|3 — тарифный класс груза (10-01)
+    tariffRef: text("tariff_ref"), // e.g. "10-01"
   },
   // HOT PATH: resolve a Direction's rate by (protocol, origin, dest, wagon_type).
-  (t) => [index("idx_psc_rate_route").on(t.protocolId, t.originRaw, t.destRaw, t.wagonType)],
+  (t) => [
+    index("idx_psc_rate_route").on(t.protocolId, t.originRaw, t.destRaw, t.wagonType),
+    check(
+      "ck_psc_rate_kind",
+      sql`${t.rateKind} IN ('flat_rub','tariff_indicative','tariff_plus_markup')`,
+    ),
+    check(
+      "ck_psc_rate_tariff_class",
+      sql`${t.tariffClass} IS NULL OR ${t.tariffClass} IN (1,2,3)`,
+    ),
+  ],
 );

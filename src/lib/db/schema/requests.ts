@@ -137,6 +137,18 @@ export const requestLines = pgTable(
     targetRatePerWagon: numeric("target_rate_per_wagon", { precision: 14, scale: 2 }),
     targetRateRaw: text("target_rate_raw"), // raw rate string, e.g. "~1 900 р/ваг", "договорная"
 
+    // RFQ upgrade — per-line wagon type (Goal 3): nullable → inherits request.wagonType.
+    wagonType: text("wagon_type"),
+
+    // RFQ upgrade — rate expression (Goal 4). A desired rate may be a flat ₽/wagon
+    // (targetRatePerWagon), an indicative tied to Прейскурант 10-01 ("+X% к тарифу"),
+    // or tariff+markup. These hold the EXPRESSION; the absolute ₽ is resolved against
+    // an operator-entered tariff base (src/lib/pricing + tariff_rates).
+    targetRateKind: text("target_rate_kind"), // flat_rub | tariff_indicative | tariff_plus_markup
+    targetRateMarkupPct: numeric("target_rate_markup_pct", { precision: 6, scale: 3 }), // +10.000 %
+    targetTariffClass: smallint("target_tariff_class"), // 1|2|3 — тарифный класс груза (10-01)
+    targetTariffRef: text("target_tariff_ref"), // tariff reference label, e.g. "10-01"
+
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
@@ -144,5 +156,13 @@ export const requestLines = pgTable(
     index("idx_request_lines_origin_road").on(t.originRoadRaw), // board "по дорогам"
     index("idx_request_lines_origin_station").on(t.originRaw), // board "по направлениям"
     index("idx_request_lines_stations_esr").on(t.originEsr, t.destEsr),
+    check(
+      "ck_request_lines_rate_kind",
+      sql`${t.targetRateKind} IS NULL OR ${t.targetRateKind} IN ('flat_rub','tariff_indicative','tariff_plus_markup')`,
+    ),
+    check(
+      "ck_request_lines_tariff_class",
+      sql`${t.targetTariffClass} IS NULL OR ${t.targetTariffClass} IN (1,2,3)`,
+    ),
   ],
 );
