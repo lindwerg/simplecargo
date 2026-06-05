@@ -32,3 +32,13 @@ export async function requireWriter(headers: Headers): Promise<SessionUser> {
   }
   return { id: session.user.id, email: session.user.email, role };
 }
+
+// Read-only gate — any signed-in role (incl. viewer) may read. Throws 401 only.
+export async function requireSession(headers: Headers): Promise<SessionUser> {
+  const session = await auth.api.getSession({ headers });
+  if (!session) {
+    throw new AuthError(401, "Требуется вход");
+  }
+  const role = (session.user.role ?? "operator") as UserRole;
+  return { id: session.user.id, email: session.user.email, role };
+}

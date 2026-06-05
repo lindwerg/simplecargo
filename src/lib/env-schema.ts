@@ -14,6 +14,10 @@ export const envSchema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
   // Display timezone (storage is UTC, display is MSK).
   APP_TZ_DISPLAY: z.string().default("Europe/Moscow"),
+  // AI intake (OpenRouter) — OPTIONAL so build/CI boot without it. When absent,
+  // the request-extraction endpoint degrades gracefully (501 + operator hint).
+  OPENROUTER_API_KEY: z.string().min(1).optional(),
+  OPENROUTER_MODEL: z.string().min(1).default("google/gemini-2.5-flash"),
 });
 
 export type Env = z.infer<typeof envSchema>;

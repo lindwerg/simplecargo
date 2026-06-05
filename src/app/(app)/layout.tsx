@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { SideRail } from "@/components/nav/SideRail";
 import { BottomBar } from "@/components/nav/BottomBar";
 import { MobileTopBar } from "@/components/nav/MobileTopBar";
+import { getBoardCounts } from "@/lib/requests/repository";
 
 /**
  * Authenticated app shell. The middleware already does an optimistic cookie bounce;
@@ -22,8 +23,14 @@ export default async function AppLayout({
     redirect("/login");
   }
 
-  // Live counts (wired to real data in a later phase; badges hide while zero).
-  const counts = { requests: 0, directions: 0 };
+  // Live counts (badges hide while zero). Best-effort — never break the shell.
+  let counts = { requests: 0, directions: 0 };
+  try {
+    const board = await getBoardCounts();
+    counts = { requests: board.activeRequests, directions: 0 };
+  } catch {
+    // keep zeros if the count query fails
+  }
 
   return (
     // md:pl clears the floating left rail so centered content never slides under it.

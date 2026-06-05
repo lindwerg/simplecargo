@@ -6,6 +6,7 @@ export type RequestStatus =
   | "quoted"
   | "won"
   | "lost"
+  | "no_bid"
   | "expired"
   | "cancelled";
 
@@ -25,6 +26,7 @@ const STATUS_CONFIG: Record<RequestStatus, StatusConfig> = {
   quoted: { glyph: "●", bgClass: "bg-info-quiet", toneClass: "text-info", pulse: false, bold: false, ru: "Предложено" },
   won: { glyph: "◆", bgClass: "bg-success-quiet", toneClass: "text-success", pulse: false, bold: true, ru: "Выигран" },
   lost: { glyph: "✕", bgClass: "bg-danger-quiet", toneClass: "text-danger", pulse: false, bold: false, ru: "Проигран" },
+  no_bid: { glyph: "✕", bgClass: "bg-surface-2", toneClass: "text-text-tertiary", pulse: false, bold: false, ru: "Не беремся" },
   expired: { glyph: "✕", bgClass: "bg-surface-2", toneClass: "text-text-tertiary", pulse: false, bold: false, ru: "Истёк" },
   cancelled: { glyph: "✕", bgClass: "bg-surface-2", toneClass: "text-text-tertiary", pulse: false, bold: false, ru: "Отменён" },
 };
