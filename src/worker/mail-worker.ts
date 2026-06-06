@@ -81,7 +81,7 @@ async function pollCycle(systemUserId: string): Promise<void> {
         const outcome = await processEmail(parsed, deps);
         await markFileCommitted(fileId);
         console.log(
-          `[mail-worker] uid=${uid} ${outcome.classification.bodyKind} → req=${outcome.createdRequestId ?? "—"} inv=${outcome.invoiceIds.length} quar=${outcome.quarantinedCount}`,
+          `[mail-worker] uid=${uid} ${outcome.classification.bodyKind} → req=${outcome.createdRequestId ?? "—"} inv=${outcome.invoiceIds.length} quote=${outcome.carrierQuotesMatched} quar=${outcome.quarantinedCount}`,
         );
       }
       processedUids.push(uid);

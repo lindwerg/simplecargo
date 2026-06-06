@@ -64,6 +64,7 @@ export async function processEmail(email: ParsedEmail, deps: IntakeDeps): Promis
     createdRequestId: null,
     createdRequestNumber: null,
     invoiceIds: [],
+    carrierQuotesMatched: 0,
     quarantinedCount: 0,
     ignored: false,
   };
@@ -145,18 +146,43 @@ export async function processEmail(email: ParsedEmail, deps: IntakeDeps): Promis
     outcome.invoiceIds.push(saved.id);
   }
 
-  // ── carrier quotes → money-sensitive → review queue (manual link, MVP) ───────
-  for (const input of quoteInputs) {
-    const q = await deps.extractCarrierQuote(input);
-    await deps.ports.quarantine(
-      buildQuarantineRow({
-        reason: "CARRIER_QUOTE_MANUAL",
-        sourceFileId: deps.ports.sourceFileId,
-        agentReason: `Ответ перевозчика: ставка ${q.costPerWagon ?? "?"} ₽/ваг, ref ${q.ourRequestRef ?? "—"}`,
-        draft: { quote: q, from: email.from, subject: email.subject },
-      }),
-    );
-    outcome.quarantinedCount += 1;
+  // ── carrier quotes → close the sourcing loop ─────────────────────────────────
+  // Thread the reply back to the polled request_owner_quotes rows (by outbound
+  // Message-ID, falling back to the R-номер + sender). On a match we record the
+  // rate; only an UNMATCHED reply (or one we can't place) goes to quarantine, so
+  // the operator never has to hand-link a quote we already know the home of.
+  if (quoteInputs.length > 0) {
+    const quoteSender = await deps.resolveSender(email.from);
+    const threadRefs = [
+      ...(email.inReplyTo ? [email.inReplyTo] : []),
+      ...(email.references ?? []),
+    ];
+    for (const input of quoteInputs) {
+      const q = await deps.extractCarrierQuote(input);
+      const match = await deps.ports.matchCarrierQuote({
+        senderCompanyId: quoteSender?.companyId ?? null,
+        ourRequestRef: q.ourRequestRef,
+        threadRefs,
+        replyMessageId: email.messageId,
+        costPerWagon: q.costPerWagon,
+        wagonsOffered: q.wagonsOffered,
+        currency: q.currency,
+        validTo: q.validTo,
+      });
+      if (match.matched) {
+        outcome.carrierQuotesMatched += match.updatedCount;
+      } else {
+        await deps.ports.quarantine(
+          buildQuarantineRow({
+            reason: "CARRIER_QUOTE_MANUAL",
+            sourceFileId: deps.ports.sourceFileId,
+            agentReason: `Ответ перевозчика не привязался к запросу: ставка ${q.costPerWagon ?? "?"} ₽/ваг, ref ${q.ourRequestRef ?? "—"}`,
+            draft: { quote: q, from: email.from, subject: email.subject },
+          }),
+        );
+        outcome.quarantinedCount += 1;
+      }
+    }
   }
 
   if (

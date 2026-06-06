@@ -69,6 +69,8 @@ export async function fetchNewEmails(lastSeenUid: number): Promise<FetchResult> 
         subject: p.subject ?? "",
         text: p.text ?? "",
         messageId: p.messageId ?? "",
+        inReplyTo: p.inReplyTo ?? null,
+        references: p.references ? (Array.isArray(p.references) ? p.references : [p.references]) : [],
         date: p.date ?? null,
         to: addresses(p.to),
         cc: addresses(p.cc),

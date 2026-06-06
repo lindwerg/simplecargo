@@ -28,6 +28,25 @@ export interface InvoiceSaveInput {
   extractedText: string | null;
 }
 
+// A carrier's quote reply, ready to be matched back to the polled
+// request_owner_quotes rows it answers (Message-ID thread → our R-номер fallback).
+export interface CarrierQuoteMatchInput {
+  senderCompanyId: string | null; // resolved carrier (owner) from the From address
+  ourRequestRef: string | null; // R-YYYY-NNNN extracted from the reply body
+  threadRefs: string[]; // In-Reply-To + References Message-IDs of the reply
+  replyMessageId: string; // the reply's own Message-ID
+  costPerWagon: number | null;
+  wagonsOffered: number | null;
+  currency: string;
+  validTo: string | null; // ISO
+}
+
+export interface CarrierQuoteMatchResult {
+  matched: boolean;
+  updatedCount: number;
+  requestId: string | null;
+}
+
 export interface IntakePorts {
   systemUserId: string;
   sourceFileId: string | null; // ingestedFiles row for this email (worker creates)
@@ -37,6 +56,9 @@ export interface IntakePorts {
   ): Promise<{ id: string; requestNumber: string }>;
   saveInvoice(input: InvoiceSaveInput): Promise<{ id: string }>;
   quarantine(row: QuarantineRowInsert): Promise<{ id: string | number }>;
+  // Close the sourcing loop: attach an inbound carrier quote to the polled
+  // request_owner_quotes rows it answers. matched=false → caller quarantines.
+  matchCarrierQuote(input: CarrierQuoteMatchInput): Promise<CarrierQuoteMatchResult>;
 }
 
 export interface IntakeDeps {
@@ -54,6 +76,7 @@ export interface IntakeOutcome {
   createdRequestId: string | null;
   createdRequestNumber: string | null;
   invoiceIds: string[];
+  carrierQuotesMatched: number;
   quarantinedCount: number;
   ignored: boolean;
 }
