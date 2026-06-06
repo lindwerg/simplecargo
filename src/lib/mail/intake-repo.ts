@@ -13,6 +13,7 @@ import { requestOwnerQuotes } from "@/lib/db/schema/requestOwnerQuotes";
 import { requestLines, requests } from "@/lib/db/schema/requests";
 import { createRequestWithLines } from "@/lib/requests/repository";
 import { resolveSenderCompany } from "@/lib/partners/repository";
+import { findCounterpartyByInn } from "@/lib/counterparties/repository";
 import { classifyEmail } from "@/lib/mail-intake/classify";
 import { extractFromInput } from "@/lib/requests/extraction";
 import { extractInvoice } from "@/lib/mail-intake/invoice-extract";
@@ -73,10 +74,15 @@ function numStr(n: number | null): string | null {
 }
 
 export async function saveInboundInvoice(input: InvoiceSaveInput): Promise<{ id: string }> {
+  // Resolve the company on insert (сопряжение): an invoice with a NULL
+  // counterpartyId is invisible under the partner and breaks debt rollups. Match
+  // by ИНН now; the raw name stays for audit / later manual linking.
+  const counterpartyId = await findCounterpartyByInn(input.counterpartyInn);
   const rows = await db
     .insert(inboundInvoices)
     .values({
       direction: input.direction,
+      counterpartyId,
       counterpartyInn: input.counterpartyInn,
       counterpartyNameRaw: input.counterpartyNameRaw,
       invoiceNumber: input.invoiceNumber,

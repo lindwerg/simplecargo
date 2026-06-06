@@ -1,4 +1,4 @@
-import { asc, sql } from "drizzle-orm";
+import { and, asc, eq, isNotNull, sql } from "drizzle-orm";
 
 import { db } from "@/lib/db/client";
 import { counterparties } from "@/lib/db/schema/counterparties";
@@ -24,6 +24,22 @@ export async function listCounterparties(): Promise<CounterpartyOption[]> {
     .orderBy(asc(counterparties.nameCanonical))
     .limit(500);
   return rows.map((r) => ({ id: r.id, name: r.name, roles: r.roles ?? [] }));
+}
+
+// Exact-INN resolution — the spine of сопряжение (cross-linking). An inbound
+// invoice / bank counterparty carries an ИНН; this maps it to the canonical
+// counterparty row so the invoice/payment hangs under the right company. Returns
+// the oldest match when duplicates exist (same "pick oldest" rule as reconcile).
+export async function findCounterpartyByInn(inn: string | null): Promise<string | null> {
+  const normalized = (inn ?? "").trim();
+  if (normalized === "") return null;
+  const rows = await db
+    .select({ id: counterparties.id })
+    .from(counterparties)
+    .where(and(eq(counterparties.inn, normalized), isNotNull(counterparties.inn)))
+    .orderBy(asc(counterparties.createdAt))
+    .limit(1);
+  return rows[0]?.id ?? null;
 }
 
 interface SearchRow {

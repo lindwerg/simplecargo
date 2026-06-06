@@ -13,14 +13,19 @@ import { SyncButton } from "@/components/finances/SyncButton";
 import { TransactionFeed } from "@/components/finances/TransactionFeed";
 import { DirectionPnl } from "@/components/finances/DirectionPnl";
 import { InboundInvoices } from "@/components/finances/InboundInvoices";
+import { Debts } from "@/components/finances/Debts";
 import { isTochkaConfigured } from "@/lib/finances/tochka-client";
 import {
+  getDebtSummary,
   getDirectionPnl,
   getFinanceSummary,
   listAccounts,
+  listDebts,
   listInboundInvoices,
   listRecentTransactions,
   type AccountRow,
+  type DebtRow,
+  type DebtSummary,
   type DirectionPnlRow,
   type FinanceSummary,
   type InboundInvoiceRow,
@@ -67,6 +72,15 @@ export default async function FinancesPage() {
     inboundInvoices = await listInboundInvoices(100);
   } catch {
     // таблицы может не быть на самом раннем деплое — пустой список
+  }
+
+  // Задолженности (AR/AP) — считаются из неоплаченных счетов, независимо от Точки.
+  let debtSummary: DebtSummary | null = null;
+  let debts: DebtRow[] = [];
+  try {
+    [debtSummary, debts] = await Promise.all([getDebtSummary(), listDebts({ limit: 100 })]);
+  } catch {
+    // нет таблицы — пустое состояние
   }
 
   const hasData = (summary?.txCount ?? 0) > 0;
@@ -184,6 +198,55 @@ export default async function FinancesPage() {
                 description="Нажмите «Обновить из Точки», чтобы загрузить выписку по счетам."
               />
             )}
+          </section>
+        </>
+      )}
+
+      {debtSummary && (debtSummary.payableCount > 0 || debtSummary.receivableCount > 0) && (
+        <>
+          <section aria-label="Задолженности — показатели" className="flex flex-wrap gap-3">
+            <StatTile
+              label="К оплате (мы должны)"
+              value={<Money value={debtSummary.payableTotal} />}
+              variant="negative"
+              hint={`${debtSummary.payableCount} счёт(ов)`}
+            />
+            <StatTile
+              label="Просрочено к оплате"
+              value={<Money value={debtSummary.payableOverdue} />}
+              variant="negative"
+              {...(debtSummary.payableOverdueCount > 0
+                ? { hint: `${debtSummary.payableOverdueCount} просрочено` }
+                : {})}
+            />
+            <StatTile
+              label="К получению (нам должны)"
+              value={<Money value={debtSummary.receivableTotal} />}
+              variant="positive"
+              hint={`${debtSummary.receivableCount} счёт(ов)`}
+            />
+            <StatTile
+              label="Просрочено к получению"
+              value={<Money value={debtSummary.receivableOverdue} />}
+              variant="positive"
+              {...(debtSummary.receivableOverdueCount > 0
+                ? { hint: `${debtSummary.receivableOverdueCount} просрочено` }
+                : {})}
+            />
+          </section>
+
+          <section
+            aria-labelledby="debts-heading"
+            className="rounded-lg border border-border bg-surface-1"
+          >
+            <div className="border-b border-border px-4 py-3">
+              <h2 id="debts-heading" className="label-caps">
+                Задолженности
+              </h2>
+            </div>
+            <div className="p-4">
+              <Debts debts={debts} />
+            </div>
           </section>
         </>
       )}

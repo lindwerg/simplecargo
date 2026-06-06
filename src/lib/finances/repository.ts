@@ -456,6 +456,127 @@ interface InboundInvoiceQueryRow {
   [k: string]: unknown;
 }
 
+// ── debts / задолженности (AR/AP) — AUTONOMY_AUDIT §3 Цель #3 ─────────────────
+// Debt = an invoice not yet settled (paid_tx_id IS NULL AND status <> 'paid').
+//   payable    = incoming  (мы должны поставщику/перевозчику)
+//   receivable = outgoing  (нам должен клиент)
+// overdue = unsettled AND due_date < now().
+export interface DebtSummary {
+  payableTotal: number;
+  payableOverdue: number;
+  payableCount: number;
+  payableOverdueCount: number;
+  receivableTotal: number;
+  receivableOverdue: number;
+  receivableCount: number;
+  receivableOverdueCount: number;
+}
+
+interface DebtSummaryRow {
+  direction: string;
+  total: string | null;
+  overdue: string | null;
+  cnt: string | null;
+  overdue_cnt: string | null;
+  [k: string]: unknown;
+}
+
+export async function getDebtSummary(): Promise<DebtSummary> {
+  const { rows } = await db.execute<DebtSummaryRow>(sql`
+    SELECT
+      direction,
+      COALESCE(SUM(amount_total), 0) AS total,
+      COALESCE(SUM(amount_total) FILTER (WHERE due_date < now()), 0) AS overdue,
+      COUNT(*) AS cnt,
+      COUNT(*) FILTER (WHERE due_date < now()) AS overdue_cnt
+    FROM inbound_invoices
+    WHERE paid_tx_id IS NULL AND status <> 'paid'
+    GROUP BY direction
+  `);
+  const summary: DebtSummary = {
+    payableTotal: 0,
+    payableOverdue: 0,
+    payableCount: 0,
+    payableOverdueCount: 0,
+    receivableTotal: 0,
+    receivableOverdue: 0,
+    receivableCount: 0,
+    receivableOverdueCount: 0,
+  };
+  for (const r of rows) {
+    if (r.direction === "outgoing") {
+      summary.receivableTotal = Number(r.total ?? 0);
+      summary.receivableOverdue = Number(r.overdue ?? 0);
+      summary.receivableCount = Number(r.cnt ?? 0);
+      summary.receivableOverdueCount = Number(r.overdue_cnt ?? 0);
+    } else {
+      summary.payableTotal = Number(r.total ?? 0);
+      summary.payableOverdue = Number(r.overdue ?? 0);
+      summary.payableCount = Number(r.cnt ?? 0);
+      summary.payableOverdueCount = Number(r.overdue_cnt ?? 0);
+    }
+  }
+  return summary;
+}
+
+export interface DebtRow {
+  id: string;
+  direction: "incoming" | "outgoing";
+  counterpartyName: string | null;
+  counterpartyInn: string | null;
+  invoiceNumber: string | null;
+  dueDate: string | null;
+  amountTotal: number | null;
+  currency: string;
+  daysOverdue: number; // >0 = overdue, <=0 = not yet due
+}
+
+interface DebtQueryRow {
+  id: string;
+  direction: string;
+  counterparty_name: string | null;
+  counterparty_inn: string | null;
+  invoice_number: string | null;
+  due_date: string | null;
+  amount_total: string | null;
+  currency: string;
+  days_overdue: string | null;
+  [k: string]: unknown;
+}
+
+/** Unsettled invoices, most-overdue first. Drives the «Задолженности» table. */
+export async function listDebts(opts: {
+  direction?: "incoming" | "outgoing";
+  limit?: number;
+} = {}): Promise<DebtRow[]> {
+  const limit = Math.min(Math.max(opts.limit ?? 100, 1), MAX_TX_LIMIT);
+  const dirFilter = opts.direction ? sql`AND i.direction = ${opts.direction}` : sql``;
+  const { rows } = await db.execute<DebtQueryRow>(sql`
+    SELECT
+      i.id, i.direction,
+      COALESCE(c.name_canonical, i.counterparty_name_raw) AS counterparty_name,
+      i.counterparty_inn, i.invoice_number, i.due_date, i.amount_total, i.currency,
+      CASE WHEN i.due_date IS NULL THEN 0
+           ELSE FLOOR(EXTRACT(EPOCH FROM (now() - i.due_date)) / 86400) END AS days_overdue
+    FROM inbound_invoices i
+    LEFT JOIN counterparties c ON c.id = i.counterparty_id
+    WHERE i.paid_tx_id IS NULL AND i.status <> 'paid' ${dirFilter}
+    ORDER BY i.due_date ASC NULLS LAST, i.created_at DESC
+    LIMIT ${limit}
+  `);
+  return rows.map((r) => ({
+    id: r.id,
+    direction: r.direction === "outgoing" ? "outgoing" : "incoming",
+    counterpartyName: r.counterparty_name,
+    counterpartyInn: r.counterparty_inn,
+    invoiceNumber: r.invoice_number,
+    dueDate: r.due_date,
+    amountTotal: r.amount_total === null ? null : Number(r.amount_total),
+    currency: r.currency,
+    daysOverdue: Number(r.days_overdue ?? 0),
+  }));
+}
+
 export async function listInboundInvoices(limit = 100): Promise<InboundInvoiceRow[]> {
   const { rows } = await db.execute<InboundInvoiceQueryRow>(sql`
     SELECT id, status, counterparty_name_raw, counterparty_inn, invoice_number,
