@@ -6,7 +6,7 @@
 import crypto from "node:crypto";
 
 import { env } from "@/lib/env";
-import { fetchNewEmails, isImapConfigured, markProcessed } from "@/lib/mail/imap-client";
+import { fetchNewEmails, getInboxStatus, isImapConfigured, markProcessed } from "@/lib/mail/imap-client";
 import { getCursor, setCursor } from "@/lib/mail/cursor";
 import {
   buildIntakeDeps,
@@ -31,6 +31,18 @@ function sleep(ms: number, abort: { stopped: boolean }): Promise<void> {
 async function pollCycle(systemUserId: string): Promise<void> {
   const folder = env.MAILRU_IMAP_INBOX;
   const cursor = await getCursor(folder);
+
+  // First-ever run: DON'T reprocess the whole historical inbox. Seed the cursor to
+  // the current high-water mark so only mail arriving AFTER deployment is handled.
+  if (!cursor.exists) {
+    const status = await getInboxStatus();
+    await setCursor(folder, status.highestUid, status.uidValidity);
+    console.log(
+      `[mail-worker] первый запуск — курсор установлен на UID ${status.highestUid}; история (всё, что было) не обрабатывается, ловим только новые письма`,
+    );
+    return;
+  }
+
   const { uidValidity, highestUid, emails } = await fetchNewEmails(cursor.lastSeenUid);
 
   // UIDVALIDITY changed → UID space reset; drop cursor and re-scan next cycle.
