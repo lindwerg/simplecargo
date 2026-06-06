@@ -10,13 +10,13 @@ interface BoardFiltersProps {
 }
 
 const inputClass =
-  "h-9 w-40 rounded-[var(--radius-md)] border border-border bg-surface-inset px-3 text-sm text-text placeholder:text-text-tertiary focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]";
+  "h-11 w-full rounded-[var(--radius-md)] border border-border bg-surface-inset px-3 text-sm text-text placeholder:text-text-tertiary focus:outline-none focus-visible:[box-shadow:var(--ring-focus)] sm:h-9 sm:w-40";
 
 /** GET form — filters are URL state (shareable). No client JS. */
 export function BoardFilters({ basePath, view, originRaw, roadRaw }: BoardFiltersProps) {
   const hasFilters = Boolean(originRaw || roadRaw);
   return (
-    <form action={basePath} method="get" className="flex flex-wrap items-center gap-2">
+    <form action={basePath} method="get" className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
       <input type="hidden" name="view" value={view} />
       <input
         type="text"
@@ -36,14 +36,14 @@ export function BoardFilters({ basePath, view, originRaw, roadRaw }: BoardFilter
       />
       <button
         type="submit"
-        className="h-9 rounded-[var(--radius-md)] border border-border bg-surface-2 px-3 text-sm text-text hover:bg-surface-3 focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
+        className="inline-flex h-11 items-center justify-center rounded-[var(--radius-md)] border border-border bg-surface-2 px-3 text-sm text-text hover:bg-surface-3 focus:outline-none focus-visible:[box-shadow:var(--ring-focus)] sm:h-9"
       >
         Фильтр
       </button>
       {hasFilters && (
         <Link
           href={`${basePath}?view=${view}`}
-          className="h-9 leading-9 px-2 text-sm text-text-tertiary hover:text-text"
+          className="inline-flex h-11 items-center justify-center px-2 text-sm text-text-tertiary hover:text-text sm:h-9"
         >
           Сбросить
         </Link>

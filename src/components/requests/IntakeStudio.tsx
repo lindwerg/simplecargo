@@ -62,7 +62,7 @@ interface ExtractionResult {
 }
 
 const inputClass =
-  "h-9 w-full rounded-[var(--radius-sm)] border border-border bg-surface-inset px-2.5 text-sm text-text placeholder:text-text-tertiary focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]";
+  "h-11 w-full min-w-0 rounded-[var(--radius-sm)] border border-border bg-surface-inset px-2.5 text-sm text-text placeholder:text-text-tertiary focus:outline-none focus-visible:[box-shadow:var(--ring-focus)] md:h-9";
 
 let keySeq = 0;
 function emptyLine(headerWagonType = ""): LineDraft {
@@ -318,7 +318,7 @@ export function IntakeStudio() {
             if (f) void onFile(f);
           }}
           className={cn(
-            "flex flex-col items-center justify-center gap-4 rounded-[var(--radius-xl)] border-2 border-dashed border-border bg-surface-inset px-8 py-14 text-center transition-[border-color,background-color] duration-[var(--duration-fast)]",
+            "flex flex-col items-center justify-center gap-4 rounded-[var(--radius-xl)] border-2 border-dashed border-border bg-surface-inset px-6 py-8 text-center transition-[border-color,background-color] duration-[var(--duration-fast)] sm:px-8 sm:py-14",
             dragging && "intake-dropzone--drag",
           )}
         >
@@ -339,7 +339,7 @@ export function IntakeStudio() {
               <button
                 type="button"
                 onClick={() => fileRef.current?.click()}
-                className="inline-flex h-9 items-center gap-2 rounded-[var(--radius-md)] border border-border bg-surface-2 px-4 text-sm text-text hover:border-accent hover:bg-accent-quiet focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
+                className="inline-flex h-11 items-center gap-2 rounded-[var(--radius-md)] border border-border bg-surface-2 px-4 text-sm text-text hover:border-accent hover:bg-accent-quiet focus:outline-none focus-visible:[box-shadow:var(--ring-focus)] md:h-9"
               >
                 Выбрать файл
               </button>
@@ -374,7 +374,7 @@ export function IntakeStudio() {
               type="button"
               disabled={busy || !pasteText.trim()}
               onClick={() => void onPaste()}
-              className="self-start inline-flex h-9 items-center gap-2 rounded-[var(--radius-md)] bg-accent px-4 text-sm font-semibold text-text-inverse disabled:opacity-50 hover:bg-accent-hover focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
+              className="self-start inline-flex h-11 items-center gap-2 rounded-[var(--radius-md)] bg-accent px-4 text-sm font-semibold text-text-inverse disabled:opacity-50 hover:bg-accent-hover focus:outline-none focus-visible:[box-shadow:var(--ring-focus)] md:h-9"
             >
               Распознать
             </button>
@@ -418,7 +418,7 @@ export function IntakeStudio() {
             setLines([emptyLine(wagonType)]);
             setPhase("review");
           }}
-          className="mx-auto inline-flex h-9 items-center gap-2 rounded-[var(--radius-md)] border border-border bg-surface-2 px-4 text-sm text-text hover:bg-surface-3 focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
+          className="mx-auto inline-flex h-11 items-center gap-2 rounded-[var(--radius-md)] border border-border bg-surface-2 px-4 text-sm text-text hover:bg-surface-3 focus:outline-none focus-visible:[box-shadow:var(--ring-focus)] md:h-9"
         >
           <Plus className="size-4" aria-hidden /> Ввести вручную
         </button>
@@ -481,7 +481,7 @@ export function IntakeStudio() {
                 type="button"
                 onClick={() => setLines((prev) => prev.filter((x) => x.key !== l.key))}
                 aria-label="Удалить направление"
-                className="text-text-tertiary hover:text-danger"
+                className="-mr-2 inline-flex size-11 items-center justify-center text-text-tertiary hover:text-danger md:size-9"
               >
                 <Trash2 className="size-4" aria-hidden />
               </button>
@@ -547,13 +547,13 @@ export function IntakeStudio() {
         <button
           type="button"
           onClick={() => setLines((prev) => [...prev, emptyLine(wagonType)])}
-          className="inline-flex h-9 items-center gap-2 self-start rounded-[var(--radius-md)] border border-dashed border-border px-4 text-sm text-text-secondary hover:border-accent hover:text-text focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
+          className="inline-flex h-11 items-center gap-2 self-start rounded-[var(--radius-md)] border border-dashed border-border px-4 text-sm text-text-secondary hover:border-accent hover:text-text focus:outline-none focus-visible:[box-shadow:var(--ring-focus)] md:h-9"
         >
           <Plus className="size-4" aria-hidden /> Добавить направление
         </button>
       </div>
 
-      <div className="sticky bottom-[5.5rem] flex items-center justify-between gap-3 rounded-[var(--radius-lg)] border border-border bg-surface-1 p-3 md:bottom-4">
+      <div className="sticky bottom-[calc(var(--bottombar-clearance)+env(safe-area-inset-bottom))] flex items-center justify-between gap-3 rounded-[var(--radius-lg)] border border-border bg-surface-1 p-3 md:bottom-[calc(1rem+env(safe-area-inset-bottom))]">
         <button
           type="button"
           onClick={() => setPhase("intake")}
@@ -577,7 +577,7 @@ export function IntakeStudio() {
 
 function Field({ label, span2, children }: { label: string; span2?: boolean; children: React.ReactNode }) {
   return (
-    <label className={cn("flex flex-col gap-1", span2 && "col-span-2")}>
+    <label className={cn("flex min-w-0 flex-col gap-1", span2 && "col-span-2")}>
       <span className="label-caps">{label}</span>
       {children}
     </label>

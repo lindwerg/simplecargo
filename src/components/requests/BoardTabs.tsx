@@ -26,7 +26,10 @@ export function BoardTabs({ basePath, view, query = {} }: BoardTabsProps) {
   };
 
   return (
-    <nav aria-label="Группировка запросов" className="flex flex-wrap gap-1 rounded-[var(--radius-md)] bg-surface-1 p-1">
+    <nav
+      aria-label="Группировка запросов"
+      className="flex w-full gap-1 overflow-x-auto rounded-[var(--radius-md)] bg-surface-1 p-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:w-auto sm:flex-wrap [&::-webkit-scrollbar]:hidden"
+    >
       {TABS.map((t) => {
         const active = t.mode === view;
         return (
@@ -35,7 +38,7 @@ export function BoardTabs({ basePath, view, query = {} }: BoardTabsProps) {
             href={buildHref(t.mode)}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "rounded-[var(--radius-sm)] px-3 py-1.5 text-sm transition-colors duration-[var(--duration-fast)] focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]",
+              "inline-flex h-11 shrink-0 items-center whitespace-nowrap rounded-[var(--radius-sm)] px-3 text-sm transition-colors duration-[var(--duration-fast)] focus:outline-none focus-visible:[box-shadow:var(--ring-focus)] sm:h-9",
               active
                 ? "bg-surface-3 text-text"
                 : "text-text-secondary hover:bg-surface-2 hover:text-text",

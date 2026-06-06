@@ -44,13 +44,13 @@ export function RequestCard({ card, archived = false }: RequestCardProps) {
       </div>
 
       {/* route hero */}
-      <div className="px-4 pt-3">
-        <div className="flex items-baseline gap-1.5 text-lg leading-tight" style={{ fontWeight: "var(--weight-semibold)" }}>
-          <span className="truncate text-text" title={card.originRaw}>
+      <div className="min-w-0 px-4 pt-3">
+        <div className="flex min-w-0 items-baseline gap-1.5 text-lg leading-tight" style={{ fontWeight: "var(--weight-semibold)" }}>
+          <span className="min-w-0 truncate text-text" title={card.originRaw}>
             {card.originRaw}
           </span>
           <span aria-hidden className="shrink-0 text-accent">→</span>
-          <span className="truncate text-text" title={card.destRaw}>
+          <span className="min-w-0 truncate text-text" title={card.destRaw}>
             {card.destRaw}
           </span>
         </div>
@@ -66,7 +66,7 @@ export function RequestCard({ card, archived = false }: RequestCardProps) {
       </div>
 
       {/* cargo */}
-      <p className="px-4 pt-2 text-sm text-text-secondary">
+      <p className="line-clamp-2 px-4 pt-2 text-sm text-text-secondary">
         {[card.wagonType, card.cargoName].filter(Boolean).join(" · ") || "груз не указан"}
       </p>
 
