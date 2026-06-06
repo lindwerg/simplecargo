@@ -10,7 +10,9 @@ export interface DirectionCardView {
   lineId: string;
   requestId: string;
   requestNumber: string | null;
-  status: string; // parent request status
+  status: string; // DIRECTION (request_line) status — drives the board bucket
+  lossReason: string | null; // per-leg loss reason when terminal (no_bid/lost)
+  kpIssuedAt: Date | null; // "КП по этому плечу уже выпущено" badge
   // client (from parent request) — D16: real id, TEMP raw label, or unlinked
   clientSuggestedId: string | null;
   clientRaw: string | null;

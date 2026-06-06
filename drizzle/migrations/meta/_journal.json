@@ -43,6 +43,13 @@
       "when": 1780710000000,
       "tag": "0005_odd_wolverine",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1780735999978,
+      "tag": "0006_dusty_living_lightning",
+      "breakpoints": true
     }
   ]
 }

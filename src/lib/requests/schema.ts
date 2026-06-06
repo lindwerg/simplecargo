@@ -121,6 +121,19 @@ export const requestTransitionSchema = z.object({
 
 export type RequestTransitionInput = z.infer<typeof requestTransitionSchema>;
 
+// ── line (direction) transition — withdraw/quote one or many legs at once ─────
+// Drives PATCH /api/requests/{id}/lines. lossReason is required for no_bid/lost
+// (enforced again in the repository via validateTransitionMeta).
+export const lineTransitionSchema = z.object({
+  lineIds: z.array(z.uuid()).min(1, "Выберите хотя бы одно направление"),
+  to: requestStatusEnum,
+  lossReason: z.enum(LOSS_REASONS).optional(),
+  competitorPrice: optRate,
+  lostTo: optText,
+});
+
+export type LineTransitionInput = z.infer<typeof lineTransitionSchema>;
+
 // ── linkClient — promote a TEMP clientRaw label to a real counterparty (D16) ──
 
 export const linkClientSchema = z.object({
