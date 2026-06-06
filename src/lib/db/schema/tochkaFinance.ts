@@ -12,6 +12,8 @@ import {
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
+import { integer } from "drizzle-orm/pg-core";
+
 import { counterparties } from "./counterparties";
 import { deals } from "./deals";
 import { directions } from "./directions";
@@ -117,5 +119,48 @@ export const bankTxLinks = pgTable(
       "ck_bank_tx_link_method",
       sql`${t.matchMethod} IN ('inn_exact','inn_amount_invoice','inn_fuzzy','name_fuzzy','subset_sum','manual')`,
     ),
+  ],
+);
+
+// --- Черновики платежей (создание → подпись директором в банке) ------------
+// Платёж создаётся через for-sign (банк НЕ списывает деньги). Подписывает
+// директор в интернет-банке; мы храним черновик и поллим статус Точки.
+export const paymentDrafts = pgTable(
+  "payment_drafts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    accountId: uuid("account_id")
+      .notNull()
+      .references(() => bankAccounts.id, { onDelete: "restrict" }),
+    externalRequestId: text("external_request_id"), // requestId Точки (после for-sign)
+    amount: numeric("amount", { precision: 14, scale: 2 }).notNull(),
+    paymentDate: text("payment_date").notNull(), // YYYY-MM-DD (МСК)
+    paymentNumber: integer("payment_number"),
+    purpose: text("purpose").notNull(),
+    counterpartyName: text("counterparty_name").notNull(),
+    counterpartyInn: varchar("counterparty_inn", { length: 12 }),
+    counterpartyKpp: varchar("counterparty_kpp", { length: 9 }),
+    counterpartyAccount: text("counterparty_account").notNull(),
+    counterpartyBankBic: varchar("counterparty_bank_bic", { length: 9 }).notNull(),
+    counterpartyCorrAccount: text("counterparty_corr_account"),
+    // Наш локальный статус + сырой статус Точки (последний опрошенный).
+    status: text("status").notNull().default("on_sign"), // on_sign|paid|rejected|error
+    tochkaStatus: text("tochka_status"),
+    lastError: text("last_error"),
+    counterpartyId: uuid("counterparty_id").references(() => counterparties.id, {
+      onDelete: "set null",
+    }),
+    dealId: uuid("deal_id").references(() => deals.id, { onDelete: "set null" }),
+    createdBy: uuid("created_by")
+      .notNull()
+      .references(() => users.id),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index("idx_payment_drafts_account").on(t.accountId),
+    index("idx_payment_drafts_status").on(t.status),
+    index("idx_payment_drafts_request").on(t.externalRequestId),
+    check("ck_payment_draft_status", sql`${t.status} IN ('on_sign','paid','rejected','error')`),
   ],
 );

@@ -254,6 +254,73 @@ export async function getTransactionDetail(id: string): Promise<TransactionDetai
   };
 }
 
+export interface ExportRow {
+  date: string;
+  direction: string;
+  amount: number;
+  counterpartyName: string | null;
+  counterpartyInn: string | null;
+  counterpartyAccount: string | null;
+  counterpartyBankBic: string | null;
+  purpose: string | null;
+  documentNumber: string | null;
+  status: string;
+}
+
+interface ExportQueryRow {
+  posted_at: string;
+  direction: string;
+  amount: string;
+  counterparty_name: string | null;
+  counterparty_inn: string | null;
+  counterparty_account: string | null;
+  counterparty_bank_bic: string | null;
+  purpose_raw: string | null;
+  document_number: string | null;
+  status: string;
+  [k: string]: unknown;
+}
+
+/** Operations within [from, to] for statement export. `from`/`to` are YYYY-MM-DD. */
+export async function listTransactionsForExport(opts: {
+  from: string;
+  to: string;
+  direction?: "in" | "out";
+  search?: string;
+}): Promise<ExportRow[]> {
+  const dirFilter = opts.direction ? sql`AND t.direction = ${opts.direction}` : sql``;
+  const searchFilter =
+    opts.search && opts.search.trim() !== ""
+      ? sql`AND (t.counterparty_name ILIKE ${"%" + opts.search.trim() + "%"} OR t.counterparty_inn ILIKE ${"%" + opts.search.trim() + "%"})`
+      : sql``;
+  // `to` is inclusive of the whole day.
+  const toExclusive = `${opts.to}T23:59:59.999Z`;
+
+  const { rows } = await db.execute<ExportQueryRow>(sql`
+    SELECT
+      t.posted_at, t.direction, t.amount, t.counterparty_name, t.counterparty_inn,
+      t.counterparty_account, t.counterparty_bank_bic, t.purpose_raw, t.status,
+      (t.raw ->> 'documentNumber') AS document_number
+    FROM bank_transactions t
+    WHERE t.posted_at >= ${opts.from} AND t.posted_at <= ${toExclusive}
+      ${dirFilter} ${searchFilter}
+    ORDER BY t.posted_at ASC
+  `);
+
+  return rows.map((r) => ({
+    date: r.posted_at,
+    direction: r.direction,
+    amount: Number(r.amount),
+    counterpartyName: r.counterparty_name,
+    counterpartyInn: r.counterparty_inn,
+    counterpartyAccount: r.counterparty_account,
+    counterpartyBankBic: r.counterparty_bank_bic,
+    purpose: r.purpose_raw,
+    documentNumber: r.document_number,
+    status: r.status,
+  }));
+}
+
 export interface AccountRow {
   id: string;
   title: string | null;

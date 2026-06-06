@@ -6,6 +6,7 @@ import { env } from "@/lib/env";
 // paths below stay identical across both.
 
 const OPEN_BANKING = "/open-banking/v1.0";
+const PAYMENT = "/payment/v1.0";
 const DEFAULT_TIMEOUT_MS = 30_000;
 
 export class TochkaError extends Error {
@@ -145,4 +146,42 @@ export function getStatement(accountId: string, statementId: string): Promise<un
   return request(
     `${OPEN_BANKING}/accounts/${encodeAccountId(accountId)}/statements/${encodeURIComponent(statementId)}`,
   );
+}
+
+// --- Платежи (создание на подписание) -------------------------------------
+// Схема выверена по OpenAPI Точки: тело — плоский { Data: { ... } }, банк сам
+// деньги НЕ списывает; ответ — { Data: { requestId } }. Подпись — за директором.
+
+export interface PaymentForSignPayload {
+  accountCode: string; // счёт плательщика (наш), 20 цифр
+  bankCode: string; // БИК банка плательщика (Точка)
+  counterpartyAccountNumber: string;
+  counterpartyBankBic: string;
+  counterpartyName: string;
+  paymentAmount: number;
+  paymentDate: string; // YYYY-MM-DD (МСК)
+  paymentPurpose: string; // 1..210
+  counterpartyINN?: string;
+  counterpartyKPP?: string;
+  counterpartyBankCorrAccount?: string;
+  paymentNumber?: number;
+  paymentPriority?: string; // очередность, по умолчанию "5"
+}
+
+/** POST создать платёж «на подписание». Возвращает requestId Точки. */
+export async function createPaymentForSign(payload: PaymentForSignPayload): Promise<string> {
+  const response = await request<{ Data?: { requestId?: string } }>(`${PAYMENT}/for-sign`, {
+    method: "POST",
+    body: { Data: payload },
+  });
+  const requestId = response?.Data?.requestId;
+  if (!requestId) {
+    throw new TochkaError(502, "Точка не вернула requestId платежа", response);
+  }
+  return requestId;
+}
+
+/** GET статус платежа по requestId. */
+export function getPaymentStatus(requestId: string): Promise<unknown> {
+  return request(`${PAYMENT}/status/${encodeURIComponent(requestId)}`);
 }

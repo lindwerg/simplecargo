@@ -33,6 +33,8 @@ export const envSchema = z.object({
   TOCHKA_WEBHOOK_PUBKEY_URL: z
     .url()
     .default("https://enter.tochka.com/doc/openapi/static/keys/public"),
+  // БИК банка плательщика для исходящих платежей (счета в Точке → БИК Точки).
+  TOCHKA_PAYER_BIC: z.string().min(9).max(9).default("044525104"),
 });
 
 export type Env = z.infer<typeof envSchema>;

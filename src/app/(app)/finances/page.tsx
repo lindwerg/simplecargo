@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { Wallet } from "lucide-react";
+import Link from "next/link";
+import { Wallet, Send, FileText } from "lucide-react";
 
 import { auth } from "@/lib/auth";
 import { Money } from "@/components/ui/Money";
@@ -66,7 +67,25 @@ export default async function FinancesPage() {
             Приходы и расходы по счетам в Точке, сшитые с контрагентами и сделками.
           </p>
         </div>
-        {configured && <SyncButton />}
+        {configured && (
+          <div className="flex flex-col items-end gap-2">
+            <SyncButton />
+            <nav className="flex gap-2">
+              <Link
+                href="/finances/statement"
+                className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm text-text transition-colors hover:bg-surface-2"
+              >
+                <FileText className="size-4" aria-hidden /> Выписка
+              </Link>
+              <Link
+                href="/finances/payments"
+                className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm text-text transition-colors hover:bg-surface-2"
+              >
+                <Send className="size-4" aria-hidden /> Платёж
+              </Link>
+            </nav>
+          </div>
+        )}
       </header>
 
       {!configured ? (
