@@ -6,6 +6,7 @@ import { Mail, Pencil, Phone, Plus, Star, Trash2, X } from "lucide-react";
 import type { ContactRow } from "@/lib/partners/repository";
 import { cn } from "@/lib/utils";
 import { Banner, Field, inputClass, textareaClass } from "./form-primitives";
+import { EmailAutosuggest } from "./EmailAutosuggest";
 
 interface ContactsEditorProps {
   counterpartyId: string;
@@ -261,12 +262,12 @@ function ContactForm({
           />
         </Field>
         <Field label="E-mail">
-          <input
-            type="email"
+          <EmailAutosuggest
             value={draft.email}
-            onChange={(e) => set({ email: e.target.value })}
-            placeholder="info@company.ru"
-            className={inputClass}
+            onChange={(email) => set({ email })}
+            onPick={(s) => {
+              if (!draft.fullName.trim() && s.displayName) set({ fullName: s.displayName });
+            }}
           />
         </Field>
       </div>
