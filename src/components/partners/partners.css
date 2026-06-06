@@ -1,0 +1,49 @@
+/* Партнёры — directory grid + company card. Colors from tokens.css only. */
+
+.partner-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+  gap: var(--space-4);
+  align-items: stretch;
+}
+
+.partner-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-left-width: 3px;
+  border-left-color: var(--color-border-strong);
+  padding: var(--space-4);
+  box-shadow: var(--elev-2);
+  transition:
+    transform var(--duration-fast) var(--ease-out-quad),
+    box-shadow var(--duration-fast) var(--ease-out-quad);
+}
+.partner-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--elev-3);
+}
+.partner-card:active {
+  transform: translateY(0);
+}
+.partner-card:focus-within {
+  box-shadow: var(--ring-focus);
+}
+
+/* Left rail tint by primary role — a quick visual sort in the grid. */
+.partner-card--client { border-left-color: var(--color-info); }
+.partner-card--owner { border-left-color: var(--color-success); }
+.partner-card--expeditor { border-left-color: var(--color-accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .partner-card {
+    transition: box-shadow var(--duration-fast) linear;
+  }
+  .partner-card:hover {
+    transform: none;
+  }
+}

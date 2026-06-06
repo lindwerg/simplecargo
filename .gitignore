@@ -30,9 +30,11 @@ pnpm-debug.log*
 coverage/
 playwright-report/
 test-results/
+.playwright-mcp/
 
 # Local data (do NOT commit real dislocations / reports / ПСЦ / заявки)
 /data/
+/.storage/
 *.xls
 *.xlsx
 *.pdf

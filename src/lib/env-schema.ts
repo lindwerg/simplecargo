@@ -14,6 +14,9 @@ export const envSchema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
   // Display timezone (storage is UTC, display is MSK).
   APP_TZ_DISPLAY: z.string().default("Europe/Moscow"),
+  // Filesystem root for uploaded counterparty documents (договоры/заявки/сканы).
+  // Prod = a mounted Railway volume (e.g. "/data"); local dev defaults to ./.storage.
+  STORAGE_DIR: z.string().min(1).default("./.storage"),
   // AI intake (OpenRouter) — OPTIONAL so build/CI boot without it. When absent,
   // the request-extraction endpoint degrades gracefully (501 + operator hint).
   OPENROUTER_API_KEY: z.string().min(1).optional(),
