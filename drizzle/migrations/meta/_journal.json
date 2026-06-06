@@ -57,6 +57,13 @@
       "when": 1780738389625,
       "tag": "0007_parched_slyde",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1780743295190,
+      "tag": "0008_dashing_chimera",
+      "breakpoints": true
     }
   ]
 }
