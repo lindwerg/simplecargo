@@ -291,7 +291,7 @@ export function IntakeStudio() {
       });
       const json = await res.json();
       if (!res.ok || !json?.success) throw new Error(json?.error ?? "Не удалось сохранить");
-      router.push("/requests/actual?view=clients");
+      router.push("/requests?view=clients");
       router.refresh();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Ошибка сохранения");

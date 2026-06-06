@@ -164,9 +164,9 @@
   /* ── Layout ── */
   --content-max: 88rem; --rail-w: 13.5rem; --rail-w-collapsed: 3.5rem;
   --drawer-w: 560px; --drawer-w-md: 480px;
-  /* Mobile bottom-bar clearance (floating glass bar height) — content/sticky bars
-     offset by this + iOS safe-area so nothing hides under the bar. Desktop has no bar. */
-  --bottombar-clearance: 5.5rem;
+  /* Mobile bottom-bar clearance (docked glass bar height, excl. safe-area) — content/sticky
+     bars offset by this + iOS safe-area so nothing hides under the bar. Desktop has no bar. */
+  --bottombar-clearance: 4.5rem;
 
   /* business constants surfaced as tokens for traceability (NOT used to compute VAT) */
   --vat-default-rate: 22; /* default only — VAT is per-row data (D-PD-3); never hardcode in math */

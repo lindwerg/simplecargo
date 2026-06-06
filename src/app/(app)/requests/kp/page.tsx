@@ -38,7 +38,7 @@ export default async function CombinedKpPage({ searchParams }: Ctx) {
   return (
     <div className="flex flex-col gap-4">
       <div className="kp-print-hidden mx-auto w-full max-w-[210mm]">
-        <KpPrintBar backHref="/requests/actual" backLabel="К запросам" />
+        <KpPrintBar backHref="/requests" backLabel="К запросам" />
       </div>
       <div className="kp-page">
         <KpDocument model={model} />

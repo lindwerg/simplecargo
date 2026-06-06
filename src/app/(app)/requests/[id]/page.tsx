@@ -76,7 +76,7 @@ export default async function RequestDetailPage({ params }: Ctx) {
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-      <Link href="/requests/actual" className="inline-flex h-11 items-center gap-1 self-start text-sm text-text-tertiary hover:text-text md:h-auto">
+      <Link href="/requests" className="inline-flex h-11 items-center gap-1 self-start text-sm text-text-tertiary hover:text-text md:h-auto">
         <ArrowLeft className="size-4" aria-hidden /> К запросам
       </Link>
 

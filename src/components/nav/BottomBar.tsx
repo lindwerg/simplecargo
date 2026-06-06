@@ -18,8 +18,9 @@ function badgeCount(key: string, counts: NavCounts): number {
 }
 
 /**
- * Mobile floating glass bottom bar (<768). Pill-shaped, translucent + blurred, floats above
- * content with a margin and respects the iOS home-indicator safe area (PWA standalone).
+ * Mobile docked glass bottom bar (<768). Full-width, pinned flush to the bottom edge,
+ * translucent + blurred, with the iOS home-indicator safe area carried as bottom padding
+ * (background runs to the very edge; the tappable row sits above the indicator).
  */
 export function BottomBar({ counts }: BottomBarProps) {
   const pathname = usePathname();
@@ -28,9 +29,9 @@ export function BottomBar({ counts }: BottomBarProps) {
     <nav
       aria-label="Основная навигация"
       className={cn(
-        "fixed inset-x-3 z-40 flex items-stretch justify-around gap-1 rounded-[var(--radius-xl)] md:hidden",
-        "border border-[var(--glass-border)] bg-[var(--glass-surface)] px-1.5 py-1.5 backdrop-blur-xl",
-        "shadow-[var(--elev-3)] bottom-[calc(0.5rem+env(safe-area-inset-bottom))]",
+        "fixed inset-x-0 bottom-0 z-40 flex items-stretch justify-around gap-1 md:hidden",
+        "border-t border-[var(--glass-border)] bg-[var(--glass-surface)] px-1.5 pt-1.5 backdrop-blur-xl",
+        "shadow-[var(--elev-3)] pb-[calc(0.375rem+env(safe-area-inset-bottom))]",
       )}
     >
       {NAV_ITEMS.map(({ key, href, ru, Icon }) => {

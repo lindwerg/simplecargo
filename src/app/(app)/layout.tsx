@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { SideRail } from "@/components/nav/SideRail";
 import { BottomBar } from "@/components/nav/BottomBar";
-import { MobileTopBar } from "@/components/nav/MobileTopBar";
 import { getBoardCounts } from "@/lib/requests/repository";
 
 /**
@@ -13,7 +12,8 @@ import { getBoardCounts } from "@/lib/requests/repository";
  *
  * Navigation:
  *  - Desktop (≥768): floating glass rail on the left (brand + nav + theme/sign-out).
- *  - Mobile (<768): slim top bar (brand + theme/sign-out) + floating glass bottom bar.
+ *  - Mobile (<768): no top bar (PWA standalone) — just the docked glass bottom bar.
+ *    Sign-out lives in the «Главная» header (see dashboard/page.tsx).
  */
 export default async function AppLayout({
   children,
@@ -36,11 +36,10 @@ export default async function AppLayout({
     // md:pl clears the floating left rail so centered content never slides under it.
     <div className="min-h-dvh md:pl-[7.5rem]">
       <SideRail counts={counts} />
-      <MobileTopBar />
 
-      {/* pt: tighter on phone (the top bar already eats vertical space); section rhythm on desktop.
-          pb: clears the floating mobile bottom bar (+ iOS safe area). */}
-      <main className="mx-auto max-w-[var(--content-max)] px-[var(--space-gutter)] pt-4 pb-[calc(var(--bottombar-clearance)+env(safe-area-inset-bottom))] md:pt-[var(--space-section)] md:pb-[var(--space-section)]">
+      {/* pt: phone clears the notch/Dynamic Island via safe-area (no top bar anymore); section rhythm on desktop.
+          pb: clears the docked mobile bottom bar (+ iOS safe area). */}
+      <main className="mx-auto max-w-[var(--content-max)] px-[var(--space-gutter)] pt-[calc(1rem+env(safe-area-inset-top))] pb-[calc(var(--bottombar-clearance)+env(safe-area-inset-bottom))] md:pt-[var(--space-section)] md:pb-[var(--space-section)]">
         {children}
       </main>
 
