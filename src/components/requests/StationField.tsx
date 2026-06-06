@@ -10,6 +10,7 @@ interface Candidate {
   name: string;
   roadCode: string;
   roadName: string;
+  roadShort: string | null;
   score: number;
 }
 
@@ -77,7 +78,13 @@ export function StationField({ label, raw, road, esr, onChange }: StationFieldPr
           if (status === "exact" && cands[0]) {
             setExact(cands[0]);
             setCandidates([]);
-            onChange({ esr: cands[0].esrCode });
+            // Auto-fill the road (short code) on confirm — operator never types it.
+            // Don't clobber a road the operator already entered.
+            const roadFill = cands[0].roadShort ?? cands[0].roadName ?? "";
+            onChange({
+              esr: cands[0].esrCode,
+              ...(road.trim() ? {} : roadFill ? { road: roadFill } : {}),
+            });
           } else {
             setExact(null);
             setCandidates(cands.slice(0, MAX_CANDIDATES));
@@ -96,7 +103,7 @@ export function StationField({ label, raw, road, esr, onChange }: StationFieldPr
     skipResolveRef.current = true;
     setExact(c);
     setCandidates([]);
-    onChange({ raw: c.name, road: c.roadName, esr: c.esrCode });
+    onChange({ raw: c.name, road: c.roadShort ?? c.roadName, esr: c.esrCode });
     trainAlias(raw.trim(), c.esrCode);
   }
 
