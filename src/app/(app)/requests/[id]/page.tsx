@@ -8,6 +8,7 @@ import { StatusPill, type RequestStatus } from "@/components/ui/StatusPill";
 import { RequestStatusActions } from "@/components/requests/RequestStatusActions";
 import { RequestWorklist, type WorklistLine } from "@/components/requests/RequestWorklist";
 import { CarrierOutreach, type OutreachLine } from "@/components/requests/CarrierOutreach";
+import { ReviewConfirmBanner } from "@/components/requests/ReviewConfirmBanner";
 import { formatRateExpression, type RateKind } from "@/lib/pricing/rate-expression";
 import { getRequest, RequestError } from "@/lib/requests/repository";
 
@@ -85,6 +86,10 @@ export default async function RequestDetailPage({ params }: Ctx) {
       <Link href="/requests" className="inline-flex h-11 items-center gap-1 self-start text-sm text-text-tertiary hover:text-text md:h-auto">
         <ArrowLeft className="size-4" aria-hidden /> К запросам
       </Link>
+
+      {data.intakeSource === "ai_email" && data.needsReview && (
+        <ReviewConfirmBanner requestId={data.id} />
+      )}
 
       <header className="flex flex-col gap-3 rounded-[var(--radius-lg)] border border-border bg-surface-2 p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">

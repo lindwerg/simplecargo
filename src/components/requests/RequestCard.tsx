@@ -68,6 +68,21 @@ export function RequestCard({
             </label>
           )}
           <StatusPill status={status} />
+          {card.intakeSource === "ai_email" && (
+            <span
+              className={cn(
+                "rounded-pill px-2 py-0.5 text-2xs font-medium",
+                card.needsReview ? "bg-warn-quiet text-warn" : "bg-accent-quiet text-accent",
+              )}
+              title={
+                card.needsReview
+                  ? "Создано ИИ из письма — подтвердите данные"
+                  : "Создано ИИ из письма"
+              }
+            >
+              {card.needsReview ? "ИИ · на проверке" : "ИИ"}
+            </span>
+          )}
         </div>
         {sla && (
           <span className={cn("font-mono text-xs tabular-nums", sla.tone)}>SLA {sla.label}</span>
