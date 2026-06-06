@@ -1,4 +1,5 @@
 import {
+  boolean,
   char,
   check,
   index,
@@ -49,7 +50,13 @@ export const requests = pgTable(
     status: text("status").notNull().default("new"),
     // new | sourcing | quoted | won | lost | no_bid | expired | cancelled
     channel: text("channel").notNull().default("manual"),
-    // upload | voice | paste | manual
+    // upload | voice | paste | manual | email
+    // intake provenance + review gate (mail-AI auto-intake): rows from the inbound
+    // mail flow land as intake_source='ai_email', needs_review=true so the operator
+    // confirms before the request is acted on. Manual rows are reviewed by hand.
+    intakeSource: text("intake_source").notNull().default("manual"),
+    // manual | ai_email
+    needsReview: boolean("needs_review").notNull().default(false),
 
     wagonType: text("wagon_type").notNull().default("ПВ"),
     cargoName: text("cargo_name"),
@@ -93,7 +100,8 @@ export const requests = pgTable(
       "ck_requests_status",
       sql`${t.status} IN ('new','sourcing','quoted','won','lost','no_bid','expired','cancelled')`,
     ),
-    check("ck_requests_channel", sql`${t.channel} IN ('upload','voice','paste','manual')`),
+    check("ck_requests_channel", sql`${t.channel} IN ('upload','voice','paste','manual','email')`),
+    check("ck_requests_intake_source", sql`${t.intakeSource} IN ('manual','ai_email')`),
     check(
       "ck_requests_loss_reason",
       sql`${t.lossReason} IS NULL OR ${t.lossReason} IN ('price','no_capacity','client_cancelled','timing','competitor','other')`,

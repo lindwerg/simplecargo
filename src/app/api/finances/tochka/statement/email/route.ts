@@ -9,7 +9,7 @@ import {
   buildXlsx,
   type PartySide,
 } from "@/lib/finances/export-builders";
-import { isEmailConfigured, sendMail, type MailAttachment } from "@/lib/finances/mailer";
+import { isEmailConfigured, sendMail, type MailAttachment } from "@/lib/mail/mailer";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

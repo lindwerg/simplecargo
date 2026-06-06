@@ -97,6 +97,10 @@ export async function createRequestWithLines(
         clientRaw: input.clientRaw ?? null,
         status: "new",
         channel: input.channel,
+        intakeSource: input.intakeSource ?? "manual",
+        // AI-email intake defaults to needs-review unless caller says otherwise;
+        // manual intake is reviewed-by-construction.
+        needsReview: input.needsReview ?? input.intakeSource === "ai_email",
         wagonType: input.wagonType ?? "ПВ",
         cargoName: input.cargoName ?? null,
         periodFrom: toDate(input.periodFrom),

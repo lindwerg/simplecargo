@@ -427,3 +427,53 @@ export async function listAccounts(): Promise<AccountRow[]> {
     balanceAt: r.balance_at,
   }));
 }
+
+// ── inbound invoices (счета из почты) — MAIL_AI_INTEGRATION §6.4 ──────────────
+export interface InboundInvoiceRow {
+  id: string;
+  status: string; // pending | matched | paid | review
+  counterpartyName: string | null;
+  counterpartyInn: string | null;
+  invoiceNumber: string | null;
+  invoiceDate: string | null;
+  amountTotal: number | null;
+  currency: string;
+  purposeRaw: string | null;
+  isPaid: boolean;
+}
+
+interface InboundInvoiceQueryRow {
+  id: string;
+  status: string;
+  counterparty_name_raw: string | null;
+  counterparty_inn: string | null;
+  invoice_number: string | null;
+  invoice_date: string | null;
+  amount_total: string | null;
+  currency: string;
+  purpose_raw: string | null;
+  paid_tx_id: string | null;
+  [k: string]: unknown;
+}
+
+export async function listInboundInvoices(limit = 100): Promise<InboundInvoiceRow[]> {
+  const { rows } = await db.execute<InboundInvoiceQueryRow>(sql`
+    SELECT id, status, counterparty_name_raw, counterparty_inn, invoice_number,
+           invoice_date, amount_total, currency, purpose_raw, paid_tx_id
+    FROM inbound_invoices
+    ORDER BY created_at DESC
+    LIMIT ${limit}
+  `);
+  return rows.map((r) => ({
+    id: r.id,
+    status: r.status,
+    counterpartyName: r.counterparty_name_raw,
+    counterpartyInn: r.counterparty_inn,
+    invoiceNumber: r.invoice_number,
+    invoiceDate: r.invoice_date,
+    amountTotal: r.amount_total === null ? null : Number(r.amount_total),
+    currency: r.currency,
+    purposeRaw: r.purpose_raw,
+    isPaid: r.paid_tx_id !== null,
+  }));
+}

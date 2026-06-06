@@ -81,6 +81,33 @@ them is **(a) the Postgres schema and (b) the Redis pub/sub JSON envelope**, whi
 validated on both ends* — **Pydantic** in the worker, **Zod** in the web app. This validated envelope
 is the real "shared package"; we do **not** build a TS monorepo shared-types package.
 
+### 2.1 REVISION (2026-06-06) — mail.ru ingestion worker is Node/TS, no Redis
+
+> This supersedes the Python/ARQ + Redis + Gmail Pub/Sub decision **for the mail ingestion channel
+> only**, per the approved design in [`MAIL_AI_INTEGRATION.md`](./MAIL_AI_INTEGRATION.md). The original
+> §2 decision assumed Source-D `.xls` parsing and a Gmail Pub/Sub trigger. The product actually uses a
+> shared **mail.ru** inbox, which changes the constraints:
+
+- **Channel:** mail.ru IMAP (poll-based; mail.ru has **no push webhook** and unreliable IDLE), **not**
+  Gmail Pub/Sub.
+- **Runner:** the mail-ingestion worker is **Node/TypeScript** (`tsx src/worker/mail-worker.ts`),
+  **not** Python/ARQ. Rationale: the intake/extraction layer the worker drives
+  (`src/lib/requests/extraction.ts`, `xlsx.ts`, the OpenRouter client) is already TypeScript and shares
+  **Zod** schemas with `web`. A Python worker would force duplicating that whole layer on Pydantic. The
+  legacy-`.xls` concern from the original §2 is moot here — request tables arrive as `.xlsx` (SheetJS in
+  `xlsx.ts`), not BIFF `.xls`.
+- **Realtime / cross-process events:** **Postgres `LISTEN/NOTIFY`** via the existing `pg` driver,
+  **not** Redis pub/sub. Redis is not provisioned (§1: "Not provisioned in P1"; auth uses Postgres
+  sessions). The §5 SSE design ("per-instance subscriber + in-process fan-out") is preserved verbatim —
+  only the transport changes from Redis to a dedicated `pg.Client` running `LISTEN`.
+- **Topology:** still a separate always-on private service (**1 replica** — multiple IMAP connections
+  get banned by mail.ru), same repo, `startCommand: pnpm worker`, no `healthcheckPath`, empty preDeploy
+  (migrations run on `web`). Node instead of Python; the "separate worker service" spirit of §3 holds.
+
+The Python/ARQ decision **remains in force for any future bulk `.xls` / Source-D dislocation pipeline**
+if that work lands — the two workers can coexist. This revision narrows §2 to the mail channel; it does
+not delete it.
+
 ---
 
 ## 3. Railway deployment topology

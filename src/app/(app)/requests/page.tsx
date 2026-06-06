@@ -6,6 +6,7 @@ import { BoardView, type BoardViewMode } from "@/components/requests/BoardView";
 import { BoardSelection } from "@/components/requests/BoardSelection";
 import { BoardTabs } from "@/components/requests/BoardTabs";
 import { BoardFilters } from "@/components/requests/BoardFilters";
+import { LiveRefresh } from "@/components/realtime/LiveRefresh";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +30,7 @@ export default async function RequestsBoardPage({ searchParams }: { searchParams
 
   return (
     <div className="flex flex-col gap-6">
+      <LiveRefresh />
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-xl text-text" style={{ fontWeight: "var(--weight-bold)" }}>

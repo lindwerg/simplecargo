@@ -11,6 +11,7 @@ import {
 import { extractAccounts, extractStatements, isStatementReady } from "./extract";
 import { parseTransaction, TochkaParseError } from "./parse-transaction";
 import { reconcileByInn, reconcileToDeals } from "./reconcile";
+import { reconcileInboundInvoices } from "./reconcile-invoices";
 
 // Sync orchestration: pull accounts + statements from Tochka and upsert them
 // idempotently. Read-only against the bank; the only writes are to our own DB.
@@ -40,6 +41,7 @@ export interface SyncResult {
   failed: number; // unparseable transactions
   linked: number; // newly auto-reconciled to a counterparty by ИНН
   dealsLinked: number; // newly auto-reconciled to a specific deal
+  invoicesMatched: number; // pending mail-invoices linked to a payment
   warnings: string[];
 }
 
@@ -160,6 +162,7 @@ export async function syncTochka(
     failed: 0,
     linked: 0,
     dealsLinked: 0,
+    invoicesMatched: 0,
     warnings: [],
   };
 
@@ -207,6 +210,15 @@ export async function syncTochka(
   } catch (error: unknown) {
     result.warnings.push(
       `Авто-разнос не выполнен: ${error instanceof Error ? error.message : "ошибка"}`,
+    );
+  }
+
+  // Сшивка входящих счетов из почты с проведёнными платежами (по ИНН+№+сумма).
+  try {
+    result.invoicesMatched = await reconcileInboundInvoices();
+  } catch (error: unknown) {
+    result.warnings.push(
+      `Сшивка счетов не выполнена: ${error instanceof Error ? error.message : "ошибка"}`,
     );
   }
 
