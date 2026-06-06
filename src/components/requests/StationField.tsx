@@ -118,19 +118,27 @@ export function StationField({ label, raw, road, esr, onChange }: StationFieldPr
       <span id={labelId} className="label-caps">
         {label}
       </span>
-      <div className="grid grid-cols-3 gap-2">
-        <input
-          aria-labelledby={labelId}
-          className={cn(inputClass, "col-span-2")}
-          value={raw}
-          onChange={(e) => onChange({ raw: e.target.value, esr: esr ? null : esr })}
-        />
+      <input
+        aria-labelledby={labelId}
+        className={inputClass}
+        value={raw}
+        onChange={(e) => onChange({ raw: e.target.value, esr: esr ? null : esr })}
+      />
+      <div className="grid grid-cols-2 gap-2">
         <input
           aria-label="Дорога"
           placeholder="дорога"
           className={inputClass}
           value={road}
           onChange={(e) => onChange({ road: e.target.value })}
+        />
+        <input
+          aria-label="Код станции (ЕСР)"
+          placeholder="код ЕСР"
+          inputMode="numeric"
+          className={cn(inputClass, "tabular-nums")}
+          value={esr ?? ""}
+          onChange={(e) => onChange({ esr: e.target.value.replace(/\D/g, "").slice(0, 6) || null })}
         />
       </div>
 
