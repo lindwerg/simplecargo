@@ -140,6 +140,30 @@ export const requestLines = pgTable(
     // RFQ upgrade — per-line wagon type (Goal 3): nullable → inherits request.wagonType.
     wagonType: text("wagon_type"),
 
+    // ── DIRECTION-WORKLIST upgrade — per-line lifecycle ──────────────────────
+    // Lifecycle moved onto the DIRECTION so the operator can quote/withdraw a
+    // single leg without touching its siblings. requests.status is now a DERIVED
+    // rollup (active while ANY line active). Same 8-state set + text+CHECK idiom
+    // as the request header. Backfilled from requests.status on migration.
+    status: text("status").notNull().default("new"),
+    // new | sourcing | quoted | won | lost | no_bid | expired | cancelled
+
+    // per-leg loss-intelligence — mirrors the header columns (requests §2.7) so a
+    // direction can be "не беремся: нет парка" independently of its siblings.
+    lossReason: text("loss_reason"),
+    // price | no_capacity | client_cancelled | timing | competitor | other
+
+    // terminal timestamps (set once on the line's transition)
+    wonAt: timestamp("won_at", { withTimezone: true }),
+    lostAt: timestamp("lost_at", { withTimezone: true }),
+    expiredAt: timestamp("expired_at", { withTimezone: true }),
+    cancelledAt: timestamp("cancelled_at", { withTimezone: true }),
+    closedAt: timestamp("closed_at", { withTimezone: true }), // no_bid
+
+    // "КП по этому плечу уже выпущено" — guards against double-issuing a КП when a
+    // plan is quoted in tranches (8-now / 4-later). Set after a КП render covers it.
+    kpIssuedAt: timestamp("kp_issued_at", { withTimezone: true }),
+
     // RFQ upgrade — rate expression (Goal 4). A desired rate may be a flat ₽/wagon
     // (targetRatePerWagon), an indicative tied to Прейскурант 10-01 ("+X% к тарифу"),
     // or tariff+markup. These hold the EXPRESSION; the absolute ₽ is resolved against
@@ -156,6 +180,7 @@ export const requestLines = pgTable(
     index("idx_request_lines_origin_road").on(t.originRoadRaw), // board "по дорогам"
     index("idx_request_lines_origin_station").on(t.originRaw), // board "по направлениям"
     index("idx_request_lines_stations_esr").on(t.originEsr, t.destEsr),
+    index("idx_request_lines_status").on(t.requestId, t.status), // rollup + board bucket scan
     check(
       "ck_request_lines_rate_kind",
       sql`${t.targetRateKind} IS NULL OR ${t.targetRateKind} IN ('flat_rub','tariff_indicative','tariff_plus_markup')`,
@@ -163,6 +188,14 @@ export const requestLines = pgTable(
     check(
       "ck_request_lines_tariff_class",
       sql`${t.targetTariffClass} IS NULL OR ${t.targetTariffClass} IN (1,2,3)`,
+    ),
+    check(
+      "ck_request_lines_status",
+      sql`${t.status} IN ('new','sourcing','quoted','won','lost','no_bid','expired','cancelled')`,
+    ),
+    check(
+      "ck_request_lines_loss_reason",
+      sql`${t.lossReason} IS NULL OR ${t.lossReason} IN ('price','no_capacity','client_cancelled','timing','competitor','other')`,
     ),
   ],
 );
