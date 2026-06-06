@@ -25,7 +25,8 @@ const optRate = z.preprocess(
 const optNum = z.preprocess(nullToUndef, z.coerce.number().positive().optional());
 const optEsr = z.preprocess(nullToUndef, z.string().length(6).optional());
 
-export const REQUEST_CHANNELS = ["upload", "voice", "paste", "manual"] as const;
+export const REQUEST_CHANNELS = ["upload", "voice", "paste", "manual", "email"] as const;
+export const INTAKE_SOURCES = ["manual", "ai_email"] as const;
 export const LOSS_REASONS = [
   "price",
   "no_capacity",
@@ -70,6 +71,10 @@ export const requestCreateSchema = z.object({
   clientSuggestedId: z.uuid().optional(),
   clientRaw: optText,
   channel: z.enum(REQUEST_CHANNELS).default("manual"),
+  // Origin of the row: 'manual' (operator) or 'ai_email' (auto-intake from mail).
+  // ai_email rows default needsReview=true so the operator confirms before acting.
+  intakeSource: z.enum(INTAKE_SOURCES).default("manual"),
+  needsReview: z.boolean().optional(),
   wagonType: optText,
   cargoName: optText,
   periodFrom: optText, // ISO datetime string
