@@ -21,6 +21,24 @@ export const envSchema = z.object({
   // the request-extraction endpoint degrades gracefully (501 + operator hint).
   OPENROUTER_API_KEY: z.string().min(1).optional(),
   OPENROUTER_MODEL: z.string().min(1).default("google/gemini-2.5-flash"),
+  // Tochka Bank Open API (Финансы tab). All OPTIONAL so build/CI boot without
+  // them; the finance routes degrade gracefully (501 + operator hint) when the
+  // JWT is absent. The JWT is a SECRET — env/Railway only, never committed.
+  // Default base points at the sandbox; set TOCHKA_BASE_URL to the prod URL
+  // (e.g. https://enter.tochka.com/uapi) when going live.
+  TOCHKA_BASE_URL: z.url().default("https://enter.tochka.com/sandbox/v2"),
+  TOCHKA_JWT_TOKEN: z.string().min(1).optional(),
+  TOCHKA_CLIENT_ID: z.string().min(1).optional(), // нужен для путей вебхуков
+  TOCHKA_CUSTOMER_CODE: z.string().min(1).optional(),
+  TOCHKA_WEBHOOK_PUBKEY_URL: z
+    .url()
+    .default("https://enter.tochka.com/doc/openapi/static/keys/public"),
+  // БИК банка плательщика для исходящих платежей (счета в Точке → БИК Точки).
+  TOCHKA_PAYER_BIC: z.string().min(9).max(9).default("044525104"),
+  // SMTP для отправки выписок на email — ОПЦИОНАЛЬНО. Без него кнопка email
+  // отдаёт 501. Формат SMTP_URL: smtp://user:pass@host:587 (или smtps:// для 465).
+  SMTP_URL: z.string().min(1).optional(),
+  SMTP_FROM: z.string().min(1).optional(), // "РНС Финансы <info@rusnerudstroy.ru>"
 });
 
 export type Env = z.infer<typeof envSchema>;

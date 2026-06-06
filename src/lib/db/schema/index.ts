@@ -18,3 +18,4 @@ export * from "./deals";
 export * from "./contracts";
 export * from "./report";
 export * from "./quarantine";
+export * from "./tochkaFinance";

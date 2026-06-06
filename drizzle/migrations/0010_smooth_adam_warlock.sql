@@ -1,0 +1,2 @@
+ALTER TABLE "bank_tx_links" DROP CONSTRAINT "ck_bank_tx_link_method";--> statement-breakpoint
+ALTER TABLE "bank_tx_links" ADD CONSTRAINT "ck_bank_tx_link_method" CHECK ("bank_tx_links"."match_method" IN ('inn_exact','inn_amount_invoice','inn_fuzzy','name_fuzzy','subset_sum','manual'));

@@ -222,3 +222,23 @@ select,
   -webkit-user-select: text;
   user-select: text;
 }
+
+/* Print: drop the app chrome so document pages (КП, выписка) print clean. */
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+  html,
+  body {
+    background: #ffffff;
+  }
+  nav,
+  .no-print {
+    display: none !important;
+  }
+  main {
+    padding: 0 !important;
+    max-width: none !important;
+  }
+}
