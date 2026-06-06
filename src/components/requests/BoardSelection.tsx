@@ -231,7 +231,7 @@ export function BoardSelection({ cards, view }: Props) {
 
       {/* sticky action bar */}
       {selected.size > 0 && (
-        <div className="fixed inset-x-3 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] z-30 rounded-[var(--radius-lg)] border border-border bg-surface-1/95 shadow-[var(--elev-3)] backdrop-blur md:inset-x-0 md:bottom-0 md:rounded-none md:border-x-0 md:[padding-bottom:max(0.75rem,env(safe-area-inset-bottom))]">
+        <div className="fixed inset-x-0 bottom-[calc(var(--bottombar-clearance)+env(safe-area-inset-bottom))] z-30 border-t border-border bg-surface-1/95 shadow-[var(--elev-3)] backdrop-blur md:inset-x-0 md:bottom-0 md:rounded-none md:border-x-0 md:[padding-bottom:max(0.75rem,env(safe-area-inset-bottom))]">
           <div className="mx-auto flex w-full max-w-5xl flex-col gap-2 px-4 pb-3 pt-3 md:pb-0">
             <div className="flex items-center justify-between gap-2">
               <span className="text-sm font-medium text-text tabular-nums">

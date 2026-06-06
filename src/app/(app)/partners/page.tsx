@@ -6,9 +6,12 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { PartnerCard } from "@/components/partners/PartnerCard";
 import { PartnersFilters } from "@/components/partners/PartnersFilters";
+import { PartnersTabs } from "@/components/partners/PartnersTabs";
 import "@/components/partners/partners.css";
 
 export const dynamic = "force-dynamic";
+
+const PARTNER_TABS = new Set(["client", "carrier"]);
 
 interface PageProps {
   searchParams: Promise<{ search?: string; role?: string }>;
@@ -17,7 +20,9 @@ interface PageProps {
 export default async function PartnersPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const search = params.search?.trim() ?? "";
-  const role = params.role?.trim() ?? "";
+  // Two tabs only (Клиенты / Перевозчики). Default to Клиенты.
+  const role = PARTNER_TABS.has(params.role?.trim() ?? "") ? (params.role as string).trim() : "client";
+  const isCarrier = role === "carrier";
 
   let partners: Awaited<ReturnType<typeof listPartners>> = [];
   let failed = false;
@@ -48,18 +53,21 @@ export default async function PartnersPage({ searchParams }: PageProps) {
         </Link>
       </header>
 
-      <PartnersFilters search={search} role={role} />
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+        <PartnersTabs role={role} search={search} />
+        <PartnersFilters search={search} role={role} />
+      </div>
 
       {failed ? (
         <ErrorState variant="page" message="Не удалось загрузить партнёров. Попробуйте обновить страницу." />
       ) : partners.length === 0 ? (
         <EmptyState
           icon={Building2}
-          title={search || role ? "Ничего не найдено" : "База партнёров пуста"}
+          title={search ? "Ничего не найдено" : isCarrier ? "Перевозчиков пока нет" : "Клиентов пока нет"}
           description={
-            search || role
-              ? "Измените запрос или сбросьте фильтр."
-              : "Добавьте первую компанию кнопкой «Добавить партнёра» — клиента, собственника вагонов или экспедитора."
+            search
+              ? "Измените запрос или сбросьте поиск."
+              : `Добавьте ${isCarrier ? "перевозчика" : "клиента"} кнопкой «Добавить партнёра».`
           }
         />
       ) : (

@@ -56,7 +56,7 @@ export function RequestStatusActions({ id, status, isTemp }: Props) {
       const res = await fetch(`/api/requests/${id}`, { method: "DELETE" });
       const json = await res.json();
       if (!res.ok || !json?.success) throw new Error(json?.error ?? "Не удалось");
-      router.push("/requests/actual");
+      router.push("/requests");
       router.refresh();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Ошибка");

@@ -6,6 +6,7 @@ import { auth } from "@/lib/auth";
 import { Money } from "@/components/ui/Money";
 import { StatTile } from "@/components/ui/StatTile";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { SignOutButton } from "@/components/nav/SignOutButton";
 
 export default async function DashboardPage() {
   // Defense in depth: the (app) layout already gates, but never render a dashboard
@@ -17,11 +18,17 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-[var(--space-section)]">
-      <header>
-        <p className="label-caps">Сводка</p>
-        <h1 className="mt-1 break-words text-xl font-semibold tracking-tight text-text">
-          {session.user.email}
-        </h1>
+      <header className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="label-caps">Сводка</p>
+          <h1 className="mt-1 break-words text-xl font-semibold tracking-tight text-text">
+            {session.user.email}
+          </h1>
+        </div>
+        {/* Mobile-only sign-out: the desktop SideRail already carries it. */}
+        <span className="shrink-0 md:hidden">
+          <SignOutButton />
+        </span>
       </header>
 
       {/* Zeroed scaffold — honest until the ingestion pipeline lands (Phase 2). */}

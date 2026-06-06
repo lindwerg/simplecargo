@@ -10,7 +10,7 @@ interface Props {
 }
 
 export function KpPrintBar({ id, backHref, backLabel }: Props) {
-  const href = backHref ?? (id ? `/requests/${id}` : "/requests/actual");
+  const href = backHref ?? (id ? `/requests/${id}` : "/requests");
   const label = backLabel ?? "Назад к запросу";
   return (
     <div className="flex flex-wrap items-center gap-2">
