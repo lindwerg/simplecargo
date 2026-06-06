@@ -33,6 +33,13 @@ export const envSchema = z.object({
   TOCHKA_WEBHOOK_PUBKEY_URL: z
     .url()
     .default("https://enter.tochka.com/doc/openapi/static/keys/public"),
+  // Публичный HTTPS-URL приёма вебхуков Точки (для авто-регистрации воркером на
+  // старте). Напр. https://app.example.ru/api/finances/tochka/webhook. Без него
+  // авто-регистрация пропускается (вебхук регистрируют вручную кнопкой).
+  TOCHKA_WEBHOOK_URL: z.url().optional(),
+  // Периодический «страховочный» опрос выписок Точки воркером (если вебхук потерян).
+  // 0 = выключено; иначе минимум 60с. По умолчанию 15 минут.
+  FINANCE_POLL_MS: z.coerce.number().int().min(0).default(900_000),
   // БИК банка плательщика для исходящих платежей (счета в Точке → БИК Точки).
   TOCHKA_PAYER_BIC: z.string().min(9).max(9).default("044525104"),
   // SMTP для отправки выписок на email — ОПЦИОНАЛЬНО. Без него кнопка email

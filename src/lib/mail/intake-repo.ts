@@ -63,6 +63,17 @@ export async function markFileCommitted(fileId: string): Promise<void> {
     .where(sql`${ingestedFiles.id} = ${fileId}`);
 }
 
+// A processing failure (transient LLM/DB error) must NOT silently lose the email.
+// We park the file as 'quarantined' so a startup sweep / operator can revisit it
+// instead of the worker advancing the cursor past a black hole.
+export async function markFileQuarantined(fileId: string): Promise<void> {
+  if (!fileId) return;
+  await db
+    .update(ingestedFiles)
+    .set({ status: "quarantined" })
+    .where(sql`${ingestedFiles.id} = ${fileId}`);
+}
+
 // ── inbound invoice (pending) ────────────────────────────────────────────────
 function toDate(iso: string | null): Date | null {
   if (!iso) return null;

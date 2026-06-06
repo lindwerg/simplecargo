@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import { describe, expect, it } from "vitest";
 
-import { isPaymentEvent, verifyJwtRS256, type WebhookPayload } from "./webhook";
+import { isPaymentEvent, isTokenFresh, verifyJwtRS256, type WebhookPayload } from "./webhook";
 
 function b64url(input: Buffer | string): string {
   return Buffer.from(input)
@@ -56,5 +56,29 @@ describe("isPaymentEvent", () => {
   it("ignores unrelated events and null", () => {
     expect(isPaymentEvent({ webhookType: "accountUpdate" } as WebhookPayload)).toBe(false);
     expect(isPaymentEvent(null)).toBe(false);
+  });
+});
+
+describe("isTokenFresh", () => {
+  const now = 1_000_000;
+
+  it("passes a token without iat/exp (can't judge — signature still gates)", () => {
+    expect(isTokenFresh({ webhookType: "incomingPayment" } as WebhookPayload, { nowSec: now })).toBe(true);
+  });
+
+  it("passes a recent iat", () => {
+    expect(isTokenFresh({ iat: now - 10 } as WebhookPayload, { nowSec: now })).toBe(true);
+  });
+
+  it("rejects a too-old iat (replay)", () => {
+    expect(isTokenFresh({ iat: now - 10_000 } as WebhookPayload, { nowSec: now, maxAgeSec: 300 })).toBe(false);
+  });
+
+  it("rejects an expired exp", () => {
+    expect(isTokenFresh({ exp: now - 1000 } as WebhookPayload, { nowSec: now })).toBe(false);
+  });
+
+  it("rejects null", () => {
+    expect(isTokenFresh(null)).toBe(false);
   });
 });

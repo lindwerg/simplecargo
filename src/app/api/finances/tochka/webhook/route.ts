@@ -1,4 +1,4 @@
-import { fetchTochkaPublicKey, isPaymentEvent, verifyJwtRS256 } from "@/lib/finances/webhook";
+import { fetchTochkaPublicKey, isPaymentEvent, isTokenFresh, verifyJwtRS256 } from "@/lib/finances/webhook";
 import { syncTochka } from "@/lib/finances/sync";
 
 export const runtime = "nodejs";
@@ -29,6 +29,10 @@ export async function POST(request: Request): Promise<Response> {
   const { valid, payload } = verifyJwtRS256(token, key);
   if (!valid) {
     return new Response("invalid signature", { status: 401 });
+  }
+  // Replay mitigation — drop a stale/expired (but validly-signed) token.
+  if (!isTokenFresh(payload)) {
+    return new Response("stale token", { status: 401 });
   }
 
   if (isPaymentEvent(payload)) {
