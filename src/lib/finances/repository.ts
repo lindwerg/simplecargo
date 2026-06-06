@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 
 import { db } from "@/lib/db/client";
+import { listAttachmentsByFiles, type AttachmentMeta } from "@/lib/mail-intake/attachments-repo";
 
 // Read side for the «Финансы» tab. Plain SQL via db.execute (mirrors the partners
 // repository). All amounts come back as JS numbers for the UI.
@@ -440,6 +441,7 @@ export interface InboundInvoiceRow {
   currency: string;
   purposeRaw: string | null;
   isPaid: boolean;
+  documents: AttachmentMeta[]; // originals to open (скан/файл счёта, текст письма)
 }
 
 interface InboundInvoiceQueryRow {
@@ -453,6 +455,7 @@ interface InboundInvoiceQueryRow {
   currency: string;
   purpose_raw: string | null;
   paid_tx_id: string | null;
+  source_file_id: string | null;
   [k: string]: unknown;
 }
 
@@ -580,11 +583,21 @@ export async function listDebts(opts: {
 export async function listInboundInvoices(limit = 100): Promise<InboundInvoiceRow[]> {
   const { rows } = await db.execute<InboundInvoiceQueryRow>(sql`
     SELECT id, status, counterparty_name_raw, counterparty_inn, invoice_number,
-           invoice_date, amount_total, currency, purpose_raw, paid_tx_id
+           invoice_date, amount_total, currency, purpose_raw, paid_tx_id, source_file_id
     FROM inbound_invoices
     ORDER BY created_at DESC
     LIMIT ${limit}
   `);
+
+  const fileIds = [...new Set(rows.map((r) => r.source_file_id).filter((v): v is string => !!v))];
+  const docs = await listAttachmentsByFiles(fileIds);
+  const docsByFile = new Map<string, AttachmentMeta[]>();
+  for (const d of docs) {
+    const list = docsByFile.get(d.sourceFileId) ?? [];
+    list.push(d);
+    docsByFile.set(d.sourceFileId, list);
+  }
+
   return rows.map((r) => ({
     id: r.id,
     status: r.status,
@@ -596,5 +609,6 @@ export async function listInboundInvoices(limit = 100): Promise<InboundInvoiceRo
     currency: r.currency,
     purposeRaw: r.purpose_raw,
     isPaid: r.paid_tx_id !== null,
+    documents: r.source_file_id ? docsByFile.get(r.source_file_id) ?? [] : [],
   }));
 }

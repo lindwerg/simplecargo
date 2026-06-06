@@ -1,4 +1,4 @@
-import { FileText } from "lucide-react";
+import { FileText, ExternalLink } from "lucide-react";
 
 import { Money } from "@/components/ui/Money";
 import type { InboundInvoiceRow } from "@/lib/finances/repository";
@@ -51,6 +51,28 @@ export function InboundInvoices({ invoices }: InboundInvoicesProps) {
               </div>
               {inv.purposeRaw && (
                 <p className="truncate text-xs text-text-secondary">{inv.purposeRaw}</p>
+              )}
+              {inv.documents.length > 0 && (
+                <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                  {inv.documents
+                    .filter((doc) => doc.hasContent)
+                    .map((doc) => (
+                      <a
+                        key={doc.id}
+                        href={`/api/ingested/attachments/${doc.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 rounded-pill border border-border bg-surface-1 px-2 py-0.5 text-2xs text-text transition-colors hover:bg-surface-3"
+                        title={`Открыть: ${doc.filename}`}
+                      >
+                        <FileText className="size-3 shrink-0 text-text-tertiary" aria-hidden />
+                        <span className="max-w-[12rem] truncate">
+                          {doc.kind === "body" ? "Текст письма" : doc.filename}
+                        </span>
+                        <ExternalLink className="size-2.5 shrink-0 text-text-tertiary" aria-hidden />
+                      </a>
+                    ))}
+                </div>
               )}
             </div>
             {inv.amountTotal != null && (
