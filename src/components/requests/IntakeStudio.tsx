@@ -486,7 +486,7 @@ export function IntakeStudio() {
                 <Trash2 className="size-4" aria-hidden />
               </button>
             </div>
-            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+            <div className="flex flex-col gap-2.5">
               <StationField
                 label="Станция отправления"
                 raw={l.originRaw}
@@ -513,19 +513,21 @@ export function IntakeStudio() {
                   })
                 }
               />
-              <Field label="Вагонов">
-                <input className={inputClass} inputMode="numeric" value={l.wagonsRequested} onChange={(e) => updateLine(l.key, { wagonsRequested: e.target.value })} />
-              </Field>
-              <Field label="Тонн/ваг">
-                <input className={inputClass} inputMode="decimal" value={l.tonnagePerWagon} onChange={(e) => updateLine(l.key, { tonnagePerWagon: e.target.value })} />
-              </Field>
-              <Field label="Тип вагона">
-                <WagonTypePicker value={l.wagonType} onChange={(v) => updateLine(l.key, { wagonType: v })} />
-              </Field>
-              <Field label="Груз">
-                <input className={inputClass} value={l.cargoName} onChange={(e) => updateLine(l.key, { cargoName: e.target.value })} />
-              </Field>
-              <Field label="Желаемая ставка" span2>
+              <div className="grid grid-cols-2 gap-2.5">
+                <Field label="Вагонов">
+                  <input className={inputClass} inputMode="numeric" value={l.wagonsRequested} onChange={(e) => updateLine(l.key, { wagonsRequested: e.target.value })} />
+                </Field>
+                <Field label="Тонн/ваг">
+                  <input className={inputClass} inputMode="decimal" value={l.tonnagePerWagon} onChange={(e) => updateLine(l.key, { tonnagePerWagon: e.target.value })} />
+                </Field>
+                <Field label="Тип вагона">
+                  <WagonTypePicker value={l.wagonType} onChange={(v) => updateLine(l.key, { wagonType: v })} />
+                </Field>
+                <Field label="Груз">
+                  <input className={inputClass} value={l.cargoName} onChange={(e) => updateLine(l.key, { cargoName: e.target.value })} />
+                </Field>
+              </div>
+              <Field label="Желаемая ставка">
                 <RateModeInput
                   kind={l.targetRateKind}
                   flatRaw={l.targetRateRaw}
