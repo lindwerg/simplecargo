@@ -36,3 +36,6 @@ test-results/
 *.xls
 *.xlsx
 *.pdf
+
+# Local Claude Code harness files
+.claude/
