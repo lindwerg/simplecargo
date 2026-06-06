@@ -39,6 +39,21 @@ export const envSchema = z.object({
   // отдаёт 501. Формат SMTP_URL: smtp://user:pass@host:587 (или smtps:// для 465).
   SMTP_URL: z.string().min(1).optional(),
   SMTP_FROM: z.string().min(1).optional(), // "РНС Финансы <info@rusnerudstroy.ru>"
+
+  // ── Входящий приём почты mail.ru (сервис mail-worker) — ОПЦИОНАЛЬНО ──────────
+  // Без значений воркер idle-выходит, web-флаг скрывает «Входящие». Пароль —
+  // ПАРОЛЬ ПРИЛОЖЕНИЯ mail.ru, только в Railway Variables, не в репозитории.
+  MAIL_INTAKE_ENABLED: z
+    .enum(["true", "false"])
+    .default("false")
+    .transform((v) => v === "true"),
+  MAILRU_IMAP_HOST: z.string().min(1).default("imap.mail.ru"),
+  MAILRU_IMAP_PORT: z.coerce.number().int().min(1).max(65535).default(993),
+  MAILRU_IMAP_USER: z.string().min(1).optional(),
+  MAILRU_IMAP_APP_PASSWORD: z.string().min(1).optional(),
+  MAILRU_IMAP_INBOX: z.string().min(1).default("INBOX"),
+  MAILRU_IMAP_PROCESSED_FOLDER: z.string().min(1).default("SimpleCargo/Processed"),
+  MAILRU_IMAP_POLL_MS: z.coerce.number().int().min(10_000).default(15_000),
 });
 
 export type Env = z.infer<typeof envSchema>;
