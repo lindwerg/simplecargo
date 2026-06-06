@@ -35,6 +35,9 @@ export const bankAccounts = pgTable(
     maskedNumber: text("masked_number"), // для UI, без полного номера в логах
     title: text("title"), // человекочитаемое имя счёта
     status: text("status").notNull().default("active"), // active|closed
+    // Снимок остатка из endDateBalance последней выписки (источник для KPI).
+    balance: numeric("balance", { precision: 14, scale: 2 }),
+    balanceAt: timestamp("balance_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [check("ck_bank_account_status", sql`${t.status} IN ('active','closed')`)],
@@ -101,7 +104,7 @@ export const bankTxLinks = pgTable(
     directionId: uuid("direction_id").references(() => directions.id, { onDelete: "set null" }),
     amountAllocated: numeric("amount_allocated", { precision: 14, scale: 2 }),
     matchConfidence: numeric("match_confidence", { precision: 4, scale: 3 }), // 0..1
-    matchMethod: text("match_method").notNull(), // inn_amount_invoice|inn_fuzzy|name_fuzzy|subset_sum|manual
+    matchMethod: text("match_method").notNull(), // inn_exact|inn_amount_invoice|inn_fuzzy|name_fuzzy|subset_sum|manual
     confirmedBy: uuid("confirmed_by").references(() => users.id, { onDelete: "set null" }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
@@ -112,7 +115,7 @@ export const bankTxLinks = pgTable(
     index("idx_bank_tx_link_direction").on(t.directionId),
     check(
       "ck_bank_tx_link_method",
-      sql`${t.matchMethod} IN ('inn_amount_invoice','inn_fuzzy','name_fuzzy','subset_sum','manual')`,
+      sql`${t.matchMethod} IN ('inn_exact','inn_amount_invoice','inn_fuzzy','name_fuzzy','subset_sum','manual')`,
     ),
   ],
 );
