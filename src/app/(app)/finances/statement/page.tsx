@@ -7,7 +7,7 @@ import { auth } from "@/lib/auth";
 import { COMPANY } from "@/lib/config/company";
 import { listAccounts } from "@/lib/finances/repository";
 import { isTochkaConfigured } from "@/lib/finances/tochka-client";
-import { isEmailConfigured } from "@/lib/finances/mailer";
+import { isEmailConfigured } from "@/lib/mail/mailer";
 import { StatementBuilder } from "@/components/finances/StatementBuilder";
 
 export const metadata = { title: "Выписка" };

@@ -7,6 +7,7 @@ import { ru } from "date-fns/locale";
 import { StatusPill, type RequestStatus } from "@/components/ui/StatusPill";
 import { RequestStatusActions } from "@/components/requests/RequestStatusActions";
 import { RequestWorklist, type WorklistLine } from "@/components/requests/RequestWorklist";
+import { CarrierOutreach, type OutreachLine } from "@/components/requests/CarrierOutreach";
 import { formatRateExpression, type RateKind } from "@/lib/pricing/rate-expression";
 import { getRequest, RequestError } from "@/lib/requests/repository";
 
@@ -56,6 +57,11 @@ export default async function RequestDetailPage({ params }: Ctx) {
 
   const fmtDay = (d: Date | null): string | null =>
     d ? format(toZonedTime(d, "Europe/Moscow"), "dd.MM.yyyy") : null;
+
+  const outreachLines: OutreachLine[] = data.lines.map((l) => ({
+    id: l.id,
+    label: `${l.originRaw} → ${l.destRaw}${l.wagonsRequested ? ` (${l.wagonsRequested} ваг)` : ""}`,
+  }));
 
   const worklistLines: WorklistLine[] = data.lines.map((l) => ({
     id: l.id,
@@ -113,6 +119,8 @@ export default async function RequestDetailPage({ params }: Ctx) {
           notes: data.notes,
         }}
       />
+
+      <CarrierOutreach requestId={id} lines={outreachLines} />
 
       {data.notes && (
         <section className="flex flex-col gap-1">

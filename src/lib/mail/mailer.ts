@@ -3,8 +3,9 @@ import nodemailer from "nodemailer";
 import { env } from "@/lib/env";
 import { COMPANY } from "@/lib/config/company";
 
-// Optional SMTP mailer for statement delivery. Configured via SMTP_URL/SMTP_FROM;
-// absent → isEmailConfigured() is false and routes degrade to 501.
+// Shared SMTP mailer (moved from finances/ — now used by statement delivery AND
+// outbound RFQ to carriers). Configured via SMTP_URL/SMTP_FROM; absent →
+// isEmailConfigured() is false and callers degrade to 501.
 
 export function isEmailConfigured(): boolean {
   return Boolean(env.SMTP_URL);
