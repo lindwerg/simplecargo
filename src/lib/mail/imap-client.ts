@@ -92,6 +92,22 @@ export async function fetchNewEmails(lastSeenUid: number): Promise<FetchResult> 
   return { uidValidity, highestUid, emails };
 }
 
+/** Lightweight high-water mark — reads UIDVALIDITY + UIDNEXT without fetching any
+ *  message. Used on first-ever run to seed the cursor so we DON'T reprocess the
+ *  whole historical inbox (only mail arriving after deployment). */
+export async function getInboxStatus(): Promise<{ uidValidity: number; highestUid: number }> {
+  const client = makeClient();
+  await client.connect();
+  try {
+    const st = await client.status(env.MAILRU_IMAP_INBOX, { uidNext: true, uidValidity: true });
+    const uidValidity = Number(st.uidValidity ?? 0);
+    const uidNext = Number(st.uidNext ?? 1);
+    return { uidValidity, highestUid: Math.max(0, uidNext - 1) };
+  } finally {
+    await client.logout().catch(() => {});
+  }
+}
+
 /** Best-effort: move processed messages to the Processed folder and mark seen. */
 export async function markProcessed(uids: number[]): Promise<void> {
   if (uids.length === 0) return;

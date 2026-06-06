@@ -10,6 +10,7 @@ import { mailCursor } from "@/lib/db/schema/mailCursor";
 export interface CursorState {
   lastSeenUid: number;
   uidValidity: number | null;
+  exists: boolean; // false = no row yet (first-ever run for this folder)
 }
 
 export async function getCursor(folder: string): Promise<CursorState> {
@@ -19,7 +20,11 @@ export async function getCursor(folder: string): Promise<CursorState> {
     .where(eq(mailCursor.folder, folder))
     .limit(1);
   const row = rows[0];
-  return { lastSeenUid: row?.lastSeenUid ?? 0, uidValidity: row?.uidValidity ?? null };
+  return {
+    lastSeenUid: row?.lastSeenUid ?? 0,
+    uidValidity: row?.uidValidity ?? null,
+    exists: Boolean(row),
+  };
 }
 
 export async function setCursor(
@@ -44,7 +49,7 @@ export async function resetCursorIfInvalid(
   const cur = await getCursor(folder);
   if (cur.uidValidity !== null && cur.uidValidity !== serverUidValidity) {
     await setCursor(folder, 0, serverUidValidity);
-    return { lastSeenUid: 0, uidValidity: serverUidValidity };
+    return { lastSeenUid: 0, uidValidity: serverUidValidity, exists: true };
   }
   return cur;
 }
