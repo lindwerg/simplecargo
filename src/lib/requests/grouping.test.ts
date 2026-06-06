@@ -16,6 +16,8 @@ function card(over: Partial<DirectionCardView>): DirectionCardView {
     requestId: over.requestId ?? "req",
     requestNumber: over.requestNumber ?? null,
     status: over.status ?? "new",
+    lossReason: over.lossReason ?? null,
+    kpIssuedAt: over.kpIssuedAt ?? null,
     clientSuggestedId: over.clientSuggestedId ?? null,
     clientRaw: over.clientRaw ?? null,
     clientName: over.clientName ?? null,

@@ -3,9 +3,16 @@ import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { counterparties } from "@/lib/db/schema/counterparties";
 import { requestLines, requests } from "@/lib/db/schema/requests";
-import { canTransition, validateTransitionMeta, type RequestStatus } from "./lifecycle";
+import {
+  canTransition,
+  canTransitionLine,
+  rollupRequestStatus,
+  validateTransitionMeta,
+  type RequestStatus,
+} from "./lifecycle";
 import type { DirectionCardView } from "./grouping";
 import type {
+  LineTransitionInput,
   LinkClientInput,
   RequestCreateInput,
   RequestListFilter,
@@ -133,11 +140,14 @@ export async function createRequestWithLines(
 }
 
 // ── list direction-cards — one card per request_line (the board unit) ────────
+// Bucket is now keyed off the DIRECTION's status (request_lines.status), so a
+// withdrawn leg leaves the active board while its active siblings stay. wagonType
+// falls back to the request header when a line has no per-line override.
 export async function listDirectionCards(filter: RequestListFilter): Promise<DirectionCardView[]> {
   const statusSet = filter.bucket === "active" ? ACTIVE : ARCHIVE;
 
   const conditions = [
-    inArray(requests.status, statusSet as unknown as string[]),
+    inArray(requestLines.status, statusSet as unknown as string[]),
     filter.clientId ? eq(requests.clientSuggestedId, filter.clientId) : undefined,
     filter.originRaw ? sql`${requestLines.originRaw} ILIKE ${"%" + filter.originRaw + "%"}` : undefined,
     filter.roadRaw ? sql`upper(${requestLines.originRoadRaw}) = upper(${filter.roadRaw})` : undefined,
@@ -148,7 +158,9 @@ export async function listDirectionCards(filter: RequestListFilter): Promise<Dir
       lineId: requestLines.id,
       requestId: requests.id,
       requestNumber: requests.requestNumber,
-      status: requests.status,
+      status: requestLines.status,
+      lossReason: requestLines.lossReason,
+      kpIssuedAt: requestLines.kpIssuedAt,
       clientSuggestedId: requests.clientSuggestedId,
       clientRaw: requests.clientRaw,
       clientName: counterparties.nameCanonical,
@@ -157,7 +169,7 @@ export async function listDirectionCards(filter: RequestListFilter): Promise<Dir
       destRaw: requestLines.destRaw,
       destRoadRaw: requestLines.destRoadRaw,
       cargoName: requestLines.cargoName,
-      wagonType: requests.wagonType,
+      wagonType: sql<string>`COALESCE(${requestLines.wagonType}, ${requests.wagonType})`,
       wagonsRequested: requestLines.wagonsRequested,
       tonnagePerWagon: requestLines.tonnagePerWagon,
       targetRatePerWagon: requestLines.targetRatePerWagon,
@@ -186,25 +198,26 @@ export async function getBoardCounts(): Promise<{
   activeWagons: number;
   archiveRequests: number;
 }> {
-  const [active, archive] = await Promise.all([
+  // A request is "active" when ANY of its directions is active. Counts derive
+  // from request_lines.status (the source of truth), not the derived header.
+  const [active, total] = await Promise.all([
     db
       .select({
-        n: sql<number>`COUNT(DISTINCT ${requests.id})::int`,
+        n: sql<number>`COUNT(DISTINCT ${requestLines.requestId})::int`,
         wagons: sql<number>`COALESCE(SUM(${requestLines.wagonsRequested}), 0)::int`,
       })
-      .from(requests)
-      .leftJoin(requestLines, eq(requestLines.requestId, requests.id))
-      .where(inArray(requests.status, ACTIVE as unknown as string[])),
+      .from(requestLines)
+      .where(inArray(requestLines.status, ACTIVE as unknown as string[])),
     db
-      .select({ n: sql<number>`COUNT(*)::int` })
-      .from(requests)
-      .where(inArray(requests.status, ARCHIVE as unknown as string[])),
+      .select({ n: sql<number>`COUNT(DISTINCT ${requestLines.requestId})::int` })
+      .from(requestLines),
   ]);
 
+  const activeRequests = active[0]?.n ?? 0;
   return {
-    activeRequests: active[0]?.n ?? 0,
+    activeRequests,
     activeWagons: active[0]?.wagons ?? 0,
-    archiveRequests: archive[0]?.n ?? 0,
+    archiveRequests: Math.max(0, (total[0]?.n ?? 0) - activeRequests),
   };
 }
 
@@ -295,12 +308,103 @@ export async function transitionRequest(
   });
 }
 
-// ── delete — new-status only (cancel the rest) ───────────────────────────────
+// ── transitionLines — move one or many DIRECTIONS, then roll the header up ────
+// The heart of per-direction lifecycle: only the chosen request_lines change
+// status; siblings are untouched. The parent requests.status is recomputed from
+// ALL its lines in the SAME transaction so the board bucket never drifts.
+export async function transitionLines(
+  requestId: string,
+  input: LineTransitionInput,
+): Promise<{ requestId: string; lineIds: string[]; to: RequestStatus; headerStatus: RequestStatus }> {
+  const to = input.to;
+  const guard = validateTransitionMeta(to, input.lossReason);
+  if (!guard.ok) throw new RequestError(422, guard.reason ?? "Недопустимый переход");
+
+  return db.transaction(async (tx) => {
+    await loadRequest(tx, requestId); // 404 if the request is gone
+
+    // Load the targeted lines, scoped to this request (ownership guard).
+    const targeted = await tx
+      .select({ id: requestLines.id, status: requestLines.status })
+      .from(requestLines)
+      .where(and(eq(requestLines.requestId, requestId), inArray(requestLines.id, input.lineIds)));
+
+    if (targeted.length !== input.lineIds.length) {
+      throw new RequestError(404, "Некоторые направления не найдены в этом запросе");
+    }
+
+    for (const line of targeted) {
+      if (!canTransitionLine(line.status as RequestStatus, to)) {
+        throw new RequestError(409, `Недопустимый переход направления: ${line.status} → ${to}`);
+      }
+    }
+
+    const now = new Date();
+    const linePatch: Partial<typeof requestLines.$inferInsert> = { status: to };
+    if (to === "won") linePatch.wonAt = now;
+    if (to === "lost") {
+      linePatch.lostAt = now;
+      linePatch.lossReason = input.lossReason ?? null;
+    }
+    if (to === "no_bid") {
+      linePatch.closedAt = now;
+      linePatch.lossReason = input.lossReason ?? null;
+    }
+    if (to === "expired") linePatch.expiredAt = now;
+    if (to === "cancelled") linePatch.cancelledAt = now;
+
+    await tx
+      .update(requestLines)
+      .set(linePatch)
+      .where(and(eq(requestLines.requestId, requestId), inArray(requestLines.id, input.lineIds)));
+
+    // Recompute the header status from the FULL post-update line set.
+    const allLines = await tx
+      .select({ status: requestLines.status })
+      .from(requestLines)
+      .where(eq(requestLines.requestId, requestId));
+    const headerStatus = rollupRequestStatus(allLines.map((l) => l.status as RequestStatus));
+
+    const headerPatch: Partial<typeof requests.$inferInsert> = { status: headerStatus, updatedAt: now };
+    if (headerStatus === "won") headerPatch.wonAt = now;
+    if (headerStatus === "lost") headerPatch.lostAt = now;
+    if (headerStatus === "no_bid") headerPatch.closedAt = now;
+    if (headerStatus === "expired") headerPatch.expiredAt = now;
+    if (headerStatus === "cancelled") headerPatch.cancelledAt = now;
+    await tx.update(requests).set(headerPatch).where(eq(requests.id, requestId));
+
+    return { requestId, lineIds: input.lineIds, to, headerStatus };
+  });
+}
+
+// ── markLinesKpIssued — stamp "КП по этому плечу выпущено" after a КП render ──
+export async function markLinesKpIssued(
+  requestId: string,
+  lineIds: string[],
+): Promise<{ requestId: string; count: number }> {
+  if (lineIds.length === 0) return { requestId, count: 0 };
+  const updated = await db
+    .update(requestLines)
+    .set({ kpIssuedAt: new Date() })
+    .where(and(eq(requestLines.requestId, requestId), inArray(requestLines.id, lineIds)))
+    .returning({ id: requestLines.id });
+  return { requestId, count: updated.length };
+}
+
+// ── delete — only while EVERY direction is still new (cancel legs otherwise) ──
 export async function deleteRequest(id: string): Promise<{ id: string }> {
   return db.transaction(async (tx) => {
-    const current = await loadRequest(tx, id);
-    if (current.status !== "new") {
-      throw new RequestError(409, "Удалять можно только новый запрос — остальные отменяйте");
+    await loadRequest(tx, id);
+    const lines = await tx
+      .select({ status: requestLines.status })
+      .from(requestLines)
+      .where(eq(requestLines.requestId, id));
+    const allNew = lines.every((l) => l.status === "new");
+    if (!allNew) {
+      throw new RequestError(
+        409,
+        "Удалить весь запрос можно, только пока все направления новые — иначе отзывайте направления по отдельности",
+      );
     }
     await tx.delete(requests).where(eq(requests.id, id)); // lines cascade
     return { id };
