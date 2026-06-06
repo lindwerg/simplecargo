@@ -12,6 +12,7 @@ export interface StationCandidate {
   nameNormalized: string;
   roadCode: number | null;
   roadName: string | null;
+  roadShort: string | null; // RZD short code (e.g. "СВР") — auto-fills the road field
   score: number;
 }
 
@@ -22,6 +23,7 @@ export interface ScoringRow {
   nameNormalized: string;
   roadCode: number | null;
   roadName: string | null;
+  roadShort: string | null;
   trgmSim: number;
 }
 
@@ -75,6 +77,7 @@ export function scoreCandidates(
       nameNormalized: row.nameNormalized,
       roadCode: row.roadCode,
       roadName: row.roadName,
+      roadShort: row.roadShort,
       score: clampScore(score),
     };
   });
@@ -140,6 +143,7 @@ export async function resolveStationName(
         s.name_normalized AS name_normalized,
         s.road_code AS road_code,
         r.full_name_ru AS road_name,
+        r.short_code AS road_short,
         similarity(s.name_normalized, ${queryNorm}) AS trgm
       FROM stations s
       LEFT JOIN roads r ON r.rzd_code = s.road_code
@@ -151,15 +155,16 @@ export async function resolveStationName(
         s.name_normalized AS name_normalized,
         s.road_code AS road_code,
         r.full_name_ru AS road_name,
+        r.short_code AS road_short,
         1::real AS trgm
       FROM station_aliases a
       JOIN stations s ON s.esr_code = a.esr_code
       LEFT JOIN roads r ON r.rzd_code = s.road_code
       WHERE a.alias_normalized = ${queryNorm}
     )
-    SELECT esr_code, name, name_normalized, road_code, road_name, MAX(trgm) AS trgm
+    SELECT esr_code, name, name_normalized, road_code, road_name, road_short, MAX(trgm) AS trgm
     FROM matches
-    GROUP BY esr_code, name, name_normalized, road_code, road_name
+    GROUP BY esr_code, name, name_normalized, road_code, road_name, road_short
     ORDER BY trgm DESC
     LIMIT ${CANDIDATE_LIMIT}
   `;
@@ -173,6 +178,8 @@ export async function resolveStationName(
     nameNormalized: String(row.name_normalized),
     roadCode: row.road_code === null || row.road_code === undefined ? null : Number(row.road_code),
     roadName: row.road_name === null || row.road_name === undefined ? null : String(row.road_name),
+    roadShort:
+      row.road_short === null || row.road_short === undefined ? null : String(row.road_short),
     trgmSim: Number(row.trgm),
   }));
 

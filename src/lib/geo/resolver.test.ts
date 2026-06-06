@@ -7,6 +7,7 @@ function row(overrides: Partial<ScoringRow> & Pick<ScoringRow, "esrCode" | "name
     name: overrides.name ?? overrides.nameNormalized,
     roadCode: overrides.roadCode ?? null,
     roadName: overrides.roadName ?? null,
+    roadShort: overrides.roadShort ?? null,
     ...overrides,
   };
 }
