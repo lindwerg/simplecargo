@@ -9,6 +9,7 @@ import { listPaymentDrafts } from "@/lib/finances/payments";
 import { isTochkaConfigured } from "@/lib/finances/tochka-client";
 import { PaymentForm } from "@/components/finances/PaymentForm";
 import { PaymentsList } from "@/components/finances/PaymentsList";
+import { WebhookManager } from "@/components/finances/WebhookManager";
 
 export const metadata = { title: "Платежи" };
 export const dynamic = "force-dynamic";
@@ -50,6 +51,11 @@ export default async function PaymentsPage() {
           <h2 className="label-caps">Черновики на подписи</h2>
         </div>
         <PaymentsList payments={payments} />
+      </section>
+
+      <section className="rounded-lg border border-border bg-surface-1 p-4">
+        <p className="label-caps mb-2">Уведомления банка</p>
+        <WebhookManager />
       </section>
     </div>
   );

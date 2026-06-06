@@ -35,6 +35,10 @@ export const envSchema = z.object({
     .default("https://enter.tochka.com/doc/openapi/static/keys/public"),
   // БИК банка плательщика для исходящих платежей (счета в Точке → БИК Точки).
   TOCHKA_PAYER_BIC: z.string().min(9).max(9).default("044525104"),
+  // SMTP для отправки выписок на email — ОПЦИОНАЛЬНО. Без него кнопка email
+  // отдаёт 501. Формат SMTP_URL: smtp://user:pass@host:587 (или smtps:// для 465).
+  SMTP_URL: z.string().min(1).optional(),
+  SMTP_FROM: z.string().min(1).optional(), // "РНС Финансы <info@rusnerudstroy.ru>"
 });
 
 export type Env = z.infer<typeof envSchema>;

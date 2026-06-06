@@ -4,8 +4,10 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 import { auth } from "@/lib/auth";
+import { COMPANY } from "@/lib/config/company";
 import { listAccounts } from "@/lib/finances/repository";
 import { isTochkaConfigured } from "@/lib/finances/tochka-client";
+import { isEmailConfigured } from "@/lib/finances/mailer";
 import { StatementBuilder } from "@/components/finances/StatementBuilder";
 
 export const metadata = { title: "Выписка" };
@@ -39,7 +41,11 @@ export default async function StatementPage() {
         </p>
       </header>
 
-      <StatementBuilder account={account} />
+      <StatementBuilder
+        account={account}
+        defaultEmail={COMPANY.email}
+        emailEnabled={isEmailConfigured()}
+      />
     </div>
   );
 }

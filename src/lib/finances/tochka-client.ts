@@ -43,7 +43,7 @@ function getConfig(): TochkaConfig {
 }
 
 interface RequestOptions {
-  method?: "GET" | "POST";
+  method?: "GET" | "POST" | "PUT" | "DELETE";
   body?: unknown;
   timeoutMs?: number;
 }
@@ -184,4 +184,34 @@ export async function createPaymentForSign(payload: PaymentForSignPayload): Prom
 /** GET статус платежа по requestId. */
 export function getPaymentStatus(requestId: string): Promise<unknown> {
   return request(`${PAYMENT}/status/${encodeURIComponent(requestId)}`);
+}
+
+// --- Вебхуки (регистрация подписки) ---------------------------------------
+const WEBHOOK = "/webhook/v1.0";
+
+// События, на которые подписываемся (в рамках прав токена).
+export const DEFAULT_WEBHOOK_EVENTS = [
+  "incomingPayment",
+  "outgoingPayment",
+  "incomingSbpPayment",
+] as const;
+
+function webhookClientId(): string {
+  if (!env.TOCHKA_CLIENT_ID) {
+    throw new TochkaError(501, "Не задан TOCHKA_CLIENT_ID для вебхуков");
+  }
+  return env.TOCHKA_CLIENT_ID;
+}
+
+/** PUT зарегистрировать (заменить) подписку на вебхуки: { webhooksList, url }. */
+export function registerWebhook(url: string, webhooksList: readonly string[]): Promise<unknown> {
+  return request(`${WEBHOOK}/${encodeURIComponent(webhookClientId())}`, {
+    method: "PUT",
+    body: { url, webhooksList: [...webhooksList] },
+  });
+}
+
+/** GET текущие подписки. */
+export function getWebhooks(): Promise<unknown> {
+  return request(`${WEBHOOK}/${encodeURIComponent(webhookClientId())}`);
 }

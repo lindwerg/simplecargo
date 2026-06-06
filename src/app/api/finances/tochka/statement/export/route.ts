@@ -1,77 +1,38 @@
-import * as XLSX from "xlsx";
-
 import { apiFail } from "@/lib/api/response";
 import { AuthError, requireSession } from "@/lib/api/session";
-import { listTransactionsForExport, type ExportRow } from "@/lib/finances/repository";
+import { env } from "@/lib/env";
+import { COMPANY } from "@/lib/config/company";
+import { listAccounts, listTransactionsForExport } from "@/lib/finances/repository";
+import { build1cBuffer, buildCsv, buildXlsx, type PartySide } from "@/lib/finances/export-builders";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
-function ru(direction: string): string {
-  return direction === "in" ? "Поступление" : "Списание";
+function contentDisposition(name: string, ext: string): string {
+  // Header values are ByteStrings — the plain filename must be ASCII; the Cyrillic
+  // name goes in the RFC 5987 filename* field.
+  return `attachment; filename="statement.${ext}"; filename*=UTF-8''${encodeURIComponent(name)}`;
 }
 
-function signed(row: ExportRow): number {
-  return row.direction === "in" ? row.amount : -row.amount;
+async function selfParty(): Promise<PartySide> {
+  const accounts = await listAccounts();
+  return {
+    accountNumber: accounts[0]?.maskedNumber ?? "",
+    bic: env.TOCHKA_PAYER_BIC,
+    name: COMPANY.name,
+    inn: COMPANY.inn,
+    kpp: COMPANY.kpp,
+  };
 }
 
-interface SheetRow {
-  Дата: string;
-  Тип: string;
-  Сумма: number;
-  Контрагент: string;
-  ИНН: string;
-  "Счёт": string;
-  БИК: string;
-  Назначение: string;
-  "№ док": string;
-  Статус: string;
-}
-
-function toSheetRows(rows: ExportRow[]): SheetRow[] {
-  return rows.map((r) => ({
-    Дата: r.date.slice(0, 10),
-    Тип: ru(r.direction),
-    Сумма: signed(r),
-    Контрагент: r.counterpartyName ?? "",
-    ИНН: r.counterpartyInn ?? "",
-    "Счёт": r.counterpartyAccount ?? "",
-    БИК: r.counterpartyBankBic ?? "",
-    Назначение: r.purpose ?? "",
-    "№ док": r.documentNumber ?? "",
-    Статус: r.status,
-  }));
-}
-
-function csvEscape(value: string | number): string {
-  const s = String(value);
-  return /[";\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-}
-
-function buildCsv(rows: SheetRow[]): string {
-  if (rows.length === 0) return "﻿";
-  const headers = Object.keys(rows[0]);
-  const lines = [headers.join(";")];
-  for (const row of rows) {
-    const rec = row as unknown as Record<string, string | number>;
-    lines.push(headers.map((h) => csvEscape(rec[h])).join(";"));
-  }
-  // BOM so Excel reads UTF-8 Cyrillic correctly.
-  return `﻿${lines.join("\r\n")}`;
-}
-
-function contentDisposition(name: string): string {
-  return `attachment; filename="${name}"; filename*=UTF-8''${encodeURIComponent(name)}`;
-}
-
-// GET ?format=csv|xlsx&from=&to=&direction=&q= — download a statement of synced ops.
+// GET ?format=csv|xlsx|1c&from=&to=&direction=&q= — download a statement.
 export async function GET(request: Request): Promise<Response> {
   try {
     await requireSession(request.headers);
     const { searchParams } = new URL(request.url);
-    const format = searchParams.get("format") === "xlsx" ? "xlsx" : "csv";
+    const format = searchParams.get("format") ?? "csv";
     const from = searchParams.get("from") ?? "";
     const to = searchParams.get("to") ?? "";
     if (!DATE_RE.test(from) || !DATE_RE.test(to)) return apiFail("Некорректный период", 422);
@@ -85,30 +46,31 @@ export async function GET(request: Request): Promise<Response> {
       ...(direction ? { direction } : {}),
       ...(search ? { search } : {}),
     });
-    const sheetRows = toSheetRows(rows);
     const base = `Выписка_${from}_${to}`;
 
     if (format === "xlsx") {
-      const ws = XLSX.utils.json_to_sheet(sheetRows);
-      ws["!cols"] = [
-        { wch: 12 }, { wch: 12 }, { wch: 14 }, { wch: 36 }, { wch: 14 },
-        { wch: 24 }, { wch: 11 }, { wch: 50 }, { wch: 8 }, { wch: 10 },
-      ];
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Выписка");
-      const buf = XLSX.write(wb, { type: "buffer", bookType: "xlsx" }) as Buffer;
-      return new Response(new Uint8Array(buf), {
+      return new Response(new Uint8Array(buildXlsx(rows)), {
         headers: {
           "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          "Content-Disposition": contentDisposition(`${base}.xlsx`),
+          "Content-Disposition": contentDisposition(`${base}.xlsx`, "xlsx"),
         },
       });
     }
 
-    return new Response(buildCsv(sheetRows), {
+    if (format === "1c") {
+      const buf = build1cBuffer(rows, { from, to, self: await selfParty() });
+      return new Response(new Uint8Array(buf), {
+        headers: {
+          "Content-Type": "text/plain; charset=windows-1251",
+          "Content-Disposition": contentDisposition(`${base}.txt`, "txt"),
+        },
+      });
+    }
+
+    return new Response(buildCsv(rows), {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": contentDisposition(`${base}.csv`),
+        "Content-Disposition": contentDisposition(`${base}.csv`, "csv"),
       },
     });
   } catch (error: unknown) {
