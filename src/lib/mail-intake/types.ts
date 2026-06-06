@@ -15,6 +15,8 @@ export interface ParsedEmail {
   subject: string;
   text: string; // plain-text body (mailparser-decoded)
   messageId: string; // RFC Message-ID — idempotency + threading
+  inReplyTo?: string | null; // RFC In-Reply-To — links a carrier reply to our RFQ
+  references?: string[]; // RFC References thread chain (newest last)
   date?: Date | null;
   to?: string[];
   cc?: string[];

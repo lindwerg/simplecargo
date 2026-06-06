@@ -3,6 +3,7 @@ import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { counterparties } from "@/lib/db/schema/counterparties";
 import { requestLines, requests } from "@/lib/db/schema/requests";
+import { publishRealtime } from "@/lib/realtime/notify";
 import {
   canTransition,
   canTransitionLine,
@@ -165,6 +166,8 @@ export async function listDirectionCards(filter: RequestListFilter): Promise<Dir
       status: requestLines.status,
       lossReason: requestLines.lossReason,
       kpIssuedAt: requestLines.kpIssuedAt,
+      intakeSource: requests.intakeSource,
+      needsReview: requests.needsReview,
       clientSuggestedId: requests.clientSuggestedId,
       clientRaw: requests.clientRaw,
       clientName: counterparties.nameCanonical,
@@ -246,6 +249,20 @@ export async function getRequest(id: string) {
     .orderBy(asc(requestLines.sortOrder));
 
   return { ...headerRows[0].request, clientName: headerRows[0].clientName, lines };
+}
+
+// ── confirm an AI-email request (clear the review gate) ──────────────────────
+// ai_email rows land with needs_review=true so the operator confirms before the
+// request is acted on (the safety boundary of auto-intake). This clears the flag.
+export async function confirmReview(id: string): Promise<{ id: string }> {
+  const updated = await db
+    .update(requests)
+    .set({ needsReview: false, updatedAt: new Date() })
+    .where(eq(requests.id, id))
+    .returning({ id: requests.id });
+  if (!updated[0]) throw new RequestError(404, "Запрос не найден");
+  await publishRealtime({ kind: "request", id });
+  return { id: updated[0].id };
 }
 
 // ── update header fields (lines edited via re-create in this slice) ──────────

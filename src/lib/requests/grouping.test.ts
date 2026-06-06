@@ -18,6 +18,8 @@ function card(over: Partial<DirectionCardView>): DirectionCardView {
     status: over.status ?? "new",
     lossReason: over.lossReason ?? null,
     kpIssuedAt: over.kpIssuedAt ?? null,
+    intakeSource: over.intakeSource ?? "manual",
+    needsReview: over.needsReview ?? false,
     clientSuggestedId: over.clientSuggestedId ?? null,
     clientRaw: over.clientRaw ?? null,
     clientName: over.clientName ?? null,

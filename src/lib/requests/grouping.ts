@@ -13,6 +13,8 @@ export interface DirectionCardView {
   status: string; // DIRECTION (request_line) status — drives the board bucket
   lossReason: string | null; // per-leg loss reason when terminal (no_bid/lost)
   kpIssuedAt: Date | null; // "КП по этому плечу уже выпущено" badge
+  intakeSource: string; // manual | ai_email — provenance badge
+  needsReview: boolean; // ai_email auto-intake awaiting operator confirmation
   // client (from parent request) — D16: real id, TEMP raw label, or unlinked
   clientSuggestedId: string | null;
   clientRaw: string | null;

@@ -25,20 +25,25 @@ function emptyExtraction(lines: ExtractionResult["lines"] = []): ExtractionResul
   return { clientGuess: null, wagonType: "ПВ", periodFrom: null, periodTo: null, lines, warnings: [] };
 }
 
-function ports(): IntakePorts & {
+function ports(
+  opts: { quoteMatches?: boolean } = {},
+): IntakePorts & {
   created: unknown[];
   invoices: unknown[];
   quarantined: unknown[];
+  quoteMatchCalls: unknown[];
 } {
   const created: unknown[] = [];
   const invoices: unknown[] = [];
   const quarantined: unknown[] = [];
+  const quoteMatchCalls: unknown[] = [];
   return {
     systemUserId: "system-user",
     sourceFileId: "file-1",
     created,
     invoices,
     quarantined,
+    quoteMatchCalls,
     async createRequest(input) {
       created.push(input);
       return { id: "req-1", requestNumber: "R-2026-0001" };
@@ -50,6 +55,12 @@ function ports(): IntakePorts & {
     async quarantine(row) {
       quarantined.push(row);
       return { id: quarantined.length };
+    },
+    async matchCarrierQuote(input) {
+      quoteMatchCalls.push(input);
+      return opts.quoteMatches
+        ? { matched: true, updatedCount: 1, requestId: "req-1" }
+        : { matched: false, updatedCount: 0, requestId: null };
     },
   };
 }
@@ -175,6 +186,53 @@ describe("processEmail orchestrator", () => {
     );
     expect(out.invoiceIds).toHaveLength(1);
     expect((p.invoices[0] as { invoiceNumber: string }).invoiceNumber).toBe("245");
+  });
+
+  it("attaches a carrier quote reply back to its RFQ (no quarantine)", async () => {
+    const p = ports({ quoteMatches: true });
+    const d = deps(
+      {
+        classify: async () =>
+          classifyResultSchema.parse({ bodyKind: "carrier_quote", bodyConfidence: 0.9 }),
+        extractCarrierQuote: async () =>
+          carrierQuoteResultSchema.parse({
+            ourRequestRef: "R-2026-0001",
+            costPerWagon: 1900,
+            wagonsOffered: 10,
+            confidence: 0.9,
+          }),
+        resolveSender: async () => ({ companyId: "carrier-1", roles: ["carrier"] }),
+      },
+      p,
+    );
+    const out = await processEmail(
+      email({ text: "Готовы дать 10 вагонов по 1900 ₽", inReplyTo: "<rfq-1@simplecargo>" }),
+      d,
+    );
+    expect(out.carrierQuotesMatched).toBe(1);
+    expect(p.quarantined).toHaveLength(0);
+    expect(p.quoteMatchCalls).toHaveLength(1);
+    expect((p.quoteMatchCalls[0] as { threadRefs: string[] }).threadRefs).toContain(
+      "<rfq-1@simplecargo>",
+    );
+  });
+
+  it("quarantines a carrier quote that can't be matched to any RFQ", async () => {
+    const p = ports({ quoteMatches: false });
+    const d = deps(
+      {
+        classify: async () =>
+          classifyResultSchema.parse({ bodyKind: "carrier_quote", bodyConfidence: 0.9 }),
+        extractCarrierQuote: async () =>
+          carrierQuoteResultSchema.parse({ costPerWagon: 1900, confidence: 0.9 }),
+        resolveSender: async () => null,
+      },
+      p,
+    );
+    const out = await processEmail(email({ text: "ставка 1900" }), d);
+    expect(out.carrierQuotesMatched).toBe(0);
+    expect(p.quarantined).toHaveLength(1);
+    expect((p.quarantined[0] as { reasonCode: string }).reasonCode).toBe("CARRIER_QUOTE_MANUAL");
   });
 
   it("ignores a plain 'thank you' email (no LLM extraction calls)", async () => {

@@ -10,22 +10,28 @@ import type { QuarantineReason } from "./thresholds";
 export interface QuarantineRowInsert {
   sourceFileId: string | null;
   tier: "recoverable";
-  severity: "WARNING" | "INFO";
-  ruleId: string; // E-01..E-04 (mail-intake namespace)
-  reasonCode: QuarantineReason | "CARRIER_QUOTE_MANUAL" | "UNSUPPORTED_ATTACHMENT";
+  severity: "ERROR" | "WARNING" | "INFO";
+  ruleId: string; // E-01..E-07 (mail-intake namespace)
+  reasonCode:
+    | QuarantineReason
+    | "CARRIER_QUOTE_MANUAL"
+    | "UNSUPPORTED_ATTACHMENT"
+    | "PROCESSING_ERROR";
   agentReason: string | null; // ИИ-объяснение оператору
   rawRowJson: unknown; // сериализованный черновик для дозаноса без LLM
 }
 
 type AnyReason = QuarantineRowInsert["reasonCode"];
 
-const RULE_BY_REASON: Record<AnyReason, { ruleId: string; severity: "WARNING" | "INFO" }> = {
+const RULE_BY_REASON: Record<AnyReason, { ruleId: string; severity: "ERROR" | "WARNING" | "INFO" }> = {
   LOW_CONFIDENCE: { ruleId: "E-01", severity: "WARNING" },
   UNKNOWN_SENDER: { ruleId: "E-02", severity: "INFO" },
   ROLE_KIND_CONFLICT: { ruleId: "E-03", severity: "WARNING" },
   NO_LINES_EXTRACTED: { ruleId: "E-04", severity: "WARNING" },
   CARRIER_QUOTE_MANUAL: { ruleId: "E-05", severity: "INFO" },
   UNSUPPORTED_ATTACHMENT: { ruleId: "E-06", severity: "INFO" },
+  // письмо упало при обработке (транзиентный сбой LLM/БД) — НЕ теряем, кладём сюда
+  PROCESSING_ERROR: { ruleId: "E-07", severity: "ERROR" },
 };
 
 export function buildQuarantineRow(params: {

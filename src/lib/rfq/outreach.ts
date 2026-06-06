@@ -119,16 +119,18 @@ export async function sendRfqToCarriers(
     });
 
     const subject = `Запрос ставок ${request.requestNumber ?? ""}: предоставление вагонов`.trim();
-    await sendMail({ to: [email], subject, text });
+    const { messageId } = await sendMail({ to: [email], subject, text });
 
-    // record one polled quote per selected line for this carrier
+    // record one polled quote per selected line for this carrier. Store the REAL
+    // outbound Message-ID so a carrier's reply (In-Reply-To/References) threads
+    // straight back to these rows (matchCarrierQuote in intake-repo).
     const rows = selectedLines.map((line) => ({
       requestLineId: line.id,
       ownerId: carrierId,
       status: "polled" as const,
       polledVia: "email" as const,
       polledAt: new Date(),
-      sourceMessageId: request.requestNumber,
+      sourceMessageId: messageId,
     }));
     if (rows.length > 0) {
       await db.insert(requestOwnerQuotes).values(rows);
