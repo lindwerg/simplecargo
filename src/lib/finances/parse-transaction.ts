@@ -88,11 +88,21 @@ const DATE_KEYS = [
 ] as const;
 const STATUS_KEYS = ["status", "Status"] as const;
 
-const INN_KEYS = ["inn", "Inn", "INN"] as const;
+const INN_KEYS = ["inn", "Inn", "INN", "payerInn", "receiverInn"] as const;
 const KPP_KEYS = ["kpp", "Kpp", "KPP"] as const;
-const NAME_KEYS = ["name", "Name", "fullName", "shortName"] as const;
-const ACCOUNT_KEYS = ["account", "Account", "accountNumber", "number", "Identification"] as const;
-const BIC_KEYS = ["bic", "Bic", "BIC", "bankBic", "bankCode", "SchemeName"] as const;
+const NAME_KEYS = ["name", "Name", "fullName", "shortName", "payerName", "receiverName"] as const;
+// Live Tochka puts the counterparty account number in *Account.identification.
+const ACCOUNT_KEYS = [
+  "identification",
+  "Identification",
+  "account",
+  "Account",
+  "accountNumber",
+  "number",
+] as const;
+// БИК lives in *Agent.identification (9 digits); flat variants kept as fallback.
+const AGENT_BIC_KEYS = ["bic", "Bic", "BIC", "bankBic", "bankCode", "identification"] as const;
+const FLAT_BIC_KEYS = ["bic", "Bic", "BIC", "bankBic", "bankCode", "payerBankBic", "receiverBankBic"] as const;
 
 // Containers holding the counterparty, by direction. `in` (Credit) → debtor side;
 // `out` (Debit) → creditor side. `counterParty` is Tochka's flatter variant.
@@ -188,12 +198,23 @@ export function parseTransaction(input: unknown): NormalizedTransaction {
   const account = pickNested(tx, accountContainers);
   const agent = pickNested(tx, agentContainers);
 
-  // Search party → account → agent → top-level (flat variant) in priority order.
-  const search = (keys: readonly string[]): string | null =>
+  // Identity (inn/kpp/name): party → account → agent → flat top-level.
+  const searchIdentity = (keys: readonly string[]): string | null =>
     pickString(party, keys) ??
     pickString(account, keys) ??
     pickString(agent, keys) ??
     pickString(tx, keys);
+
+  // Account number: account container first, then party, then flat — NEVER the
+  // agent (whose `identification` is the БИК, not the account number).
+  const counterpartyAccount =
+    pickString(account, ACCOUNT_KEYS) ??
+    pickString(party, ACCOUNT_KEYS) ??
+    pickString(tx, ["counterpartyAccount", "payerAccount", "receiverAccount", "account", "accountNumber"]);
+
+  // БИК: agent container (its `identification` is the БИК), else flat.
+  const counterpartyBankBic =
+    pickString(agent, AGENT_BIC_KEYS) ?? pickString(tx, FLAT_BIC_KEYS);
 
   return {
     externalTxId,
@@ -204,11 +225,11 @@ export function parseTransaction(input: unknown): NormalizedTransaction {
     currency,
     postedAt,
     purposeRaw: pickString(tx, PURPOSE_KEYS),
-    counterpartyInn: search(INN_KEYS),
-    counterpartyKpp: search(KPP_KEYS),
-    counterpartyName: search(NAME_KEYS),
-    counterpartyAccount: search(ACCOUNT_KEYS),
-    counterpartyBankBic: pickString(agent, BIC_KEYS) ?? search(BIC_KEYS),
+    counterpartyInn: searchIdentity(INN_KEYS),
+    counterpartyKpp: searchIdentity(KPP_KEYS),
+    counterpartyName: searchIdentity(NAME_KEYS),
+    counterpartyAccount,
+    counterpartyBankBic,
     status: normalizeStatus(pickString(tx, STATUS_KEYS)),
     raw: input,
   };

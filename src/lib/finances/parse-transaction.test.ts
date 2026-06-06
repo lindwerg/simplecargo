@@ -52,6 +52,64 @@ describe("parseTransaction — direction & counterparty", () => {
   });
 });
 
+// Exact shape observed live from Tochka /open-banking/v1.0 statements (2026-06):
+// numeric Amount, *Account.identification = account number, *Agent.identification = БИК.
+const liveDebit = {
+  transactionId: "999000111",
+  paymentId: "888777",
+  creditDebitIndicator: "Debit",
+  status: "Booked",
+  documentNumber: "272",
+  transactionTypeCode: "Платежное поручение",
+  documentProcessDate: "2026-06-05",
+  description: "Оплата за вагоны по договору 17/2026",
+  Amount: { amount: 711000, amountNat: 711000, currency: "RUB" },
+  CreditorParty: { inn: "5009876543", name: "ООО Вагон-Сервис", kpp: "500901001" },
+  CreditorAccount: { schemeName: "RU.CBR.AccountNumber", identification: "40702810900000099999" },
+  CreditorAgent: {
+    schemeName: "RU.CBR.BIK",
+    identification: "044525111",
+    accountIdentification: "30101810400000000111",
+    name: "АО БАНК",
+  },
+};
+
+const liveCredit = {
+  transactionId: "999000222",
+  paymentId: "888778",
+  creditDebitIndicator: "Credit",
+  status: "Booked",
+  documentNumber: "2451",
+  documentProcessDate: "2026-06-05",
+  description: "Поступление по счёту 245",
+  Amount: { amount: 112342.63, amountNat: 112342.63, currency: "RUB" },
+  DebtorParty: { inn: "7701234567", name: "ООО Ромашка", kpp: "770101001" },
+  DebtorAccount: { schemeName: "RU.CBR.AccountNumber", identification: "40702810400000012345" },
+  DebtorAgent: { schemeName: "RU.CBR.BIK", identification: "044525999", name: "ПАО БАНК2" },
+};
+
+describe("parseTransaction — LIVE Tochka shape", () => {
+  it("Debit: reads Creditor account from identification and БИК from agent identification", () => {
+    const tx = parseTransaction(liveDebit);
+    expect(tx.direction).toBe("out");
+    expect(tx.amount).toBe(711000);
+    expect(tx.counterpartyInn).toBe("5009876543");
+    expect(tx.counterpartyName).toBe("ООО Вагон-Сервис");
+    expect(tx.counterpartyAccount).toBe("40702810900000099999");
+    expect(tx.counterpartyBankBic).toBe("044525111"); // agent.identification, NOT account
+  });
+
+  it("Credit: reads Debtor side (от кого), numeric decimal amount", () => {
+    const tx = parseTransaction(liveCredit);
+    expect(tx.direction).toBe("in");
+    expect(tx.amount).toBe(112342.63);
+    expect(tx.counterpartyInn).toBe("7701234567");
+    expect(tx.counterpartyAccount).toBe("40702810400000012345");
+    expect(tx.counterpartyBankBic).toBe("044525999");
+    expect(tx.amountNat).toBe(112342.63);
+  });
+});
+
 describe("parseTransaction — amounts & dates", () => {
   it("parses a plain decimal string amount", () => {
     expect(parseTransaction(creditNested).amount).toBe(150000);
