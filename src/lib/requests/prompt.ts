@@ -22,7 +22,12 @@ export const SYSTEM_PROMPT = `Ты — ассистент железнодоро
       "wagonsRequested": number|null, // число вагонов (из колонки "объём, ваг/мес" и т.п.)
       "tonnagePerWagon": number|null, // тонн на вагон, если указано
       "targetRatePerWagon": number|null, // желаемая клиентом ставка за вагон (число), если извлекается
-      "targetRateRaw": string|null    // ставка как написана ("1980", "1 980 ₽", "договорная")
+      "targetRateRaw": string|null,   // ставка как написана ("1980", "1 980 ₽", "договорная")
+      "wagonType": string|null,       // вид вагона на эту строку ("полувагон"/"цистерна"…); иначе null (наследуй из шапки)
+      "targetRateKind": string|null,  // "flat_rub" | "tariff_indicative" | "tariff_plus_markup"; иначе null
+      "targetRateMarkupPct": number|null, // наценка к тарифу в % (число, может быть 0); иначе null
+      "targetTariffClass": number|null,   // тарифный класс груза 1|2|3, если указан; иначе null
+      "targetTariffRef": string|null  // ссылка на тариф ("10-01"), если указан; иначе null
     }
   ],
   "warnings": string[]                // короткие заметки на русском о проблемах распознавания
@@ -39,7 +44,13 @@ export const SYSTEM_PROMPT = `Ты — ассистент железнодоро
 8. КЛИЕНТ — если в тексте/подсказке есть название, верни в clientGuess; иначе null. Это только подсказка — оператор подтвердит вручную.
 9. ПЕРИОД — если указан месяц/диапазон, верни ISO-даты; иначе null. Не выдумывай год.
 10. Станции переноси как написано (включая «все станции») — не нормализуй, не выбирай ЭСР-код.
-11. Если извлечь нечего — верни "lines": [] и причину в "warnings".`;
+11. ВИД ВАГОНА НА СТРОКУ: распознавай вид вагона для каждой строки, если он указан (полувагон/платформа/крытый/цистерна/фитинговая платформа/хоппер/зерновоз/цементовоз/минераловоз…) → wagonType. Если у строки вид вагона не указан — оставь null (он будет унаследован из шапки wagonType). НЕ ВЫДУМЫВАЙ вид вагона.
+12. СТАВКА — ФОРМА ВЫРАЖЕНИЯ:
+    • если ставка задана как «+N% к тарифу 10-01» (или «индикатив», «от тарифа», «к Прейскуранту 10-01») → targetRateKind="tariff_indicative", targetRateMarkupPct=N (число, может быть 0), targetTariffRef="10-01" (или указанный код тарифа);
+    • если просто рубли за вагон («1980», «1 980 ₽/ваг») → targetRateKind="flat_rub" и targetRatePerWagon=число;
+    • если есть тарифный класс груза (1/2/3) → targetTariffClass=число;
+    • НЕ ВЫДУМЫВАЙ: всё, что не указано (targetRateKind, targetRateMarkupPct, targetTariffClass, targetTariffRef) — null.
+13. Если извлечь нечего — верни "lines": [] и причину в "warnings".`;
 
 interface BuildArgs {
   clientHint?: string | undefined;

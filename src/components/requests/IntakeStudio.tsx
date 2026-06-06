@@ -6,6 +6,12 @@ import { FileUp, Loader2, Mic, Plus, Square, Trash2, Type } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { ClientPicker, type ClientValue } from "./ClientPicker";
+import { ClientConfirmBanner } from "./ClientConfirmBanner";
+import { RateModeInput } from "./RateModeInput";
+import { StationField } from "./StationField";
+import { WagonTypePicker } from "./WagonTypePicker";
+
+const DEFAULT_TARIFF_REF = "10-01";
 
 type Channel = "upload" | "voice" | "paste" | "manual";
 type Phase = "intake" | "review";
@@ -14,24 +20,36 @@ interface LineDraft {
   key: string;
   originRaw: string;
   originRoadRaw: string;
+  originEsr: string | null;
   destRaw: string;
   destRoadRaw: string;
+  destEsr: string | null;
   cargoName: string;
   wagonsRequested: string;
   tonnagePerWagon: string;
+  wagonType: string;
   targetRateRaw: string;
+  targetRateKind: string;
+  targetRateMarkupPct: string;
+  targetTariffClass: string;
 }
 
 interface ExtractedLine {
   originRaw: string | null;
   originRoadRaw: string | null;
+  originEsr: string | null;
   destRaw: string | null;
   destRoadRaw: string | null;
+  destEsr: string | null;
   cargoName: string | null;
   wagonsRequested: number | null;
   tonnagePerWagon: number | null;
   targetRatePerWagon: number | null;
   targetRateRaw: string | null;
+  wagonType: string | null;
+  targetRateKind: string | null;
+  targetRateMarkupPct: number | null;
+  targetTariffClass: number | null;
 }
 
 interface ExtractionResult {
@@ -47,33 +65,90 @@ const inputClass =
   "h-9 w-full rounded-[var(--radius-sm)] border border-border bg-surface-inset px-2.5 text-sm text-text placeholder:text-text-tertiary focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]";
 
 let keySeq = 0;
-function emptyLine(): LineDraft {
+function emptyLine(headerWagonType = ""): LineDraft {
   keySeq += 1;
   return {
     key: `l${keySeq}`,
     originRaw: "",
     originRoadRaw: "",
+    originEsr: null,
     destRaw: "",
     destRoadRaw: "",
+    destEsr: null,
     cargoName: "",
     wagonsRequested: "",
     tonnagePerWagon: "",
+    wagonType: headerWagonType,
     targetRateRaw: "",
+    targetRateKind: "flat_rub",
+    targetRateMarkupPct: "",
+    targetTariffClass: "1",
   };
 }
 
-function fromExtracted(l: ExtractedLine): LineDraft {
+function fromExtracted(l: ExtractedLine, headerWagonType = ""): LineDraft {
   keySeq += 1;
   return {
     key: `l${keySeq}`,
     originRaw: l.originRaw ?? "",
     originRoadRaw: l.originRoadRaw ?? "",
+    originEsr: l.originEsr ?? null,
     destRaw: l.destRaw ?? "",
     destRoadRaw: l.destRoadRaw ?? "",
+    destEsr: l.destEsr ?? null,
     cargoName: l.cargoName ?? "",
     wagonsRequested: l.wagonsRequested != null ? String(l.wagonsRequested) : "",
     tonnagePerWagon: l.tonnagePerWagon != null ? String(l.tonnagePerWagon) : "",
+    wagonType: l.wagonType ?? headerWagonType,
     targetRateRaw: l.targetRateRaw ?? (l.targetRatePerWagon != null ? String(l.targetRatePerWagon) : ""),
+    targetRateKind: l.targetRateKind ?? "flat_rub",
+    targetRateMarkupPct: l.targetRateMarkupPct != null ? String(l.targetRateMarkupPct) : "",
+    targetTariffClass: l.targetTariffClass != null ? String(l.targetTariffClass) : "1",
+  };
+}
+
+function esrOrUndef(esr: string | null): string | undefined {
+  return esr && esr.length === 6 ? esr : undefined;
+}
+
+function parseRub(raw: string): number {
+  return Number(raw.replace(/[^\d.,]/g, "").replace(",", "."));
+}
+
+// Map a LineDraft → /api/requests line payload. flat_rub sends the parsed ₽ amount;
+// the tariff-indicative kind sends the kind + numeric markup% + 1|2|3 class + 10-01 ref.
+function buildLinePayload(l: LineDraft, headerWagonType: string) {
+  const base = {
+    originRaw: l.originRaw.trim(),
+    originRoadRaw: l.originRoadRaw.trim() || undefined,
+    originEsr: esrOrUndef(l.originEsr),
+    destRaw: l.destRaw.trim(),
+    destRoadRaw: l.destRoadRaw.trim() || undefined,
+    destEsr: esrOrUndef(l.destEsr),
+    cargoName: l.cargoName.trim() || undefined,
+    wagonsRequested: Number(l.wagonsRequested) || 1,
+    tonnagePerWagon: l.tonnagePerWagon ? Number(l.tonnagePerWagon) : undefined,
+    wagonType: l.wagonType.trim() || headerWagonType.trim() || undefined,
+    targetRateRaw: l.targetRateRaw.trim() || undefined,
+  };
+
+  if (l.targetRateKind === "flat_rub") {
+    const rate = parseRub(l.targetRateRaw);
+    return {
+      ...base,
+      targetRateKind: "flat_rub" as const,
+      targetRatePerWagon: Number.isFinite(rate) && rate > 0 ? rate : undefined,
+    };
+  }
+
+  const markup = Number(String(l.targetRateMarkupPct).replace(",", "."));
+  const cls = Number(l.targetTariffClass);
+  return {
+    ...base,
+    targetRateKind: l.targetRateKind,
+    targetRateMarkupPct: Number.isFinite(markup) ? markup : 0,
+    targetTariffClass: cls >= 1 && cls <= 3 ? cls : undefined,
+    targetTariffRef: DEFAULT_TARIFF_REF,
   };
 }
 
@@ -96,6 +171,7 @@ export function IntakeStudio() {
 
   const [channel, setChannel] = useState<Channel>("manual");
   const [client, setClient] = useState<ClientValue>(null);
+  const [showGuess, setShowGuess] = useState<string | null>(null);
   const [wagonType, setWagonType] = useState("ПВ");
   const [notes, setNotes] = useState("");
   const [lines, setLines] = useState<LineDraft[]>([]);
@@ -109,10 +185,15 @@ export function IntakeStudio() {
 
   function applyResult(data: ExtractionResult, ch: Channel) {
     setChannel(ch);
-    if (data.clientGuess) setClient({ kind: "temp", name: data.clientGuess });
-    if (data.wagonType) setWagonType(data.wagonType);
-    const drafts = data.lines.map(fromExtracted);
-    setLines(drafts.length > 0 ? drafts : [emptyLine()]);
+    const headerType = data.wagonType ?? "";
+    if (headerType) setWagonType(headerType);
+    // D16: never auto-confirm — set a temp client + raise the «это они?» banner.
+    if (data.clientGuess && client?.kind !== "existing") {
+      setClient({ kind: "temp", name: data.clientGuess });
+      setShowGuess(data.clientGuess);
+    }
+    const drafts = data.lines.map((l) => fromExtracted(l, headerType));
+    setLines(drafts.length > 0 ? drafts : [emptyLine(headerType)]);
     setWarnings(data.warnings ?? []);
     setPhase("review");
   }
@@ -185,20 +266,7 @@ export function IntakeStudio() {
     setError(null);
     const payloadLines = lines
       .filter((l) => l.originRaw.trim() && l.destRaw.trim())
-      .map((l) => {
-        const rateNum = Number(l.targetRateRaw.replace(/[^\d.,]/g, "").replace(",", "."));
-        return {
-          originRaw: l.originRaw.trim(),
-          originRoadRaw: l.originRoadRaw.trim() || undefined,
-          destRaw: l.destRaw.trim(),
-          destRoadRaw: l.destRoadRaw.trim() || undefined,
-          cargoName: l.cargoName.trim() || undefined,
-          wagonsRequested: Number(l.wagonsRequested) || 1,
-          tonnagePerWagon: l.tonnagePerWagon ? Number(l.tonnagePerWagon) : undefined,
-          targetRatePerWagon: Number.isFinite(rateNum) && rateNum > 0 ? rateNum : undefined,
-          targetRateRaw: l.targetRateRaw.trim() || undefined,
-        };
-      });
+      .map((l) => buildLinePayload(l, wagonType));
 
     if (payloadLines.length === 0) {
       setError("Добавьте хотя бы одно направление со станциями");
@@ -347,7 +415,7 @@ export function IntakeStudio() {
           type="button"
           onClick={() => {
             setChannel("manual");
-            setLines([emptyLine()]);
+            setLines([emptyLine(wagonType)]);
             setPhase("review");
           }}
           className="mx-auto inline-flex h-9 items-center gap-2 rounded-[var(--radius-md)] border border-border bg-surface-2 px-4 text-sm text-text hover:bg-surface-3 focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
@@ -375,15 +443,21 @@ export function IntakeStudio() {
       )}
 
       <div className="flex flex-col gap-3 rounded-[var(--radius-lg)] border border-border bg-surface-2 p-4">
+        {showGuess && (
+          <ClientConfirmBanner
+            guess={showGuess}
+            onConfirm={(m) => {
+              setClient({ kind: "existing", id: m.id, name: m.name });
+              setShowGuess(null);
+            }}
+            onReject={() => setShowGuess(null)}
+          />
+        )}
         <ClientPicker value={client} onChange={setClient} />
         <div className="flex flex-wrap items-center gap-3">
           <label className="flex items-center gap-2 text-sm text-text-secondary">
             Вагон
-            <input
-              value={wagonType}
-              onChange={(e) => setWagonType(e.target.value)}
-              className="h-9 w-24 rounded-[var(--radius-sm)] border border-border bg-surface-inset px-2.5 text-sm text-text focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
-            />
+            <WagonTypePicker value={wagonType} onChange={setWagonType} className="w-44" />
           </label>
           <span className="font-mono text-sm tabular-nums text-text-secondary">
             {lines.length} напр. · {totalWagons} ваг
@@ -412,37 +486,67 @@ export function IntakeStudio() {
                 <Trash2 className="size-4" aria-hidden />
               </button>
             </div>
-            <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
-              <Field label="Станция отправления" span2>
-                <input className={inputClass} value={l.originRaw} onChange={(e) => updateLine(l.key, { originRaw: e.target.value })} />
-              </Field>
-              <Field label="Дорога">
-                <input className={inputClass} value={l.originRoadRaw} onChange={(e) => updateLine(l.key, { originRoadRaw: e.target.value })} />
-              </Field>
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+              <StationField
+                label="Станция отправления"
+                raw={l.originRaw}
+                road={l.originRoadRaw}
+                esr={l.originEsr}
+                onChange={(p) =>
+                  updateLine(l.key, {
+                    ...(p.raw !== undefined ? { originRaw: p.raw } : {}),
+                    ...(p.road !== undefined ? { originRoadRaw: p.road } : {}),
+                    ...(p.esr !== undefined ? { originEsr: p.esr } : {}),
+                  })
+                }
+              />
+              <StationField
+                label="Станция назначения"
+                raw={l.destRaw}
+                road={l.destRoadRaw}
+                esr={l.destEsr}
+                onChange={(p) =>
+                  updateLine(l.key, {
+                    ...(p.raw !== undefined ? { destRaw: p.raw } : {}),
+                    ...(p.road !== undefined ? { destRoadRaw: p.road } : {}),
+                    ...(p.esr !== undefined ? { destEsr: p.esr } : {}),
+                  })
+                }
+              />
               <Field label="Вагонов">
                 <input className={inputClass} inputMode="numeric" value={l.wagonsRequested} onChange={(e) => updateLine(l.key, { wagonsRequested: e.target.value })} />
-              </Field>
-              <Field label="Станция назначения" span2>
-                <input className={inputClass} value={l.destRaw} onChange={(e) => updateLine(l.key, { destRaw: e.target.value })} />
-              </Field>
-              <Field label="Дорога">
-                <input className={inputClass} value={l.destRoadRaw} onChange={(e) => updateLine(l.key, { destRoadRaw: e.target.value })} />
               </Field>
               <Field label="Тонн/ваг">
                 <input className={inputClass} inputMode="decimal" value={l.tonnagePerWagon} onChange={(e) => updateLine(l.key, { tonnagePerWagon: e.target.value })} />
               </Field>
-              <Field label="Груз" span2>
+              <Field label="Тип вагона">
+                <WagonTypePicker value={l.wagonType} onChange={(v) => updateLine(l.key, { wagonType: v })} />
+              </Field>
+              <Field label="Груз">
                 <input className={inputClass} value={l.cargoName} onChange={(e) => updateLine(l.key, { cargoName: e.target.value })} />
               </Field>
               <Field label="Желаемая ставка" span2>
-                <input className={inputClass} value={l.targetRateRaw} onChange={(e) => updateLine(l.key, { targetRateRaw: e.target.value })} placeholder="напр. 1980 ₽/ваг" />
+                <RateModeInput
+                  kind={l.targetRateKind}
+                  flatRaw={l.targetRateRaw}
+                  markupPct={l.targetRateMarkupPct}
+                  tariffClass={l.targetTariffClass}
+                  onChange={(p) =>
+                    updateLine(l.key, {
+                      ...(p.kind !== undefined ? { targetRateKind: p.kind } : {}),
+                      ...(p.flatRaw !== undefined ? { targetRateRaw: p.flatRaw } : {}),
+                      ...(p.markupPct !== undefined ? { targetRateMarkupPct: p.markupPct } : {}),
+                      ...(p.tariffClass !== undefined ? { targetTariffClass: p.tariffClass } : {}),
+                    })
+                  }
+                />
               </Field>
             </div>
           </div>
         ))}
         <button
           type="button"
-          onClick={() => setLines((prev) => [...prev, emptyLine()])}
+          onClick={() => setLines((prev) => [...prev, emptyLine(wagonType)])}
           className="inline-flex h-9 items-center gap-2 self-start rounded-[var(--radius-md)] border border-dashed border-border px-4 text-sm text-text-secondary hover:border-accent hover:text-text focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
         >
           <Plus className="size-4" aria-hidden /> Добавить направление

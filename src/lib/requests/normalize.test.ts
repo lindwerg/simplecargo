@@ -58,4 +58,66 @@ describe("normalizeExtraction (format-agnostic hygiene)", () => {
     expect(r.lines[0].originRoadRaw).toBe("СВР");
     expect(r.lines[0].destRoadRaw).toBe("ГОР");
   });
+
+  it("normalizes a recognized per-line wagon type to its canonical code", () => {
+    const r = normalizeExtraction(
+      result([{ originRaw: "А", destRaw: "Б", wagonsRequested: 5, wagonType: "полувагон" }]),
+    );
+    expect(r.lines[0].wagonType).toBe("ПВ");
+  });
+
+  it("keeps an unrecognized wagon type as raw trimmed text (never drops)", () => {
+    const r = normalizeExtraction(
+      result([{ originRaw: "А", destRaw: "Б", wagonsRequested: 5, wagonType: "  спецвагон XYZ " }]),
+    );
+    expect(r.lines[0].wagonType).toBe("спецвагон XYZ");
+  });
+
+  it("normalizes the header wagon type (inherited default) to its canonical code", () => {
+    const r = normalizeExtraction(
+      extractionResultSchema.parse({
+        wagonType: "крытый вагон",
+        lines: [{ originRaw: "А", destRaw: "Б", wagonsRequested: 5 }],
+      }),
+    );
+    expect(r.wagonType).toBe("КР");
+  });
+
+  it("passes a tariff_indicative rate expression through with markup, class, and ref", () => {
+    const r = normalizeExtraction(
+      result([
+        {
+          originRaw: "А",
+          destRaw: "Б",
+          wagonsRequested: 5,
+          targetRateKind: "tariff_indicative",
+          targetRateMarkupPct: 10,
+          targetTariffClass: 2,
+          targetTariffRef: "10-01",
+        },
+      ]),
+    );
+    expect(r.lines[0].targetRateKind).toBe("tariff_indicative");
+    expect(r.lines[0].targetRateMarkupPct).toBe(10);
+    expect(r.lines[0].targetTariffClass).toBe(2);
+    expect(r.lines[0].targetTariffRef).toBe("10-01");
+  });
+
+  it("allows a zero markup and rejects an out-of-range tariff class / unknown rate kind", () => {
+    const r = normalizeExtraction(
+      result([
+        {
+          originRaw: "А",
+          destRaw: "Б",
+          wagonsRequested: 5,
+          targetRateKind: "nonsense",
+          targetRateMarkupPct: 0,
+          targetTariffClass: 9,
+        },
+      ]),
+    );
+    expect(r.lines[0].targetRateMarkupPct).toBe(0); // 0 is valid — not coerced away
+    expect(r.lines[0].targetRateKind).toBeNull();
+    expect(r.lines[0].targetTariffClass).toBeNull();
+  });
 });

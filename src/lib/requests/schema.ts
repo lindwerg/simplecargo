@@ -51,6 +51,13 @@ export const requestLineInputSchema = z.object({
   tonnagePerWagon: optNum,
   targetRatePerWagon: optRate, // D16: client's desired rate — SUGGESTED only
   targetRateRaw: optText,
+  // Goal 3: per-line wagon type (canonical code or raw, never invented)
+  wagonType: optText,
+  // Goal 4: rate expression — markup may be 0 or negative, so NOT coerced positive
+  targetRateKind: z.enum(["flat_rub", "tariff_indicative", "tariff_plus_markup"]).optional(),
+  targetRateMarkupPct: z.preprocess(nullToUndef, z.coerce.number().optional()),
+  targetTariffClass: z.preprocess(nullToUndef, z.coerce.number().int().min(1).max(3).optional()),
+  targetTariffRef: optText,
   sortOrder: z.coerce.number().int().min(0).optional(),
 });
 
@@ -155,6 +162,12 @@ export const extractedLineSchema = z.object({
   tonnagePerWagon: z.number().nullable().default(null),
   targetRatePerWagon: z.number().nullable().default(null),
   targetRateRaw: z.string().nullable().default(null),
+  // Goal 3 + Goal 4: per-line wagon type + rate expression (AI may emit; never invented)
+  wagonType: z.string().nullable().default(null),
+  targetRateKind: z.string().nullable().default(null),
+  targetRateMarkupPct: z.number().nullable().default(null),
+  targetTariffClass: z.number().nullable().default(null),
+  targetTariffRef: z.string().nullable().default(null),
 });
 
 export type ExtractedLine = z.infer<typeof extractedLineSchema>;

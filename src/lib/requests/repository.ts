@@ -120,6 +120,11 @@ export async function createRequestWithLines(
         tonnagePerWagon: numStr(line.tonnagePerWagon),
         targetRatePerWagon: numStr(line.targetRatePerWagon),
         targetRateRaw: line.targetRateRaw ?? null,
+        wagonType: line.wagonType ?? null,
+        targetRateKind: line.targetRateKind ?? null,
+        targetRateMarkupPct: numStr(line.targetRateMarkupPct),
+        targetTariffClass: line.targetTariffClass ?? null,
+        targetTariffRef: line.targetTariffRef ?? null,
       })),
     );
 
