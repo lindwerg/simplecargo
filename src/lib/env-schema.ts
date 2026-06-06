@@ -61,6 +61,10 @@ export const envSchema = z.object({
   MAILRU_IMAP_INBOX: z.string().min(1).default("INBOX"),
   MAILRU_IMAP_PROCESSED_FOLDER: z.string().min(1).default("SimpleCargo/Processed"),
   MAILRU_IMAP_POLL_MS: z.coerce.number().int().min(10_000).default(15_000),
+  // Разбирать только СВЕЖИЕ письма: пропускать всё, что старше N дней по дате
+  // письма (заголовок Date). Защита от старой почты, попавшей в ящик с новыми
+  // UID. 0 = без ограничения. По умолчанию 3 дня.
+  MAIL_INTAKE_MAX_AGE_DAYS: z.coerce.number().int().min(0).default(3),
 });
 
 export type Env = z.infer<typeof envSchema>;

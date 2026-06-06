@@ -128,3 +128,18 @@ export async function resolveQuarantine(
   await publishRealtime({ kind: "quarantine" });
   return { id: updated[0].id, reviewAction: action };
 }
+
+/** Bulk triage — clear the whole open queue at once (e.g. a batch of old mail
+ *  that shouldn't have been ingested). Marks every unresolved row with `action`. */
+export async function resolveAllQuarantine(
+  action: ReviewAction,
+  userId: string,
+): Promise<{ count: number }> {
+  const updated = await db
+    .update(quarantineRows)
+    .set({ resolved: true, reviewAction: action, resolvedBy: userId, resolvedAt: new Date() })
+    .where(eq(quarantineRows.resolved, false))
+    .returning({ id: quarantineRows.id });
+  if (updated.length > 0) await publishRealtime({ kind: "quarantine" });
+  return { count: updated.length };
+}

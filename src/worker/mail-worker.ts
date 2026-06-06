@@ -67,8 +67,20 @@ async function pollCycle(systemUserId: string): Promise<void> {
     console.log(`[mail-worker] ${emails.length} new message(s)`);
   }
 
+  const maxAgeMs = env.MAIL_INTAKE_MAX_AGE_DAYS * 86_400_000;
+
   const processedUids: number[] = [];
   for (const { uid, raw, parsed } of emails) {
+    // Разбираем только СВЕЖЕЕ: старое письмо, попавшее в ящик с новым UID
+    // (переслали/переместили), пропускаем целиком — не заносим и не харвестим.
+    if (maxAgeMs > 0 && parsed.date && Date.now() - parsed.date.getTime() > maxAgeMs) {
+      console.log(
+        `[mail-worker] uid=${uid} пропуск старого письма от ${parsed.date.toISOString()} (старше ${env.MAIL_INTAKE_MAX_AGE_DAYS} дн.)`,
+      );
+      processedUids.push(uid);
+      continue;
+    }
+
     let failedFileId: string | null = null;
     try {
       const sha = crypto.createHash("sha256").update(raw).digest("hex");
@@ -77,6 +89,7 @@ async function pollCycle(systemUserId: string): Promise<void> {
         filename: parsed.subject || parsed.messageId || "email",
         senderEmail: parsed.from || null,
         messageId: parsed.messageId || null,
+        emailDate: parsed.date ?? null,
       });
       failedFileId = fileId;
 
