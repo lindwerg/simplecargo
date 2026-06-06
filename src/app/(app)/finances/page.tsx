@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Wallet, Send, FileText } from "lucide-react";
 
+import { LiveRefresh } from "@/components/realtime/LiveRefresh";
+
 import { auth } from "@/lib/auth";
 import { Money } from "@/components/ui/Money";
 import { StatTile } from "@/components/ui/StatTile";
@@ -64,6 +66,7 @@ export default async function FinancesPage() {
 
   return (
     <div className="space-y-[var(--space-section)]">
+      <LiveRefresh />
       <header className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="label-caps">Деньги</p>
