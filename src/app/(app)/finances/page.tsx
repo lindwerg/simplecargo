@@ -12,15 +12,18 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { SyncButton } from "@/components/finances/SyncButton";
 import { TransactionFeed } from "@/components/finances/TransactionFeed";
 import { DirectionPnl } from "@/components/finances/DirectionPnl";
+import { InboundInvoices } from "@/components/finances/InboundInvoices";
 import { isTochkaConfigured } from "@/lib/finances/tochka-client";
 import {
   getDirectionPnl,
   getFinanceSummary,
   listAccounts,
+  listInboundInvoices,
   listRecentTransactions,
   type AccountRow,
   type DirectionPnlRow,
   type FinanceSummary,
+  type InboundInvoiceRow,
   type TransactionRow,
 } from "@/lib/finances/repository";
 
@@ -58,7 +61,16 @@ export default async function FinancesPage() {
     }
   }
 
+  // Счета из почты живут независимо от Точки (их создаёт ИИ из писем).
+  let inboundInvoices: InboundInvoiceRow[] = [];
+  try {
+    inboundInvoices = await listInboundInvoices(100);
+  } catch {
+    // таблицы может не быть на самом раннем деплое — пустой список
+  }
+
   const hasData = (summary?.txCount ?? 0) > 0;
+  const pendingInvoices = inboundInvoices.filter((i) => i.status === "pending").length;
   const balanceHint = summary?.balanceAt
     ? `на ${dateFmt.format(new Date(summary.balanceAt))}`
     : undefined;
@@ -175,6 +187,22 @@ export default async function FinancesPage() {
           </section>
         </>
       )}
+
+      <section aria-labelledby="inbound-invoices-heading" className="rounded-lg border border-border bg-surface-1">
+        <div className="flex items-center justify-between border-b border-border px-4 py-3">
+          <h2 id="inbound-invoices-heading" className="label-caps">
+            Счета из почты
+          </h2>
+          {pendingInvoices > 0 && (
+            <span className="rounded-pill bg-warn-quiet px-2 py-0.5 text-xs font-medium text-warn">
+              {pendingInvoices} ожидают оплаты
+            </span>
+          )}
+        </div>
+        <div className="p-4">
+          <InboundInvoices invoices={inboundInvoices} />
+        </div>
+      </section>
     </div>
   );
 }
