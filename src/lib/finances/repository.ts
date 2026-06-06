@@ -340,6 +340,77 @@ interface AccQueryRow {
   [k: string]: unknown;
 }
 
+export interface DirectionPnlRow {
+  id: string;
+  name: string;
+  planMargin: number;
+  factMargin: number;
+  delta: number;
+  factIn: number;
+  factOut: number;
+  deals: number;
+}
+
+interface PnlQueryRow {
+  id: string;
+  name: string | null;
+  plan_margin: string | null;
+  fact_in: string | null;
+  fact_out: string | null;
+  deals: string | null;
+  [k: string]: unknown;
+}
+
+/** План-факт маржи по направлениям: план из deals.margin, факт — из разнесённых
+ *  банковских операций (приход − расход), привязанных к направлению. */
+export async function getDirectionPnl(limit = 50): Promise<DirectionPnlRow[]> {
+  const { rows } = await db.execute<PnlQueryRow>(sql`
+    WITH plan AS (
+      SELECT direction_id,
+             SUM(margin) AS plan_margin,
+             COUNT(*) AS deals
+      FROM deals
+      WHERE direction_id IS NOT NULL
+      GROUP BY direction_id
+    ),
+    fact AS (
+      SELECT l.direction_id,
+             SUM(CASE WHEN t.direction = 'in'  THEN t.amount ELSE 0 END) AS fact_in,
+             SUM(CASE WHEN t.direction = 'out' THEN t.amount ELSE 0 END) AS fact_out
+      FROM bank_tx_links l
+      JOIN bank_transactions t ON t.id = l.transaction_id
+      WHERE l.direction_id IS NOT NULL
+      GROUP BY l.direction_id
+    )
+    SELECT dir.id, dir.display_name AS name,
+           p.plan_margin, p.deals,
+           COALESCE(f.fact_in, 0) AS fact_in,
+           COALESCE(f.fact_out, 0) AS fact_out
+    FROM plan p
+    JOIN directions dir ON dir.id = p.direction_id
+    LEFT JOIN fact f ON f.direction_id = p.direction_id
+    ORDER BY p.plan_margin DESC NULLS LAST
+    LIMIT ${limit}
+  `);
+
+  return rows.map((r) => {
+    const factIn = Number(r.fact_in ?? 0);
+    const factOut = Number(r.fact_out ?? 0);
+    const planMargin = Number(r.plan_margin ?? 0);
+    const factMargin = factIn - factOut;
+    return {
+      id: r.id,
+      name: r.name ?? "Без названия",
+      planMargin,
+      factMargin,
+      delta: factMargin - planMargin,
+      factIn,
+      factOut,
+      deals: Number(r.deals ?? 0),
+    };
+  });
+}
+
 export async function listAccounts(): Promise<AccountRow[]> {
   const { rows } = await db.execute<AccQueryRow>(sql`
     SELECT id, title, masked_number, currency, balance, balance_at

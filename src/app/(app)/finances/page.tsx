@@ -9,12 +9,15 @@ import { StatTile } from "@/components/ui/StatTile";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { SyncButton } from "@/components/finances/SyncButton";
 import { TransactionFeed } from "@/components/finances/TransactionFeed";
+import { DirectionPnl } from "@/components/finances/DirectionPnl";
 import { isTochkaConfigured } from "@/lib/finances/tochka-client";
 import {
+  getDirectionPnl,
   getFinanceSummary,
   listAccounts,
   listRecentTransactions,
   type AccountRow,
+  type DirectionPnlRow,
   type FinanceSummary,
   type TransactionRow,
 } from "@/lib/finances/repository";
@@ -39,12 +42,14 @@ export default async function FinancesPage() {
   let summary: FinanceSummary | null = null;
   let transactions: TransactionRow[] = [];
   let accounts: AccountRow[] = [];
+  let pnl: DirectionPnlRow[] = [];
   if (configured) {
     try {
-      [summary, transactions, accounts] = await Promise.all([
+      [summary, transactions, accounts, pnl] = await Promise.all([
         getFinanceSummary(),
         listRecentTransactions({ limit: 100 }),
         listAccounts(),
+        getDirectionPnl(),
       ]);
     } catch {
       // keep nulls; the empty state below still lets the operator trigger a sync
@@ -132,6 +137,17 @@ export default async function FinancesPage() {
                   {...(a.maskedNumber ? { hint: a.maskedNumber } : {})}
                 />
               ))}
+            </section>
+          )}
+
+          {pnl.length > 0 && (
+            <section aria-labelledby="pnl-heading" className="rounded-lg border border-border bg-surface-1">
+              <div className="border-b border-border px-4 py-3">
+                <h2 id="pnl-heading" className="label-caps">
+                  План-факт по направлениям
+                </h2>
+              </div>
+              <DirectionPnl rows={pnl} />
             </section>
           )}
 
