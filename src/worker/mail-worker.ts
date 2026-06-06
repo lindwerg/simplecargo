@@ -17,6 +17,7 @@ import {
   resolveSystemUserId,
 } from "@/lib/mail/intake-repo";
 import { upsertKnownEmails } from "@/lib/mail/known-emails";
+import { saveIngestedAttachment } from "@/lib/mail-intake/attachments-repo";
 import { processEmail } from "@/lib/mail-intake/orchestrator";
 import { buildQuarantineRow } from "@/lib/mail-intake/quarantine-map";
 import type { SeenAddress } from "@/lib/mail/known-emails";
@@ -89,6 +90,34 @@ async function pollCycle(systemUserId: string): Promise<void> {
       await upsertKnownEmails(seen);
 
       if (isNew) {
+        // Persist the originals so the operator can OPEN them later (тело письма +
+        // каждое вложение). Best-effort — a storage hiccup must not lose the email.
+        try {
+          if (parsed.text && parsed.text.trim().length > 0) {
+            await saveIngestedAttachment({
+              sourceFileId: fileId,
+              kind: "body",
+              filename: "Текст письма.txt",
+              mimeType: "text/plain; charset=utf-8",
+              content: Buffer.from(parsed.text, "utf8"),
+            });
+          }
+          for (const att of parsed.attachments) {
+            await saveIngestedAttachment({
+              sourceFileId: fileId,
+              kind: "attachment",
+              filename: att.filename,
+              mimeType: att.contentType,
+              content: att.content,
+            });
+          }
+        } catch (storeErr: unknown) {
+          console.error(
+            `[mail-worker] uid=${uid} не удалось сохранить вложения:`,
+            storeErr instanceof Error ? storeErr.message : storeErr,
+          );
+        }
+
         const deps = buildIntakeDeps({ systemUserId, sourceFileId: fileId });
         const outcome = await processEmail(parsed, deps);
         await markFileCommitted(fileId);

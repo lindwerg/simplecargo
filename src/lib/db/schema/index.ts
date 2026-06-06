@@ -7,6 +7,7 @@ export * from "./counterpartyContacts";
 export * from "./counterpartyDocuments";
 export * from "./wagons";
 export * from "./ingest";
+export * from "./ingestedAttachments";
 export * from "./movements";
 export * from "./orders";
 export * from "./directions";
