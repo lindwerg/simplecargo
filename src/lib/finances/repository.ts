@@ -66,6 +66,7 @@ export interface TransactionRow {
   direction: "in" | "out";
   amount: number;
   currency: string;
+  status: string;
   counterpartyName: string | null;
   counterpartyInn: string | null;
   purposeRaw: string | null;
@@ -79,6 +80,7 @@ interface TxQueryRow {
   direction: string;
   amount: string;
   currency: string;
+  status: string;
   counterparty_name: string | null;
   counterparty_inn: string | null;
   purpose_raw: string | null;
@@ -90,13 +92,22 @@ interface TxQueryRow {
 const DEFAULT_TX_LIMIT = 100;
 const MAX_TX_LIMIT = 500;
 
-/** Recent operations, newest first. `direction` optionally filters in/out. */
+/** Recent operations, newest first. Filters: direction, unlinked-only, search. */
 export async function listRecentTransactions(opts: {
   limit?: number;
   direction?: "in" | "out";
+  onlyUnlinked?: boolean;
+  search?: string;
 } = {}): Promise<TransactionRow[]> {
   const limit = Math.min(Math.max(opts.limit ?? DEFAULT_TX_LIMIT, 1), MAX_TX_LIMIT);
   const dirFilter = opts.direction ? sql`AND t.direction = ${opts.direction}` : sql``;
+  const unlinkedFilter = opts.onlyUnlinked
+    ? sql`AND NOT EXISTS (SELECT 1 FROM bank_tx_links l WHERE l.transaction_id = t.id)`
+    : sql``;
+  const searchFilter =
+    opts.search && opts.search.trim() !== ""
+      ? sql`AND (t.counterparty_name ILIKE ${"%" + opts.search.trim() + "%"} OR t.counterparty_inn ILIKE ${"%" + opts.search.trim() + "%"} OR t.purpose_raw ILIKE ${"%" + opts.search.trim() + "%"})`
+      : sql``;
 
   const { rows } = await db.execute<TxQueryRow>(sql`
     SELECT
@@ -105,6 +116,7 @@ export async function listRecentTransactions(opts: {
       t.direction,
       t.amount,
       t.currency,
+      t.status,
       t.counterparty_name,
       t.counterparty_inn,
       t.purpose_raw,
@@ -117,7 +129,7 @@ export async function listRecentTransactions(opts: {
         LIMIT 1
       ) AS matched_name
     FROM bank_transactions t
-    WHERE TRUE ${dirFilter}
+    WHERE TRUE ${dirFilter} ${unlinkedFilter} ${searchFilter}
     ORDER BY t.posted_at DESC, t.synced_at DESC
     LIMIT ${limit}
   `);
@@ -128,12 +140,118 @@ export async function listRecentTransactions(opts: {
     direction: r.direction === "out" ? "out" : "in",
     amount: Number(r.amount),
     currency: r.currency,
+    status: r.status,
     counterpartyName: r.counterparty_name,
     counterpartyInn: r.counterparty_inn,
     purposeRaw: r.purpose_raw,
     linked: Boolean(r.linked),
     matchedName: r.matched_name,
   }));
+}
+
+export interface TransactionDetail {
+  id: string;
+  postedAt: string;
+  direction: "in" | "out";
+  amount: number;
+  currency: string;
+  status: string;
+  documentNumber: string | null;
+  paymentId: string | null;
+  purposeRaw: string | null;
+  counterpartyName: string | null;
+  counterpartyInn: string | null;
+  counterpartyKpp: string | null;
+  counterpartyAccount: string | null;
+  counterpartyBankBic: string | null;
+  counterpartyBankName: string | null;
+  counterpartyCorrAccount: string | null;
+  accountTitle: string | null;
+  accountMasked: string | null;
+  linked: boolean;
+  matchedCounterparty: string | null;
+  matchedCounterpartyId: string | null;
+  matchedDealId: string | null;
+}
+
+interface DetailRow {
+  id: string;
+  posted_at: string;
+  direction: string;
+  amount: string;
+  currency: string;
+  status: string;
+  payment_id: string | null;
+  purpose_raw: string | null;
+  counterparty_name: string | null;
+  counterparty_inn: string | null;
+  counterparty_kpp: string | null;
+  counterparty_account: string | null;
+  counterparty_bank_bic: string | null;
+  document_number: string | null;
+  bank_name: string | null;
+  corr_account: string | null;
+  account_title: string | null;
+  account_masked: string | null;
+  matched_counterparty: string | null;
+  matched_counterparty_id: string | null;
+  matched_deal_id: string | null;
+  [k: string]: unknown;
+}
+
+/** Full operation card — all requisites + reconciliation, for the detail view. */
+export async function getTransactionDetail(id: string): Promise<TransactionDetail | null> {
+  const { rows } = await db.execute<DetailRow>(sql`
+    SELECT
+      t.id, t.posted_at, t.direction, t.amount, t.currency, t.status, t.payment_id,
+      t.purpose_raw, t.counterparty_name, t.counterparty_inn, t.counterparty_kpp,
+      t.counterparty_account, t.counterparty_bank_bic,
+      (t.raw ->> 'documentNumber') AS document_number,
+      COALESCE(t.raw -> 'CreditorAgent' ->> 'name', t.raw -> 'DebtorAgent' ->> 'name') AS bank_name,
+      COALESCE(
+        t.raw -> 'CreditorAgent' ->> 'accountIdentification',
+        t.raw -> 'DebtorAgent' ->> 'accountIdentification'
+      ) AS corr_account,
+      a.title AS account_title,
+      a.masked_number AS account_masked,
+      l.counterparty_id AS matched_counterparty_id,
+      l.deal_id AS matched_deal_id,
+      c.name_canonical AS matched_counterparty
+    FROM bank_transactions t
+    JOIN bank_accounts a ON a.id = t.account_id
+    LEFT JOIN LATERAL (
+      SELECT counterparty_id, deal_id FROM bank_tx_links WHERE transaction_id = t.id LIMIT 1
+    ) l ON TRUE
+    LEFT JOIN counterparties c ON c.id = l.counterparty_id
+    WHERE t.id = ${id}
+    LIMIT 1
+  `);
+  const r = rows[0];
+  if (!r) return null;
+  return {
+    id: r.id,
+    postedAt: r.posted_at,
+    direction: r.direction === "out" ? "out" : "in",
+    amount: Number(r.amount),
+    currency: r.currency,
+    status: r.status,
+    documentNumber: r.document_number,
+    paymentId: r.payment_id,
+    purposeRaw: r.purpose_raw,
+    counterpartyName: r.counterparty_name,
+    counterpartyInn: r.counterparty_inn,
+    counterpartyKpp: r.counterparty_kpp,
+    counterpartyAccount: r.counterparty_account,
+    counterpartyBankBic: r.counterparty_bank_bic,
+    counterpartyBankName: r.bank_name,
+    counterpartyCorrAccount: r.corr_account,
+    accountTitle: r.account_title,
+    accountMasked: r.account_masked,
+    linked: r.matched_counterparty_id !== null || r.matched_deal_id !== null,
+    matchedCounterparty: r.matched_counterparty,
+    matchedCounterpartyId: r.matched_counterparty_id,
+    matchedDealId: r.matched_deal_id,
+  };
 }
 
 export interface AccountRow {
