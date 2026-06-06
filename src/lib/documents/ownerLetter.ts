@@ -29,7 +29,7 @@ function station(name: string, road?: string | null): string {
   return has(road) ? `${name.trim()} (${road.trim()})` : name.trim();
 }
 
-function greeting(ownerName?: string): string {
+function greeting(ownerName?: string | null): string {
   return has(ownerName) ? `Уважаемый, ${ownerName.trim()}!` : "Уважаемые коллеги!";
 }
 
@@ -47,6 +47,72 @@ function periodPhrase(from?: string | null, to?: string | null): string | null {
   if (has(from)) return `Период: с ${from.trim()}.`;
   if (has(to)) return `Период: по ${to.trim()}.`;
   return null;
+}
+
+/** One route inside a multi-route owner letter. */
+export interface OwnerLetterRoute {
+  originName: string;
+  originRoad?: string | null;
+  destName: string;
+  destRoad?: string | null;
+  wagonsCount?: number | null;
+  cargoName?: string | null;
+  rateText?: string | null;
+}
+
+export interface OwnerLetterForRequestInput {
+  ownerName?: string | null;
+  clientName?: string | null;
+  wagonTypeLabel?: string | null;
+  periodFrom?: string | null;
+  periodTo?: string | null;
+  notes?: string | null;
+  routes: OwnerLetterRoute[];
+}
+
+/** "60 ваг • груз • ориентир 2 000 ₽/ваг" tail for a numbered route line. */
+function routeDetails(route: OwnerLetterRoute): string {
+  const parts: string[] = [];
+  if (typeof route.wagonsCount === "number" && Number.isFinite(route.wagonsCount) && route.wagonsCount > 0) {
+    parts.push(`${route.wagonsCount} ваг`);
+  }
+  if (has(route.cargoName)) parts.push(route.cargoName.trim());
+  if (has(route.rateText)) parts.push(`ориентир ${route.rateText.trim()}`);
+  return parts.length > 0 ? ` — ${parts.join(", ")}` : "";
+}
+
+/** "1. Станция (ДОР) → Станция (ДОР) — 60 ваг, груз" numbered route line. */
+function routeLine(route: OwnerLetterRoute, index: number): string {
+  const path = `${station(route.originName, route.originRoad)} → ${station(route.destName, route.destRoad)}`;
+  return `${index + 1}. ${path}${routeDetails(route)}`;
+}
+
+// Multi-route quote-request letter (Goal 5). Lists every route numbered and asks the
+// owner for a wagon-provision quote. Reuses the single-route helpers; omits any
+// missing field without leaking null/undefined or empty parentheses.
+export function buildOwnerLetterForRequest(input: OwnerLetterForRequestInput): string {
+  const intro = has(input.wagonTypeLabel)
+    ? `Просим предоставить ставки на предоставление вагонов (${input.wagonTypeLabel.trim()}) по следующим направлениям:`
+    : "Просим предоставить ставки на предоставление вагонов по следующим направлениям:";
+
+  const lines: (string | null)[] = [
+    greeting(input.ownerName),
+    "",
+    intro,
+    "",
+    ...input.routes.map((route, i) => routeLine(route, i)),
+    "",
+    periodPhrase(input.periodFrom, input.periodTo),
+    has(input.notes) ? input.notes.trim() : null,
+    "",
+    "Будем признательны за оперативный ответ.",
+    "",
+    "С уважением,",
+    COMPANY.shortName,
+    `${CONTACT_DEFAULT.name}, тел. ${CONTACT_DEFAULT.phone}, ${CONTACT_DEFAULT.email}`,
+  ];
+
+  return lines.filter((line) => line !== null).join("\n");
 }
 
 export function buildOwnerLetterText(input: OwnerLetterInput): string {

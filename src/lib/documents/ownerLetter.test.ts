@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { buildOwnerLetterText, type OwnerLetterInput } from "@/lib/documents/ownerLetter";
+import {
+  buildOwnerLetterText,
+  buildOwnerLetterForRequest,
+  type OwnerLetterInput,
+} from "@/lib/documents/ownerLetter";
 import { COMPANY, CONTACT_DEFAULT } from "@/lib/config/company";
 
 const fullInput: OwnerLetterInput = {
@@ -106,5 +110,34 @@ describe("buildOwnerLetterText — graceful omission", () => {
     });
     expect(text).toContain("предоставление крытых по направлению");
     expect(text).not.toContain("0 крытых");
+  });
+});
+
+describe("buildOwnerLetterForRequest — multi-route", () => {
+  it("lists two numbered routes with a generic greeting and no null/undefined", () => {
+    const text = buildOwnerLetterForRequest({
+      wagonTypeLabel: "Полувагон",
+      routes: [
+        { originName: "Качканар", originRoad: "СВР", destName: "Находка", destRoad: "ДВС", wagonsCount: 60, cargoName: "щебень", rateText: "2 000 ₽/ваг" },
+        { originName: "Тагил", destName: "Москва", wagonsCount: 40 },
+      ],
+    });
+
+    expect(text).toContain("Уважаемые коллеги!");
+    expect(text).toContain("1. Качканар (СВР) → Находка (ДВС) — 60 ваг, щебень, ориентир 2 000 ₽/ваг");
+    expect(text).toContain("2. Тагил → Москва — 40 ваг");
+    expect(text).toContain(COMPANY.shortName);
+    expect(text).toContain(CONTACT_DEFAULT.name);
+    expect(text).not.toMatch(/null|undefined/);
+  });
+
+  it("omits empty parentheses and rate when roads/rate are absent", () => {
+    const text = buildOwnerLetterForRequest({
+      routes: [{ originName: "Тагил", destName: "Москва" }],
+    });
+    expect(text).toContain("1. Тагил → Москва");
+    expect(text).not.toContain("(");
+    expect(text).not.toContain(")");
+    expect(text).not.toContain("ориентир");
   });
 });

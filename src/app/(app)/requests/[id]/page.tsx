@@ -7,7 +7,30 @@ import { ru } from "date-fns/locale";
 import { Money } from "@/components/ui/Money";
 import { StatusPill, type RequestStatus } from "@/components/ui/StatusPill";
 import { RequestStatusActions } from "@/components/requests/RequestStatusActions";
+import { RequestOutputs } from "@/components/requests/RequestOutputs";
+import type { OwnerLetterRoute } from "@/lib/documents/ownerLetter";
+import { formatRateExpression, type RateKind } from "@/lib/pricing/rate-expression";
 import { getRequest, RequestError } from "@/lib/requests/repository";
+
+const TARIFF_KINDS = new Set<RateKind>(["tariff_indicative", "tariff_plus_markup"]);
+const RUB = new Intl.NumberFormat("ru-RU");
+
+type RequestLine = Awaited<ReturnType<typeof getRequest>>["lines"][number];
+
+/** КП/owner-letter rate text for a line: tariff expression → flat ₽ → raw → null. */
+function lineRateText(l: RequestLine): string | null {
+  if (l.targetRateKind && TARIFF_KINDS.has(l.targetRateKind as RateKind)) {
+    return formatRateExpression({
+      kind: l.targetRateKind as RateKind,
+      markupPct: l.targetRateMarkupPct != null ? Number(l.targetRateMarkupPct) : null,
+    });
+  }
+  if (l.targetRatePerWagon != null) {
+    const n = Number(l.targetRatePerWagon);
+    if (Number.isFinite(n) && n > 0) return `${RUB.format(n)} ₽/ваг`;
+  }
+  return l.targetRateRaw ?? null;
+}
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +55,19 @@ export default async function RequestDetailPage({ params }: Ctx) {
   const clientLabel = data.clientName ?? data.clientRaw ?? "клиент не задан";
   const created = format(toZonedTime(data.createdAt, "Europe/Moscow"), "d MMMM yyyy, HH:mm", { locale: ru });
   const totalWagons = data.lines.reduce((s, l) => s + (l.wagonsRequested ?? 0), 0);
+
+  const fmtDay = (d: Date | null): string | null =>
+    d ? format(toZonedTime(d, "Europe/Moscow"), "dd.MM.yyyy") : null;
+
+  const ownerRoutes: OwnerLetterRoute[] = data.lines.map((l) => ({
+    originName: l.originRaw,
+    originRoad: l.originRoadRaw,
+    destName: l.destRaw,
+    destRoad: l.destRoadRaw,
+    wagonsCount: l.wagonsRequested,
+    cargoName: l.cargoName,
+    rateText: lineRateText(l),
+  }));
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
@@ -60,6 +96,16 @@ export default async function RequestDetailPage({ params }: Ctx) {
       </header>
 
       <RequestStatusActions id={id} status={status} isTemp={isTemp} />
+
+      <RequestOutputs
+        id={id}
+        clientName={data.clientName ?? data.clientRaw}
+        headerWagonType={data.wagonType}
+        periodFrom={fmtDay(data.periodFrom)}
+        periodTo={fmtDay(data.periodTo)}
+        notes={data.notes}
+        routes={ownerRoutes}
+      />
 
       <section className="flex flex-col gap-2">
         <h2 className="label-caps">Направления</h2>

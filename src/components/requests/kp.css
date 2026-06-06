@@ -1,0 +1,37 @@
+/* Print-safe styles for the A4 commercial proposal (КП).
+   FIXED colors only — black on white — so the document prints identically in dark
+   mode. Theme tokens are intentionally NOT used here. */
+
+.kp-page {
+  box-sizing: border-box;
+  width: 210mm;
+  max-width: 210mm;
+  margin-left: auto;
+  margin-right: auto;
+  background: #ffffff;
+  color: #111111;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18);
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  html,
+  body {
+    background: #ffffff;
+  }
+
+  .kp-print-hidden {
+    display: none !important;
+  }
+
+  .kp-page {
+    box-shadow: none;
+    margin: 0;
+    width: 100%;
+    max-width: none;
+  }
+}
