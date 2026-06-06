@@ -12,6 +12,7 @@ import type {
   ContactInput,
   CreatePartnerInput,
   DocumentMetaInput,
+  PartnerRole,
   UpdatePartnerInput,
 } from "./schema";
 
@@ -272,6 +273,30 @@ export async function resolveCounterpartyByEmail(email: string): Promise<string 
     .where(sql`lower(${counterpartyContacts.email}) = ${normalized}`)
     .limit(1);
   return rows[0]?.id ?? null;
+}
+
+// Sender resolution WITH roles — for the inbound-mail flow (MAIL_AI_INTEGRATION
+// §4.3): the classifier says "client_rfq" but the sender's role may only be
+// `carrier` → role/kind conflict → quarantine. resolveCounterpartyByEmail returns
+// only the id; this JOINs counterparties to also surface roles[]. Exact-address
+// only (operator decision #2 — no domain fallback in MVP).
+export interface SenderCompany {
+  companyId: string;
+  roles: PartnerRole[];
+}
+
+export async function resolveSenderCompany(email: string): Promise<SenderCompany | null> {
+  const normalized = normalizeEmail(email);
+  if (normalized === "") return null;
+  const rows = await db
+    .select({ id: counterparties.id, roles: counterparties.roles })
+    .from(counterpartyContacts)
+    .innerJoin(counterparties, eq(counterpartyContacts.counterpartyId, counterparties.id))
+    .where(sql`lower(${counterpartyContacts.email}) = ${normalized}`)
+    .limit(1);
+  const row = rows[0];
+  if (!row) return null;
+  return { companyId: row.id, roles: (row.roles ?? []) as PartnerRole[] };
 }
 
 // ── Documents (metadata) ──────────────────────────────────────────────────────
