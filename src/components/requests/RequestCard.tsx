@@ -118,9 +118,10 @@ export function RequestCard({ card, archived = false }: RequestCardProps) {
         )}
       </div>
 
-      {/* full-card link (covers the whole surface, keyboard-focusable) */}
+      {/* full-card link — deep-links to THIS direction (worklist auto-scrolls +
+          preselects it via #line-{lineId}), without changing the route target. */}
       <a
-        href={`/requests/${card.requestId}`}
+        href={`/requests/${card.requestId}#line-${card.lineId}`}
         className="absolute inset-0 rounded-[var(--radius-lg)] focus:outline-none"
         aria-label={`Запрос ${card.requestNumber ?? ""}: ${card.originRaw} → ${card.destRaw}, ${card.wagonsRequested} вагонов`}
       />
