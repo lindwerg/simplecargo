@@ -42,7 +42,7 @@ export default async function ArchiveBoardPage({ searchParams }: { searchParams:
         </div>
       </header>
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <BoardTabs basePath="/requests/archive" view={view} query={{ origin: originRaw, road: roadRaw }} />
         <BoardFilters basePath="/requests/archive" view={view} originRaw={originRaw} roadRaw={roadRaw} />
       </div>

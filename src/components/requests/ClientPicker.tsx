@@ -68,7 +68,7 @@ export function ClientPicker({ value, onChange }: ClientPickerProps) {
             setOpen(true);
             onChange(v.trim().length > 0 ? { kind: "temp", name: v.trim() } : null);
           }}
-          className="h-10 w-full rounded-[var(--radius-md)] border border-border bg-surface-inset px-3 text-sm text-text placeholder:text-text-tertiary focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
+          className="h-11 w-full rounded-[var(--radius-md)] border border-border bg-surface-inset px-3 text-sm text-text placeholder:text-text-tertiary focus:outline-none focus-visible:[box-shadow:var(--ring-focus)] md:h-9"
         />
         {value?.kind === "existing" && (
           <span className="shrink-0 rounded-pill bg-success-quiet px-2 py-0.5 text-2xs font-medium text-success">
@@ -94,7 +94,7 @@ export function ClientPicker({ value, onChange }: ClientPickerProps) {
                   setOpen(false);
                 }}
                 className={cn(
-                  "flex w-full items-center justify-between px-3 py-2 text-left text-sm text-text hover:bg-surface-2",
+                  "flex min-h-11 w-full items-center justify-between px-3 py-2 text-left text-sm text-text hover:bg-surface-2 md:min-h-0",
                 )}
               >
                 <span className="truncate">{o.name}</span>
@@ -110,7 +110,7 @@ export function ClientPicker({ value, onChange }: ClientPickerProps) {
                   onChange({ kind: "temp", name: query.trim() });
                   setOpen(false);
                 }}
-                className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-text-secondary hover:bg-surface-2"
+                className="flex min-h-11 w-full items-center gap-2 px-3 py-2 text-left text-sm text-text-secondary hover:bg-surface-2 md:min-h-0"
               >
                 Использовать как временного клиента: <span className="text-text">«{query.trim()}»</span>
               </button>

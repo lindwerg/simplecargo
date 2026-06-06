@@ -42,7 +42,7 @@ export default async function ActualBoardPage({ searchParams }: { searchParams: 
         </div>
       </header>
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <BoardTabs basePath="/requests/actual" view={view} query={{ origin: originRaw, road: roadRaw }} />
         <BoardFilters basePath="/requests/actual" view={view} originRaw={originRaw} roadRaw={roadRaw} />
       </div>

@@ -38,8 +38,9 @@ export default async function AppLayout({
       <SideRail counts={counts} />
       <MobileTopBar />
 
-      {/* pb clears the floating mobile bottom bar (+ iOS safe area). */}
-      <main className="mx-auto max-w-[var(--content-max)] px-[var(--space-gutter)] pt-[var(--space-section)] pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-[var(--space-section)]">
+      {/* pt: tighter on phone (the top bar already eats vertical space); section rhythm on desktop.
+          pb: clears the floating mobile bottom bar (+ iOS safe area). */}
+      <main className="mx-auto max-w-[var(--content-max)] px-[var(--space-gutter)] pt-4 pb-[calc(var(--bottombar-clearance)+env(safe-area-inset-bottom))] md:pt-[var(--space-section)] md:pb-[var(--space-section)]">
         {children}
       </main>
 

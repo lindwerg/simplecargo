@@ -128,7 +128,7 @@ export function RequestStatusActions({ id, status, isTemp }: Props) {
               disabled={busy}
               onClick={() => onTarget(to)}
               className={cn(
-                "inline-flex h-9 items-center rounded-[var(--radius-md)] px-3.5 text-sm font-medium disabled:opacity-50 focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]",
+                "inline-flex h-11 items-center rounded-[var(--radius-md)] px-3.5 text-sm font-medium disabled:opacity-50 focus:outline-none focus-visible:[box-shadow:var(--ring-focus)] md:h-9",
                 primary && "bg-accent text-text-inverse hover:bg-accent-hover",
                 danger && "border border-border bg-surface-2 text-text-secondary hover:border-danger hover:text-danger",
                 !primary && !danger && "border border-border bg-surface-2 text-text hover:bg-surface-3",
@@ -143,7 +143,7 @@ export function RequestStatusActions({ id, status, isTemp }: Props) {
             type="button"
             disabled={busy}
             onClick={() => void remove()}
-            className="inline-flex h-9 items-center rounded-[var(--radius-md)] px-3 text-sm text-text-tertiary hover:text-danger"
+            className="inline-flex h-11 items-center rounded-[var(--radius-md)] px-3 text-sm text-text-tertiary hover:text-danger md:h-9"
           >
             Удалить
           </button>
@@ -156,7 +156,7 @@ export function RequestStatusActions({ id, status, isTemp }: Props) {
           <select
             value={reason}
             onChange={(e) => setReason(e.target.value)}
-            className="h-9 rounded-[var(--radius-sm)] border border-border bg-surface-inset px-2 text-sm text-text"
+            className="h-11 rounded-[var(--radius-sm)] border border-border bg-surface-inset px-2 text-sm text-text md:h-9"
           >
             {LOSS_REASONS.map((r) => (
               <option key={r.value} value={r.value}>
@@ -168,11 +168,11 @@ export function RequestStatusActions({ id, status, isTemp }: Props) {
             type="button"
             disabled={busy}
             onClick={() => void patch({ to: pending, lossReason: reason })}
-            className="inline-flex h-9 items-center rounded-[var(--radius-md)] bg-accent px-3.5 text-sm font-semibold text-text-inverse hover:bg-accent-hover"
+            className="inline-flex h-11 items-center rounded-[var(--radius-md)] bg-accent px-3.5 text-sm font-semibold text-text-inverse hover:bg-accent-hover md:h-9"
           >
             Подтвердить
           </button>
-          <button type="button" onClick={() => setPending(null)} className="h-9 px-2 text-sm text-text-tertiary hover:text-text">
+          <button type="button" onClick={() => setPending(null)} className="inline-flex h-11 items-center px-2 text-sm text-text-tertiary hover:text-text md:h-9">
             Отмена
           </button>
         </div>
@@ -188,11 +188,11 @@ export function RequestStatusActions({ id, status, isTemp }: Props) {
                   type="button"
                   disabled={busy || !client}
                   onClick={() => void linkClient()}
-                  className="inline-flex h-9 items-center rounded-[var(--radius-md)] bg-accent px-3.5 text-sm font-semibold text-text-inverse disabled:opacity-50 hover:bg-accent-hover"
+                  className="inline-flex h-11 items-center rounded-[var(--radius-md)] bg-accent px-3.5 text-sm font-semibold text-text-inverse disabled:opacity-50 hover:bg-accent-hover md:h-9"
                 >
                   Привязать
                 </button>
-                <button type="button" onClick={() => setLinkOpen(false)} className="h-9 px-2 text-sm text-text-tertiary hover:text-text">
+                <button type="button" onClick={() => setLinkOpen(false)} className="inline-flex h-11 items-center px-2 text-sm text-text-tertiary hover:text-text md:h-9">
                   Отмена
                 </button>
               </div>
@@ -201,7 +201,7 @@ export function RequestStatusActions({ id, status, isTemp }: Props) {
             <button
               type="button"
               onClick={() => setLinkOpen(true)}
-              className="inline-flex h-9 items-center self-start rounded-[var(--radius-md)] border border-border bg-surface-2 px-3.5 text-sm text-text hover:bg-surface-3"
+              className="inline-flex h-11 items-center self-start rounded-[var(--radius-md)] border border-border bg-surface-2 px-3.5 text-sm text-text hover:bg-surface-3 md:h-9"
             >
               Привязать клиента
             </button>

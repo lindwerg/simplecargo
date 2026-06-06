@@ -12,7 +12,11 @@
 //   • surface a warning when a kept row has no wagon count
 // Deterministic, no I/O.
 
+import { normalizeWagonType } from "@/lib/wagons/wagon-type";
 import type { ExtractionResult, ExtractedLine } from "./schema";
+
+const RATE_KINDS = ["flat_rub", "tariff_indicative", "tariff_plus_markup"] as const;
+type RateKindValue = (typeof RATE_KINDS)[number];
 
 function nullifyText(v: string | null): string | null {
   if (v === null) return null;
@@ -29,6 +33,35 @@ function coerceInt(v: number | null): number | null {
 function coercePositive(v: number | null): number | null {
   if (v === null || !Number.isFinite(v) || v <= 0) return null;
   return v;
+}
+
+// Resolve to canonical wagon-type code if recognized; else keep the raw trimmed
+// string (never drop operator/AI input we don't recognize).
+function normalizeWagonTypeField(v: string | null): string | null {
+  const t = nullifyText(v);
+  if (t === null) return null;
+  return normalizeWagonType(t)?.code ?? t;
+}
+
+// Finite number or null (markup may be 0 or negative — do NOT force positive).
+function coerceFinite(v: number | null): number | null {
+  if (v === null || !Number.isFinite(v)) return null;
+  return v;
+}
+
+// Tariff class is a closed 1|2|3 set; anything else → null.
+function coerceTariffClass(v: number | null): number | null {
+  if (v === null || !Number.isFinite(v)) return null;
+  const n = Math.round(v);
+  return n === 1 || n === 2 || n === 3 ? n : null;
+}
+
+// Pass through only the 3 allowed rate kinds; else null.
+function coerceRateKind(v: string | null): RateKindValue | null {
+  const t = nullifyText(v);
+  return t !== null && (RATE_KINDS as readonly string[]).includes(t)
+    ? (t as RateKindValue)
+    : null;
 }
 
 export function normalizeExtraction(raw: ExtractionResult): ExtractionResult {
@@ -58,12 +91,17 @@ export function normalizeExtraction(raw: ExtractionResult): ExtractionResult {
       tonnagePerWagon: coercePositive(line.tonnagePerWagon),
       targetRatePerWagon: coercePositive(line.targetRatePerWagon),
       targetRateRaw: nullifyText(line.targetRateRaw),
+      wagonType: normalizeWagonTypeField(line.wagonType),
+      targetRateKind: coerceRateKind(line.targetRateKind),
+      targetRateMarkupPct: coerceFinite(line.targetRateMarkupPct),
+      targetTariffClass: coerceTariffClass(line.targetTariffClass),
+      targetTariffRef: nullifyText(line.targetTariffRef),
     });
   }
 
   return {
     clientGuess: nullifyText(raw.clientGuess),
-    wagonType: nullifyText(raw.wagonType),
+    wagonType: normalizeWagonTypeField(raw.wagonType),
     periodFrom: nullifyText(raw.periodFrom),
     periodTo: nullifyText(raw.periodTo),
     lines,
