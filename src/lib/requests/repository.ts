@@ -391,6 +391,51 @@ export async function markLinesKpIssued(
   return { requestId, count: updated.length };
 }
 
+// stamp by line id only (cross-request board selection — KISS, no request scoping)
+export async function markDirectionsKpIssued(lineIds: string[]): Promise<{ count: number }> {
+  if (lineIds.length === 0) return { count: 0 };
+  const updated = await db
+    .update(requestLines)
+    .set({ kpIssuedAt: new Date() })
+    .where(inArray(requestLines.id, lineIds))
+    .returning({ id: requestLines.id });
+  return { count: updated.length };
+}
+
+// ── getDirectionsByIds — fetch selected directions ACROSS requests for a combined
+// owner letter / КП (operator decision: mixing uploads is allowed). Each line
+// carries its effective wagon type (line override → request header). ────────────
+export async function getDirectionsByIds(lineIds: string[]): Promise<{
+  lines: (typeof requestLines.$inferSelect & { wagonType: string | null })[];
+  clientNames: string[];
+  requestIds: string[];
+}> {
+  if (lineIds.length === 0) return { lines: [], clientNames: [], requestIds: [] };
+
+  const rows = await db
+    .select({
+      line: requestLines,
+      clientName: counterparties.nameCanonical,
+      clientRaw: requests.clientRaw,
+      headerWagonType: requests.wagonType,
+    })
+    .from(requestLines)
+    .innerJoin(requests, eq(requestLines.requestId, requests.id))
+    .leftJoin(counterparties, eq(counterparties.id, requests.clientSuggestedId))
+    .where(inArray(requestLines.id, lineIds))
+    .orderBy(asc(requestLines.sortOrder));
+
+  const lines = rows.map((r) => ({
+    ...r.line,
+    wagonType: r.line.wagonType ?? r.headerWagonType,
+  }));
+  const clientNames = [
+    ...new Set(rows.map((r) => r.clientName ?? r.clientRaw).filter((n): n is string => !!n)),
+  ];
+  const requestIds = [...new Set(rows.map((r) => r.line.requestId))];
+  return { lines, clientNames, requestIds };
+}
+
 // ── delete — only while EVERY direction is still new (cancel legs otherwise) ──
 export async function deleteRequest(id: string): Promise<{ id: string }> {
   return db.transaction(async (tx) => {

@@ -4,10 +4,14 @@ import Link from "next/link";
 import { Printer, ArrowLeft } from "lucide-react";
 
 interface Props {
-  id: string;
+  id?: string;
+  backHref?: string;
+  backLabel?: string;
 }
 
-export function KpPrintBar({ id }: Props) {
+export function KpPrintBar({ id, backHref, backLabel }: Props) {
+  const href = backHref ?? (id ? `/requests/${id}` : "/requests/actual");
+  const label = backLabel ?? "Назад к запросу";
   return (
     <div className="flex flex-wrap items-center gap-2">
       <button
@@ -18,10 +22,10 @@ export function KpPrintBar({ id }: Props) {
         <Printer className="size-4" aria-hidden /> Печать / Сохранить PDF
       </button>
       <Link
-        href={`/requests/${id}`}
+        href={href}
         className="inline-flex h-10 items-center gap-2 rounded-[var(--radius-md)] border border-border bg-surface-2 px-4 text-sm text-text hover:bg-surface-3"
       >
-        <ArrowLeft className="size-4" aria-hidden /> Назад к запросу
+        <ArrowLeft className="size-4" aria-hidden /> {label}
       </Link>
     </div>
   );

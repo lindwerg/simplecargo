@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 
 import { listDirectionCards } from "@/lib/requests/repository";
 import { BoardView, type BoardViewMode } from "@/components/requests/BoardView";
+import { BoardSelection } from "@/components/requests/BoardSelection";
 import { BoardTabs } from "@/components/requests/BoardTabs";
 import { BoardFilters } from "@/components/requests/BoardFilters";
 
@@ -47,7 +48,11 @@ export default async function ActualBoardPage({ searchParams }: { searchParams: 
         <BoardFilters basePath="/requests/actual" view={view} originRaw={originRaw} roadRaw={roadRaw} />
       </div>
 
-      <BoardView cards={cards} view={view} />
+      {cards.length === 0 ? (
+        <BoardView cards={cards} view={view} />
+      ) : (
+        <BoardSelection cards={cards} view={view} />
+      )}
     </div>
   );
 }

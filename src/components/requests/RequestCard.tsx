@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { Money } from "@/components/ui/Money";
 import { StatusPill, type RequestStatus } from "@/components/ui/StatusPill";
@@ -6,6 +8,11 @@ import type { DirectionCardView } from "@/lib/requests/grouping";
 interface RequestCardProps {
   card: DirectionCardView;
   archived?: boolean | undefined;
+  /** Selection (board multi-select). When selectable, a checkbox is shown and the
+   *  whole-card link stays — the checkbox sits above it to toggle selection. */
+  selectable?: boolean;
+  selected?: boolean;
+  onToggle?: (lineId: string) => void;
 }
 
 const MS_PER_DAY = 86_400_000;
@@ -21,7 +28,13 @@ function slaChip(validUntil: Date | null): { label: string; tone: string } | nul
 
 /** Marketplace-style direction card (one request_line). Server Component — pure
  *  display. The whole card links to the parent request's detail. */
-export function RequestCard({ card, archived = false }: RequestCardProps) {
+export function RequestCard({
+  card,
+  archived = false,
+  selectable = false,
+  selected = false,
+  onToggle,
+}: RequestCardProps) {
   const status = card.status as RequestStatus;
   const clientLabel = card.clientName ?? card.clientRaw;
   const isTemp = !card.clientSuggestedId;
@@ -33,11 +46,29 @@ export function RequestCard({ card, archived = false }: RequestCardProps) {
         "direction-card flex flex-col",
         `direction-card--${status}`,
         archived && "direction-card--archived",
+        selected && "ring-2 ring-accent ring-offset-1 ring-offset-surface-1",
       )}
     >
       {/* status + SLA */}
       <div className="flex items-center justify-between px-4 pt-3">
-        <StatusPill status={status} />
+        <div className="flex items-center gap-2">
+          {selectable && (
+            // relative z-10 lifts the checkbox above the full-card <a> below.
+            <label
+              className="relative z-10 flex size-7 cursor-pointer items-center justify-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <input
+                type="checkbox"
+                checked={selected}
+                onChange={() => onToggle?.(card.lineId)}
+                className="size-5 accent-[var(--color-accent)]"
+                aria-label={`Выбрать ${card.originRaw} → ${card.destRaw}`}
+              />
+            </label>
+          )}
+          <StatusPill status={status} />
+        </div>
         {sla && (
           <span className={cn("font-mono text-xs tabular-nums", sla.tone)}>SLA {sla.label}</span>
         )}
