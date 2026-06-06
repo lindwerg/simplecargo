@@ -10,7 +10,7 @@ import {
 } from "./tochka-client";
 import { extractAccounts, extractStatements, isStatementReady } from "./extract";
 import { parseTransaction, TochkaParseError } from "./parse-transaction";
-import { reconcileByInn } from "./reconcile";
+import { reconcileByInn, reconcileToDeals } from "./reconcile";
 
 // Sync orchestration: pull accounts + statements from Tochka and upsert them
 // idempotently. Read-only against the bank; the only writes are to our own DB.
@@ -39,6 +39,7 @@ export interface SyncResult {
   skipped: number; // already present (dedup)
   failed: number; // unparseable transactions
   linked: number; // newly auto-reconciled to a counterparty by ИНН
+  dealsLinked: number; // newly auto-reconciled to a specific deal
   warnings: string[];
 }
 
@@ -158,6 +159,7 @@ export async function syncTochka(
     skipped: 0,
     failed: 0,
     linked: 0,
+    dealsLinked: 0,
     warnings: [],
   };
 
@@ -198,12 +200,13 @@ export async function syncTochka(
     }
   }
 
-  // Уровень 1 разноса: сшить новые операции с контрагентами по точному ИНН.
+  // Разнос: Уровень 1 (контрагент по ИНН) → Уровень 2 (конкретная сделка).
   try {
     result.linked = await reconcileByInn();
+    result.dealsLinked = await reconcileToDeals();
   } catch (error: unknown) {
     result.warnings.push(
-      `Авто-разнос по ИНН не выполнен: ${error instanceof Error ? error.message : "ошибка"}`,
+      `Авто-разнос не выполнен: ${error instanceof Error ? error.message : "ошибка"}`,
     );
   }
 

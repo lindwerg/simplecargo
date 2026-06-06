@@ -12,6 +12,7 @@ interface SyncResultData {
   skipped: number;
   failed: number;
   linked: number;
+  dealsLinked: number;
   warnings: string[];
 }
 
@@ -42,6 +43,7 @@ export function SyncButton() {
       const d = json.data;
       setNote(
         `Готово: +${d.inserted} новых, ${d.skipped} уже было, разнесено ${d.linked}` +
+          `${d.dealsLinked ? ` (по сделкам ${d.dealsLinked})` : ""}` +
           `${d.failed ? `, ${d.failed} не разобрано` : ""}.` +
           (d.warnings.length ? ` ⚠ ${d.warnings.join("; ")}` : ""),
       );
