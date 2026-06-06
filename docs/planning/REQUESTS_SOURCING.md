@@ -488,6 +488,16 @@ export const requestLines = pgTable("request_lines", {
 
 ### 5.4 `request_owner_quotes` — the canonical опрос table (resolves C2; VAT default 22; cost-stack)
 
+> **REVISION (2026-06-06) — enum convention.** The snippet below uses `pgEnum` helpers
+> (`ownerQuoteStatus`, `quoteCommitment`, …). The actual codebase house convention is **`text` column +
+> `CHECK` constraint, never `pgEnum`** (stated verbatim in `requests.ts`, `directionBindings.ts`,
+> `counterpartyContacts.ts`, `counterpartyDocuments.ts`; zero `pgEnum` in `src/lib/db/schema/`). When
+> this table is implemented, the **canonical form is `text + CHECK`**, not `pgEnum`. The mail-integration
+> work (see [`MAIL_AI_INTEGRATION.md`](./MAIL_AI_INTEGRATION.md)) ships a **minimal `text+CHECK` subset**
+> of this table now (status / polledVia / cost / wagons / sourceMessageId) for outbound carrier RFQ; the
+> remaining cost-stack/VAT/coverage columns below are added additively when the full sourcing engine
+> lands. Treat the field list below as the design target, the enum **mechanism** as superseded.
+
 ```typescript
 export const requestOwnerQuotes = pgTable("request_owner_quotes", {
   id:            uuid("id").primaryKey().default(sql`gen_random_uuid()`),
