@@ -5,6 +5,7 @@ import { RefreshCw } from "lucide-react";
 
 import { Money } from "@/components/ui/Money";
 import { cn } from "@/lib/utils";
+import { abbreviateOrgName } from "@/lib/finances/org-name";
 import type { PaymentDraftRow } from "@/lib/finances/payments";
 
 interface PaymentsListProps {
@@ -49,7 +50,9 @@ export function PaymentsList({ payments }: PaymentsListProps) {
         return (
           <li key={p.id} className="flex items-center gap-3 px-4 py-3">
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-text">{p.counterpartyName}</p>
+              <p className="truncate text-sm font-medium text-text">
+                {abbreviateOrgName(p.counterpartyName)}
+              </p>
               <p className="truncate text-xs text-text-tertiary">{p.purpose}</p>
               <p className="text-xs text-text-tertiary">
                 {dateFmt.format(new Date(p.paymentDate))}

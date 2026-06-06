@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { Money } from "@/components/ui/Money";
 import { cn } from "@/lib/utils";
+import { abbreviateOrgName } from "@/lib/finances/org-name";
 import type { TransactionRow } from "@/lib/finances/repository";
 
 interface TransactionFeedProps {
@@ -81,7 +82,7 @@ export function TransactionFeed({ transactions }: TransactionFeedProps) {
             {items.map((t) => {
               const incoming = t.direction === "in";
               const signed = incoming ? t.amount : -t.amount;
-              const name = t.matchedName ?? t.counterpartyName;
+              const name = abbreviateOrgName(t.matchedName ?? t.counterpartyName);
               return (
                 <li key={t.id}>
                   <Link

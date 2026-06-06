@@ -6,6 +6,7 @@ import { Check, Link2, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { abbreviateOrgName } from "@/lib/finances/org-name";
 
 interface Match {
   id: string;
@@ -90,7 +91,7 @@ export function ReconcileControl({
       <div className="flex items-center justify-between gap-2">
         <span className="flex items-center gap-1.5 text-sm text-text">
           <Check className="size-4 text-success" aria-hidden />
-          {matchedName ?? "Разнесено"}
+          {abbreviateOrgName(matchedName) ?? "Разнесено"}
         </span>
         <Button type="button" variant="ghost" size="sm" onClick={unlink} disabled={busy}>
           <X aria-hidden /> Снять
@@ -135,7 +136,7 @@ export function ReconcileControl({
                   busy && "opacity-50",
                 )}
               >
-                {m.name}
+                {abbreviateOrgName(m.name)}
               </button>
             </li>
           ))}

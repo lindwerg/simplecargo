@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { Money } from "@/components/ui/Money";
 import { getTransactionDetail } from "@/lib/finances/repository";
+import { abbreviateOrgName } from "@/lib/finances/org-name";
 import { ReconcileControl } from "@/components/finances/ReconcileControl";
 
 export const dynamic = "force-dynamic";
@@ -72,7 +73,7 @@ export default async function TransactionDetailPage({ params }: PageProps) {
       <section className="rounded-lg border border-border bg-surface-1 px-4">
         <dl>
           <Requisite label="Назначение платежа" value={tx.purposeRaw} />
-          <Requisite label={partyLabel} value={tx.counterpartyName} />
+          <Requisite label={partyLabel} value={abbreviateOrgName(tx.counterpartyName)} />
           <Requisite label="ИНН" value={tx.counterpartyInn} />
           <Requisite label="КПП" value={tx.counterpartyKpp} />
           <Requisite label="Номер счёта" value={tx.counterpartyAccount} />
