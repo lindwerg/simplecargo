@@ -30,6 +30,7 @@ export async function recordIngestedFile(params: {
   filename: string;
   senderEmail: string | null;
   messageId: string | null;
+  emailDate: Date | null; // фактическая дата письма (заголовок Date), не время обработки
 }): Promise<{ fileId: string; isNew: boolean }> {
   const inserted = await db
     .insert(ingestedFiles)
@@ -40,7 +41,8 @@ export async function recordIngestedFile(params: {
       status: "processing",
       senderEmail: params.senderEmail,
       gmailMessageId: params.messageId,
-      receivedAt: new Date(),
+      // когда письмо реально получено (его дата), а не когда воркер его разобрал
+      receivedAt: params.emailDate ?? new Date(),
     })
     .onConflictDoNothing({ target: ingestedFiles.contentSha256 })
     .returning({ id: ingestedFiles.id });

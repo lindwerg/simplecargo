@@ -92,6 +92,8 @@ export function QuarantineList({ items }: QuarantineListProps) {
   const [busyId, setBusyId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const [clearing, setClearing] = useState(false);
+
   async function resolve(id: number, action: "approved" | "rejected") {
     setBusyId(id);
     setError(null);
@@ -111,6 +113,28 @@ export function QuarantineList({ items }: QuarantineListProps) {
     }
   }
 
+  async function clearAll() {
+    if (!window.confirm(`Очистить всю очередь (${items.length})? Все письма будут помечены как разобранные.`)) {
+      return;
+    }
+    setClearing(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/quarantine/resolve-all", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "rejected" }),
+      });
+      const json: { success: boolean; error?: string } = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.error ?? "Не удалось очистить");
+      router.refresh();
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Ошибка");
+    } finally {
+      setClearing(false);
+    }
+  }
+
   if (items.length === 0) {
     return (
       <p className="text-sm text-text-tertiary">
@@ -122,6 +146,19 @@ export function QuarantineList({ items }: QuarantineListProps) {
 
   return (
     <div className="flex flex-col gap-3">
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-xs text-text-tertiary">{items.length} писем в очереди</span>
+        <Button
+          type="button"
+          size="sm"
+          variant="ghost"
+          disabled={clearing}
+          onClick={clearAll}
+          title="Пометить все письма очереди разобранными"
+        >
+          <X className="size-4" aria-hidden /> {clearing ? "Очищаю…" : "Очистить всё"}
+        </Button>
+      </div>
       {error && <p className="text-sm text-danger">{error}</p>}
       <ul className="flex flex-col gap-2.5">
         {items.map((it) => {
