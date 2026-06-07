@@ -14,8 +14,6 @@ interface RegistryBuildTableProps {
 }
 
 type RoleFilter = "all" | SuggestedRole;
-/** Роль, под которой контрагент заносится в реестр (в партнёрах только эти две). */
-type ImportRole = "client" | "carrier";
 
 const ROLE_LABEL: Readonly<Record<SuggestedRole, string>> = {
   client: "Клиент",
@@ -51,9 +49,6 @@ function matchesSearch(row: RegistryRow, q: string): boolean {
   return hay.includes(q);
 }
 
-function defaultRole(r: RegistryRow): ImportRole {
-  return r.suggestedRole === "client" ? "client" : "carrier";
-}
 function defaultEmail(r: RegistryRow): string {
   return r.matchedEmails[0] ?? r.candidateEmails[0] ?? "";
 }
@@ -74,8 +69,8 @@ export function RegistryBuildTable({ rows }: RegistryBuildTableProps) {
   const [selected, setSelected] = useState<Set<string>>(
     () => new Set(rows.filter((r) => !r.inRegistry && r.suggestedRole !== "other").map((r) => r.key)),
   );
-  const [roleByKey, setRoleByKey] = useState<Record<string, ImportRole>>(
-    () => Object.fromEntries(rows.map((r) => [r.key, defaultRole(r)])),
+  const [roleByKey, setRoleByKey] = useState<Record<string, SuggestedRole>>(
+    () => Object.fromEntries(rows.map((r) => [r.key, r.suggestedRole])),
   );
   const [emailByKey, setEmailByKey] = useState<Record<string, string>>(
     () => Object.fromEntries(rows.map((r) => [r.key, defaultEmail(r)])),
@@ -104,31 +99,42 @@ export function RegistryBuildTable({ rows }: RegistryBuildTableProps) {
     });
   };
 
-  const allFilteredSelected = filtered.length > 0 && filtered.every((r) => selected.has(r.key));
+  // «Прочее» (расходы) в партнёры не заносятся — заносимы только client/carrier.
+  const roleOf = (key: string, fallback: SuggestedRole): SuggestedRole => roleByKey[key] ?? fallback;
+  const isImportable = (r: RegistryRow): boolean =>
+    selected.has(r.key) && roleOf(r.key, r.suggestedRole) !== "other";
+
+  // «Выбрать всех» оперирует только заносимыми строками (роль ≠ прочее).
+  const eligible = filtered.filter((r) => roleOf(r.key, r.suggestedRole) !== "other");
+  const allEligibleSelected = eligible.length > 0 && eligible.every((r) => selected.has(r.key));
   const toggleAll = (): void => {
     setSelected((prev) => {
       const next = new Set(prev);
-      if (allFilteredSelected) filtered.forEach((r) => next.delete(r.key));
-      else filtered.forEach((r) => next.add(r.key));
+      if (allEligibleSelected) eligible.forEach((r) => next.delete(r.key));
+      else eligible.forEach((r) => next.add(r.key));
       return next;
     });
   };
 
-  const selectedCount = selected.size;
+  const importableCount = rows.filter(isImportable).length;
+  const skippedCount = rows.filter(
+    (r) => selected.has(r.key) && roleOf(r.key, r.suggestedRole) === "other",
+  ).length;
 
   async function runImport(): Promise<void> {
     setImporting(true);
     setResult(null);
     try {
       const items = rows
-        .filter((r) => selected.has(r.key))
+        .filter(isImportable)
         .map((r) => {
           const email = emailByKey[r.key]?.trim();
+          const role = roleOf(r.key, r.suggestedRole);
           return {
             inn: r.inn,
             name: r.registryName ?? r.names[0] ?? "",
             nameVariants: r.names,
-            role: roleByKey[r.key] ?? defaultRole(r),
+            role: role === "client" ? ("client" as const) : ("carrier" as const),
             email: email && email.includes("@") ? email : null,
           };
         })
@@ -234,9 +240,9 @@ export function RegistryBuildTable({ rows }: RegistryBuildTableProps) {
               <th className="w-10 px-3 py-2.5">
                 <input
                   type="checkbox"
-                  checked={allFilteredSelected}
+                  checked={allEligibleSelected}
                   onChange={toggleAll}
-                  aria-label="Выбрать всех на странице"
+                  aria-label="Выбрать всех клиентов и перевозчиков на странице"
                   className="size-4 accent-[var(--color-accent)]"
                 />
               </th>
@@ -255,6 +261,8 @@ export function RegistryBuildTable({ rows }: RegistryBuildTableProps) {
             {filtered.map((r) => {
               const isOpen = expanded === r.key;
               const isSel = selected.has(r.key);
+              const role = roleOf(r.key, r.suggestedRole);
+              const willImport = isSel && role !== "other";
               const name = r.registryName ?? r.names[0] ?? "—";
               const extraNames = r.names.filter((n) => n !== name);
               return (
@@ -262,7 +270,7 @@ export function RegistryBuildTable({ rows }: RegistryBuildTableProps) {
                   key={r.key}
                   className={cn(
                     "border-b border-border align-top transition-colors last:border-0",
-                    isSel ? "bg-accent-quiet" : "hover:bg-surface-1",
+                    willImport ? "bg-accent-quiet" : "hover:bg-surface-1",
                   )}
                 >
                   <td className="px-3 py-2.5">
@@ -302,16 +310,20 @@ export function RegistryBuildTable({ rows }: RegistryBuildTableProps) {
                         {r.lowConfidence && <span className="ml-1 opacity-70" title="Угадано по направлению платежа">?</span>}
                       </span>
                       <select
-                        value={roleByKey[r.key] ?? defaultRole(r)}
+                        value={role}
                         onChange={(e) =>
-                          setRoleByKey((prev) => ({ ...prev, [r.key]: e.target.value as ImportRole }))
+                          setRoleByKey((prev) => ({ ...prev, [r.key]: e.target.value as SuggestedRole }))
                         }
                         aria-label={`Роль для реестра — ${name}`}
                         className="h-8 rounded-[var(--radius-sm)] border border-border bg-surface-2 px-2 text-xs text-text focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
                       >
                         <option value="client">Клиент</option>
                         <option value="carrier">Перевозчик</option>
+                        <option value="other">Прочее (не заносить)</option>
                       </select>
+                      {isSel && role === "other" && (
+                        <span className="text-2xs text-text-tertiary">не заносится</span>
+                      )}
                     </div>
                   </td>
                   <td className="px-3 py-2.5">
@@ -374,14 +386,17 @@ export function RegistryBuildTable({ rows }: RegistryBuildTableProps) {
         <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
           <div className="flex flex-col">
             <span className="text-sm text-text">
-              Выбрано: <strong>{selectedCount}</strong>
+              К заносу: <strong>{importableCount}</strong>
+              {skippedCount > 0 && (
+                <span className="text-text-tertiary"> · «прочее» пропущено: {skippedCount}</span>
+              )}
             </span>
             {result && (
               <span className={cn("text-xs", result.ok ? "text-money-pos" : "text-danger")}>{result.text}</span>
             )}
           </div>
           <div className="flex items-center gap-2">
-            {selectedCount > 0 && (
+            {importableCount + skippedCount > 0 && (
               <button
                 type="button"
                 onClick={() => setSelected(new Set())}
@@ -393,10 +408,10 @@ export function RegistryBuildTable({ rows }: RegistryBuildTableProps) {
             <button
               type="button"
               onClick={runImport}
-              disabled={selectedCount === 0 || importing}
+              disabled={importableCount === 0 || importing}
               className="inline-flex h-10 items-center gap-2 rounded-[var(--radius-md)] bg-accent px-5 text-sm font-semibold text-text-inverse transition-colors hover:bg-accent-hover focus:outline-none focus-visible:[box-shadow:var(--ring-focus)] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {importing ? "Заношу…" : `Занести в партнёры (${selectedCount})`}
+              {importing ? "Заношу…" : `Занести в партнёры (${importableCount})`}
             </button>
           </div>
         </div>
