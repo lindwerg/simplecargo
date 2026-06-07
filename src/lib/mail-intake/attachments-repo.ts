@@ -1,15 +1,17 @@
 // Persist + read original inbound-mail documents so the operator can OPEN them
-// (счета, ответы перевозчиков, вложения, текст письма). Bytes live in Postgres
-// (see ingestedAttachments schema for why — cross-service constraint).
+// (счета, ответы перевозчиков, вложения, тело письма). Canonical store = object
+// storage (Railway Bucket); when it's not configured we fall back to Postgres
+// bytea (legacy, capped). Web and mail-worker share the bucket (no common volume).
 
 import { eq, inArray } from "drizzle-orm";
 
 import { db } from "@/lib/db/client";
 import { ingestedAttachments } from "@/lib/db/schema/ingestedAttachments";
+import { isObjectStoreConfigured, putObject } from "@/lib/storage/object-store";
 
-// Per-row byte cap. Above this we keep metadata (so the operator sees a file came
-// in) but not the bytes, to keep the DB sane. Most счета/ответы are well under.
-export const MAX_INGESTED_BYTES = 15 * 1024 * 1024; // 15 MB
+// Fallback bytea cap, used ONLY when object storage is not configured. Above it we
+// keep metadata (so the operator sees a file came in) but not the bytes.
+export const MAX_BYTEA_BYTES = 50 * 1024 * 1024; // 50 MB
 
 export interface AttachmentMeta {
   id: string;
@@ -18,7 +20,9 @@ export interface AttachmentMeta {
   filename: string;
   mimeType: string;
   sizeBytes: number;
-  hasContent: boolean; // false → over the cap, bytes not stored
+  isInline: boolean;
+  contentId: string | null;
+  hasContent: boolean; // openable (in bucket OR in bytea)
 }
 
 export interface SaveAttachmentInput {
@@ -27,24 +31,44 @@ export interface SaveAttachmentInput {
   filename: string;
   mimeType: string;
   content: Buffer;
+  objectKey: string; // куда класть в bucket (если настроен)
+  isInline?: boolean;
+  contentId?: string | null;
 }
 
-/** Store one document's bytes (or just metadata if over the cap). Best-effort: the
- *  caller wraps this so a storage hiccup never loses the email itself. */
+/** Store one document: object storage if configured (storageKey set, bytea null),
+ *  else bytea fallback. Best-effort — caller wraps so a hiccup never loses the email. */
 export async function saveIngestedAttachment(input: SaveAttachmentInput): Promise<void> {
-  const tooBig = input.content.length > MAX_INGESTED_BYTES;
+  let storageKey: string | null = null;
+  let content: Buffer | null = input.content;
+
+  if (isObjectStoreConfigured()) {
+    try {
+      await putObject(input.objectKey, input.content, input.mimeType);
+      storageKey = input.objectKey;
+      content = null; // канонично в бакете — bytea не дублируем
+    } catch {
+      // не удалось залить — упадём на bytea ниже
+    }
+  }
+  if (!storageKey && content && content.length > MAX_BYTEA_BYTES) {
+    content = null; // слишком большой и без бакета — только метаданные
+  }
+
   await db.insert(ingestedAttachments).values({
     sourceFileId: input.sourceFileId,
     kind: input.kind,
     filename: input.filename,
     mimeType: input.mimeType,
     sizeBytes: input.content.length,
-    content: tooBig ? null : input.content,
+    storageKey,
+    isInline: input.isInline ?? false,
+    contentId: input.contentId ?? null,
+    content,
   });
 }
 
-/** Metadata (no bytes) for every document of the given source emails, for listing
- *  next to quarantine items / invoices. Grouped by sourceFileId by the caller. */
+/** Metadata (no bytes) for every document of the given source emails. */
 export async function listAttachmentsByFiles(fileIds: string[]): Promise<AttachmentMeta[]> {
   if (fileIds.length === 0) return [];
   const rows = await db
@@ -55,6 +79,9 @@ export async function listAttachmentsByFiles(fileIds: string[]): Promise<Attachm
       filename: ingestedAttachments.filename,
       mimeType: ingestedAttachments.mimeType,
       sizeBytes: ingestedAttachments.sizeBytes,
+      isInline: ingestedAttachments.isInline,
+      contentId: ingestedAttachments.contentId,
+      storageKey: ingestedAttachments.storageKey,
       content: ingestedAttachments.content,
     })
     .from(ingestedAttachments)
@@ -66,29 +93,32 @@ export async function listAttachmentsByFiles(fileIds: string[]): Promise<Attachm
     filename: r.filename,
     mimeType: r.mimeType,
     sizeBytes: r.sizeBytes,
-    hasContent: r.content !== null,
+    isInline: r.isInline,
+    contentId: r.contentId,
+    hasContent: r.storageKey !== null || r.content !== null,
   }));
 }
 
-export interface AttachmentBlob {
+export interface AttachmentRef {
   filename: string;
   mimeType: string;
-  content: Buffer;
+  storageKey: string | null;
+  content: Buffer | null;
 }
 
-/** The bytes of one document, for the download/view route. Null if absent or
- *  stored metadata-only (over the cap). */
-export async function getIngestedAttachment(id: string): Promise<AttachmentBlob | null> {
+/** Where one document's bytes live (bucket key or inline bytea). Null if absent. */
+export async function getIngestedAttachmentRef(id: string): Promise<AttachmentRef | null> {
   const rows = await db
     .select({
       filename: ingestedAttachments.filename,
       mimeType: ingestedAttachments.mimeType,
+      storageKey: ingestedAttachments.storageKey,
       content: ingestedAttachments.content,
     })
     .from(ingestedAttachments)
     .where(eq(ingestedAttachments.id, id))
     .limit(1);
   const r = rows[0];
-  if (!r || r.content === null) return null;
-  return { filename: r.filename, mimeType: r.mimeType, content: r.content };
+  if (!r || (r.storageKey === null && r.content === null)) return null;
+  return { filename: r.filename, mimeType: r.mimeType, storageKey: r.storageKey, content: r.content };
 }

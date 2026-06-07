@@ -7,6 +7,8 @@ import { and, desc, eq, lt, or, sql } from "drizzle-orm";
 
 import { db } from "@/lib/db/client";
 import { ingestedFiles } from "@/lib/db/schema/ingest";
+import { ingestedAttachments } from "@/lib/db/schema/ingestedAttachments";
+import { getObjectBytes } from "@/lib/storage/object-store";
 import { MAIL_PART_KINDS, type MailPartKind } from "./classify-schema";
 import { listAttachmentsByFiles, type AttachmentMeta } from "./attachments-repo";
 
@@ -172,6 +174,119 @@ export async function countInboxByKind(): Promise<InboxCounts> {
     counts[key] = { total: prev.total + total, unread: prev.unread + unread };
   }
   return counts;
+}
+
+export interface InboxEmailDetail {
+  id: string;
+  subject: string;
+  senderEmail: string | null;
+  receivedAt: string | null;
+  kind: string | null;
+  dealId: string | null;
+  directionId: string | null;
+  hasHtml: boolean;
+  hasRawEml: boolean;
+  documents: AttachmentMeta[]; // только настоящие вложения (kind='attachment')
+  bodyText: AttachmentMeta | null; // «Текст письма» — запасной вид без HTML
+}
+
+/** One email for the detail view: header + attachments + flags (HTML/.eml есть). */
+export async function getInboxEmailDetail(id: string): Promise<InboxEmailDetail | null> {
+  const rows = await db
+    .select({
+      id: ingestedFiles.id,
+      subject: ingestedFiles.filename,
+      senderEmail: ingestedFiles.senderEmail,
+      receivedAt: ingestedFiles.receivedAt,
+      kind: ingestedFiles.kind,
+      dealId: ingestedFiles.dealId,
+      directionId: ingestedFiles.directionId,
+      storageKey: ingestedFiles.storageKey,
+      htmlStorageKey: ingestedFiles.htmlStorageKey,
+    })
+    .from(ingestedFiles)
+    .where(eq(ingestedFiles.id, id))
+    .limit(1);
+  const r = rows[0];
+  if (!r) return null;
+
+  const docs = await listAttachmentsByFiles([id]);
+  const htmlBody = docs.find((d) => d.kind === "body" && d.mimeType.includes("text/html"));
+  const textBody = docs.find((d) => d.kind === "body" && d.mimeType.includes("text/plain"));
+
+  return {
+    id: r.id,
+    subject: r.subject,
+    senderEmail: r.senderEmail,
+    receivedAt: toIso(r.receivedAt),
+    kind: r.kind,
+    dealId: r.dealId,
+    directionId: r.directionId,
+    hasHtml: Boolean(r.htmlStorageKey) || Boolean(htmlBody),
+    hasRawEml: Boolean(r.storageKey),
+    documents: docs.filter((d) => d.kind === "attachment" && !d.isInline),
+    bodyText: textBody ?? null,
+  };
+}
+
+/** Object-storage key of the raw .eml (for «скачать оригинал»). Null if not stored. */
+export async function getEmailRawStorageKey(id: string): Promise<string | null> {
+  const rows = await db
+    .select({ storageKey: ingestedFiles.storageKey })
+    .from(ingestedFiles)
+    .where(eq(ingestedFiles.id, id))
+    .limit(1);
+  return rows[0]?.storageKey ?? null;
+}
+
+/** Sanitized HTML body for the iframe view, with cid: images rewritten to the
+ *  attachment route. Returns null when the email has no HTML part. Scripts are
+ *  stripped here AND blocked by CSP + iframe sandbox at the serving layer. */
+export async function getEmailHtml(id: string): Promise<string | null> {
+  const fileRows = await db
+    .select({ htmlStorageKey: ingestedFiles.htmlStorageKey })
+    .from(ingestedFiles)
+    .where(eq(ingestedFiles.id, id))
+    .limit(1);
+  if (!fileRows[0]) return null;
+
+  const atts = await db
+    .select({
+      id: ingestedAttachments.id,
+      kind: ingestedAttachments.kind,
+      mimeType: ingestedAttachments.mimeType,
+      contentId: ingestedAttachments.contentId,
+      storageKey: ingestedAttachments.storageKey,
+      content: ingestedAttachments.content,
+    })
+    .from(ingestedAttachments)
+    .where(eq(ingestedAttachments.sourceFileId, id));
+
+  // Источник HTML: ключ на письме (bucket) → иначе вложение-тело text/html.
+  let raw: string | null = null;
+  if (fileRows[0].htmlStorageKey) {
+    const b = await getObjectBytes(fileRows[0].htmlStorageKey);
+    raw = b?.toString("utf8") ?? null;
+  }
+  if (!raw) {
+    const body = atts.find((a) => a.kind === "body" && a.mimeType.includes("text/html"));
+    if (body?.storageKey) raw = (await getObjectBytes(body.storageKey))?.toString("utf8") ?? null;
+    else if (body?.content) raw = Buffer.from(body.content).toString("utf8");
+  }
+  if (!raw) return null;
+
+  // cid → /api/ingested/attachments/{id}
+  const cidToId = new Map<string, string>();
+  for (const a of atts) {
+    if (a.contentId) cidToId.set(a.contentId.replace(/[<>]/g, ""), a.id);
+  }
+  const rewritten = raw.replace(/cid:([^"'\s>)]+)/gi, (m, cid: string) => {
+    const attId = cidToId.get(cid.replace(/[<>]/g, ""));
+    return attId ? `/api/ingested/attachments/${attId}` : m;
+  });
+
+  // defense-in-depth: вырезаем <script> (CSP + sandbox уже блокируют исполнение)
+  return rewritten.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "");
 }
 
 /** Mark one email read (clears the «новое» badge). Idempotent. */

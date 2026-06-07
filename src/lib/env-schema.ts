@@ -17,6 +17,20 @@ export const envSchema = z.object({
   // Filesystem root for uploaded counterparty documents (договоры/заявки/сканы).
   // Prod = a mounted Railway volume (e.g. "/data"); local dev defaults to ./.storage.
   STORAGE_DIR: z.string().min(1).default("./.storage"),
+  // Object storage (Railway Bucket, S3-совместимое) для оригиналов писем (.eml,
+  // HTML-тело, вложения). ВСЕ опциональны: если креды не заданы — хранение
+  // деградирует на Postgres bytea (legacy). Заполняются reference-переменными
+  // бакета в Railway (ENDPOINT/REGION/BUCKET/ACCESS_KEY_ID/SECRET_ACCESS_KEY).
+  STORAGE_S3_ENDPOINT: z.string().min(1).optional(),
+  STORAGE_S3_REGION: z.string().min(1).default("auto"),
+  STORAGE_S3_BUCKET: z.string().min(1).optional(),
+  STORAGE_S3_ACCESS_KEY_ID: z.string().min(1).optional(),
+  STORAGE_S3_SECRET_ACCESS_KEY: z.string().min(1).optional(),
+  // virtual-hosted (false) vs path-style (true). Railway/Tigris — virtual-hosted.
+  STORAGE_S3_FORCE_PATH_STYLE: z
+    .enum(["true", "false"])
+    .default("false")
+    .transform((v) => v === "true"),
   // AI intake (OpenRouter) — OPTIONAL so build/CI boot without it. When absent,
   // the request-extraction endpoint degrades gracefully (501 + operator hint).
   OPENROUTER_API_KEY: z.string().min(1).optional(),

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -81,14 +82,16 @@ export function EmailList({ tab, emptyText, initialItems, initialCursor }: Email
                       {chip.label}
                     </span>
                   )}
-                  <span
-                    className={`flex min-w-0 items-center gap-1.5 text-sm ${unread ? "font-semibold text-text" : "text-text"}`}
+                  <Link
+                    href={`/inbox/${it.id}`}
+                    onClick={() => markRead(it.id)}
+                    className={`flex min-w-0 items-center gap-1.5 text-sm hover:underline ${unread ? "font-semibold text-text" : "text-text"}`}
                   >
                     <Mail className="size-3.5 shrink-0 text-text-tertiary" aria-hidden />
                     <span className="truncate" title={subject}>
                       {subject}
                     </span>
-                  </span>
+                  </Link>
                 </div>
 
                 <span className="pl-[1.375rem] text-xs text-text-tertiary">

@@ -76,6 +76,19 @@ export async function markFileCommitted(
     .where(sql`${ingestedFiles.id} = ${fileId}`);
 }
 
+// Сохраняем ключи оригиналов в object storage на письме (сырое .eml + HTML-тело).
+export async function setIngestedFileStorage(
+  fileId: string,
+  opts: { storageKey?: string | null; htmlStorageKey?: string | null },
+): Promise<void> {
+  if (!fileId) return;
+  const set: Record<string, string | null> = {};
+  if (opts.storageKey !== undefined) set.storageKey = opts.storageKey;
+  if (opts.htmlStorageKey !== undefined) set.htmlStorageKey = opts.htmlStorageKey;
+  if (Object.keys(set).length === 0) return;
+  await db.update(ingestedFiles).set(set).where(sql`${ingestedFiles.id} = ${fileId}`);
+}
+
 // A processing failure (transient LLM/DB error) must NOT silently lose the email.
 // We park the file as 'quarantined' so a startup sweep / operator can revisit it
 // instead of the worker advancing the cursor past a black hole.

@@ -68,6 +68,7 @@ export async function fetchNewEmails(lastSeenUid: number): Promise<FetchResult> 
         fromName: p.from?.value?.[0]?.name ?? null,
         subject: p.subject ?? "",
         text: p.text ?? "",
+        html: typeof p.html === "string" ? p.html : null,
         messageId: p.messageId ?? "",
         inReplyTo: p.inReplyTo ?? null,
         references: p.references ? (Array.isArray(p.references) ? p.references : [p.references]) : [],
@@ -80,6 +81,8 @@ export async function fetchNewEmails(lastSeenUid: number): Promise<FetchResult> 
             contentType: a.contentType ?? "application/octet-stream",
             size: a.size ?? a.content.length,
             content: a.content,
+            cid: a.cid ?? null,
+            inline: a.contentDisposition === "inline" || Boolean(a.related),
           }),
         ),
       };
