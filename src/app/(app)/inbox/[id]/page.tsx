@@ -7,6 +7,7 @@ import { auth } from "@/lib/auth";
 import { AttachmentChips } from "@/components/inbox/AttachmentChips";
 import { MarkReadOnMount } from "@/components/inbox/MarkReadOnMount";
 import { LinkDealControl } from "@/components/inbox/LinkDealControl";
+import { CategoryControl } from "@/components/inbox/CategoryControl";
 import { KIND_CHIP } from "@/components/inbox/inbox-tabs";
 import { getInboxEmailDetail } from "@/lib/mail-intake/inbox-repo";
 
@@ -63,13 +64,19 @@ export default async function InboxEmailPage({ params }: { params: Promise<{ id:
         </p>
       </header>
 
-      <section className="space-y-1.5 rounded-lg border border-border bg-surface-2 p-4">
-        <p className="label-caps">Сделка</p>
-        <LinkDealControl
-          emailId={email.id}
-          directionId={email.directionId}
-          directionLabel={email.directionLabel}
-        />
+      <section className="flex flex-col gap-4 rounded-lg border border-border bg-surface-2 p-4">
+        <div className="space-y-1.5">
+          <p className="label-caps">Тип</p>
+          <CategoryControl emailId={email.id} current={email.kind} />
+        </div>
+        <div className="space-y-1.5 border-t border-border-subtle pt-3">
+          <p className="label-caps">Сделка</p>
+          <LinkDealControl
+            emailId={email.id}
+            directionId={email.directionId}
+            directionLabel={email.directionLabel}
+          />
+        </div>
       </section>
 
       {email.documents.length > 0 && (

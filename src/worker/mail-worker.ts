@@ -19,7 +19,6 @@ import {
 import { upsertKnownEmails } from "@/lib/mail/known-emails";
 import { storeEmailOriginals } from "@/lib/mail/store-originals";
 import { processEmail } from "@/lib/mail-intake/orchestrator";
-import { effectiveEmailKind } from "@/lib/mail-intake/classify-schema";
 import { buildQuarantineRow } from "@/lib/mail-intake/quarantine-map";
 import type { SeenAddress } from "@/lib/mail/known-emails";
 import { syncTochka } from "@/lib/finances/sync";
@@ -118,9 +117,10 @@ async function pollCycle(systemUserId: string): Promise<void> {
 
         const deps = buildIntakeDeps({ systemUserId, sourceFileId: fileId });
         const outcome = await processEmail(parsed, deps);
-        // Эффективный тип письма (для вкладок): при пустом теле берём тип вложения.
-        const eff = effectiveEmailKind(outcome.classification);
-        await markFileCommitted(fileId, eff.kind, eff.confidence);
+        // Тип письма (ярлык вкладки) ИИ НЕ проставляет — письмо попадает в «Все»,
+        // менеджер сам относит его к типу вручную. Извлечение заявок/счетов
+        // (processEmail) при этом работает как прежде.
+        await markFileCommitted(fileId);
         console.log(
           `[mail-worker] uid=${uid} ${outcome.classification.bodyKind} → req=${outcome.createdRequestId ?? "—"} inv=${outcome.invoiceIds.length} quote=${outcome.carrierQuotesMatched} quar=${outcome.quarantinedCount}`,
         );

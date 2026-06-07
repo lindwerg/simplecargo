@@ -21,8 +21,11 @@ export async function GET(request: Request, ctx: Ctx): Promise<Response> {
       status: 200,
       headers: {
         "Content-Type": "text/html; charset=utf-8",
+        // Письма показываем «как в почте»: внешние картинки/стили/шрифты разрешены,
+        // чтобы вёрстка не ломалась. Скрипты ЗАПРЕЩЕНЫ (нет script-src) + iframe
+        // sandbox без allow-scripts. Трекинг-пиксели грузятся (внутренний инструмент).
         "Content-Security-Policy":
-          "default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; font-src 'self' data:; media-src 'self' data:",
+          "default-src 'none'; img-src 'self' data: https: http:; style-src 'unsafe-inline' https: http:; font-src 'self' data: https: http:; media-src 'self' data: https: http:",
         "X-Content-Type-Options": "nosniff",
         "Referrer-Policy": "no-referrer",
         "Cache-Control": "private, no-store",

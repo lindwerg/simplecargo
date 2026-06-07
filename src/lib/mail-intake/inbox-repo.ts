@@ -316,6 +316,16 @@ export async function setInboxLink(emailId: string, directionId: string | null):
   await db.update(ingestedFiles).set({ directionId }).where(eq(ingestedFiles.id, emailId));
 }
 
+/** Ручной ярлык типа письма (менеджер сам относит). category=null → снять ярлык
+ *  (письмо вернётся только во «Все»). Хранится в той же колонке kind. */
+export async function setInboxCategory(emailId: string, category: string | null): Promise<void> {
+  if (!emailId) return;
+  await db
+    .update(ingestedFiles)
+    .set({ kind: category, classifiedAt: new Date() })
+    .where(eq(ingestedFiles.id, emailId));
+}
+
 export interface DirectionEmail {
   id: string;
   subject: string;
