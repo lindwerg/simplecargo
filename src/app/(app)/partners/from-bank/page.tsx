@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, Landmark } from "lucide-react";
 
 import { buildCounterpartyRegistry } from "@/lib/partners/registry-build";
+import { listKnownEmails, type KnownEmailOption } from "@/lib/contacts/suggest";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { RegistryBuildTable } from "@/components/partners/RegistryBuildTable";
@@ -10,12 +11,20 @@ export const dynamic = "force-dynamic";
 
 // «Контрагенты из банка и почты — на проверку». Read-only сводка: все контрагенты
 // из выписок Точки + реестра, с оборотами, подсказкой роли и подобранными почтами.
-// Запись в реестр здесь НЕ происходит — это выгрузка для сверки оператором.
+// Запись в реестр происходит по кнопке «Занести в партнёры» (Фаза 2).
 export default async function FromBankPage() {
   let rows: Awaited<ReturnType<typeof buildCounterpartyRegistry>> = [];
+  let knownEmails: KnownEmailOption[] = [];
   let failed = false;
   try {
-    rows = await buildCounterpartyRegistry();
+    // Справочник адресов для автоподстановки грузим параллельно; его ошибка не должна
+    // ронять страницу — поле почты просто останется без подсказок.
+    const [registry, emails] = await Promise.all([
+      buildCounterpartyRegistry(),
+      listKnownEmails().catch(() => [] as KnownEmailOption[]),
+    ]);
+    rows = registry;
+    knownEmails = emails;
   } catch (error: unknown) {
     failed = true;
     console.error("[partners] from-bank failed:", error instanceof Error ? error.message : error);
@@ -54,7 +63,7 @@ export default async function FromBankPage() {
           description="В банковских операциях ещё нет контрагентов. Запустите синхронизацию Точки, затем обновите страницу."
         />
       ) : (
-        <RegistryBuildTable rows={rows} />
+        <RegistryBuildTable rows={rows} knownEmails={knownEmails} />
       )}
     </div>
   );

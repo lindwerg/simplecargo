@@ -49,3 +49,28 @@ export async function suggestEmailContacts(
     isLinked: r.counterpartyId !== null,
   }));
 }
+
+export interface KnownEmailOption {
+  email: string;
+  displayName: string | null;
+}
+
+const LIST_MAX = 5000;
+
+// Весь справочник адресов для нативного <datalist> (быстрое заполнение многих
+// полей сразу). Самые свежие/частые — первыми. Кап, чтобы datalist не разрастался.
+export async function listKnownEmails(limit = 2000): Promise<KnownEmailOption[]> {
+  const safeLimit = Math.min(Math.max(1, limit), LIST_MAX);
+  const rows = await db
+    .select({
+      email: knownEmailContacts.emailLower,
+      displayName: knownEmailContacts.displayNameLast,
+    })
+    .from(knownEmailContacts)
+    .orderBy(
+      desc(knownEmailContacts.lastSeenAt),
+      desc(sql`${knownEmailContacts.seenIncoming} + ${knownEmailContacts.seenOutgoing}`),
+    )
+    .limit(safeLimit);
+  return rows.map((r) => ({ email: r.email, displayName: r.displayName }));
+}
