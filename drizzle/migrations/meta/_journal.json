@@ -134,6 +134,13 @@
       "when": 1780836071003,
       "tag": "0018_slimy_wolfsbane",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1780837265695,
+      "tag": "0019_violet_norrin_radd",
+      "breakpoints": true
     }
   ]
 }

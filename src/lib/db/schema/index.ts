@@ -13,6 +13,7 @@ export * from "./orders";
 export * from "./orderStoneLines";
 export * from "./directions";
 export * from "./directionBindings";
+export * from "./directionMonthlyRates";
 export * from "./requests";
 export * from "./pricing";
 export * from "./tariffs";

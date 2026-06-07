@@ -11,11 +11,13 @@ import { directions } from "@/lib/db/schema/directions";
 import { counterparties } from "@/lib/db/schema/counterparties";
 import { requestLines, requests } from "@/lib/db/schema/requests";
 import { listStoneLines } from "@/lib/trades/stoneRepository";
+import { listMonthlyRates } from "@/lib/trades/monthlyRateRepository";
 import { Button } from "@/components/ui/button";
 import { DealTabs, isDealTab, type DealTab } from "@/components/trades/DealTabs";
 import { dealStatusMeta } from "@/components/trades/dealStatusMeta";
 import { dealTypeLabel } from "@/components/trades/dealTypeMeta";
 import { StoneSection, type StoneLineView } from "@/components/trades/StoneSection";
+import { MonthlyRateGrid, type MonthlyRateView } from "@/components/trades/MonthlyRateGrid";
 import { directionStatusMeta } from "@/components/directions/statusMeta";
 
 export const dynamic = "force-dynamic";
@@ -55,7 +57,7 @@ export default async function DealCardPage({ params, searchParams }: Ctx) {
 
   if (!deal) notFound();
 
-  const dirs = await db
+  const dirRows = await db
     .select({
       id: directions.id,
       displayName: directions.displayName,
@@ -67,6 +69,21 @@ export default async function DealCardPage({ params, searchParams }: Ctx) {
     .from(directions)
     .where(eq(directions.orderId, id))
     .orderBy(asc(directions.status), desc(directions.createdAt));
+
+  // Per-month rates for each direction (Фаза 4). Parallel reads — directions are few.
+  const ratesByDirection = await Promise.all(
+    dirRows.map((d) => listMonthlyRates(d.id)),
+  );
+  const dirs: DirRow[] = dirRows.map((d, i) => ({
+    ...d,
+    monthlyRates: ratesByDirection[i].map((r) => ({
+      id: r.id,
+      effectiveMonth: r.effectiveMonth,
+      rateClient: r.rateClient,
+      rateOwner: r.rateOwner,
+      status: r.status,
+    })),
+  }));
 
   const stoneLines = await listStoneLines(id);
 
@@ -252,6 +269,7 @@ type DirRow = {
   destRaw: string | null;
   wagonCountPlanned: number | null;
   status: string;
+  monthlyRates: MonthlyRateView[];
 };
 
 function AddDirectionButton({ dealId }: { dealId: string }) {
@@ -301,45 +319,38 @@ function TransportSection({ dealId, directions: dirs }: { dealId: string; direct
         <h3 className="label-caps">Перевозка</h3>
         <AddDirectionButton dealId={dealId} />
       </div>
-      <div className="overflow-hidden rounded-lg border border-border bg-surface-1">
-        <table className="w-full border-collapse text-sm">
-          <thead>
-            <tr className="border-b border-border text-left">
-              <th className="label-caps px-4 py-2.5 font-medium">Маршрут</th>
-              <th className="label-caps px-4 py-2.5 text-right font-medium">Вагонов</th>
-              <th className="label-caps px-4 py-2.5 font-medium">Статус</th>
-            </tr>
-          </thead>
-          <tbody>
-            {dirs.map((d) => {
-              const m = directionStatusMeta(d.status);
-              const route = d.displayName ?? `${d.originRaw ?? "—"} → ${d.destRaw ?? "—"}`;
-              return (
-                <tr key={d.id} className="border-b border-border-subtle last:border-0">
-                  <td className="px-4 py-3">
-                    <Link
-                      href={`/directions/${d.id}/edit`}
-                      className="text-text transition-colors hover:text-accent"
-                    >
-                      {route}
-                    </Link>
-                  </td>
-                  <td className="px-4 py-3 text-right [font-variant-numeric:tabular-nums] text-text-secondary">
-                    {d.wagonCountPlanned ?? "—"}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className={`inline-flex items-center gap-1.5 text-xs ${m.tone}`}>
-                      <span aria-hidden className="text-[0.7em] leading-none">
-                        ●
-                      </span>
-                      {m.label}
+      <div className="space-y-3">
+        {dirs.map((d) => {
+          const m = directionStatusMeta(d.status);
+          const route = d.displayName ?? `${d.originRaw ?? "—"} → ${d.destRaw ?? "—"}`;
+          return (
+            <article
+              key={d.id}
+              className="space-y-3 rounded-lg border border-border bg-surface-1 p-4"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <Link
+                  href={`/directions/${d.id}/edit`}
+                  className="text-text transition-colors hover:text-accent"
+                >
+                  {route}
+                </Link>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm tabular-nums text-text-secondary">
+                    {d.wagonCountPlanned ?? "—"} ваг.
+                  </span>
+                  <span className={`inline-flex items-center gap-1.5 text-xs ${m.tone}`}>
+                    <span aria-hidden className="text-[0.7em] leading-none">
+                      ●
                     </span>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                    {m.label}
+                  </span>
+                </div>
+              </div>
+              <MonthlyRateGrid directionId={d.id} rates={d.monthlyRates} />
+            </article>
+          );
+        })}
       </div>
     </section>
   );
