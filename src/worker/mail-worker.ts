@@ -19,6 +19,7 @@ import {
 import { upsertKnownEmails } from "@/lib/mail/known-emails";
 import { saveIngestedAttachment } from "@/lib/mail-intake/attachments-repo";
 import { processEmail } from "@/lib/mail-intake/orchestrator";
+import { effectiveEmailKind } from "@/lib/mail-intake/classify-schema";
 import { buildQuarantineRow } from "@/lib/mail-intake/quarantine-map";
 import type { SeenAddress } from "@/lib/mail/known-emails";
 import { syncTochka } from "@/lib/finances/sync";
@@ -133,11 +134,9 @@ async function pollCycle(systemUserId: string): Promise<void> {
 
         const deps = buildIntakeDeps({ systemUserId, sourceFileId: fileId });
         const outcome = await processEmail(parsed, deps);
-        await markFileCommitted(
-          fileId,
-          outcome.classification.bodyKind,
-          outcome.classification.bodyConfidence,
-        );
+        // Эффективный тип письма (для вкладок): при пустом теле берём тип вложения.
+        const eff = effectiveEmailKind(outcome.classification);
+        await markFileCommitted(fileId, eff.kind, eff.confidence);
         console.log(
           `[mail-worker] uid=${uid} ${outcome.classification.bodyKind} → req=${outcome.createdRequestId ?? "—"} inv=${outcome.invoiceIds.length} quote=${outcome.carrierQuotesMatched} quar=${outcome.quarantinedCount}`,
         );

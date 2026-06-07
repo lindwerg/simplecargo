@@ -47,3 +47,33 @@ export const classifyResultSchema = z.object({
 });
 
 export type ClassifyResult = z.infer<typeof classifyResultSchema>;
+
+// Эффективный тип ПИСЬМА для вкладок «Входящих». Многие письма приходят БЕЗ
+// текста — только вложение (счёт.pdf, dislocation.xlsx). Тогда bodyKind="other",
+// а реальный тип лежит во вложении. Берём bodyKind, если он содержательный, иначе
+// — преобладающий тип вложений (по количеству, при равенстве — по уверенности).
+export function effectiveEmailKind(c: ClassifyResult): { kind: MailPartKind; confidence: number } {
+  if (c.bodyKind !== "other") return { kind: c.bodyKind, confidence: c.bodyConfidence };
+
+  const typed = c.attachments.filter((a) => a.kind !== "other");
+  if (typed.length === 0) return { kind: "other", confidence: c.bodyConfidence };
+
+  const score = new Map<MailPartKind, { count: number; conf: number }>();
+  for (const a of typed) {
+    const s = score.get(a.kind) ?? { count: 0, conf: 0 };
+    s.count += 1;
+    s.conf = Math.max(s.conf, a.confidence);
+    score.set(a.kind, s);
+  }
+  let best: MailPartKind = "other";
+  let bestCount = -1;
+  let bestConf = -1;
+  for (const [k, s] of score) {
+    if (s.count > bestCount || (s.count === bestCount && s.conf > bestConf)) {
+      best = k;
+      bestCount = s.count;
+      bestConf = s.conf;
+    }
+  }
+  return { kind: best, confidence: bestConf };
+}
