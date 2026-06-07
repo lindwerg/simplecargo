@@ -4,12 +4,12 @@ import { ArrowLeft } from "lucide-react";
 
 import { db } from "@/lib/db/client";
 import { counterparties } from "@/lib/db/schema/counterparties";
-import { NewDealForm } from "@/components/trades/NewDealForm";
+import { NewDealEntry } from "@/components/trades/NewDealEntry";
 
 export const dynamic = "force-dynamic";
 
-// Manual (proactive) deal creation (Фаза 1). Creates an orders row with
-// channel='proactive', status='draft'; composition is added on the deal card.
+// Proactive deal creation. Two paths: AI intake (voice/file/text → Сделка with directions,
+// type auto-derived) or the manual form. Both create an orders row, channel='proactive'.
 export default async function NewDealPage() {
   const cps = await db
     .select({ id: counterparties.id, name: counterparties.nameCanonical })
@@ -28,12 +28,12 @@ export default async function NewDealPage() {
         </Link>
         <h1 className="mt-2 text-xl font-semibold tracking-tight text-text">Новая сделка</h1>
         <p className="mt-1 text-sm text-text-secondary">
-          Проактивная продажа. Направления, щебень и ставки добавляются после создания, на карточке
-          сделки.
+          Надиктуйте, загрузите файл или вставьте текст — ИИ определит тип и маршруты и соберёт
+          сделку. Или заполните вручную.
         </p>
       </header>
 
-      <NewDealForm counterparties={cps} />
+      <NewDealEntry counterparties={cps} />
     </div>
   );
 }

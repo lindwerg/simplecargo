@@ -19,11 +19,17 @@ const reportMonth = z
   .regex(/^\d{4}-(0[1-9]|1[0-2])$/, "Месяц в формате ГГГГ-ММ")
   .optional();
 
+// Operator-declared deal type for a proactive deal (щебень / вагоны / щебень в вагонах).
+// Advisory: seeds orders.deal_type before any composition exists; recacheDealType
+// re-derives it from the actual composition once directions/stone are attached.
+const dealType = z.enum(["stone_only", "wagons_only", "stone_with_transport"]).optional();
+
 export const createTradeSchema = z.object({
   title: optionalText,
   orderNumber: optionalText,
   // D16: SUGGESTED client only — never auto-confirmed downstream.
   client: counterpartyInputSchema.optional(),
+  dealType,
   reportMonth,
   notes: optionalText,
 });
@@ -33,6 +39,7 @@ export const updateTradeSchema = z
     title: optionalText,
     orderNumber: optionalText,
     client: counterpartyInputSchema.optional(),
+    dealType,
     reportMonth,
     notes: optionalText,
   })

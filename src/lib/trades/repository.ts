@@ -57,6 +57,9 @@ export async function createTrade(
         orderNumber: input.orderNumber,
         status: "draft",
         channel: "proactive",
+        // Operator-declared type seeds the cache; recacheDealType overrides it once a
+        // direction/stone line is attached (deriveDealType is the source of truth then).
+        dealType: input.dealType ?? null,
         clientSuggestedId,
         reportMonth: input.reportMonth,
         notes: input.notes,

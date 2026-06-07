@@ -18,6 +18,13 @@ export interface CounterpartyOption {
 }
 
 type ClientMode = "none" | "existing" | "new";
+type DealType = "stone_only" | "wagons_only" | "stone_with_transport";
+
+const DEAL_TYPES: readonly [DealType, string][] = [
+  ["stone_only", "Щебень"],
+  ["wagons_only", "Вагоны"],
+  ["stone_with_transport", "Щебень в вагонах"],
+];
 
 const SUBMIT_ERROR = "Не удалось создать сделку. Проверьте поля и попробуйте снова.";
 
@@ -29,7 +36,7 @@ export function NewDealForm({ counterparties }: NewDealFormProps) {
   const router = useRouter();
 
   const [title, setTitle] = React.useState("");
-  const [reportMonth, setReportMonth] = React.useState("");
+  const [dealType, setDealType] = React.useState<DealType | "">("");
   const [notes, setNotes] = React.useState("");
 
   const [clientMode, setClientMode] = React.useState<ClientMode>("none");
@@ -55,7 +62,7 @@ export function NewDealForm({ counterparties }: NewDealFormProps) {
 
       const payload = {
         title: title.trim() || undefined,
-        reportMonth: reportMonth.trim() || undefined,
+        dealType: dealType || undefined,
         notes: notes.trim() || undefined,
         client,
       };
@@ -81,7 +88,7 @@ export function NewDealForm({ counterparties }: NewDealFormProps) {
         setPending(false);
       }
     },
-    [title, reportMonth, notes, clientMode, clientId, clientNewName, clientNewInn, router],
+    [title, dealType, notes, clientMode, clientId, clientNewName, clientNewInn, router],
   );
 
   return (
@@ -102,20 +109,29 @@ export function NewDealForm({ counterparties }: NewDealFormProps) {
           />
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <label htmlFor="report-month" className={labelClass}>
-              Отчётный месяц
-            </label>
-            <input
-              id="report-month"
-              type="month"
-              value={reportMonth}
-              onChange={(e) => setReportMonth(e.target.value)}
-              disabled={pending}
-              className={fieldClass}
-            />
+        <div className="space-y-2">
+          <span className={labelClass}>Тип сделки</span>
+          <div className="flex flex-wrap gap-2">
+            {DEAL_TYPES.map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setDealType((prev) => (prev === value ? "" : value))}
+                disabled={pending}
+                aria-pressed={dealType === value}
+                className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${
+                  dealType === value
+                    ? "border-accent bg-accent/10 text-text"
+                    : "border-border text-text-secondary hover:text-text"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
           </div>
+          <p className="text-sm text-text-tertiary">
+            Уточняется автоматически по составу сделки — направлениям и щебню.
+          </p>
         </div>
       </section>
 
