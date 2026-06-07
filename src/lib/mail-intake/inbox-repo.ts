@@ -170,9 +170,11 @@ export async function countInboxByKind(): Promise<InboxCounts> {
     const unread = Number(r.unread ?? 0);
     counts.all.total += total;
     counts.all.unread += unread;
-    const key = r.kind ?? "other"; // legacy NULL-kind rows fold into «Прочее»
-    const prev = counts[key] ?? { total: 0, unread: 0 };
-    counts[key] = { total: prev.total + total, unread: prev.unread + unread };
+    // NULL-kind (ещё не размеченные) считаем ТОЛЬКО во «Все» — иначе бейдж вкладки
+    // не сойдётся со списком (список фильтрует по конкретному kind).
+    if (r.kind == null) continue;
+    const prev = counts[r.kind] ?? { total: 0, unread: 0 };
+    counts[r.kind] = { total: prev.total + total, unread: prev.unread + unread };
   }
   return counts;
 }
