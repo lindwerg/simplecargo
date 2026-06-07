@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { asc, desc, eq } from "drizzle-orm";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Mail, Plus } from "lucide-react";
 import { format, toZonedTime } from "date-fns-tz";
 import { ru } from "date-fns/locale";
 
@@ -23,6 +23,8 @@ import { ExecutionTab } from "@/components/execution/ExecutionTab";
 import { DirectionPnl } from "@/components/finances/DirectionPnl";
 import { getDirectionExecution } from "@/lib/execution/repository";
 import { getDirectionPnl } from "@/lib/finances/repository";
+import { listEmailsForDirections, type DirectionEmail } from "@/lib/mail-intake/inbox-repo";
+import { KIND_CHIP } from "@/components/inbox/inbox-tabs";
 
 export const dynamic = "force-dynamic";
 
@@ -90,6 +92,14 @@ export default async function DealCardPage({ params, searchParams }: Ctx) {
   }));
 
   const stoneLines = await listStoneLines(id);
+
+  // Письма, привязанные к направлениям этой сделки (стык со «Входящими»).
+  const linkedEmails = await listEmailsForDirections(dirRows.map((d) => d.id));
+  const emailsByDir: Record<string, DirectionEmail[]> = {};
+  for (const e of linkedEmails) {
+    if (!e.directionId) continue;
+    (emailsByDir[e.directionId] ??= []).push(e);
+  }
 
   // Source request snapshot for the «Запрос» sub-tab (read-only). Loaded only when the
   // deal was converted from an RFQ (Фаза 3); proactive deals carry no request.
@@ -159,7 +169,7 @@ export default async function DealCardPage({ params, searchParams }: Ctx) {
         />
       )}
       {activeTab === "application" && (
-        <ApplicationTab dealId={id} directions={dirs} stoneLines={stoneLines} />
+        <ApplicationTab dealId={id} directions={dirs} stoneLines={stoneLines} emailsByDir={emailsByDir} />
       )}
       {activeTab === "execution" && <ExecutionPanel directions={dirs} />}
     </div>
@@ -332,20 +342,30 @@ function ApplicationTab({
   dealId,
   directions: dirs,
   stoneLines,
+  emailsByDir,
 }: {
   dealId: string;
   directions: DirRow[];
   stoneLines: StoneLineView[];
+  emailsByDir: Record<string, DirectionEmail[]>;
 }) {
   return (
     <div className="space-y-6">
-      <TransportSection dealId={dealId} directions={dirs} />
+      <TransportSection dealId={dealId} directions={dirs} emailsByDir={emailsByDir} />
       <StoneSection dealId={dealId} lines={stoneLines} />
     </div>
   );
 }
 
-function TransportSection({ dealId, directions: dirs }: { dealId: string; directions: DirRow[] }) {
+function TransportSection({
+  dealId,
+  directions: dirs,
+  emailsByDir,
+}: {
+  dealId: string;
+  directions: DirRow[];
+  emailsByDir: Record<string, DirectionEmail[]>;
+}) {
   if (dirs.length === 0) {
     return (
       <section className="rounded-[var(--radius-lg)] border border-dashed border-border bg-surface-1 p-6">
@@ -393,11 +413,51 @@ function TransportSection({ dealId, directions: dirs }: { dealId: string; direct
                 </div>
               </div>
               <MonthlyRateGrid directionId={d.id} rates={d.monthlyRates} />
+              <DirectionEmails emails={emailsByDir[d.id] ?? []} />
             </article>
           );
         })}
       </div>
     </section>
+  );
+}
+
+// Письма, привязанные к направлению (из «Входящих»). Компактный список-ссылки.
+function DirectionEmails({ emails }: { emails: DirectionEmail[] }) {
+  if (emails.length === 0) return null;
+  return (
+    <div className="space-y-1.5 border-t border-border-subtle pt-3">
+      <p className="label-caps">Письма ({emails.length})</p>
+      <ul className="flex flex-col gap-1">
+        {emails.map((e) => {
+          const chip = e.kind ? KIND_CHIP[e.kind] : undefined;
+          const subject = e.subject && e.subject !== "email" ? e.subject : "(без темы)";
+          return (
+            <li key={e.id}>
+              <Link
+                href={`/inbox/${e.id}`}
+                className="flex items-center gap-2 text-sm text-text-secondary transition-colors hover:text-text"
+              >
+                <Mail className="size-3.5 shrink-0 text-text-tertiary" aria-hidden />
+                {chip && (
+                  <span className={`rounded-pill px-1.5 py-0.5 text-2xs font-medium ${chip.cls}`}>
+                    {chip.label}
+                  </span>
+                )}
+                <span className="truncate" title={subject}>
+                  {subject}
+                </span>
+                {e.receivedAt && (
+                  <time dateTime={e.receivedAt} className="ml-auto shrink-0 text-xs text-text-tertiary">
+                    {new Date(e.receivedAt).toLocaleDateString("ru-RU")}
+                  </time>
+                )}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }
 

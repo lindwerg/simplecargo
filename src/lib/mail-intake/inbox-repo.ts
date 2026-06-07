@@ -3,11 +3,12 @@
 // badges. The quarantine queue («Требует проверки») stays in quarantine-repo; this
 // repo serves every other tab from ingested_files (sourceType 'E', status committed).
 
-import { and, desc, eq, lt, or, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, lt, or, sql } from "drizzle-orm";
 
 import { db } from "@/lib/db/client";
 import { ingestedFiles } from "@/lib/db/schema/ingest";
 import { ingestedAttachments } from "@/lib/db/schema/ingestedAttachments";
+import { directions } from "@/lib/db/schema/directions";
 import { getObjectBytes } from "@/lib/storage/object-store";
 import { MAIL_PART_KINDS, type MailPartKind } from "./classify-schema";
 import { listAttachmentsByFiles, type AttachmentMeta } from "./attachments-repo";
@@ -184,6 +185,7 @@ export interface InboxEmailDetail {
   kind: string | null;
   dealId: string | null;
   directionId: string | null;
+  directionLabel: string | null; // подпись привязанного направления (сделки)
   hasHtml: boolean;
   hasRawEml: boolean;
   documents: AttachmentMeta[]; // только настоящие вложения (kind='attachment')
@@ -201,10 +203,14 @@ export async function getInboxEmailDetail(id: string): Promise<InboxEmailDetail 
       kind: ingestedFiles.kind,
       dealId: ingestedFiles.dealId,
       directionId: ingestedFiles.directionId,
+      directionName: directions.displayName,
+      directionOrigin: directions.stationOriginRaw,
+      directionDest: directions.stationDestRaw,
       storageKey: ingestedFiles.storageKey,
       htmlStorageKey: ingestedFiles.htmlStorageKey,
     })
     .from(ingestedFiles)
+    .leftJoin(directions, eq(ingestedFiles.directionId, directions.id))
     .where(eq(ingestedFiles.id, id))
     .limit(1);
   const r = rows[0];
@@ -213,6 +219,9 @@ export async function getInboxEmailDetail(id: string): Promise<InboxEmailDetail 
   const docs = await listAttachmentsByFiles([id]);
   const htmlBody = docs.find((d) => d.kind === "body" && d.mimeType.includes("text/html"));
   const textBody = docs.find((d) => d.kind === "body" && d.mimeType.includes("text/plain"));
+  const directionLabel = r.directionId
+    ? r.directionName ?? ([r.directionOrigin, r.directionDest].filter(Boolean).join(" → ") || "Направление")
+    : null;
 
   return {
     id: r.id,
@@ -222,6 +231,7 @@ export async function getInboxEmailDetail(id: string): Promise<InboxEmailDetail 
     kind: r.kind,
     dealId: r.dealId,
     directionId: r.directionId,
+    directionLabel,
     hasHtml: Boolean(r.htmlStorageKey) || Boolean(htmlBody),
     hasRawEml: Boolean(r.storageKey),
     documents: docs.filter((d) => d.kind === "attachment" && !d.isInline),
@@ -296,4 +306,41 @@ export async function markInboxRead(id: string): Promise<void> {
     .update(ingestedFiles)
     .set({ readAt: new Date() })
     .where(and(eq(ingestedFiles.id, id), sql`${ingestedFiles.readAt} is null`));
+}
+
+/** Привязать/отвязать письмо к направлению (сделке). directionId=null → отвязать. */
+export async function setInboxLink(emailId: string, directionId: string | null): Promise<void> {
+  if (!emailId) return;
+  await db.update(ingestedFiles).set({ directionId }).where(eq(ingestedFiles.id, emailId));
+}
+
+export interface DirectionEmail {
+  id: string;
+  subject: string;
+  kind: string | null;
+  receivedAt: string | null;
+  directionId: string | null;
+}
+
+/** Письма, привязанные к указанным направлениям (для карточки сделки). */
+export async function listEmailsForDirections(directionIds: string[]): Promise<DirectionEmail[]> {
+  if (directionIds.length === 0) return [];
+  const rows = await db
+    .select({
+      id: ingestedFiles.id,
+      subject: ingestedFiles.filename,
+      kind: ingestedFiles.kind,
+      receivedAt: ingestedFiles.receivedAt,
+      directionId: ingestedFiles.directionId,
+    })
+    .from(ingestedFiles)
+    .where(inArray(ingestedFiles.directionId, directionIds))
+    .orderBy(desc(ingestedFiles.receivedAt));
+  return rows.map((r) => ({
+    id: r.id,
+    subject: r.subject,
+    kind: r.kind,
+    receivedAt: toIso(r.receivedAt),
+    directionId: r.directionId,
+  }));
 }
