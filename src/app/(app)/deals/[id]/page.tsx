@@ -9,7 +9,7 @@ import { db } from "@/lib/db/client";
 import { orders } from "@/lib/db/schema/orders";
 import { directions } from "@/lib/db/schema/directions";
 import { counterparties } from "@/lib/db/schema/counterparties";
-import { requests } from "@/lib/db/schema/requests";
+import { requestLines, requests } from "@/lib/db/schema/requests";
 import { listStoneLines } from "@/lib/trades/stoneRepository";
 import { Button } from "@/components/ui/button";
 import { DealTabs, isDealTab, type DealTab } from "@/components/trades/DealTabs";
@@ -70,6 +70,23 @@ export default async function DealCardPage({ params, searchParams }: Ctx) {
 
   const stoneLines = await listStoneLines(id);
 
+  // Source request snapshot for the «Запрос» sub-tab (read-only). Loaded only when the
+  // deal was converted from an RFQ (Фаза 3); proactive deals carry no request.
+  const requestLineRows = deal.requestId
+    ? await db
+        .select({
+          id: requestLines.id,
+          originRaw: requestLines.originRaw,
+          destRaw: requestLines.destRaw,
+          wagonsRequested: requestLines.wagonsRequested,
+          targetRatePerWagon: requestLines.targetRatePerWagon,
+          targetRateRaw: requestLines.targetRateRaw,
+        })
+        .from(requestLines)
+        .where(eq(requestLines.requestId, deal.requestId))
+        .orderBy(asc(requestLines.sortOrder))
+    : [];
+
   const meta = dealStatusMeta(deal.status);
   const created = format(toZonedTime(deal.createdAt, "Europe/Moscow"), "d MMMM yyyy, HH:mm", {
     locale: ru,
@@ -115,7 +132,9 @@ export default async function DealCardPage({ params, searchParams }: Ctx) {
         <RequestTab
           requestId={deal.requestId}
           requestNumber={deal.requestNumber}
+          clientName={deal.clientName}
           channel={deal.channel}
+          lines={requestLineRows}
         />
       )}
       {activeTab === "application" && (
@@ -126,14 +145,38 @@ export default async function DealCardPage({ params, searchParams }: Ctx) {
   );
 }
 
+type RequestLineView = {
+  id: string;
+  originRaw: string | null;
+  destRaw: string | null;
+  wagonsRequested: number | null;
+  targetRatePerWagon: string | null;
+  targetRateRaw: string | null;
+};
+
+const RUB = new Intl.NumberFormat("ru-RU");
+
+// Desired (SUGGESTED, D16) rate text for a request line: flat ₽ → raw string → «—».
+function desiredRateText(line: RequestLineView): string {
+  if (line.targetRatePerWagon != null) {
+    const n = Number(line.targetRatePerWagon);
+    if (Number.isFinite(n) && n > 0) return `${RUB.format(n)} ₽/ваг`;
+  }
+  return line.targetRateRaw ?? "—";
+}
+
 function RequestTab({
   requestId,
   requestNumber,
+  clientName,
   channel,
+  lines,
 }: {
   requestId: string | null;
   requestNumber: string | null;
+  clientName: string | null;
   channel: string;
+  lines: RequestLineView[];
 }) {
   if (!requestId) {
     return (
@@ -149,14 +192,54 @@ function RequestTab({
   }
 
   return (
-    <section className="rounded-[var(--radius-lg)] border border-border bg-surface-1 p-6">
-      <h2 className="label-caps mb-1">Запрос</h2>
-      <p className="text-sm text-text-secondary">
-        Сделка создана из выигранного запроса{" "}
-        <Link href={`/requests/${requestId}`} className="text-accent hover:underline">
-          {requestNumber ?? `Запрос ${requestId.slice(0, 8)}`}
+    <section className="space-y-4 rounded-[var(--radius-lg)] border border-border bg-surface-1 p-6">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <h2 className="label-caps">Исходный запрос</h2>
+          <span className="font-mono text-sm text-text">{requestNumber ?? requestId.slice(0, 8)}</span>
+        </div>
+        <Link href={`/requests/${requestId}`} className="text-sm text-accent hover:underline">
+          К запросу →
         </Link>
-        .
+      </div>
+
+      <p className="text-sm text-text-secondary">
+        Клиент: <span className="text-text">{clientName ?? "не задан"}</span>
+      </p>
+
+      {lines.length === 0 ? (
+        <p className="text-sm text-text-tertiary">В запросе нет строк.</p>
+      ) : (
+        <div className="overflow-hidden rounded-lg border border-border-subtle">
+          <table className="w-full border-collapse text-sm">
+            <thead>
+              <tr className="border-b border-border-subtle text-left">
+                <th className="label-caps px-4 py-2.5 font-medium">Маршрут</th>
+                <th className="label-caps px-4 py-2.5 text-right font-medium">Вагонов</th>
+                <th className="label-caps px-4 py-2.5 text-right font-medium">Желаемая ставка</th>
+              </tr>
+            </thead>
+            <tbody>
+              {lines.map((l) => (
+                <tr key={l.id} className="border-b border-border-subtle last:border-0">
+                  <td className="px-4 py-3 text-text">
+                    {l.originRaw ?? "—"} → {l.destRaw ?? "—"}
+                  </td>
+                  <td className="px-4 py-3 text-right [font-variant-numeric:tabular-nums] text-text-secondary">
+                    {l.wagonsRequested ?? "—"}
+                  </td>
+                  <td className="px-4 py-3 text-right [font-variant-numeric:tabular-nums] text-text-secondary">
+                    {desiredRateText(l)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      <p className="text-xs text-text-tertiary">
+        Желаемые ставки клиента — справочно (D16). Подтверждённые ставки задаются на вкладке
+        «Заявка».
       </p>
     </section>
   );

@@ -40,3 +40,17 @@ export const updateTradeSchema = z
 
 export type CreateTradeInput = z.infer<typeof createTradeSchema>;
 export type UpdateTradeInput = z.infer<typeof updateTradeSchema>;
+
+// ── Conversion scenario (Фаза 3) — Запрос → Сделка ───────────────────────────
+// Each request line becomes a transport direction and/or a stone line. "auto" lets the
+// converter decide by line shape (route+wagons → transport, else stone).
+const lineComponent = z.enum(["transport", "stone", "auto"]);
+
+export const convertRequestSchema = z.object({
+  // Default applied to every line; "auto" by default.
+  default: lineComponent.default("auto"),
+  // Optional per-line overrides keyed by request_line id.
+  perLine: z.record(z.uuid(), lineComponent).optional(),
+});
+
+export type ConvertRequestInput = z.infer<typeof convertRequestSchema>;

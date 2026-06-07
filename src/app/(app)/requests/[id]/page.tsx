@@ -6,6 +6,8 @@ import { ru } from "date-fns/locale";
 
 import { StatusPill, type RequestStatus } from "@/components/ui/StatusPill";
 import { RequestStatusActions } from "@/components/requests/RequestStatusActions";
+import { ConvertToTradeButton, type ConvertLine } from "@/components/trades/ConvertToTradeButton";
+import { hasTransportShape } from "@/lib/trades/conversionScenario";
 import { RequestWorklist, type WorklistLine } from "@/components/requests/RequestWorklist";
 import { CarrierOutreach, type OutreachLine } from "@/components/requests/CarrierOutreach";
 import { ReviewConfirmBanner } from "@/components/requests/ReviewConfirmBanner";
@@ -58,6 +60,23 @@ export default async function RequestDetailPage({ params }: Ctx) {
 
   const fmtDay = (d: Date | null): string | null =>
     d ? format(toZonedTime(d, "Europe/Moscow"), "dd.MM.yyyy") : null;
+
+  // Conversion is offered once the request is won (header or any line) and not yet
+  // converted into a deal. converted_order_id closes the loop (Фаза 3).
+  const hasWonLine = data.lines.some((l) => l.status === "won");
+  const canConvert = !data.convertedOrderId && (status === "won" || hasWonLine);
+  const convertLines: ConvertLine[] = data.lines.map((l) => ({
+    id: l.id,
+    label: `${l.originRaw} → ${l.destRaw}${l.wagonsRequested ? ` (${l.wagonsRequested} ваг)` : ""}`,
+    suggested: hasTransportShape({
+      id: l.id,
+      originRaw: l.originRaw,
+      destRaw: l.destRaw,
+      wagonsRequested: l.wagonsRequested,
+    })
+      ? "transport"
+      : "stone",
+  }));
 
   const outreachLines: OutreachLine[] = data.lines.map((l) => ({
     id: l.id,
@@ -112,6 +131,17 @@ export default async function RequestDetailPage({ params }: Ctx) {
       </header>
 
       <RequestStatusActions id={id} status={status} isTemp={isTemp} />
+
+      {canConvert && <ConvertToTradeButton requestId={id} lines={convertLines} />}
+
+      {data.convertedOrderId && (
+        <Link
+          href={`/deals/${data.convertedOrderId}`}
+          className="inline-flex h-11 items-center gap-1 self-start rounded-[var(--radius-md)] border border-border bg-surface-2 px-3 text-sm text-text hover:text-accent"
+        >
+          Открыть сделку →
+        </Link>
+      )}
 
       <RequestWorklist
         requestId={id}
