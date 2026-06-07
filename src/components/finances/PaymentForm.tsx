@@ -60,6 +60,7 @@ export function PaymentForm({ accounts }: PaymentFormProps) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [recognizing, setRecognizing] = useState(false);
+  const [dragging, setDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [warnings, setWarnings] = useState<string[]>([]);
   const [signUrl, setSignUrl] = useState<string | null>(null);
@@ -200,33 +201,46 @@ export function PaymentForm({ accounts }: PaymentFormProps) {
 
   return (
     <div className="space-y-4">
-      {/* Загрузка счёта — ИИ заполнит платёж */}
-      <div className="rounded-md border border-dashed border-border bg-surface-2 p-3">
+      {/* Загрузка счёта — ИИ заполнит платёж (клик или drag-and-drop) */}
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={() => !recognizing && fileRef.current?.click()}
+        onKeyDown={(e) => {
+          if ((e.key === "Enter" || e.key === " ") && !recognizing) fileRef.current?.click();
+        }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragging(true);
+        }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDragging(false);
+          const f = e.dataTransfer.files?.[0];
+          if (f && !recognizing) void onUpload(f);
+        }}
+        className={`cursor-pointer rounded-md border-2 border-dashed p-4 text-center transition-colors ${
+          dragging ? "border-accent bg-accent-quiet" : "border-border bg-surface-2 hover:bg-surface-1"
+        } ${recognizing ? "pointer-events-none opacity-70" : ""}`}
+      >
         <input
           ref={fileRef}
           type="file"
-          accept=".pdf,.png,.jpg,.jpeg,.webp,.xlsx,.xls"
+          accept=".pdf,.png,.jpg,.jpeg,.webp,.xlsx,.xls,image/*"
           className="sr-only"
           onChange={(e) => {
             const f = e.target.files?.[0];
             if (f) void onUpload(f);
           }}
         />
-        <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-sm font-medium text-text">Загрузить счёт — ИИ заполнит платёж</p>
-            <p className="text-xs text-text-tertiary">PDF, фото или Excel. Реквизиты, сумма и назначение подставятся автоматически.</p>
-          </div>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={recognizing}
-            onClick={() => fileRef.current?.click()}
-          >
-            <Upload aria-hidden /> {recognizing ? "Распознаю…" : "Выбрать файл"}
-          </Button>
-        </div>
+        <Upload className="mx-auto mb-1 size-5 text-text-secondary" aria-hidden />
+        <p className="text-sm font-medium text-text">
+          {recognizing ? "Распознаю счёт…" : "Перетащите счёт сюда или нажмите, чтобы выбрать"}
+        </p>
+        <p className="text-xs text-text-tertiary">
+          PDF, фото или Excel — любой формат счёта. ИИ сам заполнит реквизиты, сумму и назначение.
+        </p>
       </div>
 
       {warnings.length > 0 && (
