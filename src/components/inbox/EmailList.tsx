@@ -6,7 +6,7 @@ import { Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { AttachmentChips } from "@/components/inbox/AttachmentChips";
-import { KIND_CHIP } from "@/components/inbox/inbox-tabs";
+import { CategoryControl } from "@/components/inbox/CategoryControl";
 import type { InboxItem } from "@/lib/mail-intake/inbox-repo";
 
 interface EmailListProps {
@@ -63,7 +63,6 @@ export function EmailList({ tab, emptyText, initialItems, initialCursor }: Email
       <ul className="flex flex-col gap-2.5">
         {items.map((it) => {
           const unread = it.readAt == null;
-          const chip = it.kind ? KIND_CHIP[it.kind] : undefined;
           const subject =
             it.subject && it.subject !== "email" && it.subject !== it.messageId ? it.subject : "(без темы)";
           return (
@@ -75,12 +74,6 @@ export function EmailList({ tab, emptyText, initialItems, initialCursor }: Email
                 <div className="flex items-center gap-2">
                   {unread && (
                     <span className="size-2 shrink-0 rounded-full bg-accent" aria-label="новое" title="Новое" />
-                  )}
-                  {/* На вкладке «Все» чип-тип помогает различать; на одно-типной — лишний. */}
-                  {tab === "all" && chip && (
-                    <span className={`rounded-pill px-2 py-0.5 text-2xs font-medium ${chip.cls}`}>
-                      {chip.label}
-                    </span>
                   )}
                   <Link
                     href={`/inbox/${it.id}`}
@@ -109,6 +102,11 @@ export function EmailList({ tab, emptyText, initialItems, initialCursor }: Email
                     <AttachmentChips documents={it.documents} onOpen={() => markRead(it.id)} />
                   </div>
                 )}
+              </div>
+
+              {/* менеджер сам относит письмо к типу прямо из списка */}
+              <div className="shrink-0">
+                <CategoryControl emailId={it.id} current={it.kind} compact />
               </div>
             </li>
           );
