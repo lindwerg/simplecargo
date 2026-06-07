@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 import { db } from "@/lib/db/client";
 import { orders } from "@/lib/db/schema/orders";
@@ -86,10 +86,17 @@ export async function convertRequestToTrade(
   return db.transaction(async (tx) => {
     const request = await loadConvertibleRequest(tx, requestId);
 
+    // Only WON legs become live deal components. A request with mixed outcomes
+    // (e.g. 1 won + 2 lost) must NOT materialize its declined siblings — the
+    // per-line lifecycle exists precisely so a leg can be declined in isolation.
     const lines = await tx
       .select()
       .from(requestLines)
-      .where(eq(requestLines.requestId, requestId));
+      .where(and(eq(requestLines.requestId, requestId), eq(requestLines.status, "won")));
+
+    if (lines.length === 0) {
+      throw new TradeError(409, "Нет выигранных направлений для конвертации");
+    }
 
     // D16: the request's suggested client carries over as a SUGGESTION on the deal;
     // the confirmed client is still set per-direction downstream.

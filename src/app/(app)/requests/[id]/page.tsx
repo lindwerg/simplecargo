@@ -63,9 +63,11 @@ export default async function RequestDetailPage({ params }: Ctx) {
 
   // Conversion is offered once the request is won (header or any line) and not yet
   // converted into a deal. converted_order_id closes the loop (Фаза 3).
-  const hasWonLine = data.lines.some((l) => l.status === "won");
-  const canConvert = !data.convertedOrderId && (status === "won" || hasWonLine);
-  const convertLines: ConvertLine[] = data.lines.map((l) => ({
+  // Only WON legs are convertible. Declined siblings (lost/no_bid/expired/cancelled)
+  // must never reach the dialog/payload — the per-line lifecycle keeps them out.
+  const wonLines = data.lines.filter((l) => l.status === "won");
+  const canConvert = !data.convertedOrderId && wonLines.length > 0;
+  const convertLines: ConvertLine[] = wonLines.map((l) => ({
     id: l.id,
     label: `${l.originRaw} → ${l.destRaw}${l.wagonsRequested ? ` (${l.wagonsRequested} ваг)` : ""}`,
     suggested: hasTransportShape({
