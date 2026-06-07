@@ -106,6 +106,13 @@
       "when": 1780775841998,
       "tag": "0014_free_lorna_dane",
       "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1780828085861,
+      "tag": "0015_burly_shaman",
+      "breakpoints": true
     }
   ]
 }

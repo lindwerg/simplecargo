@@ -11,12 +11,21 @@ import { ReconcileControl } from "@/components/finances/ReconcileControl";
 
 export const dynamic = "force-dynamic";
 
+// Точка не отдаёт время операции в выписке (только дату). Время показываем,
+// только когда оно реально известно — из вебхука (notifiedAt). Всё в МСК.
+const dateFmt = new Intl.DateTimeFormat("ru-RU", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+  timeZone: "Europe/Moscow",
+});
 const dateTimeFmt = new Intl.DateTimeFormat("ru-RU", {
   day: "numeric",
   month: "long",
   year: "numeric",
   hour: "2-digit",
   minute: "2-digit",
+  timeZone: "Europe/Moscow",
 });
 
 function Requisite({ label, value }: { label: string; value: string | null }) {
@@ -59,7 +68,11 @@ export default async function TransactionDetailPage({ params }: PageProps) {
 
       <header className="text-center">
         <div className="flex items-center justify-between text-sm text-text-tertiary">
-          <span>{dateTimeFmt.format(new Date(tx.postedAt))}</span>
+          <span>
+            {tx.notifiedAt
+              ? dateTimeFmt.format(new Date(tx.notifiedAt))
+              : dateFmt.format(new Date(tx.postedAt))}
+          </span>
           <span className="font-medium text-success">{statusLabel}</span>
         </div>
         <p className="mt-4 text-3xl font-bold tracking-tight">

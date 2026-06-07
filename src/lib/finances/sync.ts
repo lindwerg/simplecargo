@@ -10,6 +10,7 @@ import {
 } from "./tochka-client";
 import { extractAccounts, extractStatements, isStatementReady } from "./extract";
 import { parseTransaction, TochkaParseError } from "./parse-transaction";
+import { isRecentDoc } from "./notify-time";
 import { reconcileByInn, reconcileToDeals } from "./reconcile";
 import { reconcileInboundInvoices } from "./reconcile-invoices";
 
@@ -90,10 +91,13 @@ async function pollStatement(externalAccountId: string, statementId: string): Pr
   return last; // best-effort: return whatever we last saw
 }
 
-/** Idempotently insert parsed transactions for one account. */
+/** Idempotently insert parsed transactions for one account. When `notifiedAt`
+ *  is given (webhook-triggered sync), стампим им реальное время свежим новым
+ *  операциям — у выписки времени нет. */
 async function upsertTransactions(
   accountDbId: string,
   rawTxs: readonly unknown[],
+  notifiedAt?: Date,
 ): Promise<{ inserted: number; skipped: number; failed: number }> {
   let inserted = 0;
   let failed = 0;
@@ -120,6 +124,10 @@ async function upsertTransactions(
         status: tx.status,
         source: "statement" as const,
         raw: tx.raw,
+        // Реальное время операции ставим только свежим (дата ~сегодня), чтобы
+        // догоняемая старая операция не получила время «сейчас». На конфликте
+        // (уже существует) ON CONFLICT DO NOTHING — существующее не перезаписываем.
+        notifiedAt: notifiedAt && isRecentDoc(tx.postedAt) ? notifiedAt : null,
       });
     } catch (error: unknown) {
       if (error instanceof TochkaParseError) {
@@ -149,7 +157,7 @@ async function upsertTransactions(
  * Updates each account's balance snapshot from the statement's endDateBalance.
  */
 export async function syncTochka(
-  opts: { months?: number } = {},
+  opts: { months?: number; notifiedAt?: Date } = {},
 ): Promise<SyncResult> {
   const months = opts.months ?? DEFAULT_BACKFILL_MONTHS;
   const startDate = ymd(monthsAgo(months));
@@ -192,7 +200,11 @@ export async function syncTochka(
             })
             .where(eq(bankAccounts.id, accountDbId));
         }
-        const counts = await upsertTransactions(accountDbId, statement.transactions);
+        const counts = await upsertTransactions(
+          accountDbId,
+          statement.transactions,
+          opts.notifiedAt,
+        );
         result.inserted += counts.inserted;
         result.skipped += counts.skipped;
         result.failed += counts.failed;
