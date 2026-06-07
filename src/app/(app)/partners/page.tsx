@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Building2, Plus } from "lucide-react";
+import { Building2, Landmark, Plus } from "lucide-react";
 
 import { listPartners } from "@/lib/partners/repository";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -44,13 +44,22 @@ export default async function PartnersPage({ searchParams }: PageProps) {
             договорами и историей сделок.
           </p>
         </div>
-        <Link
-          href="/partners/new"
-          className="inline-flex h-10 items-center gap-2 rounded-[var(--radius-md)] bg-accent px-4 text-sm font-semibold text-text-inverse transition-colors duration-[var(--duration-fast)] hover:bg-accent-hover focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
-        >
-          <Plus className="size-4" aria-hidden strokeWidth={2.2} />
-          Добавить партнёра
-        </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href="/partners/from-bank"
+            className="inline-flex h-10 items-center gap-2 rounded-[var(--radius-md)] bg-surface-3 px-4 text-sm font-medium text-text transition-colors duration-[var(--duration-fast)] hover:bg-surface-2 focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
+          >
+            <Landmark className="size-4" aria-hidden strokeWidth={2.2} />
+            Из банка
+          </Link>
+          <Link
+            href="/partners/new"
+            className="inline-flex h-10 items-center gap-2 rounded-[var(--radius-md)] bg-accent px-4 text-sm font-semibold text-text-inverse transition-colors duration-[var(--duration-fast)] hover:bg-accent-hover focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
+          >
+            <Plus className="size-4" aria-hidden strokeWidth={2.2} />
+            Добавить партнёра
+          </Link>
+        </div>
       </header>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
