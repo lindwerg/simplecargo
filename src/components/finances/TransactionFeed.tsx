@@ -10,7 +10,13 @@ interface TransactionFeedProps {
 }
 
 const dayFmt = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long" });
-const timeFmt = new Intl.DateTimeFormat("ru-RU", { hour: "2-digit", minute: "2-digit" });
+// Реальное время операции (МСК) показываем только когда оно известно — из
+// вебхука Точки. У операций из выписки времени нет (см. notifiedAt в repository).
+const timeFmt = new Intl.DateTimeFormat("ru-RU", {
+  hour: "2-digit",
+  minute: "2-digit",
+  timeZone: "Europe/Moscow",
+});
 
 function dayKey(iso: string): string {
   return iso.slice(0, 10);
@@ -121,9 +127,11 @@ export function TransactionFeed({ transactions }: TransactionFeedProps) {
                           title={t.linked ? "Разнесено" : "Не разнесено"}
                         />
                       </span>
-                      <span className="text-xs text-text-tertiary">
-                        {timeFmt.format(new Date(t.postedAt))}
-                      </span>
+                      {t.notifiedAt && (
+                        <span className="text-xs text-text-tertiary">
+                          {timeFmt.format(new Date(t.notifiedAt))}
+                        </span>
+                      )}
                     </div>
                   </Link>
                 </li>

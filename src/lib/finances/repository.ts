@@ -64,6 +64,7 @@ export async function getFinanceSummary(): Promise<FinanceSummary> {
 export interface TransactionRow {
   id: string;
   postedAt: string;
+  notifiedAt: string | null; // реальное время операции (из вебхука), если есть
   direction: "in" | "out";
   amount: number;
   currency: string;
@@ -78,6 +79,7 @@ export interface TransactionRow {
 interface TxQueryRow {
   id: string;
   posted_at: string;
+  notified_at: string | null;
   direction: string;
   amount: string;
   currency: string;
@@ -114,6 +116,7 @@ export async function listRecentTransactions(opts: {
     SELECT
       t.id,
       t.posted_at,
+      t.notified_at,
       t.direction,
       t.amount,
       t.currency,
@@ -131,13 +134,20 @@ export async function listRecentTransactions(opts: {
       ) AS matched_name
     FROM bank_transactions t
     WHERE TRUE ${dirFilter} ${unlinkedFilter} ${searchFilter}
-    ORDER BY t.posted_at DESC, t.synced_at DESC
+    -- Точка не отдаёт время операции (только дату), поэтому внутри дня сортируем
+    -- по внутреннему счётчику банка из transactionId («cbs-tb;<счётчик>;1») — он
+    -- растёт хронологически. Так порядок совпадает с приложением Точки.
+    ORDER BY
+      t.posted_at DESC,
+      (regexp_match(t.external_tx_id, '[0-9]{4,}'))[1]::numeric DESC NULLS LAST,
+      t.synced_at DESC
     LIMIT ${limit}
   `);
 
   return rows.map((r) => ({
     id: r.id,
     postedAt: r.posted_at,
+    notifiedAt: r.notified_at,
     direction: r.direction === "out" ? "out" : "in",
     amount: Number(r.amount),
     currency: r.currency,
@@ -153,6 +163,7 @@ export async function listRecentTransactions(opts: {
 export interface TransactionDetail {
   id: string;
   postedAt: string;
+  notifiedAt: string | null; // реальное время операции (из вебхука), если есть
   direction: "in" | "out";
   amount: number;
   currency: string;
@@ -178,6 +189,7 @@ export interface TransactionDetail {
 interface DetailRow {
   id: string;
   posted_at: string;
+  notified_at: string | null;
   direction: string;
   amount: string;
   currency: string;
@@ -204,7 +216,7 @@ interface DetailRow {
 export async function getTransactionDetail(id: string): Promise<TransactionDetail | null> {
   const { rows } = await db.execute<DetailRow>(sql`
     SELECT
-      t.id, t.posted_at, t.direction, t.amount, t.currency, t.status, t.payment_id,
+      t.id, t.posted_at, t.notified_at, t.direction, t.amount, t.currency, t.status, t.payment_id,
       t.purpose_raw, t.counterparty_name, t.counterparty_inn, t.counterparty_kpp,
       t.counterparty_account, t.counterparty_bank_bic,
       (t.raw ->> 'documentNumber') AS document_number,
@@ -232,6 +244,7 @@ export async function getTransactionDetail(id: string): Promise<TransactionDetai
   return {
     id: r.id,
     postedAt: r.posted_at,
+    notifiedAt: r.notified_at,
     direction: r.direction === "out" ? "out" : "in",
     amount: Number(r.amount),
     currency: r.currency,
@@ -305,7 +318,7 @@ export async function listTransactionsForExport(opts: {
     FROM bank_transactions t
     WHERE t.posted_at >= ${opts.from} AND t.posted_at <= ${toExclusive}
       ${dirFilter} ${searchFilter}
-    ORDER BY t.posted_at ASC
+    ORDER BY t.posted_at ASC, (regexp_match(t.external_tx_id, '[0-9]{4,}'))[1]::numeric ASC NULLS LAST
   `);
 
   return rows.map((r) => ({

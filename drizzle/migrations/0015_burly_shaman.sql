@@ -1,0 +1,1 @@
+ALTER TABLE "bank_transactions" ADD COLUMN "notified_at" timestamp with time zone;

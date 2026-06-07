@@ -1,4 +1,5 @@
 import { fetchTochkaPublicKey, isPaymentEvent, isTokenFresh, verifyJwtRS256 } from "@/lib/finances/webhook";
+import { notifiedTimeFromPayload } from "@/lib/finances/notify-time";
 import { syncTochka } from "@/lib/finances/sync";
 
 export const runtime = "nodejs";
@@ -36,8 +37,12 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   if (isPaymentEvent(payload)) {
+    // Реальное время операции = iat подписанного JWT (момент уведомления о
+    // проведении). Если его нет — время приёма вебхука. Стампим им новую операцию,
+    // т.к. выписка времени не отдаёт.
+    const notifiedAt = notifiedTimeFromPayload(payload) ?? new Date();
     try {
-      await syncTochka({ months: 1 });
+      await syncTochka({ months: 1, notifiedAt });
     } catch (error: unknown) {
       // Don't fail the webhook on a sync hiccup — the periodic poll is the safety net.
       console.error("[finances] webhook sync error:", error instanceof Error ? error.message : error);

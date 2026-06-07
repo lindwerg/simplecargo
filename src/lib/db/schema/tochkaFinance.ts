@@ -76,6 +76,10 @@ export const bankTransactions = pgTable(
     source: text("source").notNull().default("statement"), // statement|webhook
     raw: jsonb("raw"), // полный объект операции — на доразбор
     dedupHash: text("dedup_hash"), // fallback-ключ, см. sync.ts
+    // Реальное время операции из вебхука Точки (iat подписанного JWT ≈ момент
+    // проведения). Выписка времени не отдаёт (documentProcessDate — только дата),
+    // поэтому у операций, узнанных лишь из выписки/бэкфилла, остаётся NULL.
+    notifiedAt: timestamp("notified_at", { withTimezone: true }),
     syncedAt: timestamp("synced_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
