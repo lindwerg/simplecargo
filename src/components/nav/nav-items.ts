@@ -1,4 +1,4 @@
-import { Home, Inbox, MailWarning, Route, Building2, Wallet, BarChart3, type LucideIcon } from "lucide-react";
+import { Home, Inbox, MailWarning, Route, Handshake, Building2, Wallet, BarChart3, type LucideIcon } from "lucide-react";
 
 /** A single primary-navigation destination. Shared by the desktop rail and the mobile bar. */
 export interface NavItem {
@@ -13,6 +13,7 @@ export interface NavItem {
 export const NAV_ITEMS: readonly NavItem[] = [
   { key: "dashboard", href: "/dashboard", ru: "Главная", Icon: Home },
   { key: "inbox", href: "/inbox", ru: "Входящие", Icon: MailWarning },
+  { key: "deals", href: "/deals", ru: "Сделки", Icon: Handshake },
   { key: "requests", href: "/requests", ru: "Запросы", Icon: Inbox },
   { key: "directions", href: "/directions", ru: "Направления", Icon: Route },
   { key: "partners", href: "/partners", ru: "Партнёры", Icon: Building2 },
