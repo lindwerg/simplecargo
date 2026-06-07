@@ -113,6 +113,13 @@
       "when": 1780828085861,
       "tag": "0015_burly_shaman",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1780829848271,
+      "tag": "0016_needy_adam_warlock",
+      "breakpoints": true
     }
   ]
 }

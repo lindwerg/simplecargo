@@ -59,3 +59,8 @@ export function vatAmount(netExcl: number, rate: number = DEFAULT_VAT_RATE): num
 export function withVat(netExcl: number, rate: number = DEFAULT_VAT_RATE): number {
   return netExcl * (1 + rate / 100);
 }
+
+/** VAT embedded in a gross (incl.) amount — «в т.ч. НДС». `vatFromGross(122, 22)` → 22. */
+export function vatFromGross(gross: number, rate: number = DEFAULT_VAT_RATE): number {
+  return (gross * rate) / (100 + rate);
+}

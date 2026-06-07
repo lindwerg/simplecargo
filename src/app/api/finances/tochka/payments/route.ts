@@ -20,6 +20,7 @@ interface CreateBody {
   counterpartyId?: unknown;
   dealId?: unknown;
   paymentNumber?: unknown;
+  inboundInvoiceId?: unknown;
 }
 
 const str = (v: unknown): string => (typeof v === "string" ? v.trim() : "");
@@ -70,6 +71,7 @@ export async function POST(request: Request): Promise<Response> {
         counterpartyId: optStr(body.counterpartyId),
         dealId: optStr(body.dealId),
         paymentNumber: Number.isFinite(paymentNumberRaw) && paymentNumberRaw > 0 ? paymentNumberRaw : null,
+        inboundInvoiceId: optStr(body.inboundInvoiceId),
       },
       user.id,
     );

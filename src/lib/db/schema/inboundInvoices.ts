@@ -1,4 +1,5 @@
 import {
+  boolean,
   check,
   index,
   numeric,
@@ -43,8 +44,24 @@ export const inboundInvoices = pgTable(
 
     amountTotal: numeric("amount_total", { precision: 14, scale: 2 }),
     vatAmount: numeric("vat_amount", { precision: 14, scale: 2 }),
+    vatRate: numeric("vat_rate", { precision: 5, scale: 2 }), // ставка НДС, % (22/20/0…)
+    vatIncluded: boolean("vat_included"), // true = в т.ч.; false = без НДС; null = неизв.
     currency: varchar("currency", { length: 3 }).notNull().default("RUB"),
     purposeRaw: text("purpose_raw"), // назначение/предмет счёта как в письме
+    serviceDescription: text("service_description"), // «за что» — для назначения платежа
+
+    // банковские реквизиты получателя из самого счёта (в counterparties их нет)
+    supplierKpp: varchar("supplier_kpp", { length: 9 }),
+    supplierAccount: text("supplier_account"), // р/с (20 цифр)
+    supplierBankBic: varchar("supplier_bank_bic", { length: 9 }), // БИК
+    supplierCorrAccount: text("supplier_corr_account"), // к/с
+    supplierBankName: text("supplier_bank_name"),
+
+    // договор (часто в «Основании» счёта) — для назначения платежа
+    contractNumber: text("contract_number"),
+    contractDate: timestamp("contract_date", { withTimezone: true }),
+
+    source: text("source").notNull().default("mail"), // mail | upload
 
     // привязка к сделке/направлению (опционально, оператор подтверждает)
     dealId: uuid("deal_id").references(() => deals.id, { onDelete: "set null" }),
@@ -54,7 +71,7 @@ export const inboundInvoices = pgTable(
     paidTxId: uuid("paid_tx_id").references(() => bankTransactions.id, { onDelete: "set null" }),
 
     status: text("status").notNull().default("pending"),
-    // pending | matched | paid | review
+    // pending | partial | matched | paid | review
 
     // источник: письмо/вложение (ingestedFiles, sourceType='E')
     sourceFileId: uuid("source_file_id").references(() => ingestedFiles.id, { onDelete: "set null" }),
@@ -68,6 +85,10 @@ export const inboundInvoices = pgTable(
     index("idx_inbound_invoices_number").on(t.invoiceNumber),
     index("idx_inbound_invoices_status").on(t.status),
     check("ck_inbound_invoices_direction", sql`${t.direction} IN ('incoming','outgoing')`),
-    check("ck_inbound_invoices_status", sql`${t.status} IN ('pending','matched','paid','review')`),
+    check(
+      "ck_inbound_invoices_status",
+      sql`${t.status} IN ('pending','partial','matched','paid','review')`,
+    ),
+    check("ck_inbound_invoices_source", sql`${t.source} IN ('mail','upload')`),
   ],
 );

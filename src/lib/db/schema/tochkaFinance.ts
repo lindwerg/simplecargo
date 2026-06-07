@@ -137,6 +137,10 @@ export const paymentDrafts = pgTable(
       .notNull()
       .references(() => bankAccounts.id, { onDelete: "restrict" }),
     externalRequestId: text("external_request_id"), // requestId Точки (после for-sign)
+    redirectUrl: text("redirect_url"), // ссылка на страницу подписания в Точке
+    // счёт, по которому платим (для остатка). Логическая ссылка на inbound_invoices.id
+    // (без FK — избегаем циклического импорта схем).
+    inboundInvoiceId: uuid("inbound_invoice_id"),
     amount: numeric("amount", { precision: 14, scale: 2 }).notNull(),
     paymentDate: text("payment_date").notNull(), // YYYY-MM-DD (МСК)
     paymentNumber: integer("payment_number"),
@@ -165,6 +169,7 @@ export const paymentDrafts = pgTable(
     index("idx_payment_drafts_account").on(t.accountId),
     index("idx_payment_drafts_status").on(t.status),
     index("idx_payment_drafts_request").on(t.externalRequestId),
+    index("idx_payment_drafts_invoice").on(t.inboundInvoiceId),
     check("ck_payment_draft_status", sql`${t.status} IN ('on_sign','paid','rejected','error')`),
   ],
 );
