@@ -37,8 +37,8 @@ export default async function PaymentsPage() {
         <p className="label-caps">Платежи</p>
         <h1 className="mt-1 text-xl font-semibold tracking-tight text-text">Создать платёж</h1>
         <p className="mt-1 max-w-prose text-sm text-text-secondary">
-          Платёж уходит в Точку «на подписание» — деньги не списываются, пока директор не
-          подпишет его в интернет-банке.
+          Загрузите счёт — ИИ заполнит реквизиты, сумму и назначение. Платёж уходит в Точку
+          «на подписание»: деньги не списываются, пока директор не подпишет его в интернет-банке.
         </p>
       </header>
 

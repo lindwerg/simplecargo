@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, ExternalLink } from "lucide-react";
 
 import { Money } from "@/components/ui/Money";
 import { cn } from "@/lib/utils";
@@ -62,6 +62,16 @@ export function PaymentsList({ payments }: PaymentsListProps) {
             <div className="flex shrink-0 flex-col items-end gap-0.5">
               <Money value={-p.amount} sign />
               <span className={cn("text-xs font-medium", st.tone)}>{st.label}</span>
+              {p.status === "on_sign" && p.redirectUrl && (
+                <a
+                  href={p.redirectUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs text-accent-text underline"
+                >
+                  Подписать <ExternalLink className="size-3" aria-hidden />
+                </a>
+              )}
             </div>
             <button
               type="button"

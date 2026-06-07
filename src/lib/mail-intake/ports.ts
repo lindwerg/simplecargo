@@ -23,9 +23,21 @@ export interface InvoiceSaveInput {
   vatAmount: number | null;
   currency: string;
   purposeRaw: string | null;
-  status: "pending" | "matched" | "paid" | "review";
+  status: "pending" | "partial" | "matched" | "paid" | "review";
   sourceFileId: string | null;
   extractedText: string | null;
+  // реквизиты получателя + договор + НДС для формирования платежа (опционально)
+  vatRate?: number | null;
+  vatIncluded?: boolean | null;
+  serviceDescription?: string | null;
+  supplierKpp?: string | null;
+  supplierAccount?: string | null;
+  supplierBankBic?: string | null;
+  supplierCorrAccount?: string | null;
+  supplierBankName?: string | null;
+  contractNumber?: string | null;
+  contractDate?: string | null; // ISO
+  source?: "mail" | "upload";
 }
 
 // A carrier's quote reply, ready to be matched back to the polled

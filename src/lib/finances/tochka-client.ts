@@ -152,15 +152,41 @@ export function getStatement(accountId: string, statementId: string): Promise<un
 // Схема выверена по OpenAPI Точки: тело — плоский { Data: { ... } }, банк сам
 // деньги НЕ списывает; ответ — { Data: { requestId } }. Подпись — за директором.
 
+// Заглушка налоговых полей для НЕ-бюджетного платежа (Точка требует объект целиком).
+export interface TochkaTaxInfo {
+  status: string;
+  kbk: string;
+  oktmo: string;
+  reasonCode: string;
+  taxPeriod: string;
+  documentNumber: string;
+  documentDate: string;
+  payerStatus: string;
+}
+
+/** taxInfo для обычного (не в бюджет) платежа — все поля "0". */
+export const NON_BUDGET_TAX_INFO: TochkaTaxInfo = {
+  status: "0",
+  kbk: "0",
+  oktmo: "0",
+  reasonCode: "0",
+  taxPeriod: "0",
+  documentNumber: "0",
+  documentDate: "0",
+  payerStatus: "0",
+};
+
 export interface PaymentForSignPayload {
-  accountCode: string; // счёт плательщика (наш), 20 цифр
-  bankCode: string; // БИК банка плательщика (Точка)
+  accountCode: string; // счёт плательщика (наш), РОВНО 20 цифр (без "/БИК")
+  bankCode: string; // БИК банка плательщика (Точка), 9 цифр
   counterpartyAccountNumber: string;
   counterpartyBankBic: string;
   counterpartyName: string;
   paymentAmount: number;
-  paymentDate: string; // YYYY-MM-DD (МСК)
-  paymentPurpose: string; // 1..210
+  paymentDate: string; // YYYY-MM-DD (МСК), ≤ сегодня
+  paymentPurpose: string; // 1..210, без em-dash «—»
+  supplierBillId?: string; // "0" для обычного платежа (требуется Точкой)
+  taxInfo?: TochkaTaxInfo; // заглушка из "0" для не-бюджетного платежа
   counterpartyINN?: string;
   counterpartyKPP?: string;
   counterpartyBankCorrAccount?: string;
@@ -168,17 +194,27 @@ export interface PaymentForSignPayload {
   paymentPriority?: string; // очередность, по умолчанию "5"
 }
 
-/** POST создать платёж «на подписание». Возвращает requestId Точки. */
-export async function createPaymentForSign(payload: PaymentForSignPayload): Promise<string> {
-  const response = await request<{ Data?: { requestId?: string } }>(`${PAYMENT}/for-sign`, {
-    method: "POST",
-    body: { Data: payload },
-  });
+export interface PaymentForSignResult {
+  requestId: string;
+  redirectURL: string | null; // ссылка на страницу подписания в Точке
+}
+
+/** POST создать платёж «на подписание». Возвращает requestId + ссылку на подпись. */
+export async function createPaymentForSign(
+  payload: PaymentForSignPayload,
+): Promise<PaymentForSignResult> {
+  const response = await request<{ Data?: { requestId?: string; redirectURL?: string } }>(
+    `${PAYMENT}/for-sign`,
+    {
+      method: "POST",
+      body: { Data: payload },
+    },
+  );
   const requestId = response?.Data?.requestId;
   if (!requestId) {
     throw new TochkaError(502, "Точка не вернула requestId платежа", response);
   }
-  return requestId;
+  return { requestId, redirectURL: response.Data?.redirectURL ?? null };
 }
 
 /** GET статус платежа по requestId. */
