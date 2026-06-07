@@ -8,10 +8,15 @@ import { Download, Mail, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Money } from "@/components/ui/Money";
 import type { RegistryRow, SuggestedRole } from "@/lib/partners/registry-build";
+import type { KnownEmailOption } from "@/lib/contacts/suggest";
 
 interface RegistryBuildTableProps {
   rows: RegistryRow[];
+  /** Все адреса из переписки mail.ru — для нативной автоподстановки почты. */
+  knownEmails: KnownEmailOption[];
 }
+
+const EMAIL_DATALIST_ID = "known-emails";
 
 type RoleFilter = "all" | SuggestedRole;
 
@@ -58,7 +63,7 @@ interface ImportState {
   text: string;
 }
 
-export function RegistryBuildTable({ rows }: RegistryBuildTableProps) {
+export function RegistryBuildTable({ rows, knownEmails }: RegistryBuildTableProps) {
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<RoleFilter>("all");
@@ -168,6 +173,15 @@ export function RegistryBuildTable({ rows }: RegistryBuildTableProps) {
 
   return (
     <div className="flex flex-col gap-4 pb-24">
+      {/* Общий справочник адресов из mail.ru — нативная автоподстановка для всех полей почты */}
+      <datalist id={EMAIL_DATALIST_ID}>
+        {knownEmails.map((e) => (
+          <option key={e.email} value={e.email}>
+            {e.displayName ?? ""}
+          </option>
+        ))}
+      </datalist>
+
       {/* Панель управления */}
       <div className="flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-center lg:justify-between">
         <div className="flex flex-wrap items-center gap-2">
@@ -341,9 +355,11 @@ export function RegistryBuildTable({ rows }: RegistryBuildTableProps) {
                   <td className="px-3 py-2.5">
                     <input
                       type="email"
+                      list={EMAIL_DATALIST_ID}
+                      autoComplete="off"
                       value={emailByKey[r.key] ?? ""}
                       onChange={(e) => setEmailByKey((prev) => ({ ...prev, [r.key]: e.target.value }))}
-                      placeholder="email@…"
+                      placeholder="начните печатать…"
                       aria-label={`Почта — ${name}`}
                       className="h-8 w-44 rounded-[var(--radius-sm)] border border-border bg-surface-2 px-2 text-xs text-text placeholder:text-text-tertiary focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
                     />
