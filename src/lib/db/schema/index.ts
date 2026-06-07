@@ -10,6 +10,7 @@ export * from "./ingest";
 export * from "./ingestedAttachments";
 export * from "./movements";
 export * from "./orders";
+export * from "./orderStoneLines";
 export * from "./directions";
 export * from "./directionBindings";
 export * from "./requests";

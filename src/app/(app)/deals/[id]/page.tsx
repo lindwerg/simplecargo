@@ -10,10 +10,12 @@ import { orders } from "@/lib/db/schema/orders";
 import { directions } from "@/lib/db/schema/directions";
 import { counterparties } from "@/lib/db/schema/counterparties";
 import { requests } from "@/lib/db/schema/requests";
+import { listStoneLines } from "@/lib/trades/stoneRepository";
 import { Button } from "@/components/ui/button";
 import { DealTabs, isDealTab, type DealTab } from "@/components/trades/DealTabs";
 import { dealStatusMeta } from "@/components/trades/dealStatusMeta";
 import { dealTypeLabel } from "@/components/trades/dealTypeMeta";
+import { StoneSection, type StoneLineView } from "@/components/trades/StoneSection";
 import { directionStatusMeta } from "@/components/directions/statusMeta";
 
 export const dynamic = "force-dynamic";
@@ -66,6 +68,8 @@ export default async function DealCardPage({ params, searchParams }: Ctx) {
     .where(eq(directions.orderId, id))
     .orderBy(asc(directions.status), desc(directions.createdAt));
 
+  const stoneLines = await listStoneLines(id);
+
   const meta = dealStatusMeta(deal.status);
   const created = format(toZonedTime(deal.createdAt, "Europe/Moscow"), "d MMMM yyyy, HH:mm", {
     locale: ru,
@@ -114,7 +118,9 @@ export default async function DealCardPage({ params, searchParams }: Ctx) {
           channel={deal.channel}
         />
       )}
-      {activeTab === "application" && <ApplicationTab dealId={id} directions={dirs} />}
+      {activeTab === "application" && (
+        <ApplicationTab dealId={id} directions={dirs} stoneLines={stoneLines} />
+      )}
       {activeTab === "execution" && <ExecutionTab />}
     </div>
   );
@@ -176,18 +182,32 @@ function AddDirectionButton({ dealId }: { dealId: string }) {
   );
 }
 
-function ApplicationTab({ dealId, directions: dirs }: { dealId: string; directions: DirRow[] }) {
+function ApplicationTab({
+  dealId,
+  directions: dirs,
+  stoneLines,
+}: {
+  dealId: string;
+  directions: DirRow[];
+  stoneLines: StoneLineView[];
+}) {
+  return (
+    <div className="space-y-6">
+      <TransportSection dealId={dealId} directions={dirs} />
+      <StoneSection dealId={dealId} lines={stoneLines} />
+    </div>
+  );
+}
+
+function TransportSection({ dealId, directions: dirs }: { dealId: string; directions: DirRow[] }) {
   if (dirs.length === 0) {
     return (
       <section className="rounded-[var(--radius-lg)] border border-dashed border-border bg-surface-1 p-6">
-        <h2 className="label-caps mb-1">Заявка</h2>
-        <p className="text-sm text-text-secondary">
-          Согласованное соглашение: маршруты (направления), щебень и помесячные ставки. Транспортных
-          направлений пока нет.
-        </p>
-        <div className="mt-4">
+        <div className="flex items-center justify-between">
+          <h3 className="label-caps">Перевозка</h3>
           <AddDirectionButton dealId={dealId} />
         </div>
+        <p className="mt-2 text-sm text-text-secondary">Транспортных направлений пока нет.</p>
       </section>
     );
   }
@@ -195,46 +215,46 @@ function ApplicationTab({ dealId, directions: dirs }: { dealId: string; directio
   return (
     <section className="space-y-3">
       <div className="flex items-center justify-between">
-        <h2 className="label-caps">Заявка</h2>
+        <h3 className="label-caps">Перевозка</h3>
         <AddDirectionButton dealId={dealId} />
       </div>
       <div className="overflow-hidden rounded-lg border border-border bg-surface-1">
         <table className="w-full border-collapse text-sm">
-        <thead>
-          <tr className="border-b border-border text-left">
-            <th className="label-caps px-4 py-2.5 font-medium">Маршрут</th>
-            <th className="label-caps px-4 py-2.5 text-right font-medium">Вагонов</th>
-            <th className="label-caps px-4 py-2.5 font-medium">Статус</th>
-          </tr>
-        </thead>
-        <tbody>
-          {dirs.map((d) => {
-            const m = directionStatusMeta(d.status);
-            const route = d.displayName ?? `${d.originRaw ?? "—"} → ${d.destRaw ?? "—"}`;
-            return (
-              <tr key={d.id} className="border-b border-border-subtle last:border-0">
-                <td className="px-4 py-3">
-                  <Link
-                    href={`/directions/${d.id}/edit`}
-                    className="text-text transition-colors hover:text-accent"
-                  >
-                    {route}
-                  </Link>
-                </td>
-                <td className="px-4 py-3 text-right [font-variant-numeric:tabular-nums] text-text-secondary">
-                  {d.wagonCountPlanned ?? "—"}
-                </td>
-                <td className="px-4 py-3">
-                  <span className={`inline-flex items-center gap-1.5 text-xs ${m.tone}`}>
-                    <span aria-hidden className="text-[0.7em] leading-none">
-                      ●
+          <thead>
+            <tr className="border-b border-border text-left">
+              <th className="label-caps px-4 py-2.5 font-medium">Маршрут</th>
+              <th className="label-caps px-4 py-2.5 text-right font-medium">Вагонов</th>
+              <th className="label-caps px-4 py-2.5 font-medium">Статус</th>
+            </tr>
+          </thead>
+          <tbody>
+            {dirs.map((d) => {
+              const m = directionStatusMeta(d.status);
+              const route = d.displayName ?? `${d.originRaw ?? "—"} → ${d.destRaw ?? "—"}`;
+              return (
+                <tr key={d.id} className="border-b border-border-subtle last:border-0">
+                  <td className="px-4 py-3">
+                    <Link
+                      href={`/directions/${d.id}/edit`}
+                      className="text-text transition-colors hover:text-accent"
+                    >
+                      {route}
+                    </Link>
+                  </td>
+                  <td className="px-4 py-3 text-right [font-variant-numeric:tabular-nums] text-text-secondary">
+                    {d.wagonCountPlanned ?? "—"}
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className={`inline-flex items-center gap-1.5 text-xs ${m.tone}`}>
+                      <span aria-hidden className="text-[0.7em] leading-none">
+                        ●
+                      </span>
+                      {m.label}
                     </span>
-                    {m.label}
-                  </span>
-                </td>
-              </tr>
-            );
-          })}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

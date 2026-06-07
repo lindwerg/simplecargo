@@ -127,6 +127,13 @@
       "when": 1780835306836,
       "tag": "0017_peaceful_wolverine",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1780836071003,
+      "tag": "0018_slimy_wolfsbane",
+      "breakpoints": true
     }
   ]
 }

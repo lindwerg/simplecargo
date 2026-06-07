@@ -3,12 +3,13 @@ import { and, desc, eq, sql } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { orders } from "@/lib/db/schema/orders";
 import { directions } from "@/lib/db/schema/directions";
+import { orderStoneLines } from "@/lib/db/schema/orderStoneLines";
 import { counterparties } from "@/lib/db/schema/counterparties";
 import { resolveCounterpartyId } from "@/lib/counterparties/resolve";
 import { deriveDealType } from "./derive";
 import type { CreateTradeInput } from "./schema";
 
-type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
+export type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
 
 // Domain error mapped to an HTTP status by the route handlers (parallel to DirectionError).
 export class TradeError extends Error {
@@ -118,16 +119,19 @@ export async function listTrades(): Promise<TradeSummary[]> {
     .orderBy(desc(orders.createdAt));
 }
 
-// Re-cache orders.deal_type from the deal's current composition. Stone lines arrive in
-// Фаза 2, so transport directions are the only component today (hasStone always false).
-// Kept in its own helper so the dealType cache stays one call away from any mutation.
-async function recacheDealType(tx: Tx, orderId: string): Promise<void> {
-  const [{ n }] = await tx
-    .select({ n: sql<number>`count(*)::int` })
+// Re-cache orders.deal_type from the deal's current composition: transport directions
+// AND stone lines (Фаза 2). Kept in its own helper so the dealType cache stays one call
+// away from any mutation on either component. Exported so stoneRepository reuses it.
+export async function recacheDealType(tx: Tx, orderId: string): Promise<void> {
+  const [{ dirCount }] = await tx
+    .select({ dirCount: sql<number>`count(*)::int` })
     .from(directions)
     .where(eq(directions.orderId, orderId));
-  const hasTransport = n > 0;
-  const next = deriveDealType(false, hasTransport);
+  const [{ stoneCount }] = await tx
+    .select({ stoneCount: sql<number>`count(*)::int` })
+    .from(orderStoneLines)
+    .where(eq(orderStoneLines.orderId, orderId));
+  const next = deriveDealType(stoneCount > 0, dirCount > 0);
   await tx.update(orders).set({ dealType: next, updatedAt: new Date() }).where(eq(orders.id, orderId));
 }
 
