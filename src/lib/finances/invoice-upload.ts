@@ -139,7 +139,14 @@ export async function processUploadedInvoice(
   }
 
   // Новый счёт: сохранить байты → распознать → создать запись.
-  await saveIngestedAttachment({ sourceFileId, kind: "attachment", filename, mimeType: mime, content: buffer });
+  await saveIngestedAttachment({
+    sourceFileId,
+    kind: "attachment",
+    filename,
+    mimeType: mime,
+    content: buffer,
+    objectKey: `uploads/${sha}/${filename.replace(/[^\w.\-А-Яа-яЁё]+/g, "_").slice(0, 80) || "file"}`,
+  });
 
   const input = await toExtractInput(filename, mime, buffer);
   if (!input) {

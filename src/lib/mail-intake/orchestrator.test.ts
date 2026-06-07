@@ -235,6 +235,50 @@ describe("processEmail orchestrator", () => {
     expect((p.quarantined[0] as { reasonCode: string }).reasonCode).toBe("CARRIER_QUOTE_MANUAL");
   });
 
+  it("archives a dislocation report без извлечения (ignored, no request/invoice/quarantine)", async () => {
+    const p = ports();
+    const extractRequest = vi.fn();
+    const extractInvoice = vi.fn();
+    const convertAttachment = vi.fn();
+    const d = deps(
+      {
+        classify: async () =>
+          classifyResultSchema.parse({
+            bodyKind: "dislocation",
+            bodyConfidence: 0.92,
+            attachments: [{ index: 0, kind: "dislocation", confidence: 0.92, reason: "сводка" }],
+          }),
+        extractRequest,
+        extractInvoice,
+        convertAttachment,
+      },
+      p,
+    );
+    const out = await processEmail(
+      email({
+        subject: "Дислок",
+        text: "сводка по вагонам во вложении",
+        attachments: [
+          {
+            filename: "dislocation_2026-06-01.xlsx",
+            contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            size: 5000,
+            content: Buffer.from("x"),
+          },
+        ],
+      }),
+      d,
+    );
+    expect(out.ignored).toBe(true);
+    expect(out.classification.bodyKind).toBe("dislocation");
+    expect(extractRequest).not.toHaveBeenCalled();
+    expect(extractInvoice).not.toHaveBeenCalled();
+    expect(convertAttachment).not.toHaveBeenCalled(); // вложение не конвертируется в извлечение
+    expect(p.created).toHaveLength(0);
+    expect(p.invoices).toHaveLength(0);
+    expect(p.quarantined).toHaveLength(0);
+  });
+
   it("ignores a plain 'thank you' email (no LLM extraction calls)", async () => {
     const p = ports();
     const extractRequest = vi.fn();

@@ -57,12 +57,36 @@ export async function recordIngestedFile(params: {
   return { fileId: existing[0]?.id ?? "", isNew: false };
 }
 
-export async function markFileCommitted(fileId: string): Promise<void> {
+// Помечаем письмо разобранным и СОХРАНЯЕМ тип от классификатора (для вкладок
+// «Входящих»). kind/confidence опциональны: ошибки до классификации просто
+// проставят статус.
+export async function markFileCommitted(
+  fileId: string,
+  kind?: string,
+  kindConfidence?: number,
+): Promise<void> {
   if (!fileId) return;
   await db
     .update(ingestedFiles)
-    .set({ status: "committed" })
+    .set({
+      status: "committed",
+      ...(kind ? { kind, classifiedAt: new Date() } : {}),
+      ...(kindConfidence == null ? {} : { kindConfidence: String(kindConfidence) }),
+    })
     .where(sql`${ingestedFiles.id} = ${fileId}`);
+}
+
+// Сохраняем ключи оригиналов в object storage на письме (сырое .eml + HTML-тело).
+export async function setIngestedFileStorage(
+  fileId: string,
+  opts: { storageKey?: string | null; htmlStorageKey?: string | null },
+): Promise<void> {
+  if (!fileId) return;
+  const set: Record<string, string | null> = {};
+  if (opts.storageKey !== undefined) set.storageKey = opts.storageKey;
+  if (opts.htmlStorageKey !== undefined) set.htmlStorageKey = opts.htmlStorageKey;
+  if (Object.keys(set).length === 0) return;
+  await db.update(ingestedFiles).set(set).where(sql`${ingestedFiles.id} = ${fileId}`);
 }
 
 // A processing failure (transient LLM/DB error) must NOT silently lose the email.

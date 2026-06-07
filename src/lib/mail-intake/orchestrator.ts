@@ -7,7 +7,7 @@ import type { ExtractInput, ExtractionResult } from "@/lib/requests/schema";
 import { resultToRequestInput } from "./result-to-request";
 import { decideRfqDisposition } from "./thresholds";
 import { buildQuarantineRow } from "./quarantine-map";
-import type { ClassifyResult, MailPartKind } from "./classify-schema";
+import { EXTRACTABLE_KINDS, type ClassifyResult, type MailPartKind } from "./classify-schema";
 import type { IntakeDeps, IntakeOutcome } from "./ports";
 import type { ParsedEmail } from "./types";
 
@@ -20,12 +20,14 @@ async function collectParts(
 ): Promise<{ kind: MailPartKind; input: ExtractInput }[]> {
   const out: { kind: MailPartKind; input: ExtractInput }[] = [];
 
-  if (cls.bodyKind !== "other" && email.text.trim().length > 0) {
+  // Извлекаем данные ТОЛЬКО из типов, по которым создаём заявку/счёт/ответ.
+  // dislocation/document/gu12/claim/other — только архив+тип, без извлечения.
+  if (EXTRACTABLE_KINDS.has(cls.bodyKind) && email.text.trim().length > 0) {
     out.push({ kind: cls.bodyKind, input: { modality: "text", text: email.text } });
   }
 
   for (const ac of cls.attachments) {
-    if (ac.kind === "other") continue;
+    if (!EXTRACTABLE_KINDS.has(ac.kind)) continue;
     const att = email.attachments[ac.index];
     if (!att) continue;
     const conv = await deps.convertAttachment(att, cls.senderOrgGuess ?? undefined);

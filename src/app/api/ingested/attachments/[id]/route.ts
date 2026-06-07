@@ -2,7 +2,8 @@ import { z } from "zod";
 
 import { apiFail } from "@/lib/api/response";
 import { AuthError, requireSession } from "@/lib/api/session";
-import { getIngestedAttachment } from "@/lib/mail-intake/attachments-repo";
+import { getIngestedAttachmentRef } from "@/lib/mail-intake/attachments-repo";
+import { getObjectStream } from "@/lib/storage/object-store";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -29,18 +30,36 @@ export async function GET(request: Request, ctx: Ctx): Promise<Response> {
     const { id } = await ctx.params;
     if (!z.uuid().safeParse(id).success) return apiFail("Некорректный идентификатор", 400);
 
-    const blob = await getIngestedAttachment(id);
-    if (!blob) return apiFail("Документ недоступен", 404);
+    const ref = await getIngestedAttachmentRef(id);
+    if (!ref) return apiFail("Документ недоступен", 404);
 
-    return new Response(new Uint8Array(blob.content), {
-      status: 200,
-      headers: {
-        "Content-Type": blob.mimeType,
-        "Content-Length": String(blob.content.byteLength),
-        "Content-Disposition": contentDisposition(blob.filename, isInlineType(blob.mimeType)),
-        "Cache-Control": "private, no-store",
-      },
-    });
+    const headersBase: Record<string, string> = {
+      "Content-Type": ref.mimeType,
+      "Content-Disposition": contentDisposition(ref.filename, isInlineType(ref.mimeType)),
+      "Cache-Control": "private, no-store",
+    };
+
+    // Канонично — стрим из object storage; иначе bytea (legacy/fallback).
+    if (ref.storageKey) {
+      const obj = await getObjectStream(ref.storageKey);
+      if (obj) {
+        return new Response(obj.stream, {
+          status: 200,
+          headers: {
+            ...headersBase,
+            ...(obj.contentLength != null ? { "Content-Length": String(obj.contentLength) } : {}),
+          },
+        });
+      }
+      // ключ есть, но объект недоступен — попробуем bytea ниже
+    }
+    if (ref.content) {
+      return new Response(new Uint8Array(ref.content), {
+        status: 200,
+        headers: { ...headersBase, "Content-Length": String(ref.content.byteLength) },
+      });
+    }
+    return apiFail("Документ недоступен", 404);
   } catch (error: unknown) {
     if (error instanceof AuthError) return apiFail(error.message, error.status);
     console.error("[ingested] download failed:", error instanceof Error ? error.message : error);

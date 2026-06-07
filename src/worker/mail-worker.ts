@@ -17,8 +17,9 @@ import {
   resolveSystemUserId,
 } from "@/lib/mail/intake-repo";
 import { upsertKnownEmails } from "@/lib/mail/known-emails";
-import { saveIngestedAttachment } from "@/lib/mail-intake/attachments-repo";
+import { storeEmailOriginals } from "@/lib/mail/store-originals";
 import { processEmail } from "@/lib/mail-intake/orchestrator";
+import { effectiveEmailKind } from "@/lib/mail-intake/classify-schema";
 import { buildQuarantineRow } from "@/lib/mail-intake/quarantine-map";
 import type { SeenAddress } from "@/lib/mail/known-emails";
 import { syncTochka } from "@/lib/finances/sync";
@@ -103,37 +104,23 @@ async function pollCycle(systemUserId: string): Promise<void> {
       await upsertKnownEmails(seen);
 
       if (isNew) {
-        // Persist the originals so the operator can OPEN them later (тело письма +
-        // каждое вложение). Best-effort — a storage hiccup must not lose the email.
+        // Persist the originals so the operator can OPEN them later (сырое .eml +
+        // HTML-тело + текст + вложения) — в object storage, иначе bytea.
+        // Best-effort — a storage hiccup must not lose the email.
         try {
-          if (parsed.text && parsed.text.trim().length > 0) {
-            await saveIngestedAttachment({
-              sourceFileId: fileId,
-              kind: "body",
-              filename: "Текст письма.txt",
-              mimeType: "text/plain; charset=utf-8",
-              content: Buffer.from(parsed.text, "utf8"),
-            });
-          }
-          for (const att of parsed.attachments) {
-            await saveIngestedAttachment({
-              sourceFileId: fileId,
-              kind: "attachment",
-              filename: att.filename,
-              mimeType: att.contentType,
-              content: att.content,
-            });
-          }
+          await storeEmailOriginals({ fileId, sha, raw, parsed });
         } catch (storeErr: unknown) {
           console.error(
-            `[mail-worker] uid=${uid} не удалось сохранить вложения:`,
+            `[mail-worker] uid=${uid} не удалось сохранить оригиналы:`,
             storeErr instanceof Error ? storeErr.message : storeErr,
           );
         }
 
         const deps = buildIntakeDeps({ systemUserId, sourceFileId: fileId });
         const outcome = await processEmail(parsed, deps);
-        await markFileCommitted(fileId);
+        // Эффективный тип письма (для вкладок): при пустом теле берём тип вложения.
+        const eff = effectiveEmailKind(outcome.classification);
+        await markFileCommitted(fileId, eff.kind, eff.confidence);
         console.log(
           `[mail-worker] uid=${uid} ${outcome.classification.bodyKind} → req=${outcome.createdRequestId ?? "—"} inv=${outcome.invoiceIds.length} quote=${outcome.carrierQuotesMatched} quar=${outcome.quarantinedCount}`,
         );
