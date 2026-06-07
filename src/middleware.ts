@@ -5,6 +5,7 @@ import { getSessionCookie } from "better-auth/cookies";
 // the authoritative getSession() runs in the Server Component (P0-8). D5.
 const PROTECTED_PREFIXES = [
   "/dashboard",
+  "/deals",
   "/requests",
   "/directions",
   "/partners",
