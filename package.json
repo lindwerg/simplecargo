@@ -19,6 +19,7 @@
     "db:seed:user": "tsx src/lib/db/seed-user.ts",
     "worker": "tsx src/worker/mail-worker.ts",
     "seed:known-emails": "tsx scripts/seed-known-emails.ts",
+    "export:counterparties": "tsx scripts/export-counterparties.ts",
     "icons:generate": "tsx scripts/generate-icons.ts",
     "contrast:audit": "tsx scripts/contrast-audit.ts"
   },
