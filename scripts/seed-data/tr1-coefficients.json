@@ -1,0 +1,128 @@
+{
+  "_meta": {
+    "dataset": "TR-1 2026 special coefficients & indexation with real effective dates",
+    "fetchedAt": "2026-06-07",
+    "criticalNote": "The Приложение N 2 base rate tables in this seed-data set are the 2026 ТР-1 tables and ALREADY embed the +10% (2025-12-01) indexation. Do NOT re-apply +10% on the extracted rates. The coefficients below are the ones still applied ON TOP of the table lookup."
+  },
+  "rows": [
+    {
+      "label": "Порожний пробег универсального ПС — надбавка",
+      "kind": "coef",
+      "multiplier": 1.1,
+      "appliesTo": "porozhny",
+      "effectiveFrom": "2025-01-01",
+      "effectiveTo": null,
+      "source": "Приказ ФАС 999/24 от 13.12.2024 (ред. 05.11.2025), п.2.16/2.17; продлён на 2026",
+      "note": "×1,1 к тарифу на порожний пробег собств./аренд. универсальных вагонов (крытые, полувагоны, платформы <19.6м) и спец.платформ после контейнеров. Бессрочно (нет даты окончания после ред. 05.11.2025). ВНИМАНИЕ: дизайн-док указывал 2026-01-01 — фактически с 2025-01-01."
+    },
+    {
+      "label": "Контейнерная надбавка +5%",
+      "kind": "coef",
+      "multiplier": 1.05,
+      "appliesTo": "container",
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "skipSeed": true,
+      "source": "проект приказа ФАС",
+      "note": "DO NOT SEED for 2026. По данным trans.ru/rzd-partner (дек.2025) надбавка на перевозку контейнеров на 2026 ВРЕМЕННО ОТМЕНЕНА. +5% не применять для as-of 2026. Поле оставлено для исторической справки."
+    },
+    {
+      "label": "Базовая индексация 2026",
+      "kind": "index",
+      "multiplier": 1.1,
+      "appliesTo": "all",
+      "effectiveFrom": "2025-12-01",
+      "effectiveTo": null,
+      "skipSeed": true,
+      "source": "Распоряжение Правительства РФ 3100-р (ноя.2025); приказ ФАС об индексации",
+      "note": "+10%. УЖЕ ВКЛЮЧЕНА в базовые ставки Приложения N 2 ТР-1 2026 — повторно не умножать на извлечённые ставки. skipSeed=true чтобы сид не вставил её и движок не применил дважды."
+    },
+    {
+      "label": "Базовая индексация 2025",
+      "kind": "index",
+      "multiplier": 1.138,
+      "appliesTo": "all",
+      "effectiveFrom": "2024-12-01",
+      "effectiveTo": "2025-11-30",
+      "source": "ФАС №862/24, №863/24; Распоряжение Прав. №3248-р",
+      "note": "+13,8%. Историческая; для as-of 2026 расчётов не применяется (уже в базе ТР-1)."
+    },
+    {
+      "label": "Минерально-строительные грузы (скидка)",
+      "kind": "coef",
+      "multiplier": 0.9492,
+      "appliesTo": "minstroy",
+      "effectiveFrom": "2025-01-01",
+      "effectiveTo": "2025-12-31",
+      "source": "легаси 2025; НЕ продлена на 2026",
+      "note": "EXPIRED. С 2026-01-01 не применять. Для нерудных class-1 в 2026 действует K3=0,77 (Табл.4) + полувагон ×0,909 (п.1.5 Табл.4), а НЕ эта скидка."
+    },
+    {
+      "label": "Собственный полувагон (ПВ) — И-компонент класс 1",
+      "kind": "coef",
+      "multiplier": 0.9346,
+      "appliesTo": "own_gondola",
+      "appliesToClass": 1,
+      "effectiveFrom": "2026-01-01",
+      "effectiveTo": null,
+      "source": "ТР-1 2026 п.18.1.1 (sudact .../prilozhenie-n-1/ii/)",
+      "note": "Коэффициент к И-части для собственного/арендованного полувагона (wagonType=ПВ) class-1. Применяется ТОЛЬКО для ownership=own, wagonType=ПВ — не для РЖД-парка и не для прочих типов вагонов. class2=0,9592; class3=0,9774."
+    },
+    {
+      "label": "Собственный полувагон (ПВ) — И-компонент класс 2",
+      "kind": "coef",
+      "multiplier": 0.9592,
+      "appliesTo": "own_gondola",
+      "appliesToClass": 2,
+      "effectiveFrom": "2026-01-01",
+      "effectiveTo": null,
+      "source": "ТР-1 2026 п.18.1.1"
+    },
+    {
+      "label": "Собственный полувагон (ПВ) — И-компонент класс 3",
+      "kind": "coef",
+      "multiplier": 0.9774,
+      "appliesTo": "own_gondola",
+      "appliesToClass": 3,
+      "effectiveFrom": "2026-01-01",
+      "effectiveTo": null,
+      "source": "ТР-1 2026 п.18.1.1"
+    },
+    {
+      "label": "Нерудные/минерально-строительные K3 (Табл.4) — ДОКУМЕНТАЦИЯ",
+      "kind": "coef",
+      "multiplier": 0.77,
+      "appliesTo": "class",
+      "appliesToClass": 1,
+      "skipSeed": true,
+      "effectiveFrom": "2026-01-01",
+      "effectiveTo": null,
+      "source": "ТР-1 2026 Таблица N 4, позиции 231-236",
+      "note": "skipSeed=true: K3 уже применяется через таблицу tr1-k3-full.json в движке (resolveK3). Если также сидить сюда, получится двойное применение 0,77×0,909. Оставлено как документация."
+    },
+    {
+      "label": "Нерудные в полувагонах/платформах — доп.коэф п.1.5 — ДОКУМЕНТАЦИЯ",
+      "kind": "coef",
+      "multiplier": 0.909,
+      "appliesTo": "class",
+      "appliesToClass": 1,
+      "skipSeed": true,
+      "effectiveFrom": "2026-01-01",
+      "effectiveTo": null,
+      "source": "ТР-1 2026 Таблица N 4 п.1.5",
+      "note": "skipSeed=true: уже включён как wagonTypeMultiplier в tr1-k3-full.json (паттерн 231-236 + 241,242,245,246 × 0,909 для ПВ/ПЛ). Двойное применение недопустимо."
+    },
+    {
+      "label": "Спец.модели полувагонов к схеме N8 — ДОКУМЕНТАЦИЯ",
+      "kind": "coef",
+      "multiplier": 0.9595,
+      "appliesTo": "class",
+      "appliesToClass": null,
+      "skipSeed": true,
+      "effectiveFrom": "2026-01-01",
+      "effectiveTo": null,
+      "source": "ТР-1 2026 Таблица N 6 п.3",
+      "note": "skipSeed=true: инновационный коэффициент применяется через tr1-innovative-models.json (resolveInnovativeCoef по модели вагона). Сидить сюда как class-коэф — ошибка (нет привязки к модели)."
+    }
+  ]
+}
