@@ -4,8 +4,26 @@ import { z } from "zod";
 // call per email looks at subject + body + attachment manifest and labels each
 // part. No fetch/DB — unit-testable.
 
-export const MAIL_PART_KINDS = ["client_rfq", "invoice", "carrier_quote", "other"] as const;
+export const MAIL_PART_KINDS = [
+  "client_rfq",
+  "invoice",
+  "carrier_quote",
+  "dislocation",
+  "document",
+  "gu12",
+  "claim",
+  "other",
+] as const;
 export type MailPartKind = (typeof MAIL_PART_KINDS)[number];
+
+// Типы, по которым ИИ ИЗВЛЕКАЕТ данные (создаёт заявку/счёт/ответ перевозчика).
+// Остальные (dislocation/document/gu12/claim/other) только архивируются и
+// типизируются для вкладок «Входящих» — без авто-извлечения (см. orchestrator).
+export const EXTRACTABLE_KINDS: ReadonlySet<MailPartKind> = new Set([
+  "client_rfq",
+  "invoice",
+  "carrier_quote",
+]);
 
 const confidence = z.number().min(0).max(1);
 

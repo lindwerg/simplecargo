@@ -57,11 +57,22 @@ export async function recordIngestedFile(params: {
   return { fileId: existing[0]?.id ?? "", isNew: false };
 }
 
-export async function markFileCommitted(fileId: string): Promise<void> {
+// Помечаем письмо разобранным и СОХРАНЯЕМ тип от классификатора (для вкладок
+// «Входящих»). kind/confidence опциональны: ошибки до классификации просто
+// проставят статус.
+export async function markFileCommitted(
+  fileId: string,
+  kind?: string,
+  kindConfidence?: number,
+): Promise<void> {
   if (!fileId) return;
   await db
     .update(ingestedFiles)
-    .set({ status: "committed" })
+    .set({
+      status: "committed",
+      ...(kind ? { kind, classifiedAt: new Date() } : {}),
+      ...(kindConfidence == null ? {} : { kindConfidence: String(kindConfidence) }),
+    })
     .where(sql`${ingestedFiles.id} = ${fileId}`);
 }
 
