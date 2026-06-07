@@ -20,6 +20,7 @@ import { upsertKnownEmails } from "@/lib/mail/known-emails";
 import { storeEmailOriginals } from "@/lib/mail/store-originals";
 import { processEmail } from "@/lib/mail-intake/orchestrator";
 import { buildQuarantineRow } from "@/lib/mail-intake/quarantine-map";
+import { publishRealtime } from "@/lib/realtime/notify";
 import type { SeenAddress } from "@/lib/mail/known-emails";
 import { syncTochka } from "@/lib/finances/sync";
 import {
@@ -121,6 +122,10 @@ async function pollCycle(systemUserId: string): Promise<void> {
         // менеджер сам относит его к типу вручную. Извлечение заявок/счетов
         // (processEmail) при этом работает как прежде.
         await markFileCommitted(fileId);
+        // «Сразу у нас»: даём знать вебу о новом письме, чтобы плоский список
+        // «Входящих» обновился сам (даже если ИИ ничего не извлёк — дислокации,
+        // документы и т.п. иначе не триггерили realtime).
+        await publishRealtime({ kind: "email", id: fileId });
         console.log(
           `[mail-worker] uid=${uid} ${outcome.classification.bodyKind} → req=${outcome.createdRequestId ?? "—"} inv=${outcome.invoiceIds.length} quote=${outcome.carrierQuotesMatched} quar=${outcome.quarantinedCount}`,
         );

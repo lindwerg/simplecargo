@@ -11,8 +11,9 @@ import {
   isObjectStoreConfigured,
   putObject,
 } from "@/lib/storage/object-store";
+import { makeSnippet } from "@/lib/mail-intake/snippet";
 import type { ParsedEmail } from "@/lib/mail-intake/types";
-import { setIngestedFileStorage } from "./intake-repo";
+import { setIngestedFileBodyPreview, setIngestedFileStorage } from "./intake-repo";
 
 export async function storeEmailOriginals(opts: {
   fileId: string;
@@ -85,4 +86,7 @@ export async function storeEmailOriginals(opts: {
   if (storageKey || htmlStorageKey) {
     await setIngestedFileStorage(fileId, { storageKey, htmlStorageKey });
   }
+
+  // сниппет тела — чтобы в списке «Входящих» сразу видеть суть письма
+  await setIngestedFileBodyPreview(fileId, makeSnippet(parsed.text, parsed.html));
 }

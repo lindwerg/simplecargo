@@ -6,9 +6,8 @@ import { ArrowLeft, Download } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { AttachmentChips } from "@/components/inbox/AttachmentChips";
 import { MarkReadOnMount } from "@/components/inbox/MarkReadOnMount";
-import { LinkDealControl } from "@/components/inbox/LinkDealControl";
-import { CategoryControl } from "@/components/inbox/CategoryControl";
-import { KIND_CHIP } from "@/components/inbox/inbox-tabs";
+import { LetterActions } from "@/components/inbox/LetterActions";
+import { formatMailDate } from "@/components/inbox/mail-format";
 import { getInboxEmailDetail } from "@/lib/mail-intake/inbox-repo";
 
 export const metadata = { title: "Письмо" };
@@ -22,7 +21,7 @@ export default async function InboxEmailPage({ params }: { params: Promise<{ id:
   const email = await getInboxEmailDetail(id);
   if (!email) notFound();
 
-  const chip = email.kind ? KIND_CHIP[email.kind] : undefined;
+  const when = formatMailDate(email.receivedAt);
 
   return (
     <div className="space-y-5">
@@ -37,9 +36,6 @@ export default async function InboxEmailPage({ params }: { params: Promise<{ id:
 
       <header className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2">
-          {chip && (
-            <span className={`rounded-pill px-2 py-0.5 text-2xs font-medium ${chip.cls}`}>{chip.label}</span>
-          )}
           {email.hasRawEml && (
             <a
               href={`/api/inbox/${email.id}/eml`}
@@ -55,37 +51,16 @@ export default async function InboxEmailPage({ params }: { params: Promise<{ id:
         </h1>
         <p className="text-xs text-text-tertiary">
           {email.senderEmail ?? "отправитель неизвестен"}
-          {email.receivedAt && (
+          {when && (
             <>
               {" · "}
-              <time dateTime={email.receivedAt}>{new Date(email.receivedAt).toLocaleString("ru-RU")}</time>
+              <time dateTime={email.receivedAt ?? undefined}>{when}</time>
             </>
           )}
         </p>
       </header>
 
-      <section className="flex flex-col gap-4 rounded-lg border border-border bg-surface-2 p-4">
-        <div className="space-y-1.5">
-          <p className="label-caps">Тип</p>
-          <CategoryControl emailId={email.id} current={email.kind} />
-        </div>
-        <div className="space-y-1.5 border-t border-border-subtle pt-3">
-          <p className="label-caps">Сделка</p>
-          <LinkDealControl
-            emailId={email.id}
-            directionId={email.directionId}
-            directionLabel={email.directionLabel}
-          />
-        </div>
-      </section>
-
-      {email.documents.length > 0 && (
-        <section className="space-y-1.5">
-          <p className="label-caps">Вложения</p>
-          <AttachmentChips documents={email.documents} />
-        </section>
-      )}
-
+      {/* Тело письма — сразу видно: HTML 1:1 в песочнице, иначе текст inline. */}
       <section className="rounded-lg border border-border bg-surface-1 p-1">
         {email.hasHtml ? (
           // Песочница: без allow-scripts → JS не выполняется (плюс строгий CSP на роуте).
@@ -95,15 +70,28 @@ export default async function InboxEmailPage({ params }: { params: Promise<{ id:
             sandbox="allow-same-origin allow-popups"
             className="h-[70vh] w-full rounded-[var(--radius-md)] bg-white"
           />
-        ) : email.bodyText ? (
-          <div className="space-y-2 p-4">
-            <p className="text-sm text-text-tertiary">HTML-вид недоступен — откройте текст письма:</p>
-            <AttachmentChips documents={[email.bodyText]} />
+        ) : email.bodyTextContent ? (
+          <div className="whitespace-pre-wrap break-words p-4 text-sm leading-relaxed text-text">
+            {email.bodyTextContent}
           </div>
         ) : (
           <p className="p-4 text-sm text-text-tertiary">Тело письма недоступно.</p>
         )}
       </section>
+
+      {email.documents.length > 0 && (
+        <section className="space-y-1.5">
+          <p className="label-caps">Вложения</p>
+          <AttachmentChips documents={email.documents} />
+        </section>
+      )}
+
+      {/* Действия из письма: создать запрос/заявку, привязать к направлению, дислокация. */}
+      <LetterActions
+        emailId={email.id}
+        directionId={email.directionId}
+        directionLabel={email.directionLabel}
+      />
     </div>
   );
 }

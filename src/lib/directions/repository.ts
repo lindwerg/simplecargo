@@ -348,6 +348,34 @@ export async function removeOwnerBinding(
   return { id: deleted[0].id };
 }
 
+/** Дописать распознанные номера вагонов в expected_wagon_ids активной owner-привязки
+ *  направления (объединение, без дублей). Пишем ТОЛЬКО когда активная привязка ровно
+ *  одна — иначе не угадать, в какую (возвращаем saved:false, письмо всё равно
+ *  привязывается выше по стеку). */
+export async function mergeExpectedWagons(
+  directionId: string,
+  wagonNumbers: string[],
+): Promise<{ saved: boolean; expectedCount: number }> {
+  if (wagonNumbers.length === 0) return { saved: false, expectedCount: 0 };
+  const active = await db
+    .select({ id: directionOwnerBindings.id, expected: directionOwnerBindings.expectedWagonIds })
+    .from(directionOwnerBindings)
+    .where(
+      and(
+        eq(directionOwnerBindings.directionId, directionId),
+        eq(directionOwnerBindings.status, "active"),
+      ),
+    );
+  if (active.length !== 1) return { saved: false, expectedCount: 0 };
+
+  const union = [...new Set([...(active[0].expected ?? []), ...wagonNumbers])];
+  await db
+    .update(directionOwnerBindings)
+    .set({ expectedWagonIds: union, updatedAt: new Date() })
+    .where(eq(directionOwnerBindings.id, active[0].id));
+  return { saved: true, expectedCount: union.length };
+}
+
 export async function addClientBinding(
   directionId: string,
   input: ClientBindingInput,

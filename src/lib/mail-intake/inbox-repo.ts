@@ -10,8 +10,13 @@ import { ingestedFiles } from "@/lib/db/schema/ingest";
 import { ingestedAttachments } from "@/lib/db/schema/ingestedAttachments";
 import { directions } from "@/lib/db/schema/directions";
 import { getObjectBytes } from "@/lib/storage/object-store";
+import { xlsxToText } from "@/lib/requests/xlsx";
 import { MAIL_PART_KINDS, type MailPartKind } from "./classify-schema";
-import { listAttachmentsByFiles, type AttachmentMeta } from "./attachments-repo";
+import {
+  getIngestedAttachmentBytes,
+  listAttachmentsByFiles,
+  type AttachmentMeta,
+} from "./attachments-repo";
 
 export type InboxTab = MailPartKind | "all";
 
@@ -24,6 +29,7 @@ export interface InboxItem {
   subject: string; // ingested_files.filename = тема письма
   senderEmail: string | null;
   receivedAt: string | null;
+  snippet: string | null; // короткий превью тела письма для списка
   kind: string | null;
   kindConfidence: number | null;
   readAt: string | null;
@@ -96,6 +102,7 @@ export async function listInbox(opts: {
       subject: ingestedFiles.filename,
       senderEmail: ingestedFiles.senderEmail,
       receivedAt: ingestedFiles.receivedAt,
+      snippet: ingestedFiles.bodyPreview,
       kind: ingestedFiles.kind,
       kindConfidence: ingestedFiles.kindConfidence,
       readAt: ingestedFiles.readAt,
@@ -125,6 +132,7 @@ export async function listInbox(opts: {
     subject: r.subject,
     senderEmail: r.senderEmail,
     receivedAt: toIso(r.receivedAt),
+    snippet: r.snippet,
     kind: r.kind,
     kindConfidence: r.kindConfidence == null ? null : Number(r.kindConfidence),
     readAt: toIso(r.readAt),
@@ -190,8 +198,9 @@ export interface InboxEmailDetail {
   directionLabel: string | null; // подпись привязанного направления (сделки)
   hasHtml: boolean;
   hasRawEml: boolean;
+  bodyTextContent: string | null; // готовый текст тела письма (показываем inline)
   documents: AttachmentMeta[]; // только настоящие вложения (kind='attachment')
-  bodyText: AttachmentMeta | null; // «Текст письма» — запасной вид без HTML
+  bodyText: AttachmentMeta | null; // «Текст письма» — ссылка-вложение (запасной вид)
 }
 
 /** One email for the detail view: header + attachments + flags (HTML/.eml есть). */
@@ -225,6 +234,11 @@ export async function getInboxEmailDetail(id: string): Promise<InboxEmailDetail 
     ? r.directionName ?? ([r.directionOrigin, r.directionDest].filter(Boolean).join(" → ") || "Направление")
     : null;
 
+  const hasHtml = Boolean(r.htmlStorageKey) || Boolean(htmlBody);
+  // Текст тела достаём только когда нет HTML — это и есть фикс «пустого письма»:
+  // показываем текст inline, не завязываясь на молча падающий в 404 iframe.
+  const bodyTextContent = hasHtml ? null : await getEmailText(id);
+
   return {
     id: r.id,
     subject: r.subject,
@@ -234,11 +248,34 @@ export async function getInboxEmailDetail(id: string): Promise<InboxEmailDetail 
     dealId: r.dealId,
     directionId: r.directionId,
     directionLabel,
-    hasHtml: Boolean(r.htmlStorageKey) || Boolean(htmlBody),
+    hasHtml,
     hasRawEml: Boolean(r.storageKey),
+    bodyTextContent,
     documents: docs.filter((d) => d.kind === "attachment" && !d.isInline),
     bodyText: textBody ?? null,
   };
+}
+
+/** Текст тела письма (text/plain) из бакета/bytea. Null, если текстового тела нет. */
+export async function getEmailText(id: string): Promise<string | null> {
+  const atts = await db
+    .select({
+      kind: ingestedAttachments.kind,
+      mimeType: ingestedAttachments.mimeType,
+      storageKey: ingestedAttachments.storageKey,
+      content: ingestedAttachments.content,
+    })
+    .from(ingestedAttachments)
+    .where(eq(ingestedAttachments.sourceFileId, id));
+
+  const body = atts.find((a) => a.kind === "body" && a.mimeType.includes("text/plain"));
+  if (!body) return null;
+  if (body.storageKey) {
+    const b = await getObjectBytes(body.storageKey);
+    return b?.toString("utf8") ?? null;
+  }
+  if (body.content) return Buffer.from(body.content).toString("utf8");
+  return null;
 }
 
 /** Object-storage key of the raw .eml (for «скачать оригинал»). Null if not stored. */
@@ -299,6 +336,34 @@ export async function getEmailHtml(id: string): Promise<string | null> {
 
   // defense-in-depth: вырезаем <script> (CSP + sandbox уже блокируют исполнение)
   return rewritten.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "");
+}
+
+function isXlsxAttachment(filename: string, mimeType: string): boolean {
+  return /\.xlsx?$/i.test(filename) || mimeType.includes("spreadsheet") || mimeType.includes("excel");
+}
+
+/** Текст письма для распознавания ИИ: тело + таблицы из xlsx-вложений. Используется
+ *  для предзаполнения «Создать запрос/заявку» из письма. */
+export async function getEmailExtractableText(id: string): Promise<string> {
+  const parts: string[] = [];
+  const body = await getEmailText(id);
+  if (body && body.trim().length > 0) parts.push(body.trim());
+
+  const docs = await listAttachmentsByFiles([id]);
+  for (const a of docs) {
+    if (a.kind !== "attachment" || a.isInline || !a.hasContent) continue;
+    if (!isXlsxAttachment(a.filename, a.mimeType)) continue;
+    const bytes = await getIngestedAttachmentBytes(a.id);
+    if (!bytes) continue;
+    try {
+      const ab = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
+      const table = await xlsxToText(ab);
+      if (table && table.trim().length > 0) parts.push(`\n[${a.filename}]\n${table.trim()}`);
+    } catch {
+      // нечитаемое вложение — пропускаем, тело уже есть
+    }
+  }
+  return parts.join("\n").trim();
 }
 
 /** Mark one email read (clears the «новое» badge). Idempotent. */

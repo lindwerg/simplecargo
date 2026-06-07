@@ -1,0 +1,1 @@
+ALTER TABLE "ingested_files" ADD COLUMN "body_preview" text;
