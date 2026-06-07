@@ -7,7 +7,7 @@ import { pool } from "@/lib/db/client";
 
 export const REALTIME_CHANNEL = "requests_new";
 
-export type RealtimeKind = "request" | "invoice" | "quarantine";
+export type RealtimeKind = "request" | "invoice" | "quarantine" | "email";
 
 export interface RealtimeEvent {
   kind: RealtimeKind;
