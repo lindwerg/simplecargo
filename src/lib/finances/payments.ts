@@ -198,6 +198,7 @@ export interface PaymentDraftRow {
   counterpartyName: string;
   status: string;
   tochkaStatus: string | null;
+  redirectUrl: string | null;
   createdAt: string;
 }
 
@@ -211,6 +212,7 @@ export async function listPaymentDrafts(limit = 50): Promise<PaymentDraftRow[]> 
       counterpartyName: paymentDrafts.counterpartyName,
       status: paymentDrafts.status,
       tochkaStatus: paymentDrafts.tochkaStatus,
+      redirectUrl: paymentDrafts.redirectUrl,
       createdAt: paymentDrafts.createdAt,
     })
     .from(paymentDrafts)
@@ -225,6 +227,7 @@ export async function listPaymentDrafts(limit = 50): Promise<PaymentDraftRow[]> 
     counterpartyName: r.counterpartyName,
     status: r.status,
     tochkaStatus: r.tochkaStatus,
+    redirectUrl: r.redirectUrl,
     createdAt: r.createdAt.toISOString(),
   }));
 }
