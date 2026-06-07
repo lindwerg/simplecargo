@@ -161,8 +161,14 @@ function blobToDataUrl(blob: Blob): Promise<string> {
   });
 }
 
-export function IntakeStudio() {
+interface IntakeStudioProps {
+  // "request" (default) saves an RFQ; "deal" creates a proactive Сделка with directions.
+  target?: "request" | "deal";
+}
+
+export function IntakeStudio({ target = "request" }: IntakeStudioProps = {}) {
   const router = useRouter();
+  const isDeal = target === "deal";
   const [phase, setPhase] = useState<Phase>("intake");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -284,14 +290,14 @@ export function IntakeStudio() {
 
     setBusy(true);
     try {
-      const res = await fetch("/api/requests", {
+      const res = await fetch(isDeal ? "/api/deals/from-intake" : "/api/requests", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
       const json = await res.json();
       if (!res.ok || !json?.success) throw new Error(json?.error ?? "Не удалось сохранить");
-      router.push("/requests?view=clients");
+      router.push(isDeal ? `/deals/${json.data.id}?tab=application` : "/requests?view=clients");
       router.refresh();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Ошибка сохранения");
@@ -570,7 +576,7 @@ export function IntakeStudio() {
           className="inline-flex h-10 items-center gap-2 rounded-[var(--radius-md)] bg-accent px-5 text-sm font-semibold text-text-inverse disabled:opacity-50 hover:bg-accent-hover focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
         >
           {busy && <Loader2 className="size-4 animate-spin" aria-hidden />}
-          Сохранить запрос
+          {isDeal ? "Создать сделку" : "Сохранить запрос"}
         </button>
       </div>
     </div>
