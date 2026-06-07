@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { asc, desc, eq } from "drizzle-orm";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
 import { format, toZonedTime } from "date-fns-tz";
 import { ru } from "date-fns/locale";
 
@@ -9,8 +9,11 @@ import { db } from "@/lib/db/client";
 import { orders } from "@/lib/db/schema/orders";
 import { directions } from "@/lib/db/schema/directions";
 import { counterparties } from "@/lib/db/schema/counterparties";
+import { requests } from "@/lib/db/schema/requests";
+import { Button } from "@/components/ui/button";
 import { DealTabs, isDealTab, type DealTab } from "@/components/trades/DealTabs";
 import { dealStatusMeta } from "@/components/trades/dealStatusMeta";
+import { dealTypeLabel } from "@/components/trades/dealTypeMeta";
 import { directionStatusMeta } from "@/components/directions/statusMeta";
 
 export const dynamic = "force-dynamic";
@@ -32,13 +35,19 @@ export default async function DealCardPage({ params, searchParams }: Ctx) {
     .select({
       id: orders.id,
       orderNumber: orders.orderNumber,
+      title: orders.title,
       status: orders.status,
+      dealType: orders.dealType,
+      channel: orders.channel,
+      requestId: orders.requestId,
       notes: orders.notes,
       createdAt: orders.createdAt,
       clientName: counterparties.nameCanonical,
+      requestNumber: requests.requestNumber,
     })
     .from(orders)
     .leftJoin(counterparties, eq(orders.clientSuggestedId, counterparties.id))
+    .leftJoin(requests, eq(orders.requestId, requests.id))
     .where(eq(orders.id, id))
     .limit(1);
 
@@ -74,7 +83,9 @@ export default async function DealCardPage({ params, searchParams }: Ctx) {
       <header className="flex flex-col gap-3 rounded-[var(--radius-lg)] border border-border bg-surface-2 p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <h1 className="text-lg text-text">{deal.orderNumber ?? `Сделка ${deal.id.slice(0, 8)}`}</h1>
+            <h1 className="text-lg text-text">
+              {deal.title ?? deal.orderNumber ?? `Сделка ${deal.id.slice(0, 8)}`}
+            </h1>
             <span className={`inline-flex items-center gap-1.5 text-xs ${meta.tone}`}>
               <span aria-hidden className="text-[0.7em] leading-none">
                 ●
@@ -87,25 +98,61 @@ export default async function DealCardPage({ params, searchParams }: Ctx) {
         <div className="flex flex-wrap items-center gap-2 text-sm text-text-secondary">
           <span>Клиент:</span>
           <span className="text-text">{deal.clientName ?? "не задан"}</span>
+          <span className="rounded-full border border-border-subtle px-2 py-0.5 text-xs text-text-tertiary">
+            {dealTypeLabel(deal.dealType)}
+          </span>
           <span className="ml-auto font-mono tabular-nums">{dirs.length} напр.</span>
         </div>
       </header>
 
       <DealTabs basePath={`/deals/${id}`} active={activeTab} />
 
-      {activeTab === "request" && <RequestTab />}
-      {activeTab === "application" && <ApplicationTab directions={dirs} />}
+      {activeTab === "request" && (
+        <RequestTab
+          requestId={deal.requestId}
+          requestNumber={deal.requestNumber}
+          channel={deal.channel}
+        />
+      )}
+      {activeTab === "application" && <ApplicationTab dealId={id} directions={dirs} />}
       {activeTab === "execution" && <ExecutionTab />}
     </div>
   );
 }
 
-function RequestTab() {
+function RequestTab({
+  requestId,
+  requestNumber,
+  channel,
+}: {
+  requestId: string | null;
+  requestNumber: string | null;
+  channel: string;
+}) {
+  if (!requestId) {
+    return (
+      <TabPlaceholder
+        title="Запрос"
+        text={
+          channel === "proactive"
+            ? "Сделка создана вручную (проактивная продажа) — исходного запроса клиента нет."
+            : "Исходный запрос клиента появится здесь после конверсии запроса в сделку (Фаза 3)."
+        }
+      />
+    );
+  }
+
   return (
-    <TabPlaceholder
-      title="Запрос"
-      text="Исходный запрос клиента появится здесь после конверсии запроса в сделку (Фаза 3). Для проактивных продаж запроса нет."
-    />
+    <section className="rounded-[var(--radius-lg)] border border-border bg-surface-1 p-6">
+      <h2 className="label-caps mb-1">Запрос</h2>
+      <p className="text-sm text-text-secondary">
+        Сделка создана из выигранного запроса{" "}
+        <Link href={`/requests/${requestId}`} className="text-accent hover:underline">
+          {requestNumber ?? `Запрос ${requestId.slice(0, 8)}`}
+        </Link>
+        .
+      </p>
+    </section>
   );
 }
 
@@ -118,19 +165,41 @@ type DirRow = {
   status: string;
 };
 
-function ApplicationTab({ directions: dirs }: { directions: DirRow[] }) {
+function AddDirectionButton({ dealId }: { dealId: string }) {
+  return (
+    <Button asChild size="sm">
+      <Link href={`/directions/new?orderId=${dealId}`}>
+        <Plus />
+        Добавить направление
+      </Link>
+    </Button>
+  );
+}
+
+function ApplicationTab({ dealId, directions: dirs }: { dealId: string; directions: DirRow[] }) {
   if (dirs.length === 0) {
     return (
-      <TabPlaceholder
-        title="Заявка"
-        text="Согласованное соглашение: маршруты (направления), щебень и помесячные ставки. Транспортных направлений пока нет."
-      />
+      <section className="rounded-[var(--radius-lg)] border border-dashed border-border bg-surface-1 p-6">
+        <h2 className="label-caps mb-1">Заявка</h2>
+        <p className="text-sm text-text-secondary">
+          Согласованное соглашение: маршруты (направления), щебень и помесячные ставки. Транспортных
+          направлений пока нет.
+        </p>
+        <div className="mt-4">
+          <AddDirectionButton dealId={dealId} />
+        </div>
+      </section>
     );
   }
 
   return (
-    <section className="overflow-hidden rounded-lg border border-border bg-surface-1">
-      <table className="w-full border-collapse text-sm">
+    <section className="space-y-3">
+      <div className="flex items-center justify-between">
+        <h2 className="label-caps">Заявка</h2>
+        <AddDirectionButton dealId={dealId} />
+      </div>
+      <div className="overflow-hidden rounded-lg border border-border bg-surface-1">
+        <table className="w-full border-collapse text-sm">
         <thead>
           <tr className="border-b border-border text-left">
             <th className="label-caps px-4 py-2.5 font-medium">Маршрут</th>
@@ -166,8 +235,9 @@ function ApplicationTab({ directions: dirs }: { directions: DirRow[] }) {
               </tr>
             );
           })}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     </section>
   );
 }

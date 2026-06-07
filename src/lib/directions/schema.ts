@@ -14,6 +14,9 @@ const optionalText = z
 const optionalRate = z.coerce.number().positive("Ставка должна быть > 0").optional();
 
 export const createDirectionSchema = z.object({
+  // optional binding to a deal (Фаза 1): when set, the direction is attached to the
+  // order on create and the order's deal_type cache is refreshed in the same tx.
+  orderId: z.uuid().optional(),
   displayName: optionalText,
   stationOriginRaw: z.string().trim().min(1, "Станция отправления"),
   stationDestRaw: z.string().trim().min(1, "Станция назначения"),

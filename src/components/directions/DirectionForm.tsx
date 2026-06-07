@@ -37,6 +37,9 @@ interface DirectionFormProps {
   counterparties: CounterpartyOption[];
   initial?: DirectionFormInitial;
   directionId?: string;
+  // when set, the new direction is attached to this deal on create and the form
+  // redirects back to the deal card (Фаза 1: «Добавить направление» from the deal).
+  orderId?: string | undefined;
 }
 
 type PartyMode = "none" | "existing" | "new";
@@ -138,7 +141,7 @@ function PartyPicker(props: PartyPickerProps) {
   );
 }
 
-export function DirectionForm({ counterparties, initial, directionId }: DirectionFormProps) {
+export function DirectionForm({ counterparties, initial, directionId, orderId }: DirectionFormProps) {
   const router = useRouter();
   const isEdit = Boolean(directionId);
 
@@ -244,6 +247,7 @@ export function DirectionForm({ counterparties, initial, directionId }: Directio
       setPending(true);
 
       const payload = {
+        orderId: !isEdit && orderId ? orderId : undefined,
         displayName: displayName.trim() || undefined,
         stationOriginRaw: originRaw.trim(),
         stationDestRaw: destRaw.trim(),
@@ -273,7 +277,7 @@ export function DirectionForm({ counterparties, initial, directionId }: Directio
           setPending(false);
           return;
         }
-        router.push("/directions");
+        router.push(!isEdit && orderId ? `/deals/${orderId}?tab=application` : "/directions");
         router.refresh();
       } catch {
         setError(SUBMIT_ERROR);
@@ -281,6 +285,7 @@ export function DirectionForm({ counterparties, initial, directionId }: Directio
       }
     },
     [
+      orderId,
       displayName,
       originRaw,
       destRaw,

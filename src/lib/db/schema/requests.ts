@@ -11,12 +11,14 @@ import {
   timestamp,
   uuid,
   varchar,
+  type AnyPgColumn,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
 import { users } from "./auth";
 import { counterparties } from "./counterparties";
 import { stations } from "./geo";
+import { orders } from "./orders";
 
 // ── requests (ЗАПРОС / RFQ header) — REQUESTS_SOURCING §1, §5.2, §11 ──────────
 // Pre-order intake: a client asks "can you give N wagons on these routes, at what
@@ -69,8 +71,12 @@ export const requests = pgTable(
     notes: text("notes"),
     assignedTo: uuid("assigned_to").references(() => users.id, { onDelete: "set null" }),
 
+    // → orders(id): set once the request is converted into a deal (Фаза 3). FK landed
+    // alongside orders.request_id (lazy ref breaks the orders↔requests import cycle).
+    convertedOrderId: uuid("converted_order_id").references((): AnyPgColumn => orders.id, {
+      onDelete: "set null",
+    }),
     // ── deferred FKs (bare uuid, no REFERENCES — see header note) ──
-    convertedOrderId: uuid("converted_order_id"), // → orders(id), added in RFQ-conversion
     clonedFromRequestId: uuid("cloned_from_request_id"), // self-FK, added in RFQ-conversion
 
     // loss intelligence (terminal metadata) — REQUESTS_SOURCING §2.7
