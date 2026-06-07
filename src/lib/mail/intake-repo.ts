@@ -89,6 +89,18 @@ export async function setIngestedFileStorage(
   await db.update(ingestedFiles).set(set).where(sql`${ingestedFiles.id} = ${fileId}`);
 }
 
+// Короткий сниппет тела письма (для списка «Входящих»). Пишется один раз на приёме.
+export async function setIngestedFileBodyPreview(
+  fileId: string,
+  bodyPreview: string | null,
+): Promise<void> {
+  if (!fileId || bodyPreview == null) return;
+  await db
+    .update(ingestedFiles)
+    .set({ bodyPreview })
+    .where(sql`${ingestedFiles.id} = ${fileId}`);
+}
+
 // A processing failure (transient LLM/DB error) must NOT silently lose the email.
 // We park the file as 'quarantined' so a startup sweep / operator can revisit it
 // instead of the worker advancing the cursor past a black hole.

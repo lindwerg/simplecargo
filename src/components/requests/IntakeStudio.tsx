@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FileUp, Loader2, Mic, Plus, Square, Trash2, Type } from "lucide-react";
 
@@ -164,9 +164,12 @@ function blobToDataUrl(blob: Blob): Promise<string> {
 interface IntakeStudioProps {
   // "request" (default) saves an RFQ; "deal" creates a proactive Сделка with directions.
   target?: "request" | "deal";
+  // Предзаполнение из письма: текст тела/вложения прогоняется через ИИ на маунте,
+  // оператор сразу попадает в фазу проверки строк.
+  prefill?: { text?: string };
 }
 
-export function IntakeStudio({ target = "request" }: IntakeStudioProps = {}) {
+export function IntakeStudio({ target = "request", prefill }: IntakeStudioProps = {}) {
   const router = useRouter();
   const isDeal = target === "deal";
   const [phase, setPhase] = useState<Phase>("intake");
@@ -188,6 +191,17 @@ export function IntakeStudio({ target = "request" }: IntakeStudioProps = {}) {
   const fileRef = useRef<HTMLInputElement>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const prefilledRef = useRef(false);
+
+  // Предзаполнение из письма: один раз на маунте прогоняем текст через распознавание
+  // и сразу открываем фазу проверки (runExtract — hoisted function declaration).
+  useEffect(() => {
+    const text = prefill?.text?.trim();
+    if (!text || prefilledRef.current) return;
+    prefilledRef.current = true;
+    void runExtract({ modality: "text", text, clientHint: undefined }, false, "paste");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [prefill?.text]);
 
   function applyResult(data: ExtractionResult, ch: Channel) {
     setChannel(ch);

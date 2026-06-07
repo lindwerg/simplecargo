@@ -6,7 +6,7 @@ import { Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { AttachmentChips } from "@/components/inbox/AttachmentChips";
-import { CategoryControl } from "@/components/inbox/CategoryControl";
+import { formatMailDate } from "@/components/inbox/mail-format";
 import type { InboxItem } from "@/lib/mail-intake/inbox-repo";
 
 interface EmailListProps {
@@ -65,48 +65,47 @@ export function EmailList({ tab, emptyText, initialItems, initialCursor }: Email
           const unread = it.readAt == null;
           const subject =
             it.subject && it.subject !== "email" && it.subject !== it.messageId ? it.subject : "(без темы)";
+          const when = formatMailDate(it.receivedAt);
           return (
             <li
               key={it.id}
-              className="flex items-start justify-between gap-3 rounded-[var(--radius-md)] border border-border bg-surface-2 px-4 py-3"
+              className="rounded-[var(--radius-md)] border border-border bg-surface-2 px-4 py-3"
             >
               <div className="flex min-w-0 flex-col gap-1.5">
-                <div className="flex items-center gap-2">
+                <div className="flex items-baseline gap-2">
                   {unread && (
-                    <span className="size-2 shrink-0 rounded-full bg-accent" aria-label="новое" title="Новое" />
+                    <span className="size-2 shrink-0 translate-y-[-1px] rounded-full bg-accent" aria-label="новое" title="Новое" />
                   )}
                   <Link
                     href={`/inbox/${it.id}`}
                     onClick={() => markRead(it.id)}
-                    className={`flex min-w-0 items-center gap-1.5 text-sm hover:underline ${unread ? "font-semibold text-text" : "text-text"}`}
+                    className={`flex min-w-0 flex-1 items-center gap-1.5 text-sm hover:underline ${unread ? "font-semibold text-text" : "text-text"}`}
                   >
                     <Mail className="size-3.5 shrink-0 text-text-tertiary" aria-hidden />
                     <span className="truncate" title={subject}>
                       {subject}
                     </span>
                   </Link>
+                  {when && (
+                    <time dateTime={it.receivedAt ?? undefined} className="shrink-0 text-xs text-text-tertiary tabular-nums">
+                      {when}
+                    </time>
+                  )}
                 </div>
 
                 <span className="pl-[1.375rem] text-xs text-text-tertiary">
                   {it.senderEmail ?? "отправитель неизвестен"}
-                  {it.receivedAt && (
-                    <>
-                      {" · "}
-                      <time dateTime={it.receivedAt}>{new Date(it.receivedAt).toLocaleString("ru-RU")}</time>
-                    </>
-                  )}
                 </span>
+
+                {it.snippet && (
+                  <p className="pl-[1.375rem] text-xs text-text-secondary line-clamp-2">{it.snippet}</p>
+                )}
 
                 {it.documents.length > 0 && (
                   <div className="pl-[1.375rem]">
                     <AttachmentChips documents={it.documents} onOpen={() => markRead(it.id)} />
                   </div>
                 )}
-              </div>
-
-              {/* менеджер сам относит письмо к типу прямо из списка */}
-              <div className="shrink-0">
-                <CategoryControl emailId={it.id} current={it.kind} compact />
               </div>
             </li>
           );

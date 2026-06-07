@@ -7,7 +7,7 @@ import { eq, inArray } from "drizzle-orm";
 
 import { db } from "@/lib/db/client";
 import { ingestedAttachments } from "@/lib/db/schema/ingestedAttachments";
-import { isObjectStoreConfigured, putObject } from "@/lib/storage/object-store";
+import { getObjectBytes, isObjectStoreConfigured, putObject } from "@/lib/storage/object-store";
 
 // Fallback bytea cap, used ONLY when object storage is not configured. Above it we
 // keep metadata (so the operator sees a file came in) but not the bytes.
@@ -121,4 +121,15 @@ export async function getIngestedAttachmentRef(id: string): Promise<AttachmentRe
   const r = rows[0];
   if (!r || (r.storageKey === null && r.content === null)) return null;
   return { filename: r.filename, mimeType: r.mimeType, storageKey: r.storageKey, content: r.content };
+}
+
+/** Raw bytes of one document (bucket → bytea). Null if absent. */
+export async function getIngestedAttachmentBytes(id: string): Promise<Buffer | null> {
+  const ref = await getIngestedAttachmentRef(id);
+  if (!ref) return null;
+  if (ref.storageKey) {
+    const b = await getObjectBytes(ref.storageKey);
+    if (b) return b;
+  }
+  return ref.content ?? null;
 }

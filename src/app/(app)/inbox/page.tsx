@@ -1,62 +1,41 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { Inbox as InboxIcon } from "lucide-react";
 
 import { auth } from "@/lib/auth";
 import { LiveRefresh } from "@/components/realtime/LiveRefresh";
-import { QuarantineList } from "@/components/requests/QuarantineList";
 import { EmailList } from "@/components/inbox/EmailList";
-import { InboxTabs, type TabCount } from "@/components/inbox/InboxTabs";
-import { isInboxTabKey, tabDef, type InboxTabKey } from "@/components/inbox/inbox-tabs";
-import { listQuarantine, countUnresolvedQuarantine, type QuarantineItem } from "@/lib/mail-intake/quarantine-repo";
-import { listInbox, countInboxByKind, type InboxItem } from "@/lib/mail-intake/inbox-repo";
+import { countUnresolvedQuarantine } from "@/lib/mail-intake/quarantine-repo";
+import { listInbox, type InboxItem } from "@/lib/mail-intake/inbox-repo";
 
 export const metadata = { title: "Входящие" };
 export const dynamic = "force-dynamic";
 
 /**
- * «Входящие» — почта по типам. ИИ принимает письма из mail.ru, классифицирует и
- * раскладывает по вкладкам (Запросы / Ответы / Счета / Дислокация / ГУ-12 /
- * Документы / Претензии / Прочее). Отдельная вкладка «Требует проверки» — очередь
- * human-in-the-loop для писем, которые ИИ не смог разнести сам. Это фундамент для
- * блоков «Финансы» и «Сделки».
+ * «Входящие» — плоский список писем как в почте (новые сверху, дата+время, сниппет).
+ * ИИ принимает письма из mail.ru и архивирует их; раскладку по типам мы здесь не
+ * показываем — оператор видит всю почту сразу и действует из самого письма
+ * (создать запрос/заявку, закинуть дислокацию в направление). Письма, которые ИИ
+ * не смог разобрать, копятся в очереди «Требует проверки» (ссылка в подзаголовке).
  */
-export default async function InboxPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ tab?: string }>;
-}) {
+export default async function InboxPage() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) redirect("/login");
 
-  const { tab: tabParam } = await searchParams;
-  const active: InboxTabKey = isInboxTabKey(tabParam) ? tabParam : "all";
-  const def = tabDef(active);
-
-  // Счётчики на вкладки (всего / новых) — одним запросом + очередь карантина.
-  const counts: Record<string, TabCount | undefined> = {};
-  try {
-    const [byKind, review] = await Promise.all([countInboxByKind(), countUnresolvedQuarantine()]);
-    for (const [k, v] of Object.entries(byKind)) counts[k] = v;
-    counts.review = { total: review, unread: review };
-  } catch {
-    // ранний деплой без таблиц — без счётчиков
-  }
-
-  // Содержимое активной вкладки.
-  let reviewItems: QuarantineItem[] = [];
   let emails: InboxItem[] = [];
   let nextCursor: string | null = null;
+  let reviewCount = 0;
   try {
-    if (active === "review") {
-      reviewItems = await listQuarantine();
-    } else {
-      const page = await listInbox({ tab: active });
-      emails = page.items;
-      nextCursor = page.nextCursor;
-    }
+    const [page, review] = await Promise.all([
+      listInbox({ tab: "all" }),
+      countUnresolvedQuarantine().catch(() => 0),
+    ]);
+    emails = page.items;
+    nextCursor = page.nextCursor;
+    reviewCount = review;
   } catch {
-    // пустое состояние при отсутствии таблиц
+    // ранний деплой без таблиц — пустое состояние
   }
 
   return (
@@ -68,23 +47,27 @@ export default async function InboxPage({
           <InboxIcon className="size-5 text-text-tertiary" aria-hidden />
           Входящие
         </h1>
-        <p className="mt-1 max-w-prose text-sm text-text-secondary">{def.blurb}</p>
+        <p className="mt-1 max-w-prose text-sm text-text-secondary">
+          Вся почта в одном списке. Откройте письмо, чтобы прочитать его целиком и создать
+          из него запрос, заявку или привязать дислокацию к направлению.
+          {reviewCount > 0 && (
+            <>
+              {" "}
+              <Link href="/inbox/review" className="text-accent hover:underline">
+                Требует проверки: {reviewCount}
+              </Link>
+            </>
+          )}
+        </p>
       </header>
 
-      <InboxTabs basePath="/inbox" active={active} counts={counts} />
-
       <section className="rounded-lg border border-border bg-surface-1 p-4">
-        {active === "review" ? (
-          <QuarantineList items={reviewItems} />
-        ) : (
-          <EmailList
-            key={active}
-            tab={active}
-            emptyText={def.empty}
-            initialItems={emails}
-            initialCursor={nextCursor}
-          />
-        )}
+        <EmailList
+          tab="all"
+          emptyText="Писем пока нет."
+          initialItems={emails}
+          initialCursor={nextCursor}
+        />
       </section>
     </div>
   );

@@ -29,6 +29,7 @@ export const ingestedFiles = pgTable(
     gmailMessageId: text("gmail_message_id"),
     storageKey: text("storage_key"), // object-storage key of the raw .eml (никогда не локальный том)
     htmlStorageKey: text("html_storage_key"), // object-storage key of the rendered HTML body
+    bodyPreview: text("body_preview"), // короткий сниппет тела письма для списка «Входящих» (~200 симв.)
     headerRow: integer("header_row"), // detected header row index
     columnShift: integer("column_shift").default(0), // Source B shift offset detected
     rowCount: integer("row_count"),
