@@ -226,6 +226,14 @@ export const extractInputSchema = z.discriminatedUnion("modality", [
     dataUrl: z.string().regex(DATA_URL_RE, "Ожидается audio data URL"),
     clientHint: z.string().trim().max(200).optional(),
   }),
+  z.object({
+    // PDF целиком → модели (Gemini читает нативно, включая сканы). Используется
+    // в распознавании счетов; в извлечении заявок не возникает.
+    modality: z.literal("pdf"),
+    dataUrl: z.string().regex(/^data:application\/pdf;base64,/, "Ожидается pdf data URL"),
+    filename: z.string().trim().max(200).optional(),
+    clientHint: z.string().trim().max(200).optional(),
+  }),
 ]);
 
 export type ExtractInput = z.infer<typeof extractInputSchema>;

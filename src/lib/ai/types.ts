@@ -16,7 +16,14 @@ export interface AudioPart {
   input_audio: { data: string; format: string };
 }
 
-export type ContentPart = TextPart | ImagePart | AudioPart;
+// PDF/файл напрямую модели (OpenRouter file input). file_data — data-URL
+// «data:application/pdf;base64,…». Gemini читает PDF нативно, включая сканы.
+export interface FilePart {
+  type: "file";
+  file: { filename: string; file_data: string };
+}
+
+export type ContentPart = TextPart | ImagePart | AudioPart | FilePart;
 
 export interface ChatMessage {
   role: "system" | "user" | "assistant";
@@ -30,6 +37,9 @@ export interface ChatRequest {
   max_tokens?: number;
   response_format?: { type: "json_object" };
   modalities?: string[];
+  // OpenRouter file-parser plugin (опц.): движок разбора PDF. По умолчанию
+  // OpenRouter использует нативный разбор модели (Gemini читает PDF/скан сам).
+  plugins?: Array<{ id: string; pdf?: { engine: string } }>;
 }
 
 export interface ChatChoice {

@@ -6,8 +6,10 @@ import { ingestedFiles } from "@/lib/db/schema/ingest";
 import { inboundInvoices } from "@/lib/db/schema/inboundInvoices";
 import { DEFAULT_VAT_RATE } from "@/lib/format";
 import { saveIngestedAttachment } from "@/lib/mail-intake/attachments-repo";
-import { attachmentToExtractInput } from "@/lib/mail-intake/to-extract-input";
+import { decidePartCategory } from "@/lib/mail-intake/to-extract-input";
 import { extractInvoice } from "@/lib/mail-intake/invoice-extract";
+import { xlsxToText } from "@/lib/requests/xlsx";
+import type { ExtractInput } from "@/lib/requests/schema";
 import { saveInboundInvoice } from "@/lib/mail/intake-repo";
 import { buildPaymentPurpose } from "./payment-purpose";
 import { getInvoiceRemaining } from "./payments";
@@ -54,6 +56,35 @@ function detectMime(filename: string, given: string): string {
   if (n.endsWith(".jpg") || n.endsWith(".jpeg")) return "image/jpeg";
   if (n.endsWith(".xlsx") || n.endsWith(".xls")) return "application/vnd.ms-excel";
   return "application/octet-stream";
+}
+
+/** Загруженный файл → вход для ИИ. PDF/фото отдаём модели как есть (Gemini читает
+ *  и текст, и сканы), Excel/текст превращаем в текст. Без pdfjs — иначе в
+ *  serverless-рантайме падало (DOMMatrix/worker). */
+async function toExtractInput(
+  filename: string,
+  mime: string,
+  buffer: Buffer,
+): Promise<ExtractInput | null> {
+  const cat = decidePartCategory(filename, mime);
+  const b64 = buffer.toString("base64");
+  if (cat === "image") {
+    return { modality: "image", dataUrl: `data:${detectMime(filename, mime)};base64,${b64}` };
+  }
+  if (cat === "pdf") {
+    return { modality: "pdf", dataUrl: `data:application/pdf;base64,${b64}`, filename };
+  }
+  if (cat === "xlsx") {
+    const ab = buffer.buffer.slice(
+      buffer.byteOffset,
+      buffer.byteOffset + buffer.byteLength,
+    ) as ArrayBuffer;
+    return { modality: "text", text: await xlsxToText(ab), isTable: true };
+  }
+  if (cat === "text") {
+    return { modality: "text", text: buffer.toString("utf8") };
+  }
+  return null;
 }
 
 /** Получить остаток + ISO-сумму к оплате для уже сохранённого счёта. */
@@ -110,11 +141,11 @@ export async function processUploadedInvoice(
   // Новый счёт: сохранить байты → распознать → создать запись.
   await saveIngestedAttachment({ sourceFileId, kind: "attachment", filename, mimeType: mime, content: buffer });
 
-  const outcome = await attachmentToExtractInput({ filename, contentType: mime, size: buffer.length, content: buffer });
-  if (!outcome.ok) {
-    throw new InvoiceUploadError(415, outcome.detail);
+  const input = await toExtractInput(filename, mime, buffer);
+  if (!input) {
+    throw new InvoiceUploadError(415, "Тип файла не поддержан — пришлите PDF, фото или Excel");
   }
-  const inv = await extractInvoice(outcome.input);
+  const inv = await extractInvoice(input);
 
   const saved = await saveInboundInvoice({
     direction: "incoming",
@@ -140,7 +171,7 @@ export async function processUploadedInvoice(
     status: "pending",
     source: "upload",
     sourceFileId,
-    extractedText: outcome.input.modality === "text" ? outcome.input.text : null,
+    extractedText: input.modality === "text" ? input.text : null,
   });
 
   const [row] = await db.select().from(inboundInvoices).where(eq(inboundInvoices.id, saved.id));
