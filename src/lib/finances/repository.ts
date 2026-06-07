@@ -131,7 +131,13 @@ export async function listRecentTransactions(opts: {
       ) AS matched_name
     FROM bank_transactions t
     WHERE TRUE ${dirFilter} ${unlinkedFilter} ${searchFilter}
-    ORDER BY t.posted_at DESC, t.synced_at DESC
+    -- Точка не отдаёт время операции (только дату), поэтому внутри дня сортируем
+    -- по внутреннему счётчику банка из transactionId («cbs-tb;<счётчик>;1») — он
+    -- растёт хронологически. Так порядок совпадает с приложением Точки.
+    ORDER BY
+      t.posted_at DESC,
+      (regexp_match(t.external_tx_id, '[0-9]{4,}'))[1]::numeric DESC NULLS LAST,
+      t.synced_at DESC
     LIMIT ${limit}
   `);
 
@@ -305,7 +311,7 @@ export async function listTransactionsForExport(opts: {
     FROM bank_transactions t
     WHERE t.posted_at >= ${opts.from} AND t.posted_at <= ${toExclusive}
       ${dirFilter} ${searchFilter}
-    ORDER BY t.posted_at ASC
+    ORDER BY t.posted_at ASC, (regexp_match(t.external_tx_id, '[0-9]{4,}'))[1]::numeric ASC NULLS LAST
   `);
 
   return rows.map((r) => ({

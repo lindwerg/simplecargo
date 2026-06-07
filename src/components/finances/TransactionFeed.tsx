@@ -10,7 +10,6 @@ interface TransactionFeedProps {
 }
 
 const dayFmt = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long" });
-const timeFmt = new Intl.DateTimeFormat("ru-RU", { hour: "2-digit", minute: "2-digit" });
 
 function dayKey(iso: string): string {
   return iso.slice(0, 10);
@@ -120,9 +119,6 @@ export function TransactionFeed({ transactions }: TransactionFeedProps) {
                           )}
                           title={t.linked ? "Разнесено" : "Не разнесено"}
                         />
-                      </span>
-                      <span className="text-xs text-text-tertiary">
-                        {timeFmt.format(new Date(t.postedAt))}
                       </span>
                     </div>
                   </Link>
