@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, X, Mail, Paperclip, FileText, ExternalLink } from "lucide-react";
+import { Check, X, Mail, Paperclip } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { AttachmentChips } from "@/components/inbox/AttachmentChips";
 import type { QuarantineItem } from "@/lib/mail-intake/quarantine-repo";
 
 // Operator-facing copy for each reason: WHAT it is + WHAT TO DO. The raw reason
@@ -219,35 +220,8 @@ export function QuarantineList({ items }: QuarantineListProps) {
 
                 {/* documents — open the actual files that arrived */}
                 {it.documents.length > 0 && (
-                  <div className="flex flex-wrap items-center gap-1.5 pl-4">
-                    {it.documents.map((doc) =>
-                      doc.hasContent ? (
-                        <a
-                          key={doc.id}
-                          href={`/api/ingested/attachments/${doc.id}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 rounded-pill border border-border bg-surface-1 px-2 py-0.5 text-2xs text-text transition-colors hover:bg-surface-3"
-                          title={`Открыть: ${doc.filename}`}
-                        >
-                          <FileText className="size-3 shrink-0 text-text-tertiary" aria-hidden />
-                          <span className="max-w-[14rem] truncate">
-                            {doc.kind === "body" ? "Текст письма" : doc.filename}
-                          </span>
-                          <ExternalLink className="size-2.5 shrink-0 text-text-tertiary" aria-hidden />
-                        </a>
-                      ) : (
-                        <span
-                          key={doc.id}
-                          className="inline-flex items-center gap-1 rounded-pill border border-border bg-surface-1 px-2 py-0.5 text-2xs text-text-tertiary"
-                          title="Файл слишком большой — не сохранён"
-                        >
-                          <FileText className="size-3 shrink-0" aria-hidden />
-                          <span className="max-w-[14rem] truncate">{doc.filename}</span>
-                          <span>(слишком большой)</span>
-                        </span>
-                      ),
-                    )}
+                  <div className="pl-4">
+                    <AttachmentChips documents={it.documents} />
                   </div>
                 )}
 

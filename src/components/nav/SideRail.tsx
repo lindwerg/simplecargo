@@ -12,6 +12,7 @@ import { NAV_ITEMS, isActive } from "@/components/nav/nav-items";
 export interface NavCounts {
   requests: number;
   directions: number;
+  inbox: number;
 }
 
 interface SideRailProps {
@@ -21,6 +22,7 @@ interface SideRailProps {
 function badgeCount(key: string, counts: NavCounts): number {
   if (key === "requests") return counts.requests;
   if (key === "directions") return counts.directions;
+  if (key === "inbox") return counts.inbox;
   return 0;
 }
 

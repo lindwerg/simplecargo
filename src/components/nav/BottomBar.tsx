@@ -14,6 +14,7 @@ interface BottomBarProps {
 function badgeCount(key: string, counts: NavCounts): number {
   if (key === "requests") return counts.requests;
   if (key === "directions") return counts.directions;
+  if (key === "inbox") return counts.inbox;
   return 0;
 }
 

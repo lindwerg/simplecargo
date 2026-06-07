@@ -5,6 +5,8 @@ import { auth } from "@/lib/auth";
 import { SideRail } from "@/components/nav/SideRail";
 import { BottomBar } from "@/components/nav/BottomBar";
 import { getBoardCounts } from "@/lib/requests/repository";
+import { countInboxByKind } from "@/lib/mail-intake/inbox-repo";
+import { countUnresolvedQuarantine } from "@/lib/mail-intake/quarantine-repo";
 
 /**
  * Authenticated app shell. The middleware already does an optimistic cookie bounce;
@@ -24,10 +26,19 @@ export default async function AppLayout({
   }
 
   // Live counts (badges hide while zero). Best-effort — never break the shell.
-  let counts = { requests: 0, directions: 0 };
+  // «Входящие» badge = новые (непрочитанные) письма + очередь на проверку.
+  let counts = { requests: 0, directions: 0, inbox: 0 };
   try {
-    const board = await getBoardCounts();
-    counts = { requests: board.activeRequests, directions: 0 };
+    const [board, inboxCounts, review] = await Promise.all([
+      getBoardCounts(),
+      countInboxByKind(),
+      countUnresolvedQuarantine(),
+    ]);
+    counts = {
+      requests: board.activeRequests,
+      directions: 0,
+      inbox: (inboxCounts.all?.unread ?? 0) + review,
+    };
   } catch {
     // keep zeros if the count query fails
   }
