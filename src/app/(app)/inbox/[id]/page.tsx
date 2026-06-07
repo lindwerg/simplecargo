@@ -60,12 +60,14 @@ export default async function InboxEmailPage({ params }: { params: Promise<{ id:
         </p>
       </header>
 
-      {/* Тело письма — сразу видно: HTML 1:1 в песочнице, иначе текст inline. */}
+      {/* Тело письма — сразу видно: HTML 1:1 через srcDoc (песочница без
+          allow-scripts режет JS), иначе текст inline. srcDoc обходит глобальные
+          X-Frame-Options: DENY / frame-ancestors 'none', из-за которых src-iframe
+          оставался пустым. */}
       <section className="rounded-lg border border-border bg-surface-1 p-1">
-        {email.hasHtml ? (
-          // Песочница: без allow-scripts → JS не выполняется (плюс строгий CSP на роуте).
+        {email.bodyHtml ? (
           <iframe
-            src={`/api/inbox/${email.id}/html`}
+            srcDoc={email.bodyHtml}
             title="Тело письма"
             sandbox="allow-same-origin allow-popups"
             className="h-[70vh] w-full rounded-[var(--radius-md)] bg-white"
