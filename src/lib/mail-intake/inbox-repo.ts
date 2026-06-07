@@ -196,11 +196,11 @@ export interface InboxEmailDetail {
   dealId: string | null;
   directionId: string | null;
   directionLabel: string | null; // подпись привязанного направления (сделки)
-  hasHtml: boolean;
+  bodyHtml: string | null; // санитизированный HTML тела письма (рендерим через srcDoc)
+  bodyTextContent: string | null; // текст тела письма (запасной вид без HTML)
   hasRawEml: boolean;
-  bodyTextContent: string | null; // готовый текст тела письма (показываем inline)
   documents: AttachmentMeta[]; // только настоящие вложения (kind='attachment')
-  bodyText: AttachmentMeta | null; // «Текст письма» — ссылка-вложение (запасной вид)
+  bodyText: AttachmentMeta | null; // «Текст письма» — ссылка-вложение (на всякий случай)
 }
 
 /** One email for the detail view: header + attachments + flags (HTML/.eml есть). */
@@ -234,10 +234,26 @@ export async function getInboxEmailDetail(id: string): Promise<InboxEmailDetail 
     ? r.directionName ?? ([r.directionOrigin, r.directionDest].filter(Boolean).join(" → ") || "Направление")
     : null;
 
-  const hasHtml = Boolean(r.htmlStorageKey) || Boolean(htmlBody);
-  // Текст тела достаём только когда нет HTML — это и есть фикс «пустого письма»:
-  // показываем текст inline, не завязываясь на молча падающий в 404 iframe.
-  const bodyTextContent = hasHtml ? null : await getEmailText(id);
+  // Тело письма достаём СРАЗУ на сервере и рендерим inline. HTML кладём в iframe
+  // через srcDoc (а не src=/html): глобальные X-Frame-Options: DENY и
+  // frame-ancestors 'none' блокируют framing любого нашего ответа, из-за чего
+  // src-iframe оставался пустым. srcDoc — это inline-контент, заголовки framing
+  // к нему не применяются; песочница без allow-scripts всё так же режет JS.
+  const hasHtmlSource = Boolean(r.htmlStorageKey) || Boolean(htmlBody);
+  let bodyHtml: string | null = null;
+  if (hasHtmlSource) {
+    try {
+      bodyHtml = await getEmailHtml(id);
+    } catch {
+      bodyHtml = null;
+    }
+  }
+  let bodyTextContent: string | null = null;
+  try {
+    bodyTextContent = await getEmailText(id);
+  } catch {
+    bodyTextContent = null;
+  }
 
   return {
     id: r.id,
@@ -248,9 +264,9 @@ export async function getInboxEmailDetail(id: string): Promise<InboxEmailDetail 
     dealId: r.dealId,
     directionId: r.directionId,
     directionLabel,
-    hasHtml,
-    hasRawEml: Boolean(r.storageKey),
+    bodyHtml,
     bodyTextContent,
+    hasRawEml: Boolean(r.storageKey),
     documents: docs.filter((d) => d.kind === "attachment" && !d.isInline),
     bodyText: textBody ?? null,
   };
