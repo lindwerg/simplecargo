@@ -19,6 +19,10 @@ import { dealTypeLabel } from "@/components/trades/dealTypeMeta";
 import { StoneSection, type StoneLineView } from "@/components/trades/StoneSection";
 import { MonthlyRateGrid, type MonthlyRateView } from "@/components/trades/MonthlyRateGrid";
 import { directionStatusMeta } from "@/components/directions/statusMeta";
+import { ExecutionTab } from "@/components/execution/ExecutionTab";
+import { DirectionPnl } from "@/components/finances/DirectionPnl";
+import { getDirectionExecution } from "@/lib/execution/repository";
+import { getDirectionPnl } from "@/lib/finances/repository";
 
 export const dynamic = "force-dynamic";
 
@@ -157,7 +161,48 @@ export default async function DealCardPage({ params, searchParams }: Ctx) {
       {activeTab === "application" && (
         <ApplicationTab dealId={id} directions={dirs} stoneLines={stoneLines} />
       )}
-      {activeTab === "execution" && <ExecutionTab />}
+      {activeTab === "execution" && <ExecutionPanel directions={dirs} />}
+    </div>
+  );
+}
+
+// «Исполнение»: один конвейер дислокации на каждое транспортное направление сделки,
+// рядом — компактный план/факт за всё время по этому направлению. Server Component.
+async function ExecutionPanel({ directions: dirs }: { directions: DirRow[] }) {
+  if (dirs.length === 0) {
+    return (
+      <TabPlaceholder
+        title="Исполнение"
+        text="У сделки пока нет транспортных направлений — добавьте направление на вкладке «Заявка», чтобы видеть конвейер вагонов."
+      />
+    );
+  }
+
+  // Independent reads per direction — fetch in parallel (directions are few).
+  const panels = await Promise.all(
+    dirs.map(async (d) => {
+      const [execution, pnl] = await Promise.all([
+        getDirectionExecution(d.id),
+        getDirectionPnl({ directionId: d.id, limit: 1 }),
+      ]);
+      const route = d.displayName ?? `${d.originRaw ?? "—"} → ${d.destRaw ?? "—"}`;
+      return { id: d.id, route, execution, pnl };
+    }),
+  );
+
+  return (
+    <div className="space-y-8">
+      {panels.map((p) => (
+        <div key={p.id} className="space-y-4">
+          <ExecutionTab data={p.execution} routeLabel={dirs.length > 1 ? p.route : undefined} />
+          {p.pnl.length > 0 && (
+            <section className="rounded-[var(--radius-lg)] border border-border bg-surface-1">
+              <h3 className="label-caps px-4 pt-3">План / факт маржи</h3>
+              <DirectionPnl rows={p.pnl} />
+            </section>
+          )}
+        </div>
+      ))}
     </div>
   );
 }
@@ -353,15 +398,6 @@ function TransportSection({ dealId, directions: dirs }: { dealId: string; direct
         })}
       </div>
     </section>
-  );
-}
-
-function ExecutionTab() {
-  return (
-    <TabPlaceholder
-      title="Исполнение"
-      text="Живой конвейер вагонов из дислокации: заадресовано → в подходе → на станции → погрузка → в пути → выгружено, с днями под операцией. Появится в Фазе 5."
-    />
   );
 }
 
