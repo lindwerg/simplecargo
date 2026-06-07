@@ -38,18 +38,26 @@ export interface RegistryRow {
   samplePurposes: string[];
 }
 
-// ── Подсказка роли по назначению платежа ─────────────────────────────────────
-// Реальные роли — только client (нам платят за ТЭО) и carrier (мы платим за
-// вагоны). Всё прочее (парковка, канцелярия, услуги, налоги) — расход компании
-// → "other". Это только ПОДСКАЗКА: финальную роль назначает оператор.
+// ── Подсказка роли ───────────────────────────────────────────────────────────
+// Реальные роли в партнёрах — только client (нам платят за ТЭО) и carrier (мы
+// платим за вагоны). Всё прочее — расходы компании (курьеры, ЭДО, канцелярия,
+// такси, HR, налоги/взносы, банк, связь, ГСМ) → "other", в партнёры НЕ заносятся.
+// Это ПОДСКАЗКА: финальную роль назначает оператор.
 //
-// ГЛАВНЫЙ сигнал — направление денег: приход (нам платят) ⇒ клиент; расход (мы
-// платим) ⇒ перевозчик. Назначение платежа НЕ перевешивает направление (и клиент,
-// и перевозчик в назначении пишут «за вагоны»). Ключевые слова лишь отделяют
-// офисные расходы (исходящие, но не фрахт) и разруливают спорные случаи.
+// Логика: 1) известный сервис-поставщик (по имени) или явный непрофильный платёж
+// (по назначению) при исходящих деньгах ⇒ other; 2) иначе по направлению —
+// приход ⇒ client, расход ⇒ carrier (назначение не перевешивает: и клиент, и
+// перевозчик пишут «за вагоны»).
 
-const RE_OTHER =
-  /парковк|канцеляр|аренда офис|офисн|зарплат|заработн|подотч|налог|страхов|взнос|комисс|эквайр|интернет|связ[ьи]|хозтовар|клининг|питьев|кулер|мебел|реклам|госпошлин|подписк|хостинг/i;
+// Имена компаний, которые заведомо НЕ перевозчики, а сервис-расходы.
+const RE_OTHER_VENDOR =
+  /сдэк|cdek|комус|контур|тензор|х[эе]дхантер|headhunter|superjob|зарплата ?ру|яндекс|yandex|такси|озон|ozon|wildberries|вайлдберриз|осфр|фсс|пфр|фнс|казначейств|налогов|мегафон|билайн|ростелеком|теле ?2|тинькоф|т-банк|альфа-?банк|сбербанк|газпромнефт|лукойл|роснефт|управляющ[аяей]+ компани|клининг|delivery club|деливери/i;
+
+// Назначения платежа, характерные для непрофильных расходов.
+const RE_OTHER_PURPOSE =
+  /уборк|клининг|канцеляр|канцтовар|парковк|аренд[аеуы]?\s+(?:офис|помещен|нежил)|офисн|зарплат|заработн|подотч|ндфл|налог|страховы?х?\s+взнос|взнос(?:ы|ов|а)?\s+на|пенсионн|госпошлин|комисс|эквайр|расч[её]тно-кассов|обслуживан[ия]+\s+сч[её]т|ведени[ея]\s+сч[её]т|связ[ьи]|интернет|телефон|хостинг|домен|подписк|лицензи|реклам|маркетинг|обучен|семинар|питьев|кулер|мебел|хозтовар|топлив|гсм|бензин|дизельн|корреспонденц|курьерск|доставк[аеуи]\s+(?:документ|корреспонденц)/i;
+
+// Подтверждение фрахта в назначении — повышает уверенность для carrier.
 const RE_CARRIER =
   /вагон|полувагон|п\/в|предоставлен|подвижн[оа]г?[оа] состав|перевозчик/i;
 const RE_CLIENT = /тэо|транспортно-экспед|экспедир|организац[ияю]+ перевозк/i;
@@ -58,30 +66,35 @@ export function suggestRole(
   purposes: readonly string[],
   totalIn: number,
   totalOut: number,
+  names: readonly string[] = [],
 ): { role: SuggestedRole; lowConfidence: boolean } {
-  const text = purposes.join(" \n ");
+  const purposeText = purposes.join(" \n ");
+  const nameText = names.join(" ");
   const inDominant = totalIn > totalOut;
   const outDominant = totalOut > totalIn;
-  const hasOther = RE_OTHER.test(text);
-
-  let role: SuggestedRole;
-  if (outDominant && hasOther)
-    role = "other"; // исходящий офисный расход
-  else if (inDominant)
-    role = "client"; // нам платят → клиент
-  else if (outDominant)
-    role = "carrier"; // мы платим → перевозчик
-  else
-    // суммы равны (часто обе 0) — опираемся на ключевые слова
-    role = hasOther ? "other" : RE_CARRIER.test(text) ? "carrier" : RE_CLIENT.test(text) ? "client" : "other";
-
-  // Слабая уверенность: денег нет вовсе, либо двусторонний контрагент (обе стороны
-  // существенны) — направление неоднозначно, оператору стоит присмотреться.
   const max = Math.max(totalIn, totalOut);
   const min = Math.min(totalIn, totalOut);
   const twoWay = min > 0 && min / max > 0.2;
-  const lowConfidence = (totalIn === 0 && totalOut === 0) || twoWay;
-  return { role, lowConfidence };
+
+  // Расход компании: сервис-поставщик по имени ИЛИ непрофильное назначение —
+  // но только если деньги уходят от нас (приход = это не наш расход).
+  const looksExpense = RE_OTHER_VENDOR.test(nameText) || RE_OTHER_PURPOSE.test(purposeText);
+  if (looksExpense && !inDominant) return { role: "other", lowConfidence: false };
+
+  if (inDominant) return { role: "client", lowConfidence: twoWay };
+  if (outDominant) {
+    const freight = RE_CARRIER.test(purposeText);
+    return { role: "carrier", lowConfidence: twoWay || !freight };
+  }
+
+  // Суммы равны (часто обе 0) — опираемся на ключевые слова.
+  if (looksExpense) return { role: "other", lowConfidence: false };
+  const role: SuggestedRole = RE_CARRIER.test(purposeText)
+    ? "carrier"
+    : RE_CLIENT.test(purposeText)
+      ? "client"
+      : "other";
+  return { role, lowConfidence: true };
 }
 
 // ── CSV (общий для API-роута и CLI-скрипта) ─────────────────────────────────
@@ -282,7 +295,7 @@ export async function buildCounterpartyRegistry(): Promise<RegistryRow[]> {
     const samplePurposes = r.sample_purposes ?? [];
     const totalIn = num(r.total_in);
     const totalOut = num(r.total_out);
-    const { role, lowConfidence } = suggestRole(samplePurposes, totalIn, totalOut);
+    const { role, lowConfidence } = suggestRole(samplePurposes, totalIn, totalOut, names);
     return {
       key: r.key,
       inn: r.inn,
