@@ -376,15 +376,21 @@ interface PnlQueryRow {
 }
 
 /** План-факт маржи по направлениям: план из deals.margin, факт — из разнесённых
- *  банковских операций (приход − расход), привязанных к направлению. */
-export async function getDirectionPnl(limit = 50): Promise<DirectionPnlRow[]> {
+ *  банковских операций (приход − расход), привязанных к направлению.
+ *  `directionId` сужает выборку до одного направления (для карточки сделки). */
+export async function getDirectionPnl(
+  opts: { limit?: number; directionId?: string } = {},
+): Promise<DirectionPnlRow[]> {
+  const limit = opts.limit ?? 50;
+  const dirFilter = opts.directionId ? sql`AND direction_id = ${opts.directionId}` : sql``;
+  const factDirFilter = opts.directionId ? sql`AND l.direction_id = ${opts.directionId}` : sql``;
   const { rows } = await db.execute<PnlQueryRow>(sql`
     WITH plan AS (
       SELECT direction_id,
              SUM(margin) AS plan_margin,
              COUNT(*) AS deals
       FROM deals
-      WHERE direction_id IS NOT NULL
+      WHERE direction_id IS NOT NULL ${dirFilter}
       GROUP BY direction_id
     ),
     fact AS (
@@ -393,7 +399,7 @@ export async function getDirectionPnl(limit = 50): Promise<DirectionPnlRow[]> {
              SUM(CASE WHEN t.direction = 'out' THEN t.amount ELSE 0 END) AS fact_out
       FROM bank_tx_links l
       JOIN bank_transactions t ON t.id = l.transaction_id
-      WHERE l.direction_id IS NOT NULL
+      WHERE l.direction_id IS NOT NULL ${factDirFilter}
       GROUP BY l.direction_id
     )
     SELECT dir.id, dir.display_name AS name,

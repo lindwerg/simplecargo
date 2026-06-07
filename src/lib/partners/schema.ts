@@ -12,6 +12,7 @@ export const PARTNER_ROLES = [
   "shipper",
   "consignee",
   "carrier",
+  "quarry",
 ] as const;
 export type PartnerRole = (typeof PARTNER_ROLES)[number];
 
@@ -22,6 +23,7 @@ export const ROLE_LABELS_RU: Readonly<Record<PartnerRole, string>> = {
   shipper: "Грузоотправитель",
   consignee: "Грузополучатель",
   carrier: "Перевозчик",
+  quarry: "Карьер",
 };
 
 export const DOCUMENT_KINDS = ["contract", "request", "other"] as const;
