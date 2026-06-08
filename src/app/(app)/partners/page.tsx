@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Building2, Landmark, Plus } from "lucide-react";
 
-import { listPartners } from "@/lib/partners/repository";
+import { countPartnersByRole, listPartners } from "@/lib/partners/repository";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { PartnerCard } from "@/components/partners/PartnerCard";
@@ -11,7 +11,15 @@ import "@/components/partners/partners.css";
 
 export const dynamic = "force-dynamic";
 
-const PARTNER_TABS = new Set(["client", "carrier"]);
+const PARTNER_TABS = new Set(["client", "carrier", "quarry"]);
+
+const EMPTY_COUNTS = { client: 0, carrier: 0, quarry: 0 } as const;
+
+const EMPTY_COPY: Record<string, { title: string; cta: string }> = {
+  client: { title: "Клиентов пока нет", cta: "клиента" },
+  carrier: { title: "Перевозчиков пока нет", cta: "перевозчика" },
+  quarry: { title: "Карьеров пока нет", cta: "карьер" },
+};
 
 interface PageProps {
   searchParams: Promise<{ search?: string; role?: string }>;
@@ -20,28 +28,32 @@ interface PageProps {
 export default async function PartnersPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const search = params.search?.trim() ?? "";
-  // Two tabs only (Клиенты / Перевозчики). Default to Клиенты.
+  // Three categories (Клиенты / Перевозчики / Карьеры). Default to Клиенты.
   const role = PARTNER_TABS.has(params.role?.trim() ?? "") ? (params.role as string).trim() : "client";
-  const isCarrier = role === "carrier";
+  const emptyCopy = EMPTY_COPY[role] ?? EMPTY_COPY.client;
 
   let partners: Awaited<ReturnType<typeof listPartners>> = [];
+  let counts: Awaited<ReturnType<typeof countPartnersByRole>> = { ...EMPTY_COUNTS };
   let failed = false;
   try {
-    partners = await listPartners({ search, role });
+    [partners, counts] = await Promise.all([
+      listPartners({ search, role }),
+      countPartnersByRole({ search }),
+    ]);
   } catch {
     failed = true;
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="partners-surface flex flex-col gap-6">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-xl text-text" style={{ fontWeight: "var(--weight-bold)" }}>
             Партнёры
           </h1>
           <p className="mt-1 text-sm text-text-secondary">
-            База контрагентов: клиенты, собственники подвижного состава и экспедиторы — с контактами,
-            договорами и историей сделок.
+            База контрагентов: клиенты, перевозчики и карьеры — с контактами, договорами и историей
+            сделок. Одна компания может быть в нескольких категориях.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -62,8 +74,8 @@ export default async function PartnersPage({ searchParams }: PageProps) {
         </div>
       </header>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-        <PartnersTabs role={role} search={search} />
+      <div className="flex flex-col gap-3">
+        <PartnersTabs role={role} search={search} counts={counts} />
         <PartnersFilters search={search} role={role} />
       </div>
 
@@ -72,17 +84,17 @@ export default async function PartnersPage({ searchParams }: PageProps) {
       ) : partners.length === 0 ? (
         <EmptyState
           icon={Building2}
-          title={search ? "Ничего не найдено" : isCarrier ? "Перевозчиков пока нет" : "Клиентов пока нет"}
+          title={search ? "Ничего не найдено" : emptyCopy.title}
           description={
             search
               ? "Измените запрос или сбросьте поиск."
-              : `Добавьте ${isCarrier ? "перевозчика" : "клиента"} кнопкой «Добавить партнёра».`
+              : `Добавьте ${emptyCopy.cta} кнопкой «Добавить партнёра».`
           }
         />
       ) : (
-        <div className="partner-card-grid">
+        <div className="partner-list">
           {partners.map((p) => (
-            <PartnerCard key={p.id} partner={p} />
+            <PartnerCard key={p.id} partner={p} railRole={role} />
           ))}
         </div>
       )}
