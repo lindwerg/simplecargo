@@ -1,0 +1,281 @@
+{
+  "meta": {
+    "task": "Belarus spur↔backbone connectivity cross-check",
+    "date": "2026-06-08",
+    "inputs": {
+      "cisCsv": "cis-stations-20201230.csv (БЧ road = \"Белорусская\", 978 stations; spur ТП in field[4])",
+      "backbone": "kniga3-backbone-cis.priority.json (29696 БЧ ТП↔ТП rows, 245 unique ТП ESR, sourced-official rw.by 01.08.2010)",
+      "borderGraph": "uzel-graph-cisfill.json"
+    },
+    "method": "parse spur-ТП tokens \"<name>-<km>\" from CSV field[4], resolve name→ESR via CSV+backbone name maps, test ESR membership in backbone ТП set"
+  },
+  "connectivity": {
+    "byStationsTotal": 978,
+    "selfTp": {
+      "count": 58,
+      "reachBackbone": 46,
+      "pct": 79.3
+    },
+    "spurList": {
+      "count": 349,
+      "reachBackbone": 325,
+      "pct": 93.1
+    },
+    "emptyTp": {
+      "count": 571,
+      "note": "CSV field[4] empty — no routing token in this dataset; not traceable from this field (CSV-content gap, NOT a backbone gap)"
+    },
+    "spurTpTokenCoverage": {
+      "uniqueNames": 47,
+      "resolvedToEsr": 44,
+      "resolvedPct": 93.6,
+      "presentInBackbone": 33,
+      "presentPct": 70.2
+    },
+    "headline": "93.1% of БЧ stations carrying spur-ТП routing tokens trace to the БЧ backbone; 79.3% of self-ТП stations sit on it directly."
+  },
+  "sampleTrace": [
+    {
+      "station": "Центролит",
+      "esr": "154904",
+      "spurs": [
+        {
+          "tp": "Гомель",
+          "km": 7,
+          "tpEsr": "150000",
+          "inBackbone": true
+        },
+        {
+          "tp": "Калинковичи",
+          "km": 118,
+          "tpEsr": "153808",
+          "inBackbone": true
+        }
+      ],
+      "reachesBackbone": true
+    },
+    {
+      "station": "Глушанино (рзд.)",
+      "esr": "161113",
+      "spurs": [
+        {
+          "tp": "Санкт-Петербург-Тов.-Витебский",
+          "km": 76,
+          "tpEsr": null,
+          "inBackbone": false
+        },
+        {
+          "tp": "Полоцк",
+          "km": 25,
+          "tpEsr": "161306",
+          "inBackbone": true
+        }
+      ],
+      "reachesBackbone": true
+    },
+    {
+      "station": "Беняконе",
+      "esr": "137909",
+      "spurs": [
+        {
+          "tp": "Лида",
+          "km": 43,
+          "tpEsr": "137608",
+          "inBackbone": true
+        },
+        {
+          "tp": "Беняконе",
+          "km": 2,
+          "tpEsr": "137909",
+          "inBackbone": false
+        }
+      ],
+      "reachesBackbone": true
+    },
+    {
+      "station": "Коржевка",
+      "esr": "153615",
+      "spurs": [
+        {
+          "tp": "Калинковичи",
+          "km": 47,
+          "tpEsr": "153808",
+          "inBackbone": true
+        },
+        {
+          "tp": "Лунинец",
+          "km": 130,
+          "tpEsr": "139406",
+          "inBackbone": true
+        }
+      ],
+      "reachesBackbone": true
+    },
+    {
+      "station": "Каменная",
+      "esr": "130914",
+      "spurs": [
+        {
+          "tp": "Брест-Полесский",
+          "km": 12,
+          "tpEsr": "130308",
+          "inBackbone": false
+        },
+        {
+          "tp": "Малорито",
+          "km": 45,
+          "tpEsr": "132106",
+          "inBackbone": true
+        }
+      ],
+      "reachesBackbone": true
+    },
+    {
+      "station": "Заольша-стык",
+      "esr": "165627",
+      "spurs": [
+        {
+          "tp": "Санкт-Петербург-Тов.-Витебский",
+          "km": 59,
+          "tpEsr": null,
+          "inBackbone": false
+        },
+        {
+          "tp": "Заольша",
+          "km": 1,
+          "tpEsr": "165602",
+          "inBackbone": false
+        }
+      ],
+      "reachesBackbone": false
+    },
+    {
+      "station": "Горяны",
+      "esr": "161128",
+      "spurs": [
+        {
+          "tp": "Санкт-Петербург-Тов.-Витебский",
+          "km": 84,
+          "tpEsr": null,
+          "inBackbone": false
+        },
+        {
+          "tp": "Полоцк",
+          "km": 17,
+          "tpEsr": "161306",
+          "inBackbone": true
+        }
+      ],
+      "reachesBackbone": true
+    },
+    {
+      "station": "Воропаево",
+      "esr": "164408",
+      "spurs": [
+        {
+          "tp": "Крулевщизна",
+          "km": 49,
+          "tpEsr": "164003",
+          "inBackbone": true
+        },
+        {
+          "tp": "Лынтупы",
+          "km": 86,
+          "tpEsr": "164516",
+          "inBackbone": false
+        }
+      ],
+      "reachesBackbone": true
+    },
+    {
+      "station": "Янов-Полесский",
+      "esr": "133109",
+      "spurs": [
+        {
+          "tp": "Жабинка",
+          "km": 107,
+          "tpEsr": "131300",
+          "inBackbone": false
+        },
+        {
+          "tp": "Лунинец",
+          "km": 95,
+          "tpEsr": "139406",
+          "inBackbone": true
+        }
+      ],
+      "reachesBackbone": true
+    },
+    {
+      "station": "Ситница",
+      "esr": "152006",
+      "spurs": [
+        {
+          "tp": "Калинковичи",
+          "km": 135,
+          "tpEsr": "153808",
+          "inBackbone": true
+        },
+        {
+          "tp": "Лунинец",
+          "km": 42,
+          "tpEsr": "139406",
+          "inBackbone": true
+        }
+      ],
+      "reachesBackbone": true
+    }
+  ],
+  "rfByBorderStyki": [
+    {
+      "rf": "Красное",
+      "rfEsr": "171401",
+      "by": "Осиновка (эксп.)",
+      "byEsr": "169100",
+      "crossing": "Красное↔Осиновка",
+      "km": 0
+    },
+    {
+      "rf": "Рудня",
+      "rfEsr": "172008",
+      "by": "Заольша (эксп.)",
+      "byEsr": "165805",
+      "crossing": "Рудня↔Заольша",
+      "km": 0
+    },
+    {
+      "rf": "Злынка",
+      "rfEsr": "201202",
+      "by": "Закопытье (эксп.)",
+      "byEsr": "150405",
+      "crossing": "Злынка↔Закопытье",
+      "km": 0
+    },
+    {
+      "rf": "Завережье",
+      "rfEsr": "067405",
+      "by": "Езерище (эксп.)",
+      "byEsr": "161005",
+      "crossing": "Завережье↔Езерище",
+      "km": 0
+    },
+    {
+      "rf": "Невель I",
+      "rfEsr": "067000",
+      "by": "Алеща (эксп.)",
+      "byEsr": "161202",
+      "crossing": "Невель I↔Алеща",
+      "km": 0
+    }
+  ],
+  "gaps": {
+    "backboneSubset": "priority backbone has only 245 ТП nodes; БЧ hubs Жабинка(131300), Минск-Пассажирский(140210), Лынтупы(164516), Брест-Полесский(130308), Закопытье(150513), Беняконе(137909) appear as spur targets but are NOT backbone endpoints — priority backbone is a sourced subset, not exhaustive.",
+    "unresolvedTpNames": [
+      "Бар",
+      "Журбин (оп)",
+      "Санкт-Петербург-Тов.-Витебский (RF cross-border target, expected absent from БЧ CSV)"
+    ],
+    "emptyTpStations": "571/978 БЧ stations have no spur token in CSV field[4]; routing for those needs БЧ tariff-distance oracle (already present as full ТП↔ТП table) rather than CSV spurs."
+  },
+  "confidence": "sourced-official (backbone rw.by) cross-checked vs sourced-unofficial CSV spur tokens"
+}

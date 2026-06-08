@@ -1,0 +1,6168 @@
+[
+  {
+    "stationEsr": "162012",
+    "stationName": "Адамово",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Полоцк парк Громы",
+        "tpEsr": "161236",
+        "km": 25
+      },
+      {
+        "tpName": "Бигосово",
+        "tpEsr": "161700",
+        "km": 60
+      }
+    ]
+  },
+  {
+    "stationEsr": "161607",
+    "stationName": "Алеща",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Алеща",
+        "tpEsr": "161202",
+        "km": 5
+      },
+      {
+        "tpName": "Полоцк",
+        "tpEsr": "161306",
+        "km": 44
+      }
+    ]
+  },
+  {
+    "stationEsr": "161202",
+    "stationName": "Алеща (эксп.)",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "136249",
+    "stationName": "Андреевичи",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "135301",
+    "stationName": "Аульс",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Гродно",
+        "tpEsr": "135208",
+        "km": 8
+      },
+      {
+        "tpName": "Мосты",
+        "tpEsr": "137203",
+        "km": 50
+      }
+    ]
+  },
+  {
+    "stationEsr": "154425",
+    "stationName": "Бабичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 52
+      },
+      {
+        "tpName": "Гомель",
+        "tpEsr": "150000",
+        "km": 73
+      }
+    ]
+  },
+  {
+    "stationEsr": "162116",
+    "stationName": "Баравуха",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Полоцк парк Громы",
+        "tpEsr": "161236",
+        "km": 15
+      },
+      {
+        "tpName": "Бигосово",
+        "tpEsr": "161700",
+        "km": 70
+      }
+    ]
+  },
+  {
+    "stationEsr": "138901",
+    "stationName": "Барановичи-Полесские",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 4
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 116
+      }
+    ]
+  },
+  {
+    "stationEsr": "138437",
+    "stationName": "Барановичи-Северные",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 7
+      }
+    ]
+  },
+  {
+    "stationEsr": "138507",
+    "stationName": "Барановичи-Центральные",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "151408",
+    "stationName": "Барбаров",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 41
+      },
+      {
+        "tpName": "Словечно",
+        "tpEsr": "151200",
+        "km": 48
+      }
+    ]
+  },
+  {
+    "stationEsr": "156134",
+    "stationName": "Барсуки",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 31
+      },
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 93
+      }
+    ]
+  },
+  {
+    "stationEsr": "137805",
+    "stationName": "Бастуны",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Лида",
+        "tpEsr": "137608",
+        "km": 23
+      },
+      {
+        "tpName": "Беняконе",
+        "tpEsr": "136605",
+        "km": 22
+      }
+    ]
+  },
+  {
+    "stationEsr": "133804",
+    "stationName": "Белоозерск",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 103
+      },
+      {
+        "tpName": "Жабинка",
+        "tpEsr": "131300",
+        "km": 109
+      }
+    ]
+  },
+  {
+    "stationEsr": "159005",
+    "stationName": "Белынковичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Кричев I",
+        "tpEsr": "158209",
+        "km": 67
+      },
+      {
+        "tpName": "Журбин (оп)",
+        "tpEsr": "159306",
+        "km": 16
+      }
+    ]
+  },
+  {
+    "stationEsr": "137909",
+    "stationName": "Беняконе",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Лида",
+        "tpEsr": "137608",
+        "km": 43
+      },
+      {
+        "tpName": "Беняконе",
+        "tpEsr": "136605",
+        "km": 2
+      }
+    ]
+  },
+  {
+    "stationEsr": "136605",
+    "stationName": "Беняконе (эксп.)",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "133700",
+    "stationName": "Береза Картузская",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 102
+      },
+      {
+        "tpName": "Жабинка",
+        "tpEsr": "131300",
+        "km": 74
+      }
+    ]
+  },
+  {
+    "stationEsr": "147703",
+    "stationName": "Березина",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 60
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 47
+      }
+    ]
+  },
+  {
+    "stationEsr": "150212",
+    "stationName": "Березки",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Новобелицкая",
+        "tpEsr": "150208",
+        "km": 3
+      },
+      {
+        "tpName": "Закопытье",
+        "tpEsr": "150513",
+        "km": 37
+      }
+    ]
+  },
+  {
+    "stationEsr": "136200",
+    "stationName": "Берестовица",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "161700",
+    "stationName": "Бигосово",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "161401",
+    "stationName": "Бигосово (эксп.)",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "161698",
+    "stationName": "Бигосово-стык",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Полоцк парк Громы",
+        "tpEsr": "161236",
+        "km": 84
+      },
+      {
+        "tpName": "Бигосово",
+        "tpEsr": "161700",
+        "km": 1
+      }
+    ]
+  },
+  {
+    "stationEsr": "164200",
+    "stationName": "Бобровники",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 83
+      },
+      {
+        "tpName": "Гудогай",
+        "tpEsr": "164107",
+        "km": 49
+      }
+    ]
+  },
+  {
+    "stationEsr": "147008",
+    "stationName": "Бобруйск",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 65
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 42
+      }
+    ]
+  },
+  {
+    "stationEsr": "162506",
+    "stationName": "Богданов",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Лида",
+        "tpEsr": "137608",
+        "km": 70
+      },
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 58
+      }
+    ]
+  },
+  {
+    "stationEsr": "162440",
+    "stationName": "Богланов-стык",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Лида",
+        "tpEsr": "137608",
+        "km": 68
+      },
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 60
+      }
+    ]
+  },
+  {
+    "stationEsr": "167001",
+    "stationName": "Богушевская",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 42
+      },
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 42
+      }
+    ]
+  },
+  {
+    "stationEsr": "161908",
+    "stationName": "Борковичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Полоцк парк Громы",
+        "tpEsr": "161236",
+        "km": 35
+      },
+      {
+        "tpName": "Бигосово",
+        "tpEsr": "161700",
+        "km": 50
+      }
+    ]
+  },
+  {
+    "stationEsr": "165103",
+    "stationName": "Боровое",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Полоцк",
+        "tpEsr": "161306",
+        "km": 62
+      },
+      {
+        "tpName": "Крулевщизна",
+        "tpEsr": "164003",
+        "km": 29
+      }
+    ]
+  },
+  {
+    "stationEsr": "137129",
+    "stationName": "Боровцы",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 8
+      },
+      {
+        "tpName": "Волковыск-Центральный",
+        "tpEsr": "136709",
+        "km": 114
+      }
+    ]
+  },
+  {
+    "stationEsr": "130204",
+    "stationName": "Брест-Восточный",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "130308",
+    "stationName": "Брест-Полесский",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "130100",
+    "stationName": "Брест-Северный",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Брест-Центральный",
+        "tpEsr": "130007",
+        "km": 2
+      }
+    ]
+  },
+  {
+    "stationEsr": "130505",
+    "stationName": "Брест-Северный (эксп.)",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "130007",
+    "stationName": "Брест-Центральный",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "130609",
+    "stationName": "Брест-Центральный (эксп.)",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "130837",
+    "stationName": "Брест-Южный",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Брест-Полесский",
+        "tpEsr": "130308",
+        "km": 4
+      },
+      {
+        "tpName": "Малорито",
+        "tpEsr": "132106",
+        "km": 53
+      }
+    ]
+  },
+  {
+    "stationEsr": "153314",
+    "stationName": "Бринево",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 92
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 85
+      }
+    ]
+  },
+  {
+    "stationEsr": "147506",
+    "stationName": "Брожа",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 89
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 66
+      }
+    ]
+  },
+  {
+    "stationEsr": "134008",
+    "stationName": "Бронная Гора",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 85
+      },
+      {
+        "tpName": "Жабинка",
+        "tpEsr": "131300",
+        "km": 91
+      }
+    ]
+  },
+  {
+    "stationEsr": "134807",
+    "stationName": "Брузги (эксп.)",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "135104",
+    "stationName": "Брузги",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Гродно",
+        "tpEsr": "135208",
+        "km": 21
+      },
+      {
+        "tpName": "Брузги",
+        "tpEsr": "134807",
+        "km": 2
+      }
+    ]
+  },
+  {
+    "stationEsr": "155201",
+    "stationName": "Буда-Кошелевская",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Гомель",
+        "tpEsr": "150000",
+        "km": 45
+      },
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 41
+      }
+    ]
+  },
+  {
+    "stationEsr": "163802",
+    "stationName": "Будслав",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Крулевщизна",
+        "tpEsr": "164003",
+        "km": 37
+      },
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 70
+      }
+    ]
+  },
+  {
+    "stationEsr": "156401",
+    "stationName": "Буйничи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 7
+      },
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 117
+      }
+    ]
+  },
+  {
+    "stationEsr": "168606",
+    "stationName": "Бурбин",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 62
+      }
+    ]
+  },
+  {
+    "stationEsr": "156100",
+    "stationName": "Быхов",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 48
+      },
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 76
+      }
+    ]
+  },
+  {
+    "stationEsr": "166210",
+    "stationName": "Бычиха",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 61
+      },
+      {
+        "tpName": "Езерище",
+        "tpEsr": "161005",
+        "km": 21
+      }
+    ]
+  },
+  {
+    "stationEsr": "154406",
+    "stationName": "Василевичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 39
+      },
+      {
+        "tpName": "Гомель",
+        "tpEsr": "150000",
+        "km": 86
+      }
+    ]
+  },
+  {
+    "stationEsr": "157423",
+    "stationName": "Вендриж",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 111
+      },
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 22
+      }
+    ]
+  },
+  {
+    "stationEsr": "146147",
+    "stationName": "Верейцы",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 10
+      },
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 101
+      }
+    ]
+  },
+  {
+    "stationEsr": "146096",
+    "stationName": "Верейцы-стык",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 100
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 11
+      }
+    ]
+  },
+  {
+    "stationEsr": "158106",
+    "stationName": "Веремейки",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 71
+      },
+      {
+        "tpName": "Кричев I",
+        "tpEsr": "158209",
+        "km": 30
+      }
+    ]
+  },
+  {
+    "stationEsr": "161804",
+    "stationName": "Верхнедвинск",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Полоцк парк Громы",
+        "tpEsr": "161236",
+        "km": 65
+      },
+      {
+        "tpName": "Бигосово",
+        "tpEsr": "161700",
+        "km": 20
+      }
+    ]
+  },
+  {
+    "stationEsr": "149022",
+    "stationName": "Верхутино",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 62
+      },
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 146
+      }
+    ]
+  },
+  {
+    "stationEsr": "139302",
+    "stationName": "Видибор",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 28
+      },
+      {
+        "tpName": "Горынь",
+        "tpEsr": "138808",
+        "km": 25
+      }
+    ]
+  },
+  {
+    "stationEsr": "163602",
+    "stationName": "Вилейка",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 24
+      },
+      {
+        "tpName": "Крулевщизна",
+        "tpEsr": "164003",
+        "km": 83
+      }
+    ]
+  },
+  {
+    "stationEsr": "155042",
+    "stationName": "Вирский",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 4
+      },
+      {
+        "tpName": "Гомель",
+        "tpEsr": "150000",
+        "km": 82
+      }
+    ]
+  },
+  {
+    "stationEsr": "160002",
+    "stationName": "Витебск",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "166009",
+    "stationName": "Витьба",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 15
+      }
+    ]
+  },
+  {
+    "stationEsr": "132407",
+    "stationName": "Влодава",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Брест-Полесский",
+        "tpEsr": "130308",
+        "km": 65
+      }
+    ]
+  },
+  {
+    "stationEsr": "136709",
+    "stationName": "Волковыск-Центральный",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "162607",
+    "stationName": "Воложин",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Лида",
+        "tpEsr": "137608",
+        "km": 92
+      },
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 36
+      }
+    ]
+  },
+  {
+    "stationEsr": "159113",
+    "stationName": "Волосковня",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Журбин (оп)",
+        "tpEsr": "159306",
+        "km": 42
+      },
+      {
+        "tpName": "Кричев I",
+        "tpEsr": "158209",
+        "km": 41
+      }
+    ]
+  },
+  {
+    "stationEsr": "157207",
+    "stationName": "Воничи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 68
+      },
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 65
+      }
+    ]
+  },
+  {
+    "stationEsr": "164408",
+    "stationName": "Воропаево",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Крулевщизна",
+        "tpEsr": "164003",
+        "km": 49
+      },
+      {
+        "tpName": "Лынтупы",
+        "tpEsr": "164516",
+        "km": 86
+      }
+    ]
+  },
+  {
+    "stationEsr": "138225",
+    "stationName": "Выгода",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 50
+      },
+      {
+        "tpName": "Лида",
+        "tpEsr": "137608",
+        "km": 64
+      }
+    ]
+  },
+  {
+    "stationEsr": "131705",
+    "stationName": "Высоко-Литовск",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "131809",
+    "stationName": "Высоко-Литовск (эксп.)",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "162309",
+    "stationName": "Гавья",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Лида",
+        "tpEsr": "137608",
+        "km": 29
+      },
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 99
+      }
+    ]
+  },
+  {
+    "stationEsr": "139603",
+    "stationName": "Ганцевичи(закр.с1.07.09 по § 1)",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Бар",
+        "tpEsr": "332606",
+        "km": 55
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 65
+      }
+    ]
+  },
+  {
+    "stationEsr": "164906",
+    "stationName": "Глубокое",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Крулевщизна",
+        "tpEsr": "164003",
+        "km": 17
+      },
+      {
+        "tpName": "Лынтупы",
+        "tpEsr": "164516",
+        "km": 118
+      }
+    ]
+  },
+  {
+    "stationEsr": "161113",
+    "stationName": "Глушанино (рзд.)",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 76
+      },
+      {
+        "tpName": "Полоцк",
+        "tpEsr": "161306",
+        "km": 25
+      }
+    ]
+  },
+  {
+    "stationEsr": "164342",
+    "stationName": "Годутишки (ОП.)",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Крулевщизна",
+        "tpEsr": "164003",
+        "km": 91
+      },
+      {
+        "tpName": "Лынтупы",
+        "tpEsr": "164516",
+        "km": 44
+      }
+    ]
+  },
+  {
+    "stationEsr": "153850",
+    "stationName": "Голевицы",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 13
+      },
+      {
+        "tpName": "Гомель",
+        "tpEsr": "150000",
+        "km": 112
+      }
+    ]
+  },
+  {
+    "stationEsr": "157508",
+    "stationName": "Голынец",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 121
+      },
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 12
+      }
+    ]
+  },
+  {
+    "stationEsr": "150000",
+    "stationName": "Гомель",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "150104",
+    "stationName": "Гомель-Северный",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 83
+      },
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 126
+      }
+    ]
+  },
+  {
+    "stationEsr": "132801",
+    "stationName": "Городец",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жабинка",
+        "tpEsr": "131300",
+        "km": 48
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 154
+      }
+    ]
+  },
+  {
+    "stationEsr": "138600",
+    "stationName": "Городея",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 43
+      },
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 95
+      }
+    ]
+  },
+  {
+    "stationEsr": "140901",
+    "stationName": "Городище",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 188
+      },
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 28
+      }
+    ]
+  },
+  {
+    "stationEsr": "166418",
+    "stationName": "Городнянский (ПП.)",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 5
+      },
+      {
+        "tpName": "Осиновка",
+        "tpEsr": "169100",
+        "km": 43
+      }
+    ]
+  },
+  {
+    "stationEsr": "160604",
+    "stationName": "Городок",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 36
+      },
+      {
+        "tpName": "Езерище",
+        "tpEsr": "161005",
+        "km": 46
+      }
+    ]
+  },
+  {
+    "stationEsr": "157527",
+    "stationName": "Городщина",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 0
+      },
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 0
+      }
+    ]
+  },
+  {
+    "stationEsr": "154105",
+    "stationName": "Горочичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 84
+      },
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 17
+      }
+    ]
+  },
+  {
+    "stationEsr": "138808",
+    "stationName": "Горынь (эксп.)",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "139209",
+    "stationName": "Горынь",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Горынь",
+        "tpEsr": "138808",
+        "km": 10
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 44
+      }
+    ]
+  },
+  {
+    "stationEsr": "139213",
+    "stationName": "Горынь-стык",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 45
+      },
+      {
+        "tpName": "Горынь",
+        "tpEsr": "138808",
+        "km": 9
+      }
+    ]
+  },
+  {
+    "stationEsr": "161128",
+    "stationName": "Горяны",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 84
+      },
+      {
+        "tpName": "Полоцк",
+        "tpEsr": "161306",
+        "km": 17
+      }
+    ]
+  },
+  {
+    "stationEsr": "160731",
+    "stationName": "Грибачи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 72
+      },
+      {
+        "tpName": "Езерище",
+        "tpEsr": "161005",
+        "km": 10
+      }
+    ]
+  },
+  {
+    "stationEsr": "134506",
+    "stationName": "Грицевец",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 12
+      },
+      {
+        "tpName": "Жабинка",
+        "tpEsr": "131300",
+        "km": 164
+      }
+    ]
+  },
+  {
+    "stationEsr": "135208",
+    "stationName": "Гродно",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "164107",
+    "stationName": "Гудогай (эксп.)",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "163000",
+    "stationName": "Гудогай",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 71
+      },
+      {
+        "tpName": "Гудогай",
+        "tpEsr": "164107",
+        "km": 9
+      }
+    ]
+  },
+  {
+    "stationEsr": "163034",
+    "stationName": "Гудогай-стык",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Гудогай",
+        "tpEsr": "164107",
+        "km": 8
+      },
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 72
+      }
+    ]
+  },
+  {
+    "stationEsr": "137701",
+    "stationName": "Гуды",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Лида",
+        "tpEsr": "137608",
+        "km": 9
+      },
+      {
+        "tpName": "Беняконе",
+        "tpEsr": "136605",
+        "km": 36
+      }
+    ]
+  },
+  {
+    "stationEsr": "138009",
+    "stationName": "Гутно",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Лида",
+        "tpEsr": "137608",
+        "km": 9
+      },
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 119
+      }
+    ]
+  },
+  {
+    "stationEsr": "149234",
+    "stationName": "Дараганово",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 189
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 19
+      }
+    ]
+  },
+  {
+    "stationEsr": "156242",
+    "stationName": "Дашковка",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 21
+      },
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 103
+      }
+    ]
+  },
+  {
+    "stationEsr": "143702",
+    "stationName": "Дегтяревка",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 145
+      },
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 19
+      }
+    ]
+  },
+  {
+    "stationEsr": "143717",
+    "stationName": "Дегтяревка-Техническая",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 70
+      },
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 14
+      }
+    ]
+  },
+  {
+    "stationEsr": "154459",
+    "stationName": "Демехи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Гомель",
+        "tpEsr": "150000",
+        "km": 57
+      },
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 68
+      }
+    ]
+  },
+  {
+    "stationEsr": "149222",
+    "stationName": "Деревцы",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 199
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 9
+      }
+    ]
+  },
+  {
+    "stationEsr": "150509",
+    "stationName": "Добруш",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Новобелицкая",
+        "tpEsr": "150208",
+        "km": 20
+      },
+      {
+        "tpName": "Закопытье",
+        "tpEsr": "150513",
+        "km": 20
+      }
+    ]
+  },
+  {
+    "stationEsr": "134309",
+    "stationName": "Доманово",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 49
+      },
+      {
+        "tpName": "Жабинка",
+        "tpEsr": "131300",
+        "km": 127
+      }
+    ]
+  },
+  {
+    "stationEsr": "138422",
+    "stationName": "Домашевичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 19
+      },
+      {
+        "tpName": "Лида",
+        "tpEsr": "137608",
+        "km": 95
+      }
+    ]
+  },
+  {
+    "stationEsr": "161518",
+    "stationName": "Дретунь",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Полоцк",
+        "tpEsr": "161306",
+        "km": 35
+      },
+      {
+        "tpName": "Алеща",
+        "tpEsr": "161202",
+        "km": 14
+      }
+    ]
+  },
+  {
+    "stationEsr": "132905",
+    "stationName": "Дрогичин",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жабинка",
+        "tpEsr": "131300",
+        "km": 72
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 130
+      }
+    ]
+  },
+  {
+    "stationEsr": "157300",
+    "stationName": "Друть",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 43
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 90
+      }
+    ]
+  },
+  {
+    "stationEsr": "164605",
+    "stationName": "Друя",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Крулевщизна",
+        "tpEsr": "164003",
+        "km": 138
+      },
+      {
+        "tpName": "Лынтупы",
+        "tpEsr": "164516",
+        "km": 155
+      }
+    ]
+  },
+  {
+    "stationEsr": "132303",
+    "stationName": "Дубица",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Брест-Полесский",
+        "tpEsr": "130308",
+        "km": 36
+      }
+    ]
+  },
+  {
+    "stationEsr": "160816",
+    "stationName": "Езерище",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 82
+      },
+      {
+        "tpName": "Езерище",
+        "tpEsr": "161005",
+        "km": 1
+      }
+    ]
+  },
+  {
+    "stationEsr": "161005",
+    "stationName": "Езерище (эксп.)",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "160801",
+    "stationName": "Езерище",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Езерище",
+        "tpEsr": "161005",
+        "km": 2
+      },
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 81
+      }
+    ]
+  },
+  {
+    "stationEsr": "157003",
+    "stationName": "Елизово",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 105
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 28
+      }
+    ]
+  },
+  {
+    "stationEsr": "151304",
+    "stationName": "Ельск",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 48
+      },
+      {
+        "tpName": "Словечно",
+        "tpEsr": "151200",
+        "km": 23
+      }
+    ]
+  },
+  {
+    "stationEsr": "131300",
+    "stationName": "Жабинка (эксп.)",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "131207",
+    "stationName": "Жабинка",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "143651",
+    "stationName": "Ждановичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 14
+      }
+    ]
+  },
+  {
+    "stationEsr": "154162",
+    "stationName": "Жердь",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 49
+      },
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 52
+      }
+    ]
+  },
+  {
+    "stationEsr": "153301",
+    "stationName": "Житковичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 103
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 74
+      }
+    ]
+  },
+  {
+    "stationEsr": "152171",
+    "stationName": "Житковичи-стык",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 71
+      },
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 106
+      }
+    ]
+  },
+  {
+    "stationEsr": "135335",
+    "stationName": "Житомля",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Гродно",
+        "tpEsr": "135208",
+        "km": 20
+      },
+      {
+        "tpName": "Мосты",
+        "tpEsr": "137203",
+        "km": 38
+      }
+    ]
+  },
+  {
+    "stationEsr": "155004",
+    "stationName": "Жлобин",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "155038",
+    "stationName": "Жлобин-Западный",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 6
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 101
+      }
+    ]
+  },
+  {
+    "stationEsr": "154270",
+    "stationName": "Жлобин-Подольский",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 4
+      },
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 97
+      }
+    ]
+  },
+  {
+    "stationEsr": "155822",
+    "stationName": "Жлобин-Северный",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 5
+      },
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 119
+      }
+    ]
+  },
+  {
+    "stationEsr": "159306",
+    "stationName": "Журбин (оп) (эксп.)",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "166102",
+    "stationName": "Журжево",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 10
+      }
+    ]
+  },
+  {
+    "stationEsr": "165754",
+    "stationName": "Заболотинка",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 12
+      },
+      {
+        "tpName": "Заольша",
+        "tpEsr": "165805",
+        "km": 47
+      }
+    ]
+  },
+  {
+    "stationEsr": "135320",
+    "stationName": "Завадичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Гродно",
+        "tpEsr": "135208",
+        "km": 15
+      },
+      {
+        "tpName": "Мосты",
+        "tpEsr": "137203",
+        "km": 43
+      }
+    ]
+  },
+  {
+    "stationEsr": "165148",
+    "stationName": "Загатье",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Крулевщизна",
+        "tpEsr": "164003",
+        "km": 56
+      },
+      {
+        "tpName": "Полоцк",
+        "tpEsr": "161306",
+        "km": 35
+      }
+    ]
+  },
+  {
+    "stationEsr": "157809",
+    "stationName": "Заднепровская",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 25
+      },
+      {
+        "tpName": "Кричев I",
+        "tpEsr": "158209",
+        "km": 106
+      }
+    ]
+  },
+  {
+    "stationEsr": "150513",
+    "stationName": "Закопытье",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "150405",
+    "stationName": "Закопытье (эксп.)",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "150528",
+    "stationName": "Закопытье-стык",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "132500",
+    "stationName": "Закрутин",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Брест-Полесский",
+        "tpEsr": "130308",
+        "km": 22
+      },
+      {
+        "tpName": "Малорито",
+        "tpEsr": "132106",
+        "km": 35
+      }
+    ]
+  },
+  {
+    "stationEsr": "163405",
+    "stationName": "Залесье",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 24
+      },
+      {
+        "tpName": "Гудогай",
+        "tpEsr": "164107",
+        "km": 56
+      }
+    ]
+  },
+  {
+    "stationEsr": "160337",
+    "stationName": "Залучье",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 28
+      },
+      {
+        "tpName": "Езерище",
+        "tpEsr": "161005",
+        "km": 54
+      }
+    ]
+  },
+  {
+    "stationEsr": "167054",
+    "stationName": "Замосточье",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 23
+      },
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 61
+      }
+    ]
+  },
+  {
+    "stationEsr": "165602",
+    "stationName": "Заольша",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Заольша",
+        "tpEsr": "165805",
+        "km": 2
+      },
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 58
+      }
+    ]
+  },
+  {
+    "stationEsr": "165805",
+    "stationName": "Заольша (эксп.)",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "165627",
+    "stationName": "Заольша-стык",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 59
+      },
+      {
+        "tpName": "Заольша",
+        "tpEsr": "165805",
+        "km": 1
+      }
+    ]
+  },
+  {
+    "stationEsr": "168201",
+    "stationName": "Заслоново",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 116
+      }
+    ]
+  },
+  {
+    "stationEsr": "136802",
+    "stationName": "Зельва",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 94
+      },
+      {
+        "tpName": "Волковыск-Центральный",
+        "tpEsr": "136709",
+        "km": 28
+      }
+    ]
+  },
+  {
+    "stationEsr": "165114",
+    "stationName": "Зябки",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Крулевщизна",
+        "tpEsr": "164003",
+        "km": 37
+      },
+      {
+        "tpName": "Полоцк",
+        "tpEsr": "161306",
+        "km": 54
+      }
+    ]
+  },
+  {
+    "stationEsr": "150674",
+    "stationName": "Зябровка",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Новобелицкая",
+        "tpEsr": "150208",
+        "km": 16
+      },
+      {
+        "tpName": "Тереховка",
+        "tpEsr": "150706",
+        "km": 27
+      }
+    ]
+  },
+  {
+    "stationEsr": "134205",
+    "stationName": "Ивацевичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 65
+      },
+      {
+        "tpName": "Жабинка",
+        "tpEsr": "131300",
+        "km": 111
+      }
+    ]
+  },
+  {
+    "stationEsr": "155771",
+    "stationName": "Ипуть",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Новобелицкая",
+        "tpEsr": "150208",
+        "km": 5
+      }
+    ]
+  },
+  {
+    "stationEsr": "162807",
+    "stationName": "Каледино",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Лида",
+        "tpEsr": "137608",
+        "km": 122
+      },
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 6
+      }
+    ]
+  },
+  {
+    "stationEsr": "148208",
+    "stationName": "Калий I",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 134
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 124
+      }
+    ]
+  },
+  {
+    "stationEsr": "148301",
+    "stationName": "Калий III",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 128
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 118
+      }
+    ]
+  },
+  {
+    "stationEsr": "148509",
+    "stationName": "Калий IV",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 144
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 134
+      }
+    ]
+  },
+  {
+    "stationEsr": "153808",
+    "stationName": "Калинковичи",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "130914",
+    "stationName": "Каменная",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Брест-Полесский",
+        "tpEsr": "130308",
+        "km": 12
+      },
+      {
+        "tpName": "Малорито",
+        "tpEsr": "132106",
+        "km": 45
+      }
+    ]
+  },
+  {
+    "stationEsr": "153723",
+    "stationName": "Кацуры",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 21
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 156
+      }
+    ]
+  },
+  {
+    "stationEsr": "139001",
+    "stationName": "Клецк",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 48
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 160
+      }
+    ]
+  },
+  {
+    "stationEsr": "159202",
+    "stationName": "Климовичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Кричев I",
+        "tpEsr": "158209",
+        "km": 22
+      },
+      {
+        "tpName": "Журбин (оп)",
+        "tpEsr": "159306",
+        "km": 61
+      }
+    ]
+  },
+  {
+    "stationEsr": "153742",
+    "stationName": "Клинск",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 12
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 165
+      }
+    ]
+  },
+  {
+    "stationEsr": "163706",
+    "stationName": "Княгинин",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Крулевщизна",
+        "tpEsr": "164003",
+        "km": 56
+      },
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 51
+      }
+    ]
+  },
+  {
+    "stationEsr": "160021",
+    "stationName": "Княжица",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 14
+      },
+      {
+        "tpName": "Полоцк",
+        "tpEsr": "161306",
+        "km": 87
+      }
+    ]
+  },
+  {
+    "stationEsr": "132708",
+    "stationName": "Кобрин",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жабинка",
+        "tpEsr": "131300",
+        "km": 23
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 179
+      }
+    ]
+  },
+  {
+    "stationEsr": "151605",
+    "stationName": "Козенки",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 23
+      },
+      {
+        "tpName": "Словечно",
+        "tpEsr": "151200",
+        "km": 48
+      }
+    ]
+  },
+  {
+    "stationEsr": "144508",
+    "stationName": "Койданово",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 105
+      },
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 33
+      }
+    ]
+  },
+  {
+    "stationEsr": "138738",
+    "stationName": "Колосово",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 80
+      },
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 58
+      }
+    ]
+  },
+  {
+    "stationEsr": "159109",
+    "stationName": "Коммунары",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Кричев I",
+        "tpEsr": "158209",
+        "km": 50
+      },
+      {
+        "tpName": "Журбин (оп)",
+        "tpEsr": "159306",
+        "km": 33
+      }
+    ]
+  },
+  {
+    "stationEsr": "153507",
+    "stationName": "Копцевичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 71
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 106
+      }
+    ]
+  },
+  {
+    "stationEsr": "156908",
+    "stationName": "Копысь",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 49
+      },
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 33
+      }
+    ]
+  },
+  {
+    "stationEsr": "150250",
+    "stationName": "Кореневка",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Новобелицкая",
+        "tpEsr": "150208",
+        "km": 7
+      },
+      {
+        "tpName": "Тереховка",
+        "tpEsr": "150706",
+        "km": 36
+      }
+    ]
+  },
+  {
+    "stationEsr": "153615",
+    "stationName": "Коржевка",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 47
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 130
+      }
+    ]
+  },
+  {
+    "stationEsr": "134101",
+    "stationName": "Коссово-Полесское",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 76
+      },
+      {
+        "tpName": "Жабинка",
+        "tpEsr": "131300",
+        "km": 100
+      }
+    ]
+  },
+  {
+    "stationEsr": "155502",
+    "stationName": "Костюковка",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Гомель",
+        "tpEsr": "150000",
+        "km": 12
+      },
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 74
+      }
+    ]
+  },
+  {
+    "stationEsr": "148000",
+    "stationName": "Красный Берег",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 19
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 88
+      }
+    ]
+  },
+  {
+    "stationEsr": "147845",
+    "stationName": "Красный Берег-стык",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 87
+      },
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 20
+      }
+    ]
+  },
+  {
+    "stationEsr": "147602",
+    "stationName": "Красный Брод",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 79
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 56
+      }
+    ]
+  },
+  {
+    "stationEsr": "158209",
+    "stationName": "Кричев I",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "158820",
+    "stationName": "Кричев II",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Кричев I",
+        "tpEsr": "158209",
+        "km": 10
+      }
+    ]
+  },
+  {
+    "stationEsr": "150903",
+    "stationName": "Круговец",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Новобелицкая",
+        "tpEsr": "150208",
+        "km": 56
+      },
+      {
+        "tpName": "Тереховка",
+        "tpEsr": "150706",
+        "km": 21
+      }
+    ]
+  },
+  {
+    "stationEsr": "164003",
+    "stationName": "Крулевщизна",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "165735",
+    "stationName": "Крынки",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 25
+      },
+      {
+        "tpName": "Заольша",
+        "tpEsr": "165805",
+        "km": 34
+      }
+    ]
+  },
+  {
+    "stationEsr": "165307",
+    "stationName": "Ксты",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Крулевщизна",
+        "tpEsr": "164003",
+        "km": 84
+      },
+      {
+        "tpName": "Полоцк",
+        "tpEsr": "161306",
+        "km": 7
+      }
+    ]
+  },
+  {
+    "stationEsr": "165133",
+    "stationName": "Кульгаи (рзд.)",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Крулевщизна",
+        "tpEsr": "164003",
+        "km": 49
+      },
+      {
+        "tpName": "Полоцк",
+        "tpEsr": "161306",
+        "km": 42
+      }
+    ]
+  },
+  {
+    "stationEsr": "163617",
+    "stationName": "Куренец (ПП.)",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Крулевщизна",
+        "tpEsr": "164003",
+        "km": 75
+      },
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 32
+      }
+    ]
+  },
+  {
+    "stationEsr": "155409",
+    "stationName": "Лазурная",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 68
+      },
+      {
+        "tpName": "Гомель",
+        "tpEsr": "150000",
+        "km": 18
+      }
+    ]
+  },
+  {
+    "stationEsr": "150227",
+    "stationName": "Ларищево",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Новобелицкая",
+        "tpEsr": "150208",
+        "km": 9
+      },
+      {
+        "tpName": "Закопытье",
+        "tpEsr": "150513",
+        "km": 31
+      }
+    ]
+  },
+  {
+    "stationEsr": "151944",
+    "stationName": "Лахва",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 158
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 19
+      }
+    ]
+  },
+  {
+    "stationEsr": "168633",
+    "stationName": "Лемница",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 41
+      }
+    ]
+  },
+  {
+    "stationEsr": "168108",
+    "stationName": "Лепель",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 132
+      }
+    ]
+  },
+  {
+    "stationEsr": "134402",
+    "stationName": "Лесная",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 22
+      },
+      {
+        "tpName": "Жабинка",
+        "tpEsr": "131300",
+        "km": 154
+      }
+    ]
+  },
+  {
+    "stationEsr": "134328",
+    "stationName": "Лесная-стык",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жабинка",
+        "tpEsr": "131300",
+        "km": 153
+      },
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 23
+      }
+    ]
+  },
+  {
+    "stationEsr": "137608",
+    "stationName": "Лида",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "165701",
+    "stationName": "Лиозно",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 48
+      },
+      {
+        "tpName": "Заольша",
+        "tpEsr": "165805",
+        "km": 11
+      }
+    ]
+  },
+  {
+    "stationEsr": "150246",
+    "stationName": "Лисички",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Новобелицкая",
+        "tpEsr": "150208",
+        "km": 3
+      },
+      {
+        "tpName": "Тереховка",
+        "tpEsr": "150706",
+        "km": 40
+      }
+    ]
+  },
+  {
+    "stationEsr": "154430",
+    "stationName": "Лиски",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Гомель",
+        "tpEsr": "150000",
+        "km": 65
+      },
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 60
+      }
+    ]
+  },
+  {
+    "stationEsr": "133433",
+    "stationName": "Ловча",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жабинка",
+        "tpEsr": "131300",
+        "km": 186
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 16
+      }
+    ]
+  },
+  {
+    "stationEsr": "160910",
+    "stationName": "Ловша",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 54
+      },
+      {
+        "tpName": "Полоцк",
+        "tpEsr": "161306",
+        "km": 0
+      }
+    ]
+  },
+  {
+    "stationEsr": "160322",
+    "stationName": "Лосвида",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 19
+      },
+      {
+        "tpName": "Езерище",
+        "tpEsr": "161005",
+        "km": 63
+      }
+    ]
+  },
+  {
+    "stationEsr": "134703",
+    "stationName": "Лососно",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Гродно",
+        "tpEsr": "135208",
+        "km": 5
+      },
+      {
+        "tpName": "Брузги",
+        "tpEsr": "134807",
+        "km": 18
+      }
+    ]
+  },
+  {
+    "stationEsr": "156543",
+    "stationName": "Лотва",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 23
+      },
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 59
+      }
+    ]
+  },
+  {
+    "stationEsr": "156011",
+    "stationName": "Лудчицы",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 63
+      },
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 61
+      }
+    ]
+  },
+  {
+    "stationEsr": "160318",
+    "stationName": "Лужесно",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 10
+      },
+      {
+        "tpName": "Езерище",
+        "tpEsr": "161005",
+        "km": 72
+      }
+    ]
+  },
+  {
+    "stationEsr": "155818",
+    "stationName": "Лукское",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 13
+      },
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 111
+      }
+    ]
+  },
+  {
+    "stationEsr": "139406",
+    "stationName": "Лунинец",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "139707",
+    "stationName": "Лунинец-стык",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 2
+      },
+      {
+        "tpName": "Жабинка",
+        "tpEsr": "131300",
+        "km": 200
+      }
+    ]
+  },
+  {
+    "stationEsr": "157705",
+    "stationName": "Луполово",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Кричев I",
+        "tpEsr": "158209",
+        "km": 91
+      },
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 10
+      }
+    ]
+  },
+  {
+    "stationEsr": "165769",
+    "stationName": "Лучеса",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 5
+      },
+      {
+        "tpName": "Заольша",
+        "tpEsr": "165805",
+        "km": 55
+      }
+    ]
+  },
+  {
+    "stationEsr": "164516",
+    "stationName": "Лынтупы",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "132204",
+    "stationName": "Лыщицы",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Брест-Центральный",
+        "tpEsr": "130007",
+        "km": 23
+      },
+      {
+        "tpName": "Высоко-Литовск",
+        "tpEsr": "131705",
+        "km": 26
+      }
+    ]
+  },
+  {
+    "stationEsr": "139502",
+    "stationName": "Люща",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 95
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 24
+      }
+    ]
+  },
+  {
+    "stationEsr": "139904",
+    "stationName": "Ляховичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 21
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 98
+      }
+    ]
+  },
+  {
+    "stationEsr": "132604",
+    "stationName": "Малорита",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Брест-Полесский",
+        "tpEsr": "130308",
+        "km": 43
+      },
+      {
+        "tpName": "Хотислав",
+        "tpEsr": "132002",
+        "km": 0
+      }
+    ]
+  },
+  {
+    "stationEsr": "132106",
+    "stationName": "Малорито (эксп.)",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "139514",
+    "stationName": "Мальковичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 82
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 38
+      }
+    ]
+  },
+  {
+    "stationEsr": "167105",
+    "stationName": "Медведка",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 7
+      },
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 77
+      }
+    ]
+  },
+  {
+    "stationEsr": "152106",
+    "stationName": "Микашевичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 130
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 47
+      }
+    ]
+  },
+  {
+    "stationEsr": "137612",
+    "stationName": "Минойты",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 103
+      },
+      {
+        "tpName": "Лида",
+        "tpEsr": "137608",
+        "km": 11
+      }
+    ]
+  },
+  {
+    "stationEsr": "140210",
+    "stationName": "Минск-Пассажирский",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "140102",
+    "stationName": "Минск-Северный",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 5
+      }
+    ]
+  },
+  {
+    "stationEsr": "140009",
+    "stationName": "Минск-Сортировочный",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 140
+      },
+      {
+        "tpName": "Минск-Пассажирский",
+        "tpEsr": "140210",
+        "km": 5
+      }
+    ]
+  },
+  {
+    "stationEsr": "140507",
+    "stationName": "Минск-Южный",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 7
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 104
+      }
+    ]
+  },
+  {
+    "stationEsr": "164709",
+    "stationName": "Миоры",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Крулевщизна",
+        "tpEsr": "164003",
+        "km": 118
+      }
+    ]
+  },
+  {
+    "stationEsr": "146927",
+    "stationName": "Мирадино",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 75
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 32
+      }
+    ]
+  },
+  {
+    "stationEsr": "151338",
+    "stationName": "Михалки",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 32
+      },
+      {
+        "tpName": "Словечно",
+        "tpEsr": "151200",
+        "km": 39
+      }
+    ]
+  },
+  {
+    "stationEsr": "145002",
+    "stationName": "Михановичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 24
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 87
+      }
+    ]
+  },
+  {
+    "stationEsr": "138314",
+    "stationName": "Мицкевичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 37
+      },
+      {
+        "tpName": "Лида",
+        "tpEsr": "137608",
+        "km": 77
+      }
+    ]
+  },
+  {
+    "stationEsr": "156609",
+    "stationName": "Могилев I(б .Могилев I-на-Днепре)",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 3
+      },
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 79
+      }
+    ]
+  },
+  {
+    "stationEsr": "156505",
+    "stationName": "Могилев II(б. Могилев II-на-Днепре)",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "156613",
+    "stationName": "Могилев III",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 3
+      },
+      {
+        "tpName": "Кричев I",
+        "tpEsr": "158209",
+        "km": 98
+      }
+    ]
+  },
+  {
+    "stationEsr": "166723",
+    "stationName": "Можеевка",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 77
+      },
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 7
+      }
+    ]
+  },
+  {
+    "stationEsr": "166742",
+    "stationName": "Можеевка-стык",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 76
+      },
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 8
+      }
+    ]
+  },
+  {
+    "stationEsr": "151709",
+    "stationName": "Мозырь",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 13
+      },
+      {
+        "tpName": "Словечно",
+        "tpEsr": "151200",
+        "km": 58
+      }
+    ]
+  },
+  {
+    "stationEsr": "162900",
+    "stationName": "Молодечно",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "138403",
+    "stationName": "Мордичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 31
+      },
+      {
+        "tpName": "Лида",
+        "tpEsr": "137608",
+        "km": 83
+      }
+    ]
+  },
+  {
+    "stationEsr": "154232",
+    "stationName": "Мормаль",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 16
+      },
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 85
+      }
+    ]
+  },
+  {
+    "stationEsr": "137203",
+    "stationName": "Мосты",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "130420",
+    "stationName": "Мотыкалы",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Брест-Центральный",
+        "tpEsr": "130007",
+        "km": 14
+      },
+      {
+        "tpName": "Высоко-Литовск",
+        "tpEsr": "131705",
+        "km": 35
+      }
+    ]
+  },
+  {
+    "stationEsr": "153600",
+    "stationName": "Муляровка",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 53
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 124
+      }
+    ]
+  },
+  {
+    "stationEsr": "153719",
+    "stationName": "Мышанка",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 26
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 151
+      }
+    ]
+  },
+  {
+    "stationEsr": "153884",
+    "stationName": "Нахов",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Гомель",
+        "tpEsr": "150000",
+        "km": 98
+      },
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 27
+      }
+    ]
+  },
+  {
+    "stationEsr": "144404",
+    "stationName": "Негорелое",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 93
+      },
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 45
+      }
+    ]
+  },
+  {
+    "stationEsr": "144014",
+    "stationName": "Негорелое-стык",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 92
+      },
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 46
+      }
+    ]
+  },
+  {
+    "stationEsr": "148621",
+    "stationName": "Некраши",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Бар",
+        "tpEsr": "332606",
+        "km": 121
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 87
+      }
+    ]
+  },
+  {
+    "stationEsr": "138121",
+    "stationName": "Неман",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 89
+      },
+      {
+        "tpName": "Лида",
+        "tpEsr": "137608",
+        "km": 25
+      }
+    ]
+  },
+  {
+    "stationEsr": "157103",
+    "stationName": "Несета",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 85
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 48
+      }
+    ]
+  },
+  {
+    "stationEsr": "150208",
+    "stationName": "Новобелицкая",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "148617",
+    "stationName": "Новодворцы",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 114
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 94
+      }
+    ]
+  },
+  {
+    "stationEsr": "138206",
+    "stationName": "Новоельня",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Лида",
+        "tpEsr": "137608",
+        "km": 51
+      },
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 63
+      }
+    ]
+  },
+  {
+    "stationEsr": "168409",
+    "stationName": "Новолукомль",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 122
+      }
+    ]
+  },
+  {
+    "stationEsr": "165504",
+    "stationName": "Новополоцк",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Полоцк",
+        "tpEsr": "161306",
+        "km": 19
+      },
+      {
+        "tpName": "Крулевщизна",
+        "tpEsr": "164003",
+        "km": 96
+      }
+    ]
+  },
+  {
+    "stationEsr": "141500",
+    "stationName": "Новосады",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 119
+      },
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 96
+      }
+    ]
+  },
+  {
+    "stationEsr": "161109",
+    "stationName": "Оболь",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 67
+      },
+      {
+        "tpName": "Полоцк",
+        "tpEsr": "161306",
+        "km": 34
+      }
+    ]
+  },
+  {
+    "stationEsr": "140704",
+    "stationName": "Озерище",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 199
+      },
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 17
+      }
+    ]
+  },
+  {
+    "stationEsr": "136906",
+    "stationName": "Озерница",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 75
+      },
+      {
+        "tpName": "Волковыск-Центральный",
+        "tpEsr": "136709",
+        "km": 47
+      }
+    ]
+  },
+  {
+    "stationEsr": "142409",
+    "stationName": "Олехновичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 54
+      },
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 30
+      }
+    ]
+  },
+  {
+    "stationEsr": "133607",
+    "stationName": "Оранчицы",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 129
+      },
+      {
+        "tpName": "Жабинка",
+        "tpEsr": "131300",
+        "km": 47
+      }
+    ]
+  },
+  {
+    "stationEsr": "166704",
+    "stationName": "Орша-Восточная",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 8
+      },
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 74
+      }
+    ]
+  },
+  {
+    "stationEsr": "166507",
+    "stationName": "Орша-Западная",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 74
+      },
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 8
+      }
+    ]
+  },
+  {
+    "stationEsr": "166719",
+    "stationName": "Орша-Западная-стык",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Кричев I",
+        "tpEsr": "158209",
+        "km": 123
+      }
+    ]
+  },
+  {
+    "stationEsr": "166808",
+    "stationName": "Орша-Северная",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 16
+      }
+    ]
+  },
+  {
+    "stationEsr": "166403",
+    "stationName": "Орша-Центральная",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "169007",
+    "stationName": "Осиновка",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 26
+      },
+      {
+        "tpName": "Осиновка",
+        "tpEsr": "169100",
+        "km": 22
+      }
+    ]
+  },
+  {
+    "stationEsr": "169100",
+    "stationName": "Осиновка (эксп.)",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "146407",
+    "stationName": "Осиповичи I",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "146414",
+    "stationName": "Осиповичи II",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 128
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 5
+      }
+    ]
+  },
+  {
+    "stationEsr": "146433",
+    "stationName": "Осиповичи III",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 102
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 5
+      }
+    ]
+  },
+  {
+    "stationEsr": "158110",
+    "stationName": "Осовец",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Кричев I",
+        "tpEsr": "158209",
+        "km": 20
+      },
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 81
+      }
+    ]
+  },
+  {
+    "stationEsr": "154143",
+    "stationName": "Останковичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 60
+      },
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 41
+      }
+    ]
+  },
+  {
+    "stationEsr": "163104",
+    "stationName": "Ошмяны",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 57
+      },
+      {
+        "tpName": "Гудогай",
+        "tpEsr": "164107",
+        "km": 23
+      }
+    ]
+  },
+  {
+    "stationEsr": "163937",
+    "stationName": "Парафьнов-стык",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 106
+      },
+      {
+        "tpName": "Крулевщизна",
+        "tpEsr": "164003",
+        "km": 1
+      }
+    ]
+  },
+  {
+    "stationEsr": "163903",
+    "stationName": "Парафьянов",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Крулевщизна",
+        "tpEsr": "164003",
+        "km": 21
+      },
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 86
+      }
+    ]
+  },
+  {
+    "stationEsr": "133400",
+    "stationName": "Парохонск",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жабинка",
+        "tpEsr": "131300",
+        "km": 169
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 33
+      }
+    ]
+  },
+  {
+    "stationEsr": "159404",
+    "stationName": "Петрозаводская",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Кричев I",
+        "tpEsr": "158209",
+        "km": 46
+      },
+      {
+        "tpName": "Журбин (оп)",
+        "tpEsr": "159306",
+        "km": 47
+      }
+    ]
+  },
+  {
+    "stationEsr": "133202",
+    "stationName": "Пинск",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жабинка",
+        "tpEsr": "131300",
+        "km": 144
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 58
+      }
+    ]
+  },
+  {
+    "stationEsr": "158500",
+    "stationName": "Погодино",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Кричев I",
+        "tpEsr": "158209",
+        "km": 77
+      },
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 57
+      }
+    ]
+  },
+  {
+    "stationEsr": "138550",
+    "stationName": "Погорельцы",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 22
+      },
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 116
+      }
+    ]
+  },
+  {
+    "stationEsr": "165006",
+    "stationName": "Подсвилье",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Крулевщизна",
+        "tpEsr": "164003",
+        "km": 20
+      },
+      {
+        "tpName": "Полоцк парк Громы",
+        "tpEsr": "161236",
+        "km": 71
+      }
+    ]
+  },
+  {
+    "stationEsr": "137101",
+    "stationName": "Полонка",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 24
+      },
+      {
+        "tpName": "Волковыск-Центральный",
+        "tpEsr": "136709",
+        "km": 98
+      }
+    ]
+  },
+  {
+    "stationEsr": "161255",
+    "stationName": "Полота",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Полоцк парк Громы",
+        "tpEsr": "161236",
+        "km": 20
+      },
+      {
+        "tpName": "Алеща",
+        "tpEsr": "161202",
+        "km": 29
+      }
+    ]
+  },
+  {
+    "stationEsr": "161306",
+    "stationName": "Полоцк",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "161236",
+    "stationName": "Полоцк парк Громы",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "162703",
+    "stationName": "Полочаны",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Лида",
+        "tpEsr": "137608",
+        "km": 109
+      },
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 19
+      }
+    ]
+  },
+  {
+    "stationEsr": "144635",
+    "stationName": "Помыслище",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 132
+      },
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 6
+      }
+    ]
+  },
+  {
+    "stationEsr": "134972",
+    "stationName": "Поречье",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "138583",
+    "stationName": "Пост № 1",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 0
+      }
+    ]
+  },
+  {
+    "stationEsr": "168771",
+    "stationName": "Пост № 2 км",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 3
+      },
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 79
+      }
+    ]
+  },
+  {
+    "stationEsr": "164304",
+    "stationName": "Поставы",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Крулевщизна",
+        "tpEsr": "164003",
+        "km": 73
+      },
+      {
+        "tpName": "Лынтупы",
+        "tpEsr": "164516",
+        "km": 62
+      }
+    ]
+  },
+  {
+    "stationEsr": "159404",
+    "stationName": "Предзаводская",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Кричев I",
+        "tpEsr": "158209",
+        "km": 46
+      },
+      {
+        "tpName": "Журбин (оп)",
+        "tpEsr": "159306",
+        "km": 47
+      }
+    ]
+  },
+  {
+    "stationEsr": "154872",
+    "stationName": "Прибор",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Гомель",
+        "tpEsr": "150000",
+        "km": 18
+      },
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 107
+      }
+    ]
+  },
+  {
+    "stationEsr": "165909",
+    "stationName": "Придвинская",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 24
+      }
+    ]
+  },
+  {
+    "stationEsr": "139711",
+    "stationName": "Припять",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 12
+      },
+      {
+        "tpName": "Горынь",
+        "tpEsr": "138808",
+        "km": 41
+      }
+    ]
+  },
+  {
+    "stationEsr": "141603",
+    "stationName": "Приямино",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 107
+      },
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 109
+      }
+    ]
+  },
+  {
+    "stationEsr": "156914",
+    "stationName": "Прокшино",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 56
+      },
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 26
+      }
+    ]
+  },
+  {
+    "stationEsr": "160708",
+    "stationName": "Прудок",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 41
+      },
+      {
+        "tpName": "Езерище",
+        "tpEsr": "161005",
+        "km": 41
+      }
+    ]
+  },
+  {
+    "stationEsr": "163509",
+    "stationName": "Пруды",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 14
+      },
+      {
+        "tpName": "Гудогай",
+        "tpEsr": "164107",
+        "km": 66
+      }
+    ]
+  },
+  {
+    "stationEsr": "153761",
+    "stationName": "Птичь",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 35
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 142
+      }
+    ]
+  },
+  {
+    "stationEsr": "150778",
+    "stationName": "Пут.пост 151 км",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Новобелицкая",
+        "tpEsr": "150208",
+        "km": 41
+      },
+      {
+        "tpName": "Тереховка",
+        "tpEsr": "150706",
+        "km": 2
+      }
+    ]
+  },
+  {
+    "stationEsr": "145407",
+    "stationName": "Пуховичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 67
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 45
+      }
+    ]
+  },
+  {
+    "stationEsr": "153901",
+    "stationName": "Пхов (эксп.)",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "151802",
+    "stationName": "Пхов",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 9
+      },
+      {
+        "tpName": "Словечно",
+        "tpEsr": "151200",
+        "km": 62
+      }
+    ]
+  },
+  {
+    "stationEsr": "147205",
+    "stationName": "Рабкор",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 134
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 111
+      }
+    ]
+  },
+  {
+    "stationEsr": "143505",
+    "stationName": "Радошковичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 41
+      },
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 43
+      }
+    ]
+  },
+  {
+    "stationEsr": "150778",
+    "stationName": "Разъезд 151 км",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Новобелицкая",
+        "tpEsr": "150208",
+        "km": 41
+      },
+      {
+        "tpName": "Тереховка",
+        "tpEsr": "150706",
+        "km": 2
+      }
+    ]
+  },
+  {
+    "stationEsr": "147402",
+    "stationName": "Ратмировичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 113
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 90
+      }
+    ]
+  },
+  {
+    "stationEsr": "143632",
+    "stationName": "Ратомка",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 19
+      }
+    ]
+  },
+  {
+    "stationEsr": "154711",
+    "stationName": "Ребуса",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Гомель",
+        "tpEsr": "150000",
+        "km": 50
+      },
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 75
+      }
+    ]
+  },
+  {
+    "stationEsr": "139800",
+    "stationName": "Рейтанов",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 29
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 91
+      }
+    ]
+  },
+  {
+    "stationEsr": "157902",
+    "stationName": "Реста",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Кричев I",
+        "tpEsr": "158209",
+        "km": 72
+      },
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 29
+      }
+    ]
+  },
+  {
+    "stationEsr": "154800",
+    "stationName": "Речица",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Гомель",
+        "tpEsr": "150000",
+        "km": 44
+      },
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 81
+      }
+    ]
+  },
+  {
+    "stationEsr": "155907",
+    "stationName": "Рогачев",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 27
+      },
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 97
+      }
+    ]
+  },
+  {
+    "stationEsr": "155930",
+    "stationName": "Рогачев-стык",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 27
+      },
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 97
+      }
+    ]
+  },
+  {
+    "stationEsr": "137400",
+    "stationName": "Рожанка",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Лида",
+        "tpEsr": "137608",
+        "km": 51
+      },
+      {
+        "tpName": "Мосты",
+        "tpEsr": "137203",
+        "km": 23
+      }
+    ]
+  },
+  {
+    "stationEsr": "162211",
+    "stationName": "Ропнянская",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Полоцк парк Громы",
+        "tpEsr": "161236",
+        "km": 9
+      },
+      {
+        "tpName": "Бигосово",
+        "tpEsr": "161700",
+        "km": 76
+      }
+    ]
+  },
+  {
+    "stationEsr": "160712",
+    "stationName": "Росляки",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 50
+      },
+      {
+        "tpName": "Езерище",
+        "tpEsr": "161005",
+        "km": 32
+      }
+    ]
+  },
+  {
+    "stationEsr": "137307",
+    "stationName": "Рось",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Волковыск-Центральный",
+        "tpEsr": "136709",
+        "km": 19
+      },
+      {
+        "tpName": "Мосты",
+        "tpEsr": "137203",
+        "km": 17
+      }
+    ]
+  },
+  {
+    "stationEsr": "145303",
+    "stationName": "Руденск",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 45
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 67
+      }
+    ]
+  },
+  {
+    "stationEsr": "158708",
+    "stationName": "Румино",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Кричев I",
+        "tpEsr": "158209",
+        "km": 116
+      },
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 18
+      }
+    ]
+  },
+  {
+    "stationEsr": "138916",
+    "stationName": "Русино",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 10
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 110
+      }
+    ]
+  },
+  {
+    "stationEsr": "156702",
+    "stationName": "Рыжковичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 31
+      },
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 51
+      }
+    ]
+  },
+  {
+    "stationEsr": "147722",
+    "stationName": "Савичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 51
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 56
+      }
+    ]
+  },
+  {
+    "stationEsr": "155112",
+    "stationName": "Салтановка",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Гомель",
+        "tpEsr": "150000",
+        "km": 64
+      },
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 22
+      }
+    ]
+  },
+  {
+    "stationEsr": "155803",
+    "stationName": "Сверково",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 20
+      },
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 104
+      }
+    ]
+  },
+  {
+    "stationEsr": "154209",
+    "stationName": "Светлогорск-на-Березине",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 39
+      },
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 62
+      }
+    ]
+  },
+  {
+    "stationEsr": "150024",
+    "stationName": "Светоч (рзд.)",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Гомель",
+        "tpEsr": "150000",
+        "km": 7
+      },
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 79
+      }
+    ]
+  },
+  {
+    "stationEsr": "135706",
+    "stationName": "Свислочь (эксп.)",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "135602",
+    "stationName": "Свислочь",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "161819",
+    "stationName": "Свольно",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Полоцк парк Громы",
+        "tpEsr": "161236",
+        "km": 52
+      },
+      {
+        "tpName": "Бигосово",
+        "tpEsr": "161700",
+        "km": 33
+      }
+    ]
+  },
+  {
+    "stationEsr": "151925",
+    "stationName": "Сенкевичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 145
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 32
+      }
+    ]
+  },
+  {
+    "stationEsr": "154815",
+    "stationName": "Сенозавод",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Гомель",
+        "tpEsr": "150000",
+        "km": 38
+      },
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 87
+      }
+    ]
+  },
+  {
+    "stationEsr": "152006",
+    "stationName": "Ситница",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 135
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 42
+      }
+    ]
+  },
+  {
+    "stationEsr": "135405",
+    "stationName": "Скидель",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Гродно",
+        "tpEsr": "135208",
+        "km": 30
+      },
+      {
+        "tpName": "Мосты",
+        "tpEsr": "137203",
+        "km": 28
+      }
+    ]
+  },
+  {
+    "stationEsr": "137504",
+    "stationName": "Скрибовцы",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Лида",
+        "tpEsr": "137608",
+        "km": 31
+      },
+      {
+        "tpName": "Мосты",
+        "tpEsr": "137203",
+        "km": 43
+      }
+    ]
+  },
+  {
+    "stationEsr": "141938",
+    "stationName": "Славное",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 148
+      },
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 67
+      }
+    ]
+  },
+  {
+    "stationEsr": "151200",
+    "stationName": "Словечно (эксп.)",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "151130",
+    "stationName": "Словечно",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 70
+      },
+      {
+        "tpName": "Словечно",
+        "tpEsr": "151200",
+        "km": 1
+      }
+    ]
+  },
+  {
+    "stationEsr": "151145",
+    "stationName": "Словечно-стык",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "137006",
+    "stationName": "Слоним",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 51
+      },
+      {
+        "tpName": "Волковыск-Центральный",
+        "tpEsr": "136709",
+        "km": 71
+      }
+    ]
+  },
+  {
+    "stationEsr": "148602",
+    "stationName": "Слуцк",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 109
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 99
+      }
+    ]
+  },
+  {
+    "stationEsr": "148706",
+    "stationName": "Слуцк-стык",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 106
+      },
+      {
+        "tpName": "Слуцк",
+        "tpEsr": "148602",
+        "km": 3
+      }
+    ]
+  },
+  {
+    "stationEsr": "141001",
+    "stationName": "Смолевичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 43
+      },
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 173
+      }
+    ]
+  },
+  {
+    "stationEsr": "168700",
+    "stationName": "Смольяны",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 22
+      }
+    ]
+  },
+  {
+    "stationEsr": "163301",
+    "stationName": "Сморгонь",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 37
+      },
+      {
+        "tpName": "Гудогай",
+        "tpEsr": "164107",
+        "km": 43
+      }
+    ]
+  },
+  {
+    "stationEsr": "155714",
+    "stationName": "Сож",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 79
+      },
+      {
+        "tpName": "Новобелицкая",
+        "tpEsr": "150208",
+        "km": 20
+      }
+    ]
+  },
+  {
+    "stationEsr": "148227",
+    "stationName": "Солигорск",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 139
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 129
+      }
+    ]
+  },
+  {
+    "stationEsr": "163208",
+    "stationName": "Солы",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 49
+      },
+      {
+        "tpName": "Гудогай",
+        "tpEsr": "164107",
+        "km": 31
+      }
+    ]
+  },
+  {
+    "stationEsr": "161221",
+    "stationName": "Сосница",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 98
+      },
+      {
+        "tpName": "Полоцк",
+        "tpEsr": "161306",
+        "km": 3
+      }
+    ]
+  },
+  {
+    "stationEsr": "166761",
+    "stationName": "Стайки",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 62
+      },
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 22
+      }
+    ]
+  },
+  {
+    "stationEsr": "160040",
+    "stationName": "Старое Село",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 24
+      },
+      {
+        "tpName": "Полоцк",
+        "tpEsr": "161306",
+        "km": 77
+      }
+    ]
+  },
+  {
+    "stationEsr": "155911",
+    "stationName": "Старосельский",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 40
+      },
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 84
+      }
+    ]
+  },
+  {
+    "stationEsr": "153329",
+    "stationName": "Старушки",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 83
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 94
+      }
+    ]
+  },
+  {
+    "stationEsr": "149107",
+    "stationName": "Старые Дороги",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 165
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 43
+      }
+    ]
+  },
+  {
+    "stationEsr": "140403",
+    "stationName": "Степянка",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 13
+      },
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 203
+      }
+    ]
+  },
+  {
+    "stationEsr": "138704",
+    "stationName": "Столбцы",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 67
+      },
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 71
+      }
+    ]
+  },
+  {
+    "stationEsr": "145454",
+    "stationName": "Талька",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 24
+      },
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 87
+      }
+    ]
+  },
+  {
+    "stationEsr": "146715",
+    "stationName": "Татарка",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 93
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 14
+      }
+    ]
+  },
+  {
+    "stationEsr": "131245",
+    "stationName": "Тевли",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жабинка",
+        "tpEsr": "131300",
+        "km": 21
+      },
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 155
+      }
+    ]
+  },
+  {
+    "stationEsr": "147807",
+    "stationName": "Телуша",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 39
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 68
+      }
+    ]
+  },
+  {
+    "stationEsr": "158407",
+    "stationName": "Темный Лес",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Кричев I",
+        "tpEsr": "158209",
+        "km": 51
+      },
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 83
+      }
+    ]
+  },
+  {
+    "stationEsr": "150706",
+    "stationName": "Тереховка",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "150805",
+    "stationName": "Тереховка (эксп.)",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "150782",
+    "stationName": "Тереховка-стык",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Новобелицкая",
+        "tpEsr": "150208",
+        "km": 36
+      },
+      {
+        "tpName": "Тереховка",
+        "tpEsr": "150706",
+        "km": 7
+      }
+    ]
+  },
+  {
+    "stationEsr": "151003",
+    "stationName": "Терюха (эксп.)",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "150301",
+    "stationName": "Терюха",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "150354",
+    "stationName": "Терюха-стык",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Лисички",
+        "tpEsr": "150246",
+        "km": 20
+      },
+      {
+        "tpName": "Терюха",
+        "tpEsr": "151003",
+        "km": 11
+      }
+    ]
+  },
+  {
+    "stationEsr": "139105",
+    "stationName": "Тимковичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 74
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 134
+      }
+    ]
+  },
+  {
+    "stationEsr": "142004",
+    "stationName": "Толочин",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 43
+      },
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 172
+      }
+    ]
+  },
+  {
+    "stationEsr": "156030",
+    "stationName": "Тощица",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 52
+      },
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 72
+      }
+    ]
+  },
+  {
+    "stationEsr": "133005",
+    "stationName": "Трудовая (б.Снитово)",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жабинка",
+        "tpEsr": "131300",
+        "km": 96
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 106
+      }
+    ]
+  },
+  {
+    "stationEsr": "155305",
+    "stationName": "Уза",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Гомель",
+        "tpEsr": "150000",
+        "km": 24
+      },
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 62
+      }
+    ]
+  },
+  {
+    "stationEsr": "149003",
+    "stationName": "Уречье",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 136
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 72
+      }
+    ]
+  },
+  {
+    "stationEsr": "150265",
+    "stationName": "Уть",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Новобелицкая",
+        "tpEsr": "150208",
+        "km": 11
+      },
+      {
+        "tpName": "Терюха",
+        "tpEsr": "151003",
+        "km": 23
+      }
+    ]
+  },
+  {
+    "stationEsr": "142305",
+    "stationName": "Уша",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 67
+      },
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 17
+      }
+    ]
+  },
+  {
+    "stationEsr": "149126",
+    "stationName": "Фаличи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 175
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 33
+      }
+    ]
+  },
+  {
+    "stationEsr": "144601",
+    "stationName": "Фаниполь",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Барановичи-Центральные",
+        "tpEsr": "138507",
+        "km": 120
+      },
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 18
+      }
+    ]
+  },
+  {
+    "stationEsr": "165203",
+    "stationName": "Фариново",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Крулевщизна",
+        "tpEsr": "164003",
+        "km": 74
+      },
+      {
+        "tpName": "Полоцк",
+        "tpEsr": "161306",
+        "km": 17
+      }
+    ]
+  },
+  {
+    "stationEsr": "165311",
+    "stationName": "Фомино (рзд.)",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 90
+      },
+      {
+        "tpName": "Полоцк парк Громы",
+        "tpEsr": "161236",
+        "km": 12
+      }
+    ]
+  },
+  {
+    "stationEsr": "155061",
+    "stationName": "Хальч",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Гомель",
+        "tpEsr": "150000",
+        "km": 74
+      },
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 12
+      }
+    ]
+  },
+  {
+    "stationEsr": "166422",
+    "stationName": "Хлусово",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 10
+      },
+      {
+        "tpName": "Осиновка",
+        "tpEsr": "169100",
+        "km": 38
+      }
+    ]
+  },
+  {
+    "stationEsr": "168907",
+    "stationName": "ХлюстиноХме",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 19
+      },
+      {
+        "tpName": "Осиновка",
+        "tpEsr": "169100",
+        "km": 29
+      }
+    ]
+  },
+  {
+    "stationEsr": "158303",
+    "stationName": "Ходосы",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Кричев I",
+        "tpEsr": "158209",
+        "km": 26
+      },
+      {
+        "tpName": "Орша-Восточная",
+        "tpEsr": "166704",
+        "km": 102
+      }
+    ]
+  },
+  {
+    "stationEsr": "154507",
+    "stationName": "Хойники",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Гомель",
+        "tpEsr": "150000",
+        "km": 130
+      },
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 83
+      }
+    ]
+  },
+  {
+    "stationEsr": "154124",
+    "stationName": "Холодники",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 73
+      },
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 28
+      }
+    ]
+  },
+  {
+    "stationEsr": "132002",
+    "stationName": "Хотислав",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Брест-Полесский",
+        "tpEsr": "130308",
+        "km": 55
+      },
+      {
+        "tpName": "Малорито",
+        "tpEsr": "132106",
+        "km": 2
+      }
+    ]
+  },
+  {
+    "stationEsr": "154904",
+    "stationName": "Центролит",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Гомель",
+        "tpEsr": "150000",
+        "km": 7
+      },
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 118
+      }
+    ]
+  },
+  {
+    "stationEsr": "158002",
+    "stationName": "Чаусы",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Кричев I",
+        "tpEsr": "158209",
+        "km": 55
+      },
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 46
+      }
+    ]
+  },
+  {
+    "stationEsr": "168305",
+    "stationName": "Чашники",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 101
+      }
+    ]
+  },
+  {
+    "stationEsr": "160303",
+    "stationName": "Чепино",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 5
+      },
+      {
+        "tpName": "Езерище",
+        "tpEsr": "161005",
+        "km": 77
+      }
+    ]
+  },
+  {
+    "stationEsr": "166600",
+    "stationName": "Червено",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 64
+      },
+      {
+        "tpName": "Орша-Восточная",
+        "tpEsr": "166704",
+        "km": 12
+      }
+    ]
+  },
+  {
+    "stationEsr": "166628",
+    "stationName": "Червено-стык",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 19
+      },
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 63
+      }
+    ]
+  },
+  {
+    "stationEsr": "135424",
+    "stationName": "Черлена",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Гродно",
+        "tpEsr": "135208",
+        "km": 40
+      },
+      {
+        "tpName": "Мосты",
+        "tpEsr": "137203",
+        "km": 18
+      }
+    ]
+  },
+  {
+    "stationEsr": "156308",
+    "stationName": "Черноземовка",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 109
+      },
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 15
+      }
+    ]
+  },
+  {
+    "stationEsr": "145201",
+    "stationName": "Шабаны",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 29
+      },
+      {
+        "tpName": "Осиповичи I",
+        "tpEsr": "146407",
+        "km": 98
+      }
+    ]
+  },
+  {
+    "stationEsr": "164802",
+    "stationName": "Шарковщизна",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Крулевщизна",
+        "tpEsr": "164003",
+        "km": 86
+      },
+      {
+        "tpName": "Лынтупы",
+        "tpEsr": "164516",
+        "km": 103
+      }
+    ]
+  },
+  {
+    "stationEsr": "141114",
+    "stationName": "Шеметово",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Минск-Сортировочный",
+        "tpEsr": "140009",
+        "km": 68
+      },
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 198
+      }
+    ]
+  },
+  {
+    "stationEsr": "158604",
+    "stationName": "Шестеровка (эксп.)",
+    "isTp": true,
+    "spurs": []
+  },
+  {
+    "stationEsr": "158905",
+    "stationName": "Шестеровка",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Кричев I",
+        "tpEsr": "158209",
+        "km": 0
+      },
+      {
+        "tpName": "Шестеровка",
+        "tpEsr": "158604",
+        "km": 11
+      }
+    ]
+  },
+  {
+    "stationEsr": "156806",
+    "stationName": "Шклов",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Могилев II(б. Могилев II-на-Днепре)",
+        "tpEsr": "156505",
+        "km": 38
+      },
+      {
+        "tpName": "Орша-Центральная",
+        "tpEsr": "166403",
+        "km": 44
+      }
+    ]
+  },
+  {
+    "stationEsr": "160905",
+    "stationName": "Шумилино",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 43
+      },
+      {
+        "tpName": "Полоцк",
+        "tpEsr": "161306",
+        "km": 58
+      }
+    ]
+  },
+  {
+    "stationEsr": "162402",
+    "stationName": "Юратишки",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Лида",
+        "tpEsr": "137608",
+        "km": 49
+      },
+      {
+        "tpName": "Молодечно",
+        "tpEsr": "162900",
+        "km": 79
+      }
+    ]
+  },
+  {
+    "stationEsr": "133113",
+    "stationName": "Юхновичи",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жабинка",
+        "tpEsr": "131300",
+        "km": 119
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 83
+      }
+    ]
+  },
+  {
+    "stationEsr": "154016",
+    "stationName": "Юшки",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 90
+      },
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 11
+      }
+    ]
+  },
+  {
+    "stationEsr": "160055",
+    "stationName": "Язвино",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Санкт-Петербург-Тов.-Витебский",
+        "tpEsr": "033502",
+        "km": 33
+      },
+      {
+        "tpName": "Полоцк",
+        "tpEsr": "161306",
+        "km": 68
+      }
+    ]
+  },
+  {
+    "stationEsr": "154834",
+    "stationName": "Якимовка",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Гомель",
+        "tpEsr": "150000",
+        "km": 30
+      },
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 95
+      }
+    ]
+  },
+  {
+    "stationEsr": "133109",
+    "stationName": "Янов-Полесский",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жабинка",
+        "tpEsr": "131300",
+        "km": 107
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 95
+      }
+    ]
+  },
+  {
+    "stationEsr": "133325",
+    "stationName": "Ясельда",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жабинка",
+        "tpEsr": "131300",
+        "km": 156
+      },
+      {
+        "tpName": "Лунинец",
+        "tpEsr": "139406",
+        "km": 46
+      }
+    ]
+  },
+  {
+    "stationEsr": "154228",
+    "stationName": "Ящицы",
+    "isTp": false,
+    "spurs": [
+      {
+        "tpName": "Жлобин",
+        "tpEsr": "155004",
+        "km": 25
+      },
+      {
+        "tpName": "Калинковичи",
+        "tpEsr": "153808",
+        "km": 76
+      }
+    ]
+  }
+]

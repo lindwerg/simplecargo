@@ -1,0 +1,64 @@
+{
+  "_meta": {
+    "dataset": "acq-oracle-O2 — independent free RZD tariff-oracle confirmation of receipt ЭТ201459",
+    "purpose": "Lever-2 (699km K4 short-haul uplift = 1.0057499686370497, FITTED). Reproduce the ЭТ201459 route on an independent free no-login RZD tariff calculator to either CONFIRM 187 344 ₽ (and the implied K4) or expose a different chargeable-weight/coefficient.",
+    "acquiredAt": "2026-06-08",
+    "result": "CONFIRMED — independent oracle reproduces per-wagon провозная плата = 31 224,00 ₽ без НДС to the kopeck, i.e. 187 344 ₽ for 6 wagons. The engine's fitted 699km total is independently corroborated.",
+    "leverStatus": "Lever-2 (SHORT_HAUL_BOUNDARY_UPLIFT) — the TOTAL is now independently confirmed by a second free calculator. The oracle shows only провозная плата (no per-coefficient decomposition), so it confirms the aggregate 31 224 ₽/wagon but does NOT itself break out K4 from base. The fit remains internally consistent and now externally validated at the total level.",
+    "caution": "gruzivagon's 'класс' column shows 5 (their internal cargo-grouping label for 'Щебень не поименованный'), NOT the ETSNG tariff class. The тариф itself is the own-ПВ class-1 нерудные value. The decomposition into N8base × K1 × K4 is the ENGINE's; the oracle confirms only their product."
+  },
+  "oracle": {
+    "name": "ГРУЗ и ВАГОН (gruzivagon.info)",
+    "url": "https://gruzivagon.info/tariff",
+    "access": "free, no login; custom image-digit captcha (/captcha.php) solved per request; calc via /components/ajax/ajax.php?task=PutTariff then polled via task=GetListTariff",
+    "official": false,
+    "note": "Unofficial third-party calculator. Reproduces ТР-1 2026 prices; not a primary РЖД source, but independent of our engine."
+  },
+  "request": {
+    "asOfDate": "08.06.2026",
+    "tariffRegime": "ТР-1 2026",
+    "stStart": { "esr": "771500", "name": "Исеть", "road": "Свердловская ж.д.", "country": "Российская Федерация" },
+    "stFinish": { "esr": "648503", "name": "Набережные Челны", "road": "Куйбышевская ж.д.", "country": "Российская Федерация" },
+    "etcng": { "code": "232431.0", "name": "Щебень не поименованный в алфавите" },
+    "wagonType": "Полувагон",
+    "ownership": "Собственный / Арендованный (own)",
+    "weightTonsPerWagon": 70,
+    "wagonCount": 6,
+    "capacityT": 70,
+    "axis": "default (4)",
+    "currency": "Рубли"
+  },
+  "result": {
+    "distanceKm": 699,
+    "gruzivagonClassColumn": 5,
+    "gruzivagonClassColumnNote": "their internal cargo-grouping label, NOT the ETSNG tariff class",
+    "perWagon": {
+      "provoznaya_noVat": 31224.00,
+      "ohrana": 0.00,
+      "vat": 6869.28,
+      "vatRatePct": 22,
+      "withVat": 38093.28
+    },
+    "total6Wagons": {
+      "provoznaya_noVat": 187344.00,
+      "withVat": 228559.68
+    },
+    "rawRow": "<td>Полувагон</td><td>Собственный/Арендованный</td><td>Исеть</td><td>Набережные Челны</td><td>Щебень не поименованный в алфавите</td><td>70</td><td>6</td><td>5</td><td>699</td><td>31 224,00₽</td><td>0,00₽</td><td>6 869,28₽</td><td>38 093,28₽</td>",
+    "detailLeg": { "country": "Россия", "distanceKm": 699, "provoznaya_noVat": 31224.00, "withVat": 38093.28 }
+  },
+  "reconciliationWithReceipt": {
+    "receiptId": "ЭТ201459",
+    "receiptPerWagon_noVat": 31224,
+    "receiptTotal_noVat": 187344,
+    "oraclePerWagon_noVat": 31224.00,
+    "oracleTotal_noVat": 187344.00,
+    "deltaRub": 0,
+    "matchToKopeck": true
+  },
+  "impliedK4": {
+    "note": "The oracle returns provoznaya only (no coefficient breakdown), so K4 cannot be read off directly. Because the oracle's 31 224 ₽/wagon equals the engine output exactly, the engine's fitted K4 short-haul uplift (1.0057499686370497) is consistent with an independent computation of the same number — but is NOT independently DECOMPOSED here.",
+    "engineFittedShortHaulUplift": 1.0057499686370497,
+    "independentlyConfirmedTotal": true,
+    "independentlyDecomposedK4": false
+  }
+}

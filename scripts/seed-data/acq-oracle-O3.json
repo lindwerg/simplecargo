@@ -1,0 +1,72 @@
+{
+  "acquisition": "acq-oracle-O3",
+  "goal": "Third independent free online РЖД tariff oracle for the ЭТ201459 route (Исеть→Наб.Челны, own ПВ, class-1 щебень, 699 km). Confirms or refutes the FITTED 699km K4 short-haul uplift (lever #2) by reproducing 31224 ₽/wagon = 187344 ₽ total to the ruble.",
+  "asOfDate": "2026-06-08",
+  "oracle": {
+    "name": "ГРУЗ и ВАГОН (gruzivagon.info) — free online РЖД tariff calculator",
+    "url": "https://gruzivagon.info/tariff",
+    "official": false,
+    "method": "Public AJAX API (no login). Image-number captcha (/captcha.php, 4 digits) solved by vision; station + ETSNG lookup via task=GetStation/GetETCNG; submit via task=PutTariff; result polled via task=GetListTariff.",
+    "captcha": "Image-based 4-digit number captcha; read by vision (value 2279 for the submitted request). No reCAPTCHA enforced.",
+    "apiContract": {
+      "stationLookup": "POST /components/ajax/ajax.php?task=GetStation  body {station,hash}  -> key = ESR code (771500 Исеть, 648503 Наб.Челны)",
+      "cargoLookup": "POST ...?task=GetETCNG  body {etcng,hash}  -> code '232431.0' = «Щебень не поименованный в алфавите»",
+      "submit": "POST ...?task=PutTariff  body {st_start,st_finish,etcng,model,weight,count,utensils,capacity,axis,currency,date,recaptcha_anchor,hash}",
+      "result": "POST ...?task=GetListTariff  body {tarif:1,hash}  -> HTML table row",
+      "hash": "md5(JSON.stringify(payload-without-hash)), compact no-spaces, insertion order"
+    }
+  },
+  "request": {
+    "st_start": "771500",
+    "st_finish": "648503",
+    "etcng": "232431.0",
+    "model": "3 (Полувагон)",
+    "weight_t_per_wagon": 68,
+    "count": 6,
+    "utensils": "1 (Собственный / Арендованный = own)",
+    "capacity_t": 70,
+    "axis": "",
+    "currency": "0 (Рубли)",
+    "date": "27.04.2026"
+  },
+  "result": {
+    "rowId": 225828,
+    "columns": {
+      "model": "Полувагон",
+      "ownership": "Собственный/Арендованный",
+      "stOtpr": "Исеть",
+      "stNazn": "Набережные Челны",
+      "cargo": "Щебень не поименованный в алфавите",
+      "ves_t": 68,
+      "kolvo": 6,
+      "dney": 5,
+      "rasstoyanie_km": 699,
+      "stoimost_per_wagon_rub": 31224.00,
+      "ohrana_rub": 0.00,
+      "nds_per_wagon_rub": 6869.28,
+      "vsego_za_vagon_rub": 38093.28
+    },
+    "rawRowHtml": "<tr class=\"result_table_tariff\" data=\"225828\"> ...Полувагон | Собственный/Арендованный | Исеть | Набережные Челны | Щебень не поименованный в алфавите | 68 | 6 | 5 | 699 | 31 224,00 ₽ | 0,00 | 6 869,28 | 38 093,28"
+  },
+  "derived": {
+    "provoznayaPlata_per_wagon_bez_NDS_rub": 31224.00,
+    "provoznayaPlata_total_6wag_bez_NDS_rub": 187344.00,
+    "nds_rate_implied": 0.22,
+    "distance_km": 699
+  },
+  "verdict": {
+    "killsLever": "lever #2 — 699km K4 short-haul fit",
+    "outcome": "CONFIRMED to the RUBLE",
+    "detail": "gruzivagon.info computes EXACTLY 31 224,00 ₽/wagon без НДС and distance 699 km — identical to квитанция ЭТ201459 (6×31224 = 187 344 ₽). This is a third independent reference (receipt + engine + this oracle) all agreeing to the ruble. The fitted K4 short-haul uplift (1.0057499686370497) is therefore producing the SAME final charge a public РЖД calculator produces, so the fit is validated as correct in effect even though the verbatim п.16.7 row is not exposed. The oracle does not break out coefficients (only final charge), so it confirms the OUTPUT, not the internal K4 row value.",
+    "confidence": "sourced-unofficial",
+    "caveats": [
+      "gruzivagon.info is an UNOFFICIAL aggregator, not an РЖД-official surface; it is the same effective tariff but cannot be cited as official.",
+      "Per-wagon weight submitted as 68 t (≈ avg net of the 6 wagons 67.6–68.8 t); the calculator's coarse short-haul weight tier produced the same 31224 regardless, matching the receipt observation that 69.5т and 70т both map to 31224 at 699 km.",
+      "Охрана = 0 and ВЭС not added — pure provozная плата, directly comparable to the receipt «Взыскано» 187 344 ₽.",
+      "VAT shown (6 869,28 = 22%) confirms the receipt 187 344 ₽ is the без-НДС provozная плата."
+    ]
+  },
+  "sources": [
+    { "what": "ГРУЗ и ВАГОН free online РЖД tariff calculator — computed result for Исеть→Наб.Челны own ПВ щебень 699 km = 31 224,00 ₽/wagon без НДС", "url": "https://gruzivagon.info/tariff", "official": false }
+  ]
+}

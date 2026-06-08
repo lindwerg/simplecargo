@@ -1,0 +1,65 @@
+{
+  "_meta": {
+    "dataset": "ТР-4 §узлы — full enumeration of РЖД узлы carrying a FIXED tariff-distance adder",
+    "purpose": "Close the NEEDS-VERIFICATION gap in TARIFF_CALCULATOR.md line 124 / line 424: 'Full list of узлы beyond Moscow/SPb un-enumerated'. This file answers the question 'are there узлы besides Москва 54 / СПб 25 with a fixed tariff km, e.g. Екатеринбург / Новосибирск / Челябинск?'",
+    "date": "2026-06-08",
+    "headline_finding": "The enumeration is CLOSED at exactly TWO узлы. The governing acts establish a FIXED внутриузловой tariff distance for ONLY the обобщённые транзитные пункты «Московский узел» (54 км) and «Санкт-Петербургский узел» (25 км). NO other railway узел (Екатеринбург, Новосибирск, Челябинск, Свердловск, Самара, Ростов, etc.) carries a fixed-km узел adder. Those cities ARE major транзитные пункты (узловые станции) in Книга 3, but their distances are read from the Книга-3 ТП↔ТП backbone table like any other ТП — they are NOT a fixed-km override. So beyond Moscow/SPb there is nothing to add: the list of 'other узлы with fixed distances' is EMPTY.",
+    "verification": "Three independent free sources agree, no contradictions: (1) consultant.ru LAW_63243 'Указания по определению тарифных расстояний' (ТР-4 Книга 1, Приказ МПС от 15.07.2003 N55) — verbatim: «Расстояния между станциями, входящими в обобщенные транзитные пункты «Московский узел» и «Санкт-Петербургский узел», приняты фиксированными и равны соответственно 54 км и 25 км.» — no third узел named. (2) tr4.info/general/ reproduces the same single sentence; explicit answer 'No other узлы are mentioned; Ekaterinburg, Novosibirsk, Chelyabinsk do not appear.' (3) Current Минтранс №313/2024 (in force 2026) reframes Moscow as 'Малое кольцо Московской ж.д.' = 54 км (same physical override, 10 radial directions, 22 connecting branches) and introduces NO additional fixed-km узел.",
+    "consistency_with_repo": "Matches and reinforces scripts/seed-data/hub-distances.json ('completeness: ONLY two railway узлы carry fixed tariff distances') and scripts/seed-data/special-distances.json (uzel_adders_note: moscow 54 / spb 25, same_radial_line_exclusion). This file is the explicit verification artifact for that closure.",
+    "label": "sourced-official",
+    "sources": [
+      {
+        "what": "ТР-4 Книга 1 / Указания по определению тарифных расстояний — verbatim fixed-distance declaration (Москва 54 / СПб 25), Приказ МПС от 15.07.2003 N55",
+        "url": "https://www.consultant.ru/document/cons_doc_LAW_63243/7cfc044bbc8e0bf36505b5e36d4c3331affe0a1e/",
+        "official": true
+      },
+      {
+        "what": "ТР-4 Общие положения (unofficial mirror) — confirms ONLY Moscow 54 / SPb 25; Ekaterinburg/Novosibirsk/Chelyabinsk absent",
+        "url": "https://tr4.info/general/",
+        "official": false
+      },
+      {
+        "what": "Приказ Минтранса России от 12.09.2024 N313 'Порядок определения кратчайшего расстояния' (in force 2026) — Малое кольцо Московской ж.д. 54 км, no other fixed-km узел",
+        "url": "https://base.garant.ru/410566678/53f89421bbdaf741eb2d1ecc4ddb4c33/",
+        "official": true
+      }
+    ]
+  },
+  "uzly": [
+    {
+      "hub": "Московский узел",
+      "esr": "000015",
+      "km": 54,
+      "exclusion": "same-radial-line: NOT added if wagon enters AND exits the узел on the same radial line of the Малое кольцо; passenger/baggage variant = 20 км",
+      "current_wording_2026": "Малое кольцо Московской ж.д. (10 radial directions, 22 connecting branches) per Минтранс №313/2024",
+      "label": "sourced-official",
+      "source": "https://www.consultant.ru/document/cons_doc_LAW_63243/7cfc044bbc8e0bf36505b5e36d4c3331affe0a1e/"
+    },
+    {
+      "hub": "Санкт-Петербургский узел",
+      "esr": "000023",
+      "km": 25,
+      "exclusion": "same-radial-line: NOT added if wagon enters AND exits on the same radial line of the СПб узел",
+      "label": "sourced-official",
+      "source": "https://www.consultant.ru/document/cons_doc_LAW_63243/7cfc044bbc8e0bf36505b5e36d4c3331affe0a1e/"
+    }
+  ],
+  "other_uzly_with_fixed_distance": [],
+  "explicitly_checked_and_NOT_fixed_km_uzly": [
+    {
+      "city": "Екатеринбург (Екатеринбург-Сортировочный)",
+      "status": "major транзитный пункт / узловая станция in Книга 3, distance read from ТП↔ТП backbone — NO fixed-km узел adder",
+      "label": "sourced-official (absence verified)"
+    },
+    {
+      "city": "Новосибирск (Инская)",
+      "status": "major sorting ТП in Книга 3 — NO fixed-km узел adder",
+      "label": "sourced-official (absence verified)"
+    },
+    {
+      "city": "Челябинск",
+      "status": "major ТП in Книга 3 — NO fixed-km узел adder",
+      "label": "sourced-official (absence verified)"
+    }
+  ]
+}
