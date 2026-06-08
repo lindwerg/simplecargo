@@ -1,14 +1,14 @@
 import Link from "next/link";
-import { desc, eq, inArray, sql } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { Handshake, Plus } from "lucide-react";
 
 import { db } from "@/lib/db/client";
 import { orders } from "@/lib/db/schema/orders";
-import { directions } from "@/lib/db/schema/directions";
 import { counterparties } from "@/lib/db/schema/counterparties";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { dealStatusMeta } from "@/components/trades/dealStatusMeta";
+import { DEAL_TYPE_LABEL } from "@/components/trades/dealTypeMeta";
 import {
   DEAL_STAGES,
   isDealStage,
@@ -17,6 +17,8 @@ import {
 } from "@/components/trades/dealStageMeta";
 
 export const dynamic = "force-dynamic";
+
+const dateFmt = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long" });
 
 // Phase 0 skeleton: the unified «Сделки» list. Reads the existing `orders` spine
 // (empty until deals are created in Phase 1) and counts attached transport directions.
@@ -34,6 +36,8 @@ export default async function DealsPage({
     .select({
       id: orders.id,
       orderNumber: orders.orderNumber,
+      title: orders.title,
+      dealType: orders.dealType,
       status: orders.status,
       clientName: counterparties.nameCanonical,
       createdAt: orders.createdAt,
@@ -41,16 +45,6 @@ export default async function DealsPage({
     .from(orders)
     .leftJoin(counterparties, eq(orders.clientSuggestedId, counterparties.id))
     .orderBy(desc(orders.createdAt));
-
-  const ids = rows.map((r) => r.id);
-  const directionCounts = ids.length
-    ? await db
-        .select({ orderId: directions.orderId, count: sql<number>`count(*)::int` })
-        .from(directions)
-        .where(inArray(directions.orderId, ids))
-        .groupBy(directions.orderId)
-    : [];
-  const countByOrder = new Map(directionCounts.map((d) => [d.orderId, d.count]));
 
   // Счётчики воронки и фильтрация — из уже загруженных строк, без новых запросов.
   const stageCounts = new Map<DealStage, number>();
@@ -136,47 +130,47 @@ export default async function DealsPage({
           </Link>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-lg border border-border bg-surface-1">
-          <table className="w-full border-collapse text-sm">
-            <thead>
-              <tr className="border-b border-border text-left">
-                <th className="label-caps px-4 py-2.5 font-medium">Сделка</th>
-                <th className="label-caps px-4 py-2.5 font-medium">Клиент</th>
-                <th className="label-caps px-4 py-2.5 text-right font-medium">Направлений</th>
-                <th className="label-caps px-4 py-2.5 font-medium">Статус</th>
-              </tr>
-            </thead>
-            <tbody>
-              {visibleRows.map((r) => {
-                const meta = dealStatusMeta(r.status);
-                return (
-                  <tr key={r.id} className="border-b border-border-subtle last:border-0">
-                    <td className="px-4 py-3">
-                      <Link
-                        href={`/deals/${r.id}`}
-                        className="text-text transition-colors hover:text-accent"
-                      >
-                        {r.orderNumber ?? `Сделка ${r.id.slice(0, 8)}`}
-                      </Link>
-                    </td>
-                    <td className="px-4 py-3 text-text-secondary">{r.clientName ?? "—"}</td>
-                    <td className="px-4 py-3 text-right [font-variant-numeric:tabular-nums] text-text-secondary">
-                      {countByOrder.get(r.id) ?? 0}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex items-center gap-1.5 text-xs ${meta.tone}`}>
-                        <span aria-hidden className="text-[0.7em] leading-none">
-                          ●
-                        </span>
-                        {meta.label}
+        <ul className="overflow-hidden rounded-lg border border-border bg-surface-1">
+          {visibleRows.map((r) => {
+            const meta = dealStatusMeta(r.status);
+            const headline = r.clientName ?? r.orderNumber ?? `Сделка ${r.id.slice(0, 8)}`;
+            const typeLabel = r.dealType ? DEAL_TYPE_LABEL[r.dealType] : null;
+            const konkretika = r.title ?? null;
+            return (
+              <li key={r.id} className="border-b border-border-subtle last:border-0">
+                <Link
+                  href={`/deals/${r.id}`}
+                  className="flex flex-col gap-1.5 px-4 py-3 transition-colors hover:bg-surface-2 focus-visible:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="min-w-0 truncate font-medium text-text">{headline}</span>
+                    <span
+                      className={`inline-flex shrink-0 items-center gap-1.5 text-xs ${meta.tone}`}
+                    >
+                      <span aria-hidden className="text-[0.7em] leading-none">
+                        ●
                       </span>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                      {meta.label}
+                    </span>
+                  </div>
+                  {(typeLabel || konkretika) && (
+                    <div className="flex min-w-0 items-center gap-2 text-sm text-text-secondary">
+                      {typeLabel && (
+                        <span className="inline-flex shrink-0 items-center rounded-pill bg-surface-2 px-2 py-0.5 text-xs text-text-secondary">
+                          {typeLabel}
+                        </span>
+                      )}
+                      {konkretika && <span className="truncate">{konkretika}</span>}
+                    </div>
+                  )}
+                  <span className="text-xs text-text-tertiary">
+                    {dateFmt.format(new Date(r.createdAt))}
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
       )}
     </div>
   );
