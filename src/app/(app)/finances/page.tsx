@@ -132,7 +132,7 @@ export default async function FinancesPage() {
         </section>
       ) : (
         <>
-          <section aria-label="Показатели" className="flex flex-wrap gap-3">
+          <section aria-label="Показатели" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <StatTile
               label="Остаток на счетах"
               value={<Money value={summary?.totalBalance ?? 0} />}
@@ -157,7 +157,7 @@ export default async function FinancesPage() {
           </section>
 
           {accounts.length > 0 && (
-            <section aria-label="Счета" className="flex flex-wrap gap-3">
+            <section aria-label="Счета" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
               {accounts.map((a) => (
                 <StatTile
                   key={a.id}
@@ -204,7 +204,7 @@ export default async function FinancesPage() {
 
       {debtSummary && (debtSummary.payableCount > 0 || debtSummary.receivableCount > 0) && (
         <>
-          <section aria-label="Задолженности — показатели" className="flex flex-wrap gap-3">
+          <section aria-label="Задолженности — показатели" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <StatTile
               label="К оплате (мы должны)"
               value={<Money value={debtSummary.payableTotal} />}
