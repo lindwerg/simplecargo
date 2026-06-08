@@ -15,7 +15,7 @@ const matrixSchema = z.object({
   etsngCode: z.string().trim().min(1).optional(),
   classicCapacityT: z.coerce.number().positive("Г/п > 0").optional(),
   innovativeCapacityT: z.coerce.number().positive("Г/п > 0").optional(),
-  markupPct: z.coerce.number().finite().optional(),
+  ownerCoeff: z.coerce.number().positive("Коэффициент > 0").optional(),
 });
 
 // POST — матрица «обычный/инновационный × группы» для маршрута: 5 групп ТР-1 × оба типа

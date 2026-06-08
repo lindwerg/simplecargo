@@ -1,10 +1,11 @@
-// ── Golden-тесты матрицы «обычный/инновационный × группы» против R-Тариф ──────
+// ── Golden-тесты матрицы: собственный тариф (выверен) + инвентарный (И1+В4) + предоставление ──
 //
-// buildMatrixCells — чистая, поэтому тестируем с готовым distKm=1367 (Тёплая Гора → Балашейка),
-// сверяя ячейки против reference-quotes-rtariff.json:
-//   #4 групповая(6) обычный 70т = 50080 ;  #6 групповая(6) иннов 75т = 48951
-//   #7 повагонная(1) обычный 70т = 52463 ;  #9 повагонная(1) иннов 75т = 51278
-// Ставка предоставления = round(тариф × 1,15); с НДС = round(× 1,22).
+// buildMatrixCells — чистая, тестируем с готовым distKm=1367 (Тёплая Гора → Балашейка).
+// Собственный тариф (N8) сверен против reference-quotes-rtariff.json:
+//   #4 групповая(6) обычн 70т = 50080 ; #6 групповая иннов 75т = 48951
+//   #7 повагонная(1) обычн 70т = 52463 ; #9 повагонная иннов 75т = 51278
+// Инвентарный (И1+В4) ⚠️ НЕ выверен против эталона — фиксируем то, что даёт формула (regression-lock).
+// Предоставление = round(инвентарный × коэффициент собственника).
 
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -16,6 +17,7 @@ import type {
   N8K4Belt,
   N8TariffData,
 } from "./computeTariffN8";
+import { loadInventoryTariffData } from "./inventoryData";
 import { buildMatrixCells, type MatrixRow } from "./quoteMatrix";
 
 const SEED = resolve(process.cwd(), "scripts/seed-data");
@@ -30,16 +32,17 @@ function loadN8Data(): N8TariffData {
 }
 
 const DIST = 1367;
-const MARKUP = 15;
-const data = loadN8Data();
-const rows = buildMatrixCells(DIST, data, 70, 75, MARKUP);
+const COEFF = 1.15;
+const n8Data = loadN8Data();
+const invData = loadInventoryTariffData();
+const rows = buildMatrixCells(DIST, n8Data, invData, 70, 75, COEFF);
 const byBand = (band: string): MatrixRow => {
   const row = rows.find((r) => r.band === band);
   if (!row) throw new Error(`нет строки группы '${band}'`);
   return row;
 };
 
-describe("buildMatrixCells — тариф (якоря R-Тариф @1367 км)", () => {
+describe("buildMatrixCells — собственный тариф (якоря R-Тариф @1367 км)", () => {
   it("группа 6–20: обычный 70т = 50080 ₽, инновац 75т = 48951 ₽", () => {
     const row = byBand("6-20");
     expect(row.classic.tariffNoVat).toBe(50080);
@@ -57,22 +60,43 @@ describe("buildMatrixCells — тариф (якоря R-Тариф @1367 км)",
   });
 });
 
-describe("buildMatrixCells — ставка предоставления (+15%) и НДС", () => {
-  it("предоставление = round(тариф × 1,15)", () => {
+describe("buildMatrixCells — инвентарный парк (И1+В4) ⚠️ regression-lock, не эталон", () => {
+  it("группа 6–20: обычный 70т = 95220 ₽, инновац 75т = 96211 ₽", () => {
     const row = byBand("6-20");
-    expect(row.classic.provisionNoVat).toBe(Math.round(50080 * 1.15)); // 57592
-    expect(row.innovative.provisionNoVat).toBe(Math.round(48951 * 1.15)); // 56294
+    expect(row.classic.inventoryNoVat).toBe(95220);
+    expect(row.innovative.inventoryNoVat).toBe(96211);
   });
 
-  it("с НДС = round(× 1,22) для тарифа и предоставления", () => {
-    const row = byBand("6-20");
-    expect(row.classic.tariffWithVat).toBe(Math.round(50080 * 1.22)); // 61098
-    expect(row.classic.provisionWithVat).toBe(Math.round(57592 * 1.22)); // 70262
+  it("повагонная (1): обычный 70т = 98533 ₽, инновац 75т = 99567 ₽", () => {
+    const row = byBand("1");
+    expect(row.classic.inventoryNoVat).toBe(98533);
+    expect(row.innovative.inventoryNoVat).toBe(99567);
   });
 
-  it("наценка 0% → предоставление равно тарифу", () => {
-    const flat = buildMatrixCells(DIST, data, 70, 75, 0);
+  it("инвентарный > собственного (добавлена вагонная составляющая В4)", () => {
+    for (const r of rows) {
+      expect(r.classic.inventoryNoVat).toBeGreaterThan(r.classic.tariffNoVat);
+      expect(r.innovative.inventoryNoVat).toBeGreaterThan(r.innovative.tariffNoVat);
+    }
+  });
+});
+
+describe("buildMatrixCells — ставка предоставления = инвентарный × коэффициент + НДС", () => {
+  it("предоставление = round(инвентарный × 1,15)", () => {
+    const row = byBand("6-20");
+    expect(row.classic.provisionNoVat).toBe(Math.round(95220 * COEFF)); // 109503
+    expect(row.innovative.provisionNoVat).toBe(Math.round(96211 * COEFF));
+  });
+
+  it("с НДС = round(× 1,22) для инвентарного и предоставления", () => {
+    const row = byBand("6-20");
+    expect(row.classic.inventoryWithVat).toBe(Math.round(95220 * 1.22));
+    expect(row.classic.provisionWithVat).toBe(Math.round(row.classic.provisionNoVat * 1.22));
+  });
+
+  it("коэффициент 1,0 → предоставление равно инвентарному", () => {
+    const flat = buildMatrixCells(DIST, n8Data, invData, 70, 75, 1.0);
     const row = flat.find((r) => r.band === "6-20")!;
-    expect(row.classic.provisionNoVat).toBe(row.classic.tariffNoVat);
+    expect(row.classic.provisionNoVat).toBe(row.classic.inventoryNoVat);
   });
 });

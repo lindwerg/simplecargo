@@ -1,37 +1,37 @@
 // Матрица «обычный/инновационный × группы отправки» для голосового быстрого расчёта.
 //
-// Цена за вагон зависит от типа вагона (обычный / инновационный 75т ×0,9595) И от размера
-// отправки (K4 отправочный, Табл.5 ТР-1 2026): 1 вагон — одна цена, 6–20 — другая, и т.д.
-// Эта матрица считает все 5 групп ТР-1 × оба типа вагона за один маршрут, плюс «ставку
-// предоставления» = тариф + наценка% (модель tariff_plus_markup, см. resolveAmount).
+// За вагон считаются ТРИ числа:
+//   • собственный тариф (своя цена N8, выверена до рубля) — зависит от типа вагона и группы;
+//   • тариф инвентарного парка (И1+В4) — ⚠️ НЕ выверен (нет эталона R-Тариф общего парка);
+//   • ставка предоставления = инвентарный × коэффициент собственника (вводится оператором).
 //
-// buildMatrixCells — ЧИСТАЯ (готовый distKm на входе, без БД/графа) → тестируется golden-ами,
-// как goldenRtariff.test.ts. computeQuoteMatrix — async-обёртка: расстояние (ТР-4) + класс ЕТСНГ
-// + scope-guard + чистый расчёт. Вне контура (own ПВ, класс 1, домашнее) цену НЕ выдаёт.
+// buildMatrixCells — ЧИСТАЯ (готовый distKm). computeQuoteMatrix — async-обёртка: расстояние
+// (ТР-4) + класс ЕТСНГ + scope-guard + расчёт. Вне контура (own ПВ, класс 1, домашнее) цену
+// собственного парка не выдаёт; инвентарный/предоставление помечаются «проверяется» в UI.
 
 import { resolveDistance } from "@/lib/distance/repository";
 import { isForeignEsr } from "@/lib/distance/foreignStations";
-import { resolveAmount } from "@/lib/pricing/rate-expression";
 import {
   computeWagonN8,
-  k4GroupForWagons,
   type N8TariffData,
 } from "@/lib/tariff/computeTariffN8";
+import { computeInventoryPV } from "@/lib/tariff/computeInventory";
+import { loadInventoryTariffData, type InventoryTariffData } from "@/lib/tariff/inventoryData";
 import { loadN8TariffData } from "@/lib/tariff/n8Data";
 import { lookupEtsng, VAT_RATE_DOMESTIC } from "@/lib/tariff/quoteService";
 
-/** Груз по умолчанию, если в голосовой фразе/запросе не назван: щебень (класс 1, нерудные). */
+/** Груз по умолчанию, если не назван: щебень (класс 1, нерудные). */
 export const DEFAULT_ETSNG_CODE = "232431";
-/** Дефолтная грузоподъёмность обычного полувагона, т (оператор может переопределить). */
+/** Дефолтная грузоподъёмность обычного полувагона, т. */
 export const DEFAULT_CLASSIC_CAPACITY_T = 70;
 /** Дефолтная грузоподъёмность инновационного полувагона, т. */
 export const DEFAULT_INNOVATIVE_CAPACITY_T = 75;
-/** Наценка предоставления по умолчанию, % к тарифу. */
-export const DEFAULT_MARKUP_PCT = 15;
+/** Коэффициент собственника по умолчанию (× к инвентарному тарифу). Оператор вводит своё. */
+export const DEFAULT_OWNER_COEFF = 1.15;
 
 /**
- * Группы отправки ТР-1 (Табл.5) и их представительное число вагонов, чтобы k4GroupForWagons
- * вернул нужную строку: 1→"1", 2→"2", 4→"3-5", 6→"6-20", 25→"свыше 20".
+ * Группы отправки ТР-1 (Табл.5) и представительное число вагонов для k4GroupForWagons:
+ * 1→"1", 2→"2", 4→"3-5", 6→"6-20", 25→"свыше 20".
  */
 const BANDS: ReadonlyArray<{ band: string; representativeCount: number; label: string }> = [
   { band: "1", representativeCount: 1, label: "Повагонная (1 ваг)" },
@@ -42,26 +42,24 @@ const BANDS: ReadonlyArray<{ band: string; representativeCount: number; label: s
 ];
 
 export interface MatrixCell {
-  /** Провозная плата РЖД за вагон, без НДС (тариф). */
+  /** Собственный тариф (своя цена N8), ₽/ваг, без НДС — выверен до рубля. */
   readonly tariffNoVat: number;
-  /** Ставка предоставления за вагон, без НДС = round(тариф × (1 + наценка%/100)). */
-  readonly provisionNoVat: number;
-  /** Тариф с НДС 22%. */
   readonly tariffWithVat: number;
-  /** Ставка предоставления с НДС 22%. */
+  /** Тариф инвентарного парка (И1+В4), ₽/ваг, без НДС. ⚠️ НЕ выверен (проверяется). */
+  readonly inventoryNoVat: number;
+  readonly inventoryWithVat: number;
+  /** Ставка предоставления = round(инвентарный × коэффициент собственника), без НДС. ⚠️ проверяется. */
+  readonly provisionNoVat: number;
   readonly provisionWithVat: number;
 }
 
 export interface MatrixRow {
-  /** Метка строки Табл.5 ("1" | "2" | "3-5" | "6-20" | "свыше 20"). */
   readonly band: string;
-  /** Человекочитаемая метка группы. */
   readonly bandLabel: string;
-  /** Представительное число вагонов, на котором посчитана строка. */
   readonly representativeCount: number;
   /** Обычный полувагон (г/п classicCapacityT). */
   readonly classic: MatrixCell;
-  /** Инновационный полувагон (г/п innovativeCapacityT, ×0,9595). */
+  /** Инновационный полувагон (г/п innovativeCapacityT, ×0,9595 только в собственном тарифе). */
   readonly innovative: MatrixCell;
 }
 
@@ -75,7 +73,8 @@ export interface MatrixResult {
   readonly etsngName: string | null;
   readonly classicCapacityT: number;
   readonly innovativeCapacityT: number;
-  readonly markupPct: number;
+  /** Коэффициент собственника (× к инвентарному тарифу для ставки предоставления). */
+  readonly ownerCoeff: number;
   readonly vatRate: number;
   readonly rows: readonly MatrixRow[];
   readonly warnings: readonly string[];
@@ -87,67 +86,62 @@ export interface MatrixInput {
   readonly etsngCode?: string;
   readonly classicCapacityT?: number;
   readonly innovativeCapacityT?: number;
-  readonly markupPct?: number;
+  readonly ownerCoeff?: number;
 }
 
 function withVat(amount: number): number {
   return Math.round(amount * (1 + VAT_RATE_DOMESTIC / 100));
 }
 
-function provisionOf(tariffNoVat: number, markupPct: number): number {
-  const resolved = resolveAmount({ kind: "tariff_plus_markup", markupPct }, tariffNoVat);
-  // tariff_plus_markup всегда разрешимо при положительном tariffBase; на всякий случай — фолбэк.
-  return resolved.amount ?? tariffNoVat;
-}
-
 function buildCell(
-  data: N8TariffData,
+  n8Data: N8TariffData,
+  invData: InventoryTariffData,
   distKm: number,
   capacityT: number,
   innovative: boolean,
   representativeCount: number,
-  markupPct: number,
+  ownerCoeff: number,
 ): MatrixCell {
   const wagon = computeWagonN8(
     { wagonNo: "1", capacityT, innovative },
-    data,
+    n8Data,
     distKm,
     representativeCount,
   );
   const tariffNoVat = wagon.tariffRub;
-  const provisionNoVat = provisionOf(tariffNoVat, markupPct);
+
+  const inv = computeInventoryPV(capacityT, distKm, representativeCount, invData);
+  const inventoryNoVat = inv.inventoryNoVat;
+  const provisionNoVat = Math.round(inventoryNoVat * ownerCoeff);
+
   return {
     tariffNoVat,
-    provisionNoVat,
     tariffWithVat: withVat(tariffNoVat),
+    inventoryNoVat,
+    inventoryWithVat: withVat(inventoryNoVat),
+    provisionNoVat,
     provisionWithVat: withVat(provisionNoVat),
   };
 }
 
 /**
  * ЧИСТАЯ часть: матрица 5 групп × {обычный, инновационный} на готовом расстоянии.
- * distKm — тарифное расстояние (из движка ТР-4), НЕ воздушная линия.
+ * distKm — тарифное расстояние (из движка ТР-4).
  */
 export function buildMatrixCells(
   distKm: number,
-  data: N8TariffData,
+  n8Data: N8TariffData,
+  invData: InventoryTariffData,
   classicCapacityT: number,
   innovativeCapacityT: number,
-  markupPct: number,
+  ownerCoeff: number,
 ): MatrixRow[] {
   return BANDS.map((b) => ({
     band: b.band,
     bandLabel: b.label,
     representativeCount: b.representativeCount,
-    classic: buildCell(data, distKm, classicCapacityT, false, b.representativeCount, markupPct),
-    innovative: buildCell(
-      data,
-      distKm,
-      innovativeCapacityT,
-      true,
-      b.representativeCount,
-      markupPct,
-    ),
+    classic: buildCell(n8Data, invData, distKm, classicCapacityT, false, b.representativeCount, ownerCoeff),
+    innovative: buildCell(n8Data, invData, distKm, innovativeCapacityT, true, b.representativeCount, ownerCoeff),
   }));
 }
 
@@ -168,7 +162,7 @@ export async function computeQuoteMatrix(input: MatrixInput): Promise<MatrixResu
   const etsngCode = (input.etsngCode ?? DEFAULT_ETSNG_CODE).trim();
   const classicCapacityT = input.classicCapacityT ?? DEFAULT_CLASSIC_CAPACITY_T;
   const innovativeCapacityT = input.innovativeCapacityT ?? DEFAULT_INNOVATIVE_CAPACITY_T;
-  const markupPct = input.markupPct ?? DEFAULT_MARKUP_PCT;
+  const ownerCoeff = input.ownerCoeff ?? DEFAULT_OWNER_COEFF;
 
   const dist = await resolveDistance({
     originEsr: input.originEsr,
@@ -189,11 +183,10 @@ export async function computeQuoteMatrix(input: MatrixInput): Promise<MatrixResu
     etsngName,
     classicCapacityT,
     innovativeCapacityT,
-    markupPct,
+    ownerCoeff,
     vatRate: VAT_RATE_DOMESTIC,
   };
 
-  // ── Scope guard (повторяем контур computeRzdQuote) ──────────────────────────
   const outOfScope: string[] = [];
   if (isForeignEsr(input.originEsr) || isForeignEsr(input.destEsr)) {
     outOfScope.push(
@@ -226,9 +219,10 @@ export async function computeQuoteMatrix(input: MatrixInput): Promise<MatrixResu
   const rows = buildMatrixCells(
     dist.km,
     loadN8TariffData(),
+    loadInventoryTariffData(),
     classicCapacityT,
     innovativeCapacityT,
-    markupPct,
+    ownerCoeff,
   );
 
   const confidence: "green" | "yellow" | "red" =
