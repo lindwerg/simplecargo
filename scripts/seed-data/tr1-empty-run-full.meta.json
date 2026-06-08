@@ -1,0 +1,51 @@
+{
+  "dataset": "TR-1 2026 — порожний пробег собств./аренд. вагонов на своих осях (Тарифные схемы N25, N25(1), N26, N26(1), N27, N28, N29; за один вагон, в рублях), Приложение N 2",
+  "source": "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-2/tarify-na-perevozki-po-infrastrukture/",
+  "fetchedAt": "2026-06-07",
+  "verifiedAt": "2026-06-07",
+  "verifyNote": "All 7 schemes cross-checked against sudact.ru for first 8 belts — exact matches: N25=[27,107,174,241,308,375,442,509], N25(1)=[18,71,115,159,203,248,292,336], N26=[31,124,201,279,356,433,511,588], N26(1)=[20,82,133,184,235,286,337,388], N27=[37,146,238,329,421,512,604,695], N28=[41,162,264,365,467,568,670,771], N29=[46,185,300,416,532,647,763,878]. Re-exported from tr1-empty-run.json[rows].",
+  "schemeNote": "TR-1 2026 organizes empty run by SCHEME (wagon type), NOT by axle count. axles=4 for universal 4-axle (N25,N25(1),N26,N26(1),N27); axles=null for N28 (locos/cranes/oversized) and N29 (passenger/EMU/DMU) where it does not apply. Standard own полувагон empty return = scheme N25.",
+  "rateNote": "rateRub = ЗА ОДИН ВАГОН (per wagon), без НДС, ALREADY 2026-indexed. Apply порожний надбавка ×1,1 (Приказ ФАС 999/24, действ. с 2025-01-01) ON TOP for own/rented empty return.",
+  "unitContradictionNote": "TARIFF_FILL_PLAN item 2 hypothesised these N25 values are ЗА ОСЬ (per AXLE) and that the engine should multiply rate×осность (would 4× a 4-axle empty leg). VERIFIED ON DISK this is NOT the case: (a) the source export tr1-empty-run.json[_meta].sources + .rateNote both transcribe Приложение N2 as 'за вагон'; (b) verifyNote above cross-checked N25=[27,107,174,241,308,375,442,509] byte-for-byte against sudact.ru as PER-WAGON belt values; (c) the production engine (src/lib/tariff/computeTariff.ts:252 'emptyRun = er.rateRub'; src/lib/tariff/schemeResolve.ts snapEmptyRun) returns rateRub directly and does NOT multiply by axles. Engine + seed data + source transcription are MUTUALLY CONSISTENT at per-wagon. Flipping this note to 'за ось' WITHOUT a real own-ПВ порожний-return квитанция would 4× every own-wagon empty leg with no oracle backing and contradict the verified belt values — so per the safety gate (do NOT 4×-change a number a passing test asserts without updating the test WITH rationale) the per-wagon reading is KEPT. NEEDS-DATA to resolve definitively: one real own-ПВ порожний-return квитанция (goldenUniversal Scenario 4 only asserts emptyRun>0, not an exact ₽, so the empty leg is currently unvalidated by any ruble anchor).",
+  "beltNote": "Distance belts: 5km in short range, widening to ~200km at long range. 127 belts per scheme, 0-11900 km.",
+  "schemeMeta": {
+    "25": {
+      "axles": 4,
+      "desc": "Универсальные крытые, полувагоны, спец.вагоны/цистерны (кроме 25(1),26-29) — 4-осные"
+    },
+    "26": {
+      "axles": 4,
+      "desc": "Цистерны для сжиж.газов тара>7,5т/ось, битумовозы, платформы ≥19.6м для контейнеров, изотермические"
+    },
+    "27": {
+      "axles": 4,
+      "desc": "Полувагон для щепы, 2-ярус. платформа авто, платформы ≥19.6м лесоматериалы/длинномер, автомобилевоз, ЦМГВ"
+    },
+    "28": {
+      "axles": null,
+      "desc": "Локомотивы, тендеры, краны, путевые машины, вагоны >25м"
+    },
+    "29": {
+      "axles": null,
+      "desc": "Вагоны пассажирские, электро-/дизель-поездов"
+    },
+    "25(1)": {
+      "axles": 4,
+      "desc": "Универсальные платформы и полувагоны <19.6м, спец.платформы лесоматериалов <19.6м, спец.вагоны <19.6м после контейнерных отправок"
+    },
+    "26(1)": {
+      "axles": 4,
+      "desc": "Платформы ≥19.6м для контейнеров/колесной техники после контейнерных отправок"
+    }
+  },
+  "schemes": [
+    "25",
+    "25(1)",
+    "26",
+    "26(1)",
+    "27",
+    "28",
+    "29"
+  ],
+  "rowCount": 889
+}

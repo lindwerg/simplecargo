@@ -1,0 +1,71 @@
+[
+  {
+    "_meta": {
+      "purpose": "Derived, engine-ready узел fixed-distance adder rows for ТР-4. Each row is a {hubName, fromLine, toLine, km, rule, source, confidence} tuple. fromLine/toLine use '*' as a wildcard meaning 'any line'. Rows are evaluated most-specific-first: a same-line exclusion row (fromLine == toLine literal) overrides the wildcard cross-line row. Derived from scripts/seed-data/hub-distances.json + ТР-4 primary text; does NOT modify the base file.",
+      "evaluation": "Given a route entering a узел on line L_in and leaving on line L_out: if L_in == L_out apply the same-line exclusion row (km 0); else apply the cross-line wildcard row (km 54 freight / 25). Moscow passenger/baggage uses the 20 km variant. Adder is class-independent and applied to tariff distance BEFORE the tariff formula.",
+      "exhaustiveness": "EXACTLY TWO узлы carry fixed adders in ТР-4: Московский узел (54 km) and Санкт-Петербургский узел (25 km). No third узел exists. Калининград/Теткино are route-specific особые расстояния, not узел adders, and are excluded.",
+      "killsFittedLever": false,
+      "fittedLeversTouched": "none (all 3 fitted levers are K4/coefficient; this узел rule is class-independent distance, applied before the tariff formula)"
+    }
+  },
+  {
+    "hubName": "Московский узел",
+    "esr": "000015",
+    "fromLine": "*",
+    "toLine": "*",
+    "km": 54,
+    "rule": "cross-line freight: entry line != exit line — add fixed 54 km внутриузловое расстояние to tariff distance",
+    "verbatim": "Расстояния между станциями, входящими в обобщенные транзитные пункты «Московский узел» и «Санкт-Петербургский узел», приняты фиксированными и равны соответственно 54 км и 25 км.",
+    "appliesToCargoClasses": "all",
+    "source": "consultant.ru LAW_63243 (Указания по определению тарифных расстояний); garant.ru 5367457 (Приказ МПС 15.07.2003 N55); docs.cntd.ru 901918296",
+    "confidence": "sourced-official"
+  },
+  {
+    "hubName": "Московский узел",
+    "esr": "000015",
+    "fromLine": "SAME",
+    "toLine": "SAME",
+    "km": 0,
+    "rule": "same-line exclusion freight: груз отправляется/прибывает по той же линии узла, по которой он следует при выходе/входе — 54 км NOT added",
+    "verbatim": "Если груз отправляется со станций той же линии Московского узла, по которой он будет следовать при выходе из него, или прибывает в узел на станции той же линии, по которой он следовал до Московского узла, к тарифному расстоянию между пунктами отправления и назначения не прибавляется 54 км, а при перевозке пассажиров, багажа и грузобагажа - 20 км.",
+    "appliesToCargoClasses": "all",
+    "source": "consultant.ru LAW_63243; garant.ru 5367457; docs.cntd.ru 901918296",
+    "confidence": "sourced-official"
+  },
+  {
+    "hubName": "Московский узел",
+    "esr": "000015",
+    "fromLine": "*",
+    "toLine": "*",
+    "km": 20,
+    "rule": "cross-line passenger/baggage/грузобагаж variant: add 20 km instead of 54 km (Moscow only)",
+    "verbatim": "...а при перевозке пассажиров, багажа и грузобагажа - 20 км.",
+    "appliesToCargoClasses": "passenger/baggage/грузобагаж only (NOT freight гружёные вагоны)",
+    "source": "consultant.ru LAW_63243; garant.ru 5367457; docs.cntd.ru 901918296",
+    "confidence": "sourced-official"
+  },
+  {
+    "hubName": "Санкт-Петербургский узел",
+    "esr": "000023",
+    "fromLine": "*",
+    "toLine": "*",
+    "km": 25,
+    "rule": "cross-line: entry line != exit line — add fixed 25 km (same value for freight and passenger/baggage)",
+    "verbatim": "Фиксированное расстояние Санкт-Петербургского узла при исчислении плат за перевозку пассажиров, багажа, грузобагажа, грузов, следующих с пассажирскими поездами, и грузов, перевозимых большой и грузовой скоростью, установлено 25 км.",
+    "appliesToCargoClasses": "all",
+    "source": "consultant.ru LAW_63243; garant.ru 5367457; docs.cntd.ru 901918296",
+    "confidence": "sourced-official"
+  },
+  {
+    "hubName": "Санкт-Петербургский узел",
+    "esr": "000023",
+    "fromLine": "SAME",
+    "toLine": "SAME",
+    "km": 0,
+    "rule": "same-line exclusion: отправление/прибытие по той же линии узла — 25 км NOT added",
+    "verbatim": "Если грузы, багаж и пассажиры отправляются со станций той линии, по которой они будут следовать по выходу из Санкт-Петербургского узла или прибывать на станцию той линии, по которой они следовали в Санкт-Петербургский узел, к расчету принимается тарифное расстояние без прибавления 25 км.",
+    "appliesToCargoClasses": "all",
+    "source": "consultant.ru LAW_63243; garant.ru 5367457; docs.cntd.ru 901918296",
+    "confidence": "sourced-official"
+  }
+]

@@ -1,0 +1,206 @@
+{
+  "_meta": {
+    "dataset": "ТР-4 §2 особые / кратчайшие расстояния — pair overrides and routing-rule overrides",
+    "purpose": "Overrides that REPLACE the computed l1+L_K+l3 sum (ТР-4) for specific routes. If a route matches one of these, the computed graph distance is wrong and must be replaced/adjusted per the rule below.",
+    "date": "2026-06-07",
+    "headline_finding": "The «особые/кратчайшие расстояния» regime is RULE-BASED, NOT a flat (a,b,km) pair table. The governing legal acts (Приказ Минтранса РФ от 21.12.2009 №245, superseded 2026-relevant by Приказ Минтранса РФ от 12.09.2024 №313 'Порядок определения кратчайшего расстояния') contain exactly ONE explicit fixed-km override (Moscow ring = 54 км); every other override is a mandated-routing / section-include-exclude rule, not a tabulated distance. There is no published flat 'special distances' km matrix to scrape — Книга 3 itself is already the 'кратчайшее расстояние без обходных и соединительных ветвей' table, and these orders are the named exceptions to it.",
+    "authoritative_sources": [
+      {
+        "id": "MINTRANS_313_2024",
+        "title": "Приказ Минтранса России от 12.09.2024 №313 «Об установлении Порядка определения кратчайшего расстояния, на которое осуществляются перевозки грузов железнодорожным транспортом» (Минюст 17.10.2024)",
+        "status": "CURRENT / in force — this is the active 'особые расстояния' rule set as of 2026; supersedes №245",
+        "consultant": "https://www.consultant.ru/document/cons_doc_LAW_488446/2bfad742e63dbc62cd7b59cc8c26919fa06053b8/",
+        "garant": "https://base.garant.ru/410566678/53f89421bbdaf741eb2d1ecc4ddb4c33/",
+        "official": "http://publication.pravo.gov.ru/document/0001202410180001"
+      },
+      {
+        "id": "MINTRANS_245_2009",
+        "title": "Приказ Минтранса России от 21.12.2009 №245 (ред. от 11.10.2019) «Об особенностях определения кратчайших расстояний при перевозке грузов по отдельным участкам российских железных дорог» (Минюст 31.12.2009 №15908)",
+        "status": "PREDECESSOR — superseded by №313, but text is fully readable and the override SUBSTANCE largely carried forward; used here to verify station-level routing and the 54 км value",
+        "consultant": "https://www.consultant.ru/document/cons_doc_LAW_96012/",
+        "garant": "https://base.garant.ru/197093/",
+        "rg": "https://rg.ru/documents/2010/01/12/mintrans-dok.html"
+      },
+      {
+        "id": "TR4_KNIGA2_GENERAL",
+        "title": "ТР-4 Книга 2 Часть 1, Общие положения / Раздел определения тарифных расстояний",
+        "consultant_kniga1": "https://www.consultant.ru/document/cons_doc_LAW_63243/",
+        "tr4info": "https://tr4.info/rp/general/",
+        "studfile": "https://studfile.net/preview/10977924/page:2/"
+      }
+    ],
+    "verification": "Same 54 км value and the same set of named routing exceptions reproduced across 3 independent mirrors (consultant.ru LAW_96012, consultant.ru LAW_488446, base.garant.ru/197093). In §245 the 54 км is worded as the 'Московский узел' generalized point; in current §313 it is worded as 'Малое кольцо Московской ж.д.' (16 stations) — same physical override, updated wording. NO other fixed-km override exists in either act.",
+    "spb_note": "CORRECTION (was reversed): the '+25 км Санкт-Петербургский узел' IS sourced-official — ТР-4 Книга 1 / Указания по определению тарифных расстояний (consultant.ru LAW_63243; Приказ МПС от 15.07.2003 N55, garant.ru 5367457; docs.cntd.ru 901918296). The generalized транзитные пункты «Московский узел» и «Санкт-Петербургский узел» carry FIXED внутриузловые distances of 54 км and 25 км respectively, BOTH with a same-radial-line exclusion (no adder when entry line == exit line; Moscow passenger/baggage variant = 20 км). These are узел ADDERS (applied before the tariff formula), NOT flat (a,b,km) station-pair overrides — they are seeded in hub-distances.json and consumed by computeDistance via the узел path (Gap 6), so the СПб 25 км IS seeded there. The earlier note ('do NOT seed — unsourced') was WRONG and is hereby reversed. The §313/§245 Минтранс orders govern the route-based особые расстояния (routing_rules below); the fixed узел км come from ТР-4 Книга 1 LAW_63243, a separate authoritative source.",
+    "completeness": "COMPLETE. The flat (ESR,ESR,km) §2 pair-override matrix does NOT exist as a tabulated free source (Gap 7), so 'overrides' is intentionally EMPTY but now correctly ESR-keyed and reachable by the engine. The узел fixed-km adders (Moscow 54 / SPb 25) are NOT pair overrides — they live in hub-distances.json (see uzel_adders_note). The rule-based portion is captured as precise rules below (not as expanded station pairs, because the acts themselves do not tabulate km for them — they mandate a routing that re-selects which Книга-1/2/3 segments to sum). Expanding every rule into explicit ESR pairs would require per-route км computation against Книга 1/3 and is NOT something the source provides as a table.",
+    "schema": "'overrides' = flat pair-level km overrides, ESR-KEYED ({a,b,km,reason} where a,b are 6-digit station ESR codes matched directly against originEsr/destEsr by computeDistance.ts §2). 'routing_rules' = the rule-based overrides that change WHICH segments get summed (engine applies them as routing constraints, not a km lookup). 'uzel_adders_note' documents the узел fixed-distance adders, which are NOT station-pair overrides and live in hub-distances.json (consumed via the узел path, Gap 6).",
+    "overrides_keying_fix": "PREVIOUSLY the single 'overrides' row stored the узел NAME «Московский узел …» in a/b, but computeDistance.ts §2 matches s.a===originEsr (a 6-digit ESR), so the branch was permanently UNREACHABLE (a name never equals an ESR). FIX: 'overrides' is now strictly ESR-keyed and reachable. The Moscow 54 км value was never a station-pair override at all — it is a узел adder (applied before the tariff formula) and belongs in hub-distances.json, not here; it has been moved out of 'overrides' into 'uzel_adders_note'. Per Gap 7 (TARIFF_FILL_PLAN), no flat (ESR,ESR,km) §2 matrix exists in the free sources, so 'overrides' is intentionally empty but now correctly typed/reachable — real ESR pairs can be appended and will be honored immediately."
+  },
+
+  "uzel_adders_note": {
+    "_comment": "Узел fixed-distance ADDERS (NOT station-pair overrides). Applied to the tariff distance BEFORE the tariff formula, with a same-radial-line exclusion. Seeded in hub-distances.json and consumed by computeDistance via the узел backbone path (Gap 6). Listed here only for cross-reference; do NOT put these in 'overrides' (they are not (ESR,ESR,km) pairs).",
+    "moscow_uzel_km": 54,
+    "moscow_passenger_baggage_km": 20,
+    "spb_uzel_km": 25,
+    "same_radial_line_exclusion": "If the wagon enters AND exits the узел on the same radial line, the +54/+25 км is NOT added (Moscow passenger/baggage variant = 20 км). Implemented in computeDistance.ts via hub.lines membership.",
+    "legal_ref": "ТР-4 Книга 1 / Указания по определению тарифных расстояний — consultant.ru LAW_63243; Приказ МПС от 15.07.2003 N55 (garant.ru 5367457); docs.cntd.ru 901918296",
+    "applies_to": "cross-radial-line transit aggregated to the «Московский узел» / «Санкт-Петербургский узел» generalized ТП; excluded on same radial line (see routing_rules SAME_RADIAL_LINE)"
+  },
+
+  "overrides": [],
+
+  "routing_rules": [
+    {
+      "id": "MSK_NODE_54KM",
+      "para_313": 23,
+      "para_245": 20,
+      "scope": "Москва — Малое кольцо / Московский узел",
+      "rule": "Between stations aggregated under the generalized «Московский узел» point, take FIXED 54 км. This is the 'overrides' row above; listed here too because it is conditional on the cross-radial-line case.",
+      "fixed_km": 54,
+      "condition": "applies to cross-line transit through the Moscow node; excluded when same-radial-line (see SAME_RADIAL_LINE)"
+    },
+    {
+      "id": "BMK_RING_ACTUAL",
+      "para_313": 19,
+      "para_245": 17,
+      "scope": "Большое Московское кольцо (БМК / БМО)",
+      "rule": "For freight TO/FROM stations located ON the Большое Московское кольцо, the shortest distance INCLUDES the actual distance of travel along the ring (фактическое расстояние следования по кольцу). БМК stations include: Воскресенск, Непецино, Михнево, Детково, Жилёво, Столбовая, Кресты, Бекасово-Сорт., Бекасово I, Акулово, Кубинка I/II, Манихино II, Лукино, Поварово II, Белый Раст, Икша, Яхрома, Дмитров, Костино, Желтиково, Наугольный, Бужаниново, Арсаки, Александров, Бельково, Киржач, Поточино, Орехово-Зуево, Дулёво, Давыдово, Куровская, Егорьевск I.",
+      "fixed_km": null,
+      "condition": "destination or origin is a БМК station; distance = leg + actual-ring-segment + leg (no flat override, recompute via ring)"
+    },
+    {
+      "id": "BMK_CROSS_RING_TRANSIT",
+      "para_313": 20,
+      "para_245": 18,
+      "scope": "Большое Московское кольцо — transit between stations on DIFFERENT radial lines inside the ring",
+      "rule": "For stations inside the ring on different radial lines, distance = origin → ring entry station → ring distance → ring exit station → destination, routed through the specific entry/exit junctions enumerated in the order's subsections (per-radial-line mapping). Re-selects segments; not a flat km.",
+      "fixed_km": null,
+      "condition": "origin and destination on different radial lines within БМК"
+    },
+    {
+      "id": "SAME_RADIAL_LINE",
+      "para_313": 21,
+      "para_245": 18,
+      "scope": "Москва — same radial line within БМК",
+      "rule": "If origin and destination lie on ONE radial line, the direct shortest distance between them is taken WITHOUT attaching to БМК входные/выходные stations and WITHOUT the 54 км node override (без учёта привязки к входным (выходным) станциям). This is the same-line exclusion noted in TARIFF_CALCULATOR.md §3.1.",
+      "fixed_km": null,
+      "condition": "exclusion of the 54 км / ring detour when same radial line"
+    },
+    {
+      "id": "FAR_EAST_DIRECTION",
+      "para_313": 3,
+      "para_245": 1,
+      "scope": "Siberia/Caucasus → Far East",
+      "rule": "Shipments to Far Eastern stations are routed (and distance summed) via the direction through Тайшет — Иркутск — Чита I — Бамовская — Волочаевка I (and Лена — Хани — Ургал I for the BAM corridor). The computed distance must follow this mandated direction, not a shorter graph path.",
+      "fixed_km": null,
+      "condition": "Far East destination"
+    },
+    {
+      "id": "NORTH_CAUCASUS_KRIVENKOVSKAYA_ENEM",
+      "para_313": "5-6",
+      "para_245": 3,
+      "scope": "Северо-Кавказская ж.д.",
+      "rule": "Section Кривенковская — Энем I is INCLUDED in the distance when BOTH origin and destination are within the North Caucasus railway; EXCLUDED when either terminal is outside it.",
+      "fixed_km": null,
+      "condition": "both endpoints on СКЖД → include section; else exclude"
+    },
+    {
+      "id": "ZHURAVKA_MILLEROVO",
+      "para_313": "see §313 eastern-corridor section",
+      "para_245": 22,
+      "scope": "Юго-Восточная → Северо-Кавказская (обход Украины)",
+      "rule": "For the участок Журавка (ЮВЖД) — Миллерово (СКЖД), the shortest distance is determined WITH the distance of the route Журавка — Зайцевка (ЮВЖД) — Кутейниково (СКЖД) — Миллерово (с учётом расстояния участка). Mandated routing replaces the otherwise-shorter (cross-border) graph path.",
+      "fixed_km": null,
+      "condition": "route crosses the Журавка–Миллерово corridor"
+    },
+    {
+      "id": "LIKHAYA_MOROZOVSKAYA_TSIMLYANSKAYA",
+      "para_313": "see §313",
+      "para_245": 23,
+      "scope": "Северо-Кавказская / Приволжская",
+      "rule": "For участки Лихая (СКЖД) — Обливская (ПривЖД) and Морозовская — Цимлянская (СКЖД), distance via Морозовская — Цимлянская — Куберле is counted ONLY IF the resulting transit distance does not exceed the кратчайшее расстояние per ТР-4. Conditional inclusion based on whether the routed distance is ≤ tariff maximum.",
+      "fixed_km": null,
+      "condition": "include the section only if routed distance ≤ ТР-4 shortest"
+    },
+    {
+      "id": "LOSEVO_KAMENNOGORSK",
+      "para_313": 28,
+      "para_245": 25,
+      "scope": "Октябрьская ж.д. — Карельский перешеек / Выборг",
+      "rule": "Section Лосево I — Каменногорск is INCLUDED in the distance for destinations Каменногорск / Выборг / Пихтовая / Высоцк / Светогорск / Бусловская; EXCLUDED (bypass routing) otherwise.",
+      "fixed_km": null,
+      "condition": "include for the named Vyborg-area destinations; else exclude"
+    },
+    {
+      "id": "LEDMOZERO_KOCHKOMA",
+      "para_313": 29,
+      "para_245": null,
+      "scope": "Октябрьская ж.д. — Костомукша / Finland",
+      "rule": "Section Ледмозеро II — Кочкома is INCLUDED for Костомукша and Finnish-railway destinations; EXCLUDED for bypass routes.",
+      "fixed_km": null,
+      "condition": "include for Kostomuksha/Finland; else exclude"
+    },
+    {
+      "id": "OCTOBER_RAILWAY_SPB_CORRIDORS",
+      "para_313": "11-17",
+      "para_245": "4-15",
+      "scope": "Октябрьская ж.д. / Санкт-Петербургский узел",
+      "rule": "A large family of per-origin-region mandated routings around the СПб/Тверь/Бологое node: sections Ховрино–Бологое, Бологое–Чудово, Овинище I–Кабожа–Неболчи, Новосокольники–Дно, Дно–Батецкая, Тверь–Осеченка, Лихославль–Торжок–Селижарово, Дорошиха–Васильевский Мох, Редкино–Завидово, etc. are INCLUDED/EXCLUDED and routed via specific directions (e.g. Мурманск/Петрозаводск via Маленьга–Сонково; СПб via Дно–Бологое) depending on origin region and destination. No flat km — they re-select which Книга-1 segments sum. СПб узел has NO fixed-km override (contrary to the '+25 км' note in the design doc).",
+      "fixed_km": null,
+      "condition": "origin-region- and destination-dependent routing; engine must follow mandated direction"
+    },
+    {
+      "id": "KALININGRAD",
+      "para_313": 7,
+      "para_245": null,
+      "scope": "Калининградская ж.д.",
+      "rule": "Distance = actual routing within Kaliningrad railway + shortest path beyond its boundary to the foreign-railway handover point (segmented at boundary).",
+      "fixed_km": null,
+      "condition": "Kaliningrad enclave routing"
+    },
+    {
+      "id": "SAKHALIN",
+      "para_313": 8,
+      "para_245": null,
+      "scope": "Сахалинская ж.д.",
+      "rule": "Distance computed SEPARATELY for the island segment and the mainland segment (no through-summation across the strait as a single graph edge).",
+      "fixed_km": null,
+      "condition": "Sakhalin island/mainland split"
+    },
+    {
+      "id": "CRIMEA_BRIDGE_AND_FERRY",
+      "para_313": "30-31",
+      "para_245": null,
+      "scope": "Крымская ж.д.",
+      "rule": "Crimean bridge route via Вышестеблиевская → Багерово; ferry route via Кавказ and Керчь/Симферополь ports. Mandated routing for the Crimea crossing.",
+      "fixed_km": null,
+      "condition": "Crimea destination/origin"
+    },
+    {
+      "id": "EASTERN_CORRIDOR_NEW_REGIONS",
+      "para_313": "32-34",
+      "para_245": null,
+      "scope": "Донбасс / Луганск / Херсон branches",
+      "rule": "Complex routing via Успенская / Гуково / Выстрел through multiple operators (Донецкая, Луганская, Херсонская branches); distance based on фактическое расстояние перевозки (actual travelled distance).",
+      "fixed_km": null,
+      "condition": "new-regions corridor; use actual distance"
+    },
+    {
+      "id": "ALTERNATIVE_ROUTE_ACTUAL",
+      "para_313": 24,
+      "para_245": 21,
+      "scope": "All railways",
+      "rule": "For shipments via alternative routes whose distance does NOT exceed the established shortest distance, the ACTUAL travelled distance is taken as the shortest. (General catch-all: a real shorter actual route wins over the tabulated one.)",
+      "fixed_km": null,
+      "condition": "actual route ≤ tabulated shortest → use actual"
+    },
+    {
+      "id": "REPAIR_PERIOD",
+      "para_313": 18,
+      "para_245": 16,
+      "scope": "All railways — temporary",
+      "rule": "During planned repair/reconstruction of infrastructure, shortest distances follow the routes announced by the infrastructure owner (по объявляемым владельцем инфраструктуры маршрутам), if agreed with the shipper. Temporary, not a permanent override; do NOT seed as a permanent edge.",
+      "fixed_km": null,
+      "condition": "temporary, owner-announced; out of scope for static seed"
+    }
+  ]
+}

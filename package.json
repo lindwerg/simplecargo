@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build && rm -rf .next/standalone/public .next/standalone/.next/static && cp -r public .next/standalone/public && cp -r .next/static .next/standalone/.next/static",
+    "build": "next build && rm -rf .next/standalone/public .next/standalone/.next/static && cp -r public .next/standalone/public && cp -r .next/static .next/standalone/.next/static && mkdir -p .next/standalone/scripts && cp -r scripts/seed-data .next/standalone/scripts/seed-data",
     "start": "node .next/standalone/server.js",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
@@ -21,7 +21,10 @@
     "seed:known-emails": "tsx scripts/seed-known-emails.ts",
     "export:counterparties": "tsx scripts/export-counterparties.ts",
     "icons:generate": "tsx scripts/generate-icons.ts",
-    "contrast:audit": "tsx scripts/contrast-audit.ts"
+    "contrast:audit": "tsx scripts/contrast-audit.ts",
+    "db:seed:graph": "tsx scripts/seed/tariffGraph.ts",
+    "db:seed:etsng": "tsx scripts/seed/etsng.ts",
+    "db:seed:tariff": "tsx scripts/seed/tariffSchemes.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1063.0",

@@ -1,0 +1,108 @@
+{
+  "_meta": {
+    "dataset": "Reference quotes template — golden fixtures for the convergence-to-zero validation harness",
+    "purpose": "The operator fills this from REAL РЖД квитанции (ГУ-27у тарифные отметки) and/or RailTarif runs. Each record is a golden route the engine must reproduce to EXACTLY 0₽ diff. This template defines the field contract; populate `records[]` and DELETE the example rows (marked _isExample:true).",
+    "howToUse": [
+      "1. Open a real РЖД квитанция (ГУ-27у) or run the same route in RailTarif/РЖД calc.",
+      "2. Copy the numbers VERBATIM — never OCR-guess, never round. A wrong digit poisons the golden.",
+      "3. Fill one record per route. For групповая/маршрутная отправка also fill ref.perWagon (the per-wagon tariff tiers) — the harness diffs per-wagon, then the sum.",
+      "4. Set source to 'квитанция' (deterministic, every-commit golden, Layer A) or 'railtariff' (live cross-check, Layer B).",
+      "5. refTariffRub_noVat is the load-bearing number the engine must hit to 0₽. refTariffRub_withVat is a cross-check only (НДС is applied last and externally).",
+      "6. If you do not know whether the квитанция «Взыскано» is with or without НДС, fill BOTH the value AND vatStatus:'unknown' and add a note — the harness will flag it YELLOW until disambiguated, never silently assume."
+    ],
+    "fieldContract": {
+      "origin": "{ name: station name as on квитанция, esr: 6-digit ЕСР код, road?: дорога abbrev } — origin station of the loaded leg",
+      "dest": "{ name, esr, road? } — destination station of the loaded leg",
+      "etsngCode": "6-digit ЕТСНГ code of the cargo (drives class + МВН). e.g. '232431' = щебень н.п.",
+      "freightClass": "1 | 2 | 3 — tariff class for the etsngCode (cross-check vs etsng-classes.json; нерудные = 1)",
+      "wagonType": "canonical wagon code: 'ПВ' полувагон | 'ПЛ' платформа | 'КР' крытый | 'ЦС' цистерна | ... (see tr1-scheme-classifier-extended.json)",
+      "ownership": "'own' (собственный/арендованный — И-схема N8 + порожний N25, БЕЗ В) | 'rzd' (общий/инвентарный парк — И + В)",
+      "shipmentType": "'wagon' повагонная | 'group' групповая | 'route' маршрутная — affects the отправочный coefficient (K4)",
+      "weightTons": "chargeable weight basis. For per-wagon records this is the TOTAL across all wagons; per-wagon net mass goes in ref.perWagon[].netT",
+      "asOfDate": "YYYY-MM-DD — date the tariff was computed/issued. Drives indexation chronology selection.",
+      "traffic": "'domestic' (НДС 22%) | 'export' | 'import' (often НДС 0%)",
+      "refDistanceKm": "тарифное расстояние in km from the квитанция/RailTarif (integer). The distance engine must reproduce this EXACTLY.",
+      "refTariffRub_noVat": "провозная плата БЕЗ НДС, per the source, in whole ₽. THE primary 0₽-diff target. null if only the с-НДС figure is known.",
+      "refTariffRub_withVat": "провозная плата С НДС, in whole ₽. Cross-check only. null if not on the source.",
+      "vatStatus": "'noVat' | 'withVat' | 'unknown' — what refTariffRub_* actually represents on the source document (квитанция тарифные отметки are usually без НДС but VERIFY).",
+      "source": "'квитанция' | 'railtariff'",
+      "ref.scheme": "(optional) the tariff scheme the source used, e.g. '8' (N8). Helps localize a scheme-classifier divergence.",
+      "ref.tariffCoeff": "(optional) the scenario coefficient printed/implied on the квитанция, e.g. 0.6999. KEY: квитанции show this is FIXED per scenario (own ПВ class-1 ГО), NOT distance-dependent — pin it.",
+      "ref.perWagon": "(optional, групповая/маршрутная) [{ wagonNo, capacityT, netT, tariffRub }] — per-wagon tariff. Harness diffs each wagon's tariff by its weight tier, then the sum.",
+      "notes": "free-text: anything that helps localize a divergence (узел crossing, special-distance corridor, weight-tier boundary observed, НДС ambiguity, ...)"
+    },
+    "convergenceContract": "GREEN only when BOTH refDistanceKm AND refTariffRub_noVat are reproduced to exactly 0 (distance) / 0₽ (tariff). For per-wagon records, EVERY wagon tariff must match AND their sum must equal refTariffRub_noVat. Any non-zero diff stays YELLOW with the localized cause from VALIDATION_PLAN.md decision tree.",
+    "exampleNote": "The rows below with _isExample:true use the project's golden anchors (Серпухов→Ревякино 74km; Москва-Южный Порт→Печора 1850km). Distances are real ТР-4 worked-example anchors; the ₽ values are PLACEHOLDERS (___FILL___) — replace the whole example block with real квитанции. See reference-quotes.json (already populated) for two fully-verified real квитанции (ЭФ164189, ЭТ201459) to use as the working golden set."
+  },
+  "records": [
+    {
+      "_isExample": true,
+      "_replaceMe": "EXAMPLE — golden distance anchor #1. Replace ₽ with a real квитанция for this or any route.",
+      "origin": { "name": "Серпухов", "esr": "190205", "road": "Моск" },
+      "dest": { "name": "Ревякино", "esr": "210606", "road": "Моск" },
+      "etsngCode": "232395",
+      "freightClass": 1,
+      "wagonType": "ПВ",
+      "ownership": "own",
+      "shipmentType": "wagon",
+      "weightTons": 70,
+      "asOfDate": "2026-01-01",
+      "traffic": "domestic",
+      "refDistanceKm": 74,
+      "refTariffRub_noVat": null,
+      "refTariffRub_withVat": null,
+      "vatStatus": "unknown",
+      "source": "квитанция",
+      "ref": { "scheme": "8", "tariffCoeff": null, "perWagon": [] },
+      "notes": "DISTANCE GOLDEN: 74 km is the CONFIRMED ТР-4 same-section subtraction anchor (Столбовая 109-35=74; Тула I-Курская 95-21=74). Reproducible offline against kniga1-sections.json. ₽ target is ___FILL___ from a real квитанция."
+    },
+    {
+      "_isExample": true,
+      "_replaceMe": "EXAMPLE — golden distance anchor #2. Replace ₽ with a real квитанция.",
+      "origin": { "name": "Москва-Южный Порт", "esr": "195906", "road": "Моск" },
+      "dest": { "name": "Печора", "esr": "289608", "road": "Сев" },
+      "etsngCode": "232395",
+      "freightClass": 1,
+      "wagonType": "ПВ",
+      "ownership": "own",
+      "shipmentType": "wagon",
+      "weightTons": 70,
+      "asOfDate": "2026-01-01",
+      "traffic": "domestic",
+      "refDistanceKm": 1850,
+      "refTariffRub_noVat": null,
+      "refTariffRub_withVat": null,
+      "vatStatus": "unknown",
+      "source": "квитанция",
+      "ref": { "scheme": "8", "tariffCoeff": null, "perWagon": [] },
+      "notes": "DISTANCE GOLDEN: 1850 km = 1601+249 ТР-4 worked example. Long-haul stress + Moscow узел. Verify the узел 54 km adder fires (cross-line) and the N8 weight×distance grid snaps. ₽ target is ___FILL___."
+    },
+    {
+      "_isExample": true,
+      "_replaceMe": "EXAMPLE — per-wagon групповая template shape. Real worked instance lives in reference-quotes.json (ЭФ164189).",
+      "origin": { "name": "___станция отправления___", "esr": "______", "road": "" },
+      "dest": { "name": "___станция назначения___", "esr": "______", "road": "" },
+      "etsngCode": "232431",
+      "freightClass": 1,
+      "wagonType": "ПВ",
+      "ownership": "own",
+      "shipmentType": "group",
+      "weightTons": 0,
+      "asOfDate": "2026-01-01",
+      "traffic": "domestic",
+      "refDistanceKm": 0,
+      "refTariffRub_noVat": null,
+      "refTariffRub_withVat": null,
+      "vatStatus": "unknown",
+      "source": "квитанция",
+      "ref": {
+        "scheme": "8",
+        "tariffCoeff": 0.6999,
+        "perWagon": [
+          { "wagonNo": "________", "capacityT": 75.0, "netT": 0.0, "tariffRub": 0 }
+        ]
+      },
+      "notes": "PER-WAGON SHAPE: групповая/маршрутная отправка prices per wagon by weight tier, then sums. The harness must match EACH wagon's tariffRub by its (capacityT, netT) tier AND the sum = refTariffRub_noVat. квитанция «Взыскано» = sum of perWagon[].tariffRub. tariffCoeff 0.6999 = own ПВ / class-1 / групповая scenario (FIXED, not distance-dependent — confirmed across ЭФ164189 @2444km and ЭТ201459 @699km)."
+    }
+  ]
+}

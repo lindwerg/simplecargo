@@ -1,0 +1,158 @@
+{
+ "_meta": {
+  "dataset": "TR-1 2026 K1 class coefficient (Табл.2) — VERIFIED VERBATIM from sudact. CORRECTION: the prior 0.739@699 hypothesis was WRONG. Real K1 at 699km = 0.75 (belt 1-1200). At 2444km = 0.68 (belt 2401-2600).",
+  "source": "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-1_1/tablitsa-n-2/",
+  "fetchedAt": "2026-06-07",
+  "verbatim": "1-1200 0,75; 1201-1400 0,74; 1401-1600 0,73; 1601-1800 0,72; 1801-2000 0,71; 2001-2200 0,70; 2201-2400 0,69; 2401-2600 0,68; ... ; 5001 и более 0,55",
+  "note": "This table is IDENTICAL to the existing tr1-class-coeff.json classCoeff. The 31224 calibration gap was NOT a K1 problem (the apparent K1~0.739 was an artifact of the missing/incorrect K4 group and per-model coefficient)."
+ },
+ "classCoeff": [
+  {
+   "class": 1,
+   "distFromKm": 1,
+   "distToKm": 1200,
+   "k1": 0.75
+  },
+  {
+   "class": 1,
+   "distFromKm": 1201,
+   "distToKm": 1400,
+   "k1": 0.74
+  },
+  {
+   "class": 1,
+   "distFromKm": 1401,
+   "distToKm": 1600,
+   "k1": 0.73
+  },
+  {
+   "class": 1,
+   "distFromKm": 1601,
+   "distToKm": 1800,
+   "k1": 0.72
+  },
+  {
+   "class": 1,
+   "distFromKm": 1801,
+   "distToKm": 2000,
+   "k1": 0.71
+  },
+  {
+   "class": 1,
+   "distFromKm": 2001,
+   "distToKm": 2200,
+   "k1": 0.7
+  },
+  {
+   "class": 1,
+   "distFromKm": 2201,
+   "distToKm": 2400,
+   "k1": 0.69
+  },
+  {
+   "class": 1,
+   "distFromKm": 2401,
+   "distToKm": 2600,
+   "k1": 0.68
+  },
+  {
+   "class": 1,
+   "distFromKm": 2601,
+   "distToKm": 2800,
+   "k1": 0.67
+  },
+  {
+   "class": 1,
+   "distFromKm": 2801,
+   "distToKm": 3000,
+   "k1": 0.66
+  },
+  {
+   "class": 1,
+   "distFromKm": 3001,
+   "distToKm": 3200,
+   "k1": 0.65
+  },
+  {
+   "class": 1,
+   "distFromKm": 3201,
+   "distToKm": 3400,
+   "k1": 0.64
+  },
+  {
+   "class": 1,
+   "distFromKm": 3401,
+   "distToKm": 3600,
+   "k1": 0.63
+  },
+  {
+   "class": 1,
+   "distFromKm": 3601,
+   "distToKm": 3800,
+   "k1": 0.62
+  },
+  {
+   "class": 1,
+   "distFromKm": 3801,
+   "distToKm": 4000,
+   "k1": 0.61
+  },
+  {
+   "class": 1,
+   "distFromKm": 4001,
+   "distToKm": 4200,
+   "k1": 0.6
+  },
+  {
+   "class": 1,
+   "distFromKm": 4201,
+   "distToKm": 4400,
+   "k1": 0.59
+  },
+  {
+   "class": 1,
+   "distFromKm": 4401,
+   "distToKm": 4600,
+   "k1": 0.58
+  },
+  {
+   "class": 1,
+   "distFromKm": 4601,
+   "distToKm": 4800,
+   "k1": 0.57
+  },
+  {
+   "class": 1,
+   "distFromKm": 4801,
+   "distToKm": 5000,
+   "k1": 0.56
+  },
+  {
+   "class": 1,
+   "distFromKm": 5001,
+   "distToKm": 999999,
+   "k1": 0.55
+  },
+  {
+   "class": 2,
+   "distFromKm": 0,
+   "distToKm": 999999,
+   "k1": 1.0,
+   "etsngNote": "Все позиции грузов второго тарифного класса"
+  },
+  {
+   "class": 3,
+   "distFromKm": 0,
+   "distToKm": 999999,
+   "k1": 1.74,
+   "etsngNote": "092,093,312-316,321-324,331-333,381,391,411,414,416,454,461,481,483-489,611,693,711-713,721-726,731,732,741,742,751-754,756-758"
+  },
+  {
+   "class": 3,
+   "distFromKm": 0,
+   "distToKm": 999999,
+   "k1": 1.54,
+   "etsngNote": "Остальные позиции третьего класса"
+  }
+ ]
+}

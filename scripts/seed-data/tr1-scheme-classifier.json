@@ -1,0 +1,111 @@
+{
+  "_meta": {
+    "dataset": "TR-1 2026 scheme classifier (Прил.7-equivalent)",
+    "sources": [
+      "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-1_1/tablitsa-n-6/  (Таблица N 6 — универсальные вагоны)",
+      "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-1_1/tablitsa-n-17/ (Таблица N 17 — порожний пробег собственных вагонов)",
+      "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/ii/ (п.18.1.1 — коэффициенты полувагона по классу)"
+    ],
+    "fetchedAt": "2026-06-07",
+    "note": "TR-1 2026 numbers tariff schemes (N8, N25, N25(1), ...). The legacy И*/В* letter codes survive only for общий-парк specialized wagons/cisterns. For own (собственный/арендованный) wagons you pay the infrastructure scheme (loaded) + empty-run scheme (порожний); there is NO В (wagon) component. The В* component is charged ONLY for общий-парк (RZD-owned) wagons. iScheme below = loaded-haul infrastructure scheme; vScheme = wagon component (null for own wagons); emptyScheme = порожний-run scheme for own wagons."
+  },
+  "rows": [
+    {
+      "wagon": "полувагон",
+      "ownership": "own",
+      "shipment": "wagon",
+      "iScheme": "N8",
+      "vScheme": null,
+      "emptyScheme": "N25",
+      "ownClassCoeffNote": "полувагон own: ×0,9346 (class1) / ×0,9592 (class2) / ×0,9774 (class3) per п.18.1.1; полувагоны спец. моделей 12-9761-02 etc → схема N8 ×0,9595"
+    },
+    {
+      "wagon": "крытый",
+      "ownership": "own",
+      "shipment": "wagon",
+      "iScheme": "N8",
+      "vScheme": null,
+      "emptyScheme": "N25"
+    },
+    {
+      "wagon": "платформа",
+      "ownership": "own",
+      "shipment": "wagon",
+      "iScheme": "N8",
+      "vScheme": null,
+      "emptyScheme": "N25(1)",
+      "note": "универсальная платформа <19.6m → empty N25(1); ≥19.6m для контейнеров → N26"
+    },
+    {
+      "wagon": "полувагон-сочлененный-6ос",
+      "ownership": "own",
+      "shipment": "wagon",
+      "iScheme": "N8(1)",
+      "vScheme": null,
+      "emptyScheme": "N25"
+    },
+    {
+      "wagon": "крытый",
+      "ownership": "rzd",
+      "shipment": "wagon",
+      "iScheme": "N8",
+      "vScheme": "В3",
+      "emptyScheme": null,
+      "note": "крытый общий парк: И-часть схема И1/N8, вагонная составляющая В3"
+    },
+    {
+      "wagon": "платформа",
+      "ownership": "rzd",
+      "shipment": "wagon",
+      "iScheme": "N8",
+      "vScheme": "В1",
+      "emptyScheme": null,
+      "note": "платформа общий парк: при перевозке груза N N 8,25(1); порожний рейс по схеме N25(1) за 60% расстояния; вагонная В1"
+    },
+    {
+      "wagon": "полувагон",
+      "ownership": "rzd",
+      "shipment": "wagon",
+      "iScheme": "N8",
+      "vScheme": "В4",
+      "emptyScheme": null,
+      "note": "полувагон общий парк: И-часть N8 (+порожний N25(1) за 60% расст.), вагонная В4"
+    },
+    {
+      "wagon": "универсальный-6ос-сочлененный",
+      "ownership": "rzd",
+      "shipment": "wagon",
+      "iScheme": null,
+      "vScheme": "8(1)",
+      "emptyScheme": null,
+      "note": "общий парк 6-осн сочлененный: только вагонная схема 8(1)"
+    },
+    {
+      "wagon": "спец-общий-парк",
+      "ownership": "rzd",
+      "shipment": "wagon",
+      "iScheme": "И2..И7",
+      "vScheme": "В5..В14",
+      "emptyScheme": null,
+      "note": "специализированные вагоны общего парка: И-часть по схемам И2-И7 (за вагон), вагонная В5-В14; конкретное соответствие — Таблица N 7-9 (не извлечено полностью)"
+    },
+    {
+      "wagon": "цистерна-общий-парк",
+      "ownership": "rzd",
+      "shipment": "wagon",
+      "iScheme": "И14..И18",
+      "vScheme": null,
+      "emptyScheme": null,
+      "note": "наливные в цистернах общего парка: схемы И14-И18 (за тонну)"
+    },
+    {
+      "wagon": "цистерна",
+      "ownership": "own",
+      "shipment": "wagon",
+      "iScheme": "19..24",
+      "vScheme": null,
+      "emptyScheme": "26",
+      "note": "собственные цистерны: схемы 19-24 (за тонну); порожний 26/26(1)"
+    }
+  ]
+}

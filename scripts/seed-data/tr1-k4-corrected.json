@@ -1,0 +1,183 @@
+{
+ "_meta": {
+  "dataset": "TR-1 2026 Табл.5 (K4 отправочный, по количеству вагонов в отправке × пояс дальности) — VERIFIED VERBATIM from sudact",
+  "source": "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-1_1/tablitsa-n-5/",
+  "fetchedAt": "2026-06-07",
+  "verbatim": "Количество вагонов: 1 -> 1,08/1,04/1,03/1,01 ; 2 -> 1,02/1,01/1,01/1,00 ; 3-5 -> 1,00 all ; 6-20 -> 0,97/0,98/1,00/1,00 ; свыше 20 -> 0,95/0,97/0,98/1,00. Belts: До 510 | 511-1000 | 1001-2000 | Свыше 2000.",
+  "k4Application_VERBATIM": "ТР-1 894/25 Приложение N 1, Раздел II, п.17.1 (sudact, VERBATIM-CONFIRMED 2026-06-07): «При перевозке грузов по инфраструктуре РЖД в универсальных, специализированных вагонах и цистернах в зависимости от количества вагонов в отправке (повагонная, групповая) и применяемой грузоотправителем технологии перевозки грузов (отправительский маршрут) к тарифным схемам ... применяются коэффициенты, указанные в таблице N 5». Schemes covered: И1-И7, И14-И18, 8, 8(1), 9-13, 19-24, 31. Waybill marks: ВО=повагонная, ГО=групповая, М=маршрут.",
+  "ROW_MAPPING_RULE_VERBATIM": "The row is selected BY THE NUMBER OF WAGONS IN THE ОТПРАВКА (п.17.1 'в зависимости от количества вагонов в отправке'). групповая отправка = партия по одной накладной, требующая больше одного вагона, но меньше маршрута; the row is the wagon-count bracket containing that wagon count. THEREFORE 15-wagon групповая maps to row '6-20', NOT row '1'.",
+  "BOUNDARY_RULE_VERBATIM": "п.17.2 (sudact, VERBATIM-CONFIRMED): «При применении коэффициента абсолютная величина увеличения (уменьшения) тарифов ... при переходе на последующую градацию пояса дальности не должна быть меньше абсолютной величины увеличения (уменьшения) тарифов ... на наибольшем расстоянии предыдущего пояса». This is a continuity guard on PLATA across belt boundaries — it is NOT a 'max-of-two-rows' rule and does not promote a 1.00 coefficient to a higher row's value.",
+  "CALIBRATION_CONTRADICTION": "VERBATIM-vs-ORACLE CONFLICT, reported honestly: п.17.1 verbatim => 15-wagon групповая @2444km uses row '6-20' => K4=1,00 at belt 'Свыше 2000'. But the real квитанция ЭФ164189 (2444km) reproduces to the ruble ONLY with effective K4=1,01 (= row '1' value). The prior 'row 1 / max-of-two' assignment was a FIT and is NOT supported by п.17.1/17.2 as written. Remaining hypotheses for the 1,01 residual: (a) the квитанция отправка was actually повагонная (1 wagon) or 2-wagon, not 15-wagon групповая — verify wagon count on the real document; (b) a different шаг (K1/K3/N8 rounding) absorbs the 1% and K4 is truly 1,00; (c) an unextracted special clause. DO NOT keep the row-1 fit as fact.",
+  "WARNING_INFERRED": "DEPRECATED claim removed: the earlier note that групповая 'maps to row 1' was an oracle fit. Verbatim п.17.1 says row=wagon-count bracket (15 wagons -> '6-20' -> 1,00 at >2000km). The 1,01 oracle residual is now an OPEN calibration question, not a confirmed mapping."
+ },
+ "distanceCorr": [
+  {
+   "shipmentGroup": "1",
+   "distFromKm": 0,
+   "distToKm": 510,
+   "k": 1.08
+  },
+  {
+   "shipmentGroup": "1",
+   "distFromKm": 511,
+   "distToKm": 1000,
+   "k": 1.04
+  },
+  {
+   "shipmentGroup": "1",
+   "distFromKm": 1001,
+   "distToKm": 2000,
+   "k": 1.03
+  },
+  {
+   "shipmentGroup": "1",
+   "distFromKm": 2001,
+   "distToKm": 999999,
+   "k": 1.01
+  },
+  {
+   "shipmentGroup": "2",
+   "distFromKm": 0,
+   "distToKm": 510,
+   "k": 1.02
+  },
+  {
+   "shipmentGroup": "2",
+   "distFromKm": 511,
+   "distToKm": 1000,
+   "k": 1.01
+  },
+  {
+   "shipmentGroup": "2",
+   "distFromKm": 1001,
+   "distToKm": 2000,
+   "k": 1.01
+  },
+  {
+   "shipmentGroup": "2",
+   "distFromKm": 2001,
+   "distToKm": 999999,
+   "k": 1.0
+  },
+  {
+   "shipmentGroup": "3-5",
+   "distFromKm": 0,
+   "distToKm": 510,
+   "k": 1.0
+  },
+  {
+   "shipmentGroup": "3-5",
+   "distFromKm": 511,
+   "distToKm": 1000,
+   "k": 1.0
+  },
+  {
+   "shipmentGroup": "3-5",
+   "distFromKm": 1001,
+   "distToKm": 2000,
+   "k": 1.0
+  },
+  {
+   "shipmentGroup": "3-5",
+   "distFromKm": 2001,
+   "distToKm": 999999,
+   "k": 1.0
+  },
+  {
+   "shipmentGroup": "6-20",
+   "distFromKm": 0,
+   "distToKm": 510,
+   "k": 0.97
+  },
+  {
+   "shipmentGroup": "6-20",
+   "distFromKm": 511,
+   "distToKm": 1000,
+   "k": 0.98
+  },
+  {
+   "shipmentGroup": "6-20",
+   "distFromKm": 1001,
+   "distToKm": 2000,
+   "k": 1.0
+  },
+  {
+   "shipmentGroup": "6-20",
+   "distFromKm": 2001,
+   "distToKm": 999999,
+   "k": 1.0
+  },
+  {
+   "shipmentGroup": "свыше 20",
+   "distFromKm": 0,
+   "distToKm": 510,
+   "k": 0.95
+  },
+  {
+   "shipmentGroup": "свыше 20",
+   "distFromKm": 511,
+   "distToKm": 1000,
+   "k": 0.97
+  },
+  {
+   "shipmentGroup": "свыше 20",
+   "distFromKm": 1001,
+   "distToKm": 2000,
+   "k": 0.98
+  },
+  {
+   "shipmentGroup": "свыше 20",
+   "distFromKm": 2001,
+   "distToKm": 999999,
+   "k": 1.0
+  },
+  {
+   "shipmentGroup": "маршрут прямой",
+   "distFromKm": 0,
+   "distToKm": 510,
+   "k": 0.85
+  },
+  {
+   "shipmentGroup": "маршрут прямой",
+   "distFromKm": 511,
+   "distToKm": 1000,
+   "k": 0.89
+  },
+  {
+   "shipmentGroup": "маршрут прямой",
+   "distFromKm": 1001,
+   "distToKm": 2000,
+   "k": 0.92
+  },
+  {
+   "shipmentGroup": "маршрут прямой",
+   "distFromKm": 2001,
+   "distToKm": 999999,
+   "k": 0.95
+  },
+  {
+   "shipmentGroup": "маршрут с распылением",
+   "distFromKm": 0,
+   "distToKm": 510,
+   "k": 0.9
+  },
+  {
+   "shipmentGroup": "маршрут с распылением",
+   "distFromKm": 511,
+   "distToKm": 1000,
+   "k": 0.92
+  },
+  {
+   "shipmentGroup": "маршрут с распылением",
+   "distFromKm": 1001,
+   "distToKm": 2000,
+   "k": 0.95
+  },
+  {
+   "shipmentGroup": "маршрут с распылением",
+   "distFromKm": 2001,
+   "distToKm": 999999,
+   "k": 0.97
+  }
+ ]
+}
