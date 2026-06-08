@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 
 import { signIn, useSession } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 const GENERIC_ERROR = "Неверный email или пароль";
 const FUNNEL = ["Запросы", "Направления", "Отчётность"] as const;
@@ -56,10 +55,6 @@ export default function LoginPage() {
 
   return (
     <div className="relative grid min-h-dvh md:grid-cols-[1.1fr_1fr]">
-      <div className="absolute right-4 top-4 z-10">
-        <ThemeToggle />
-      </div>
-
       {/* ── Brand panel (editorial; desktop only) ── */}
       <aside className="relative hidden flex-col justify-between overflow-hidden border-r border-border bg-surface-1 p-12 md:flex">
         <div className="flex items-center gap-2.5">
