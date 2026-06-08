@@ -29,3 +29,10 @@ export function stageForStatus(status: string): DealStage | null {
 export function isDealStage(value: string | undefined): value is DealStage {
   return value === "request" || value === "application" || value === "execution";
 }
+
+// Под-статус стадии «Запрос» (orders.quote_status) → метка для списка/карточки.
+export const QUOTE_STATUS_LABEL: Record<string, string> = {
+  quoting: "Просчёт",
+  quoted: "Цена дана",
+  won: "Прошли — ждём заявку",
+};

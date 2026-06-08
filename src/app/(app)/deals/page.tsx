@@ -11,6 +11,7 @@ import { dealStatusMeta } from "@/components/trades/dealStatusMeta";
 import { DEAL_TYPE_LABEL } from "@/components/trades/dealTypeMeta";
 import {
   DEAL_STAGES,
+  QUOTE_STATUS_LABEL,
   isDealStage,
   stageForStatus,
   type DealStage,
@@ -31,6 +32,7 @@ export default async function DealsPage({
 }) {
   const { stage } = await searchParams;
   const activeStage: DealStage | null = isDealStage(stage) ? stage : null;
+  const isArchive = stage === "archive";
 
   const rows = await db
     .select({
@@ -39,6 +41,7 @@ export default async function DealsPage({
       title: orders.title,
       dealType: orders.dealType,
       status: orders.status,
+      quoteStatus: orders.quoteStatus,
       clientName: counterparties.nameCanonical,
       createdAt: orders.createdAt,
     })
@@ -47,18 +50,24 @@ export default async function DealsPage({
     .orderBy(desc(orders.createdAt));
 
   // Счётчики воронки и фильтрация — из уже загруженных строк, без новых запросов.
+  // Архив = cancelled (вне воронки): не попадает в тайлы и в дефолтный список.
   const stageCounts = new Map<DealStage, number>();
+  let archiveCount = 0;
   for (const r of rows) {
     const s = stageForStatus(r.status);
     if (s) stageCounts.set(s, (stageCounts.get(s) ?? 0) + 1);
+    else if (r.status === "cancelled") archiveCount += 1;
   }
 
-  const visibleRows = activeStage
-    ? rows.filter((r) => stageForStatus(r.status) === activeStage)
-    : rows;
+  const visibleRows = isArchive
+    ? rows.filter((r) => r.status === "cancelled")
+    : activeStage
+      ? rows.filter((r) => stageForStatus(r.status) === activeStage)
+      : rows.filter((r) => stageForStatus(r.status) !== null);
   const activeMeta = activeStage
     ? DEAL_STAGES.find((s) => s.stage === activeStage)
     : undefined;
+  const emptyFilterLabel = isArchive ? "Архив" : activeMeta?.label;
 
   return (
     <div className="space-y-[var(--space-section)]">
@@ -109,6 +118,26 @@ export default async function DealsPage({
         })}
       </section>
 
+      {(archiveCount > 0 || isArchive) && (
+        <div className="-mt-2 flex items-center gap-3 text-xs">
+          {isArchive ? (
+            <>
+              <span className="text-text-secondary">Архив · {archiveCount}</span>
+              <Link href="/deals" className="text-accent hover:underline">
+                ← к воронке
+              </Link>
+            </>
+          ) : (
+            <Link
+              href="/deals?stage=archive"
+              className="text-text-tertiary transition-colors hover:text-text"
+            >
+              Архив · {archiveCount}
+            </Link>
+          )}
+        </div>
+      )}
+
       {rows.length === 0 ? (
         <div className="rounded-lg border border-border bg-surface-1">
           <EmptyState
@@ -124,9 +153,9 @@ export default async function DealsPage({
         </div>
       ) : visibleRows.length === 0 ? (
         <div className="rounded-lg border border-border bg-surface-1 px-4 py-6 text-center text-sm text-text-secondary">
-          На стадии «{activeMeta?.label}» сделок нет.{" "}
+          {isArchive ? "В архиве пусто." : `На стадии «${emptyFilterLabel}» сделок нет.`}{" "}
           <Link href="/deals" className="text-accent hover:underline">
-            Показать все
+            {isArchive ? "← к воронке" : "Показать все"}
           </Link>
         </div>
       ) : (
@@ -136,6 +165,8 @@ export default async function DealsPage({
             const headline = r.clientName ?? r.orderNumber ?? `Сделка ${r.id.slice(0, 8)}`;
             const typeLabel = r.dealType ? DEAL_TYPE_LABEL[r.dealType] : null;
             const konkretika = r.title ?? null;
+            // Для сделок в стадии «Запрос» (draft) показываем под-статус просчёта.
+            const quoteLabel = r.status === "draft" ? QUOTE_STATUS_LABEL[r.quoteStatus] : null;
             return (
               <li key={r.id} className="border-b border-border-subtle last:border-0">
                 <Link
@@ -163,9 +194,14 @@ export default async function DealsPage({
                       {konkretika && <span className="truncate">{konkretika}</span>}
                     </div>
                   )}
-                  <span className="text-xs text-text-tertiary">
-                    {dateFmt.format(new Date(r.createdAt))}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-text-tertiary">
+                      {dateFmt.format(new Date(r.createdAt))}
+                    </span>
+                    {quoteLabel && (
+                      <span className="text-xs text-accent">· {quoteLabel}</span>
+                    )}
+                  </div>
                 </Link>
               </li>
             );
