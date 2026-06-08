@@ -4,10 +4,12 @@ import { ArrowLeft, Pencil } from "lucide-react";
 
 import { getPartnerDossier, PartnerError } from "@/lib/partners/repository";
 import { getPartnerFinance, listPartnerMail } from "@/lib/partners/general";
+import { getPartnerAnalytics } from "@/lib/partners/analytics";
 import { PartnerTabs, resolvePartnerTab } from "@/components/partners/PartnerTabs";
 import { GeneralInfoTab } from "@/components/partners/GeneralInfoTab";
 import { ContractTab } from "@/components/partners/ContractTab";
-import { PartnerDossier } from "@/components/partners/PartnerDossier";
+import { HistoryTab } from "@/components/partners/HistoryTab";
+import { AnalyticsTab } from "@/components/partners/AnalyticsTab";
 import { DeletePartnerButton } from "@/components/partners/DeletePartnerButton";
 import { RoleBadges } from "@/components/partners/RoleBadges";
 
@@ -94,7 +96,7 @@ export default async function PartnerDetailPage({ params, searchParams }: PagePr
           documents={dossier.documents}
         />
       )}
-      {activeTab === "history" && <PartnerDossier dossier={dossier} />}
+      {activeTab === "history" && <HistoryTab dossier={dossier} />}
       {activeTab === "contract" && (
         <ContractTab
           counterpartyId={partner.id}
@@ -109,7 +111,7 @@ export default async function PartnerDetailPage({ params, searchParams }: PagePr
             }))}
         />
       )}
-      {activeTab === "analytics" && <TabPlaceholder title="Аналитика по отгрузкам" />}
+      {activeTab === "analytics" && <AnalyticsTabLoader counterpartyId={partner.id} roles={partner.roles} />}
       {activeTab === "materials" && <TabPlaceholder title="Каталог щебня и паспорта" />}
     </div>
   );
@@ -139,4 +141,16 @@ async function GeneralInfoTabLoader({
       documents={documents}
     />
   );
+}
+
+// Loads shipment analytics only for the Analytics tab. Server Component.
+async function AnalyticsTabLoader({
+  counterpartyId,
+  roles,
+}: {
+  counterpartyId: string;
+  roles: string[];
+}) {
+  const analytics = await getPartnerAnalytics(counterpartyId, roles);
+  return <AnalyticsTab analytics={analytics} roles={roles} />;
 }
