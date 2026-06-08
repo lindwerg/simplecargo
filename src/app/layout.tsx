@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { cookies } from "next/headers";
 
 import "./globals.css";
 
@@ -25,8 +24,7 @@ export const metadata: Metadata = {
   other: { "apple-mobile-web-app-capable": "yes" },
 };
 
-// theme-color tracks --color-bg per theme (approx hex; oklch isn't universally
-// honored in the meta tag). Dark is the product default (ADR-D19).
+// Светлая тема — единственная (PWA light-only). theme-color = --color-bg светлой темы.
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -35,10 +33,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: "cover",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fafbfc" },
-    { media: "(prefers-color-scheme: dark)", color: "#15161a" },
-  ],
+  themeColor: "#fafbfc",
 };
 
 // The per-request CSP nonce (set by src/middleware.ts) can only be injected into
@@ -54,14 +49,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Dark is the default (ADR-D19). Reading the persisted choice server-side means
-  // returning light-theme users get the right theme in the first paint — no FOUC,
-  // and no inline theme script (which would need the CSP nonce).
-  const theme =
-    (await cookies()).get("theme")?.value === "light" ? "light" : "dark";
-
+  // PWA — только светлая тема. Жёстко фиксируем data-theme="light" на сервере
+  // (без FOUC; переключатель темы убран).
   return (
-    <html lang="ru" data-theme={theme}>
+    <html lang="ru" data-theme="light">
       <head>
         {/* Preload the money typeface (Geist Mono) — its swap is the CLS risk the
             design budget guards (fix L3) — plus the primary UI subsets (Cyrillic
