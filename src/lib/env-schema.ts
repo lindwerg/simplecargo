@@ -74,6 +74,14 @@ export const envSchema = z.object({
   MAILRU_IMAP_APP_PASSWORD: z.string().min(1).optional(),
   MAILRU_IMAP_INBOX: z.string().min(1).default("INBOX"),
   MAILRU_IMAP_PROCESSED_FOLDER: z.string().min(1).default("SimpleCargo/Processed"),
+  // По умолчанию ВЫКЛ: воркер НЕ помечает письма прочитанными и НЕ переносит их в
+  // папку Processed — оператор читает почту в mail.ru сам, наш приём пассивный
+  // (идемпотентность держится на UID-курсоре mail_cursor, флаги не нужны). Включи
+  // ("true"), только если хочешь, чтобы бот раскладывал обработанное по папке.
+  MAILRU_IMAP_MARK_PROCESSED: z
+    .enum(["true", "false"])
+    .default("false")
+    .transform((v) => v === "true"),
   MAILRU_IMAP_POLL_MS: z.coerce.number().int().min(10_000).default(15_000),
   // Разбирать только СВЕЖИЕ письма: пропускать всё, что старше N дней по дате
   // письма (заголовок Date). Защита от старой почты, попавшей в ящик с новыми
