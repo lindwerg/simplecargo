@@ -9,7 +9,6 @@ import { auth } from "@/lib/auth";
 import { Money } from "@/components/ui/Money";
 import { StatTile } from "@/components/ui/StatTile";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { SyncButton } from "@/components/finances/SyncButton";
 import { TransactionFeed } from "@/components/finances/TransactionFeed";
 import { DirectionPnl } from "@/components/finances/DirectionPnl";
 import { InboundInvoices } from "@/components/finances/InboundInvoices";
@@ -93,33 +92,12 @@ export default async function FinancesPage() {
   return (
     <div className="space-y-[var(--space-section)]">
       <LiveRefresh />
-      <header className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="label-caps">Деньги</p>
-          <h1 className="mt-1 break-words text-xl font-semibold tracking-tight text-text">Финансы</h1>
-          <p className="mt-1 max-w-prose text-sm text-text-secondary">
-            Приходы и расходы по счетам в Точке, сшитые с контрагентами и сделками.
-          </p>
-        </div>
-        {configured && (
-          <div className="flex flex-col items-end gap-2">
-            <SyncButton />
-            <nav className="flex gap-2">
-              <Link
-                href="/finances/statement"
-                className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm text-text transition-colors hover:bg-surface-2"
-              >
-                <FileText className="size-4" aria-hidden /> Выписка
-              </Link>
-              <Link
-                href="/finances/payments"
-                className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm text-text transition-colors hover:bg-surface-2"
-              >
-                <Send className="size-4" aria-hidden /> Платёж
-              </Link>
-            </nav>
-          </div>
-        )}
+      <header className="min-w-0">
+        <p className="label-caps">Деньги</p>
+        <h1 className="mt-1 break-words text-xl font-semibold tracking-tight text-text">Финансы</h1>
+        <p className="mt-1 max-w-prose text-sm text-text-secondary">
+          Приходы и расходы по счетам в Точке, сшитые с контрагентами и сделками.
+        </p>
       </header>
 
       {!configured ? (
@@ -132,6 +110,33 @@ export default async function FinancesPage() {
         </section>
       ) : (
         <>
+          <section aria-label="Действия" className="grid grid-cols-2 gap-3">
+            <Link
+              href="/finances/statement"
+              className="group flex items-center gap-3 rounded-lg border border-border bg-surface-1 px-5 py-6 transition-transform duration-[var(--duration-fast)] ease-[var(--ease-out-quad)] hover:-translate-y-[2px] active:translate-y-0 active:opacity-90 focus-visible:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
+            >
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-md bg-surface-2 text-text-secondary transition-colors group-hover:text-text">
+                <FileText className="size-5" aria-hidden />
+              </span>
+              <span className="min-w-0">
+                <span className="block text-base font-semibold text-text">Выписка</span>
+                <span className="block text-xs text-text-tertiary">Скачать за период</span>
+              </span>
+            </Link>
+            <Link
+              href="/finances/payments"
+              className="group flex items-center gap-3 rounded-lg border border-border bg-surface-1 px-5 py-6 transition-transform duration-[var(--duration-fast)] ease-[var(--ease-out-quad)] hover:-translate-y-[2px] active:translate-y-0 active:opacity-90 focus-visible:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
+            >
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-md bg-accent-quiet text-accent transition-transform group-hover:scale-105">
+                <Send className="size-5" aria-hidden />
+              </span>
+              <span className="min-w-0">
+                <span className="block text-base font-semibold text-text">Платёж</span>
+                <span className="block text-xs text-text-tertiary">Создать поручение</span>
+              </span>
+            </Link>
+          </section>
+
           <section aria-label="Показатели" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <StatTile
               label="Остаток на счетах"
@@ -195,7 +200,7 @@ export default async function FinancesPage() {
               <EmptyState
                 icon={Wallet}
                 title="Операций пока нет"
-                description="Нажмите «Обновить из Точки», чтобы загрузить выписку по счетам."
+                description="Выписка по счетам подтянется из Точки автоматически при ближайшей синхронизации."
               />
             )}
           </section>
