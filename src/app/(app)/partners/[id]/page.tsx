@@ -6,6 +6,7 @@ import { getPartnerDossier, PartnerError } from "@/lib/partners/repository";
 import { getPartnerFinance, listPartnerMail } from "@/lib/partners/general";
 import { PartnerTabs, resolvePartnerTab } from "@/components/partners/PartnerTabs";
 import { GeneralInfoTab } from "@/components/partners/GeneralInfoTab";
+import { ContractTab } from "@/components/partners/ContractTab";
 import { PartnerDossier } from "@/components/partners/PartnerDossier";
 import { DeletePartnerButton } from "@/components/partners/DeletePartnerButton";
 import { RoleBadges } from "@/components/partners/RoleBadges";
@@ -94,7 +95,20 @@ export default async function PartnerDetailPage({ params, searchParams }: PagePr
         />
       )}
       {activeTab === "history" && <PartnerDossier dossier={dossier} />}
-      {activeTab === "contract" && <TabPlaceholder title="ИИ-чат по договору" />}
+      {activeTab === "contract" && (
+        <ContractTab
+          counterpartyId={partner.id}
+          contracts={dossier.documents
+            .filter((d) => d.kind === "contract")
+            .map((d) => ({
+              id: d.id,
+              title: d.title,
+              docRef: d.docRef,
+              originalFilename: d.originalFilename,
+              mimeType: d.mimeType,
+            }))}
+        />
+      )}
       {activeTab === "analytics" && <TabPlaceholder title="Аналитика по отгрузкам" />}
       {activeTab === "materials" && <TabPlaceholder title="Каталог щебня и паспорта" />}
     </div>
