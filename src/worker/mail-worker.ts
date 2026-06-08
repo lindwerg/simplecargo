@@ -156,7 +156,9 @@ async function pollCycle(systemUserId: string): Promise<void> {
     }
   }
 
-  if (processedUids.length > 0) {
+  // По умолчанию НЕ помечаем письма прочитанными и НЕ переносим — оператор читает
+  // mail.ru сам, наш приём пассивный. Идемпотентность держит UID-курсор ниже.
+  if (env.MAILRU_IMAP_MARK_PROCESSED && processedUids.length > 0) {
     await markProcessed(processedUids);
   }
   if (highestUid > cursor.lastSeenUid) {

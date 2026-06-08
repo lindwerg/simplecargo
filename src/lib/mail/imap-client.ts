@@ -51,7 +51,10 @@ export async function fetchNewEmails(lastSeenUid: number): Promise<FetchResult> 
   let uidValidity = 0;
   let highestUid = lastSeenUid;
 
-  const lock = await client.getMailboxLock(env.MAILRU_IMAP_INBOX);
+  // READ-ONLY (EXAMINE): сервер НЕ меняет флаги при выборке — письма остаются
+  // непрочитанными в ящике. Оператор читает почту в mail.ru напрямую, наш приём
+  // не должен трогать статус «прочитано».
+  const lock = await client.getMailboxLock(env.MAILRU_IMAP_INBOX, { readOnly: true });
   try {
     const mb = client.mailbox;
     uidValidity = mb && typeof mb !== "boolean" ? Number(mb.uidValidity) : 0;
