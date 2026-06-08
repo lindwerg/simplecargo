@@ -5,6 +5,8 @@ const ROLE_CLASS: Partial<Record<PartnerRole, string>> = {
   client: "bg-info-quiet text-info",
   owner: "bg-success-quiet text-success",
   expeditor: "bg-accent-quiet text-accent",
+  carrier: "bg-warn-quiet text-warn",
+  quarry: "partner-badge--quarry",
 };
 
 function labelFor(role: string): string {
@@ -29,12 +31,4 @@ export function RoleBadges({ roles, className }: { roles: string[]; className?: 
       ))}
     </div>
   );
-}
-
-/** The role that drives the card's left rail color (client > owner > expeditor). */
-export function primaryRole(roles: string[]): "client" | "owner" | "expeditor" | "other" {
-  if (roles.includes("client")) return "client";
-  if (roles.includes("owner")) return "owner";
-  if (roles.includes("expeditor")) return "expeditor";
-  return "other";
 }

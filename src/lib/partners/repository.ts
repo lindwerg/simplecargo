@@ -96,6 +96,46 @@ export async function listPartners(opts: {
   }));
 }
 
+export interface PartnerRoleCounts {
+  client: number;
+  carrier: number;
+  quarry: number;
+}
+
+interface CountsRow {
+  client: number;
+  carrier: number;
+  quarry: number;
+  [column: string]: unknown;
+}
+
+// Per-category counts for the filter cards on /partners. Honours the same fuzzy
+// search filter as listPartners, so each card shows how many matches fall into it.
+export async function countPartnersByRole(opts: {
+  search?: string | undefined;
+}): Promise<PartnerRoleCounts> {
+  const search = opts.search?.trim() ?? "";
+  const searchFilter = search
+    ? sql`AND (c.name_canonical ILIKE ${"%" + search + "%"} OR similarity(c.name_canonical, ${search}) > 0.2)`
+    : sql``;
+
+  const result = await db.execute<CountsRow>(sql`
+    SELECT
+      count(*) FILTER (WHERE c.roles @> ARRAY['client']::text[])::int  AS client,
+      count(*) FILTER (WHERE c.roles @> ARRAY['carrier']::text[])::int AS carrier,
+      count(*) FILTER (WHERE c.roles @> ARRAY['quarry']::text[])::int  AS quarry
+    FROM counterparties c
+    WHERE TRUE ${searchFilter}
+  `);
+
+  const row = result.rows[0];
+  return {
+    client: row?.client ?? 0,
+    carrier: row?.carrier ?? 0,
+    quarry: row?.quarry ?? 0,
+  };
+}
+
 // Create a company. Rejects a duplicate canonical name (unique constraint surfaced
 // as a friendly 409).
 export async function createPartner(input: CreatePartnerInput): Promise<{ id: string }> {
