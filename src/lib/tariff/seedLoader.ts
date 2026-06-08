@@ -1,0 +1,344 @@
+// Singleton JSON-file loaders for ТР-1 2026 seed tables. Module-level cache ensures
+// each file is parsed exactly once per process. The loaders convert the raw JSON shapes
+// into the TypeScript interfaces used by the pure engine core (computeTariff.ts).
+//
+// NEVER used in tests that inject fixtures directly — the pure core is DB/file-free.
+// This module is only called by ./repository.ts (the Drizzle + seed I/O layer).
+
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+
+import type { EtsngEntry } from "./classLookup";
+import type {
+  ClassCoeffBelt,
+} from "./coefficients";
+import type {
+  EmptyRunBelt,
+  InnovativeModel,
+  K3Row,
+  K4FullRow,
+  RateBelt,
+  WagonSchemeRow,
+} from "./schemeResolve";
+import type { FreightClass, Ownership, ShipmentType } from "./schema";
+
+const SEED_DIR = resolve(process.cwd(), "scripts/seed-data");
+
+function loadJson<T>(filename: string): T {
+  return JSON.parse(readFileSync(resolve(SEED_DIR, filename), "utf8")) as T;
+}
+
+// ── Cache entries (set once, then reused) ─────────────────────────────────────
+
+let _schemeMap: readonly WagonSchemeRow[] | null = null;
+let _rateBelts: readonly RateBelt[] | null = null;
+let _emptyRunBelts: readonly EmptyRunBelt[] | null = null;
+let _classBelts: readonly ClassCoeffBelt[] | null = null;
+let _k3Rows: readonly K3Row[] | null = null;
+let _k4FullRows: readonly K4FullRow[] | null = null;
+let _innovativeModels: readonly InnovativeModel[] | null = null;
+let _etsngCatalog: readonly EtsngEntry[] | null = null;
+
+// ── Internal raw shapes ───────────────────────────────────────────────────────
+
+interface PinnedClassifierRow {
+  wagonCode: string;
+  ownership: string;
+  shipment: string;
+  iBeltScheme: string | null;
+  vBeltScheme: string | null;
+  emptyScheme: string | null;
+  /**
+   * Optional applicability guard (metres): the emptyScheme above holds only for wagons
+   * SHORTER than this. Ordinary own полувагон <19.6м → emptyScheme 25(1) (TARIFF_FILL_PLAN
+   * item 1). Carried through for downstream selection once wagon length is captured at intake;
+   * currently documentary (the pinned scheme is already correct for the dominant <19.6м case).
+   */
+  emptyLengthGuardM?: number | null;
+  computable: boolean;
+}
+
+interface RawBelt {
+  scheme: string;
+  weightT?: number | null;
+  distFromKm: number;
+  distToKm: number;
+  rateRub: number;
+}
+
+interface RawEmptyRunBelt {
+  scheme: string;
+  axles: number | null;
+  distFromKm: number;
+  distToKm: number;
+  rateRub: number;
+}
+
+interface RawK1Row {
+  class: number;
+  distFromKm: number;
+  distToKm: number;
+  k1: number;
+}
+
+interface RawK3Row {
+  etsng: string;
+  k3: number;
+}
+
+interface RawK4Row {
+  shipmentGroup: string;
+  distFromKm: number;
+  distToKm: number;
+  k: number;
+}
+
+interface RawInnovativeModel {
+  model: string;
+  coef: number;
+  scheme: string;
+}
+
+interface RawEtsngEntry {
+  code: string;
+  name: string;
+  tariffClass: number;
+  mvnRaw?: string;
+  mvnByWagon?: Record<string, unknown> | null;
+}
+
+// ── WagonSchemeRow from pinned classifier ─────────────────────────────────────
+
+export function loadSchemeMapFromSeed(): readonly WagonSchemeRow[] {
+  if (_schemeMap !== null) return _schemeMap;
+
+  const file = loadJson<{ rows: PinnedClassifierRow[] }>("tr1-classifier-pinned.json");
+  const rows: WagonSchemeRow[] = [];
+
+  for (const r of file.rows) {
+    const ownership = r.ownership as Ownership;
+    const shipmentType = r.shipment as ShipmentType;
+
+    // Only include rows that have a computable iScheme (iBeltScheme present).
+    // Non-computable rows (containers/transporters without belt data) are kept so the
+    // engine can degrade gracefully (scheme found in map but no belt → yellow/red).
+    rows.push({
+      wagonType: r.wagonCode,
+      ownership,
+      shipmentType,
+      iSchemeCode: r.iBeltScheme ?? null,
+      vSchemeCode: r.vBeltScheme ?? null,
+      emptySchemeCode: r.emptyScheme ?? null,
+      emptyLengthGuardM: r.emptyLengthGuardM ?? null,
+    });
+  }
+
+  _schemeMap = rows;
+  return _schemeMap;
+}
+
+// Per-tonne nalivnye schemes (ЗА ТОННУ, not ЗА ВАГОН):
+// И14-И18 = RZD цистерны; N19-N24 = own/рented цистерны.
+const PER_TONNE_SCHEMES = new Set([
+  "И14", "И15", "И16", "И17", "И18",
+  "N19", "N20", "N21", "N22", "N23", "N24",
+]);
+
+// ── RateBelt from i-belts-full + v-belts-full ─────────────────────────────────
+
+export function loadRateBeltsFromSeed(): readonly RateBelt[] {
+  if (_rateBelts !== null) return _rateBelts;
+
+  const iBeltsFile = loadJson<{ belts: RawBelt[] }>("tr1-i-belts-full.json");
+  const vBeltsRaw = loadJson<RawBelt[]>("tr1-v-belts-full.json");
+
+  const out: RateBelt[] = [];
+
+  for (const b of iBeltsFile.belts) {
+    out.push({
+      schemeCode: b.scheme,
+      distFromKm: b.distFromKm,
+      distToKm: b.distToKm,
+      rateRub: b.rateRub,
+      weightT: b.weightT ?? null,
+      perTonne: PER_TONNE_SCHEMES.has(b.scheme),
+    });
+  }
+
+  for (const b of vBeltsRaw) {
+    out.push({
+      schemeCode: b.scheme,
+      distFromKm: b.distFromKm,
+      distToKm: b.distToKm,
+      rateRub: b.rateRub,
+      weightT: null,
+      perTonne: false,
+    });
+  }
+
+  _rateBelts = out;
+  return _rateBelts;
+}
+
+// ── EmptyRunBelt from empty-run-full ─────────────────────────────────────────
+
+export function loadEmptyRunBeltsFromSeed(): readonly EmptyRunBelt[] {
+  if (_emptyRunBelts !== null) return _emptyRunBelts;
+
+  const raw = loadJson<RawEmptyRunBelt[]>("tr1-empty-run-full.json");
+
+  _emptyRunBelts = raw.map((b) => ({
+    schemeCode: b.scheme,
+    axles: b.axles ?? null,
+    distFromKm: b.distFromKm,
+    distToKm: b.distToKm,
+    rateRub: b.rateRub,
+  }));
+
+  return _emptyRunBelts;
+}
+
+// ── ClassCoeffBelt from k1-full ───────────────────────────────────────────────
+
+export function loadClassBeltsFromSeed(): readonly ClassCoeffBelt[] {
+  if (_classBelts !== null) return _classBelts;
+
+  const file = loadJson<{ classCoeff: RawK1Row[] }>("tr1-k1-full.json");
+
+  _classBelts = file.classCoeff.map((r) => ({
+    freightClass: (r.class === 1 ? 1 : r.class === 3 ? 3 : 2) as FreightClass,
+    distFromKm: r.distFromKm,
+    distToKm: r.distToKm,
+    k1: r.k1,
+  }));
+
+  return _classBelts;
+}
+
+// ── K3Row from k3-full ────────────────────────────────────────────────────────
+//
+// K3 extra multipliers (п.1.5/3.3/5.7):
+//   class 1: ×0.909 for patterns "231-236" and "241,242,245,246" in ПВ/ПЛ (sourced, EXACT).
+//   class 2: ×1.04 for "Отдельные грузы в полувагонах/платформах" — ETSNG subset NOT fully
+//            extracted (confidence=medium per seed meta). SKIPPED to avoid fabrication.
+//   class 3: ×1.04 — same gap. SKIPPED.
+// The gaps are reflected as missing wagonTypeMultiplier on the affected rows.
+
+const K3_CLASS1_EXTRA_PATTERNS = ["231-236", "241,242,245,246"];
+const K3_CLASS1_EXTRA_MULTIPLIER = 0.909;
+const K3_EXTRA_WAGON_TYPES = ["ПВ", "ПЛ"];
+
+export function loadK3RowsFromSeed(): readonly K3Row[] {
+  if (_k3Rows !== null) return _k3Rows;
+
+  const file = loadJson<{
+    class1: RawK3Row[];
+    class1_extra: { multiplier: number };
+    class2: RawK3Row[];
+    class3: RawK3Row[];
+  }>("tr1-k3-full.json");
+
+  const out: K3Row[] = [];
+
+  // Class 1 rows with ×0.909 sub-multiplier for mineral/строительные in ПВ/ПЛ.
+  for (const r of file.class1) {
+    const hasExtra = K3_CLASS1_EXTRA_PATTERNS.includes(r.etsng);
+    out.push({
+      etsngPattern: r.etsng,
+      freightClass: 1,
+      k3: r.k3,
+      wagonTypeMultiplier: hasExtra ? K3_CLASS1_EXTRA_MULTIPLIER : null,
+      wagonTypeApplicable: hasExtra ? K3_EXTRA_WAGON_TYPES : null,
+    });
+  }
+
+  // Class 2 rows — no extra wagon-type sub-multiplier (gap, see note above).
+  for (const r of file.class2) {
+    out.push({ etsngPattern: r.etsng, freightClass: 2, k3: r.k3 });
+  }
+
+  // Class 3 rows — no extra wagon-type sub-multiplier (gap, see note above).
+  for (const r of file.class3) {
+    out.push({ etsngPattern: r.etsng, freightClass: 3, k3: r.k3 });
+  }
+
+  _k3Rows = out;
+  return _k3Rows;
+}
+
+// ── K4FullRow from k4-full ────────────────────────────────────────────────────
+
+export function loadK4FullRowsFromSeed(): readonly K4FullRow[] {
+  if (_k4FullRows !== null) return _k4FullRows;
+
+  const file = loadJson<{ distanceCorr: RawK4Row[] }>("tr1-k4-full.json");
+
+  _k4FullRows = file.distanceCorr.map((r) => ({
+    shipmentGroup: r.shipmentGroup,
+    distFromKm: r.distFromKm,
+    distToKm: r.distToKm,
+    k: r.k,
+  }));
+
+  return _k4FullRows;
+}
+
+// ── InnovativeModel from innovative-models ────────────────────────────────────
+
+export function loadInnovativeModelsFromSeed(): readonly InnovativeModel[] {
+  if (_innovativeModels !== null) return _innovativeModels;
+
+  const file = loadJson<{ models: RawInnovativeModel[] }>("tr1-innovative-models.json");
+
+  _innovativeModels = file.models.map((m) => ({
+    model: m.model,
+    coef: m.coef,
+    scheme: m.scheme,
+  }));
+
+  return _innovativeModels;
+}
+
+// ── EtsngEntry from etsng-classes ─────────────────────────────────────────────
+//
+// The etsng-classes.json mvnByWagon field uses keys like "default", "pv", "pl", "kr"
+// and values like numbers or the "gp" sentinel. We map these to MvnByWagon safely.
+
+function toMvnValue(v: unknown): number | "gp" | null {
+  if (typeof v === "number") return v;
+  if (v === "gp") return "gp";
+  return null;
+}
+
+export function loadEtsngFromSeed(): readonly EtsngEntry[] {
+  if (_etsngCatalog !== null) return _etsngCatalog;
+
+  const raw = loadJson<RawEtsngEntry[]>("etsng-classes.json");
+  const cls2 = (n: number): FreightClass =>
+    n === 1 ? 1 : n === 3 ? 3 : 2;
+
+  const out: EtsngEntry[] = raw.map((r) => {
+    const mvn = r.mvnByWagon as Record<string, unknown> | null | undefined;
+    if (!mvn) {
+      return { code: r.code, name: r.name, tariffClass: cls2(r.tariffClass), mvnByWagon: null };
+    }
+    const defVal = toMvnValue(mvn["default"]);
+    const pvVal = toMvnValue(mvn["pv"]);
+    const plVal = toMvnValue(mvn["pl"]);
+    const krVal = toMvnValue(mvn["kr"]);
+    return {
+      code: r.code,
+      name: r.name,
+      tariffClass: cls2(r.tariffClass),
+      mvnByWagon: {
+        ...(defVal !== null ? { default: defVal } : {}),
+        ...(pvVal !== null ? { pv: pvVal } : {}),
+        ...(plVal !== null ? { pl: plVal } : {}),
+        ...(krVal !== null ? { kr: krVal } : {}),
+      },
+    };
+  });
+
+  _etsngCatalog = out;
+  return _etsngCatalog;
+}

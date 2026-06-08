@@ -29,12 +29,13 @@
       "shipment": "wagon",
       "iScheme": "8",
       "vScheme": null,
-      "emptyScheme": "25",
+      "emptyScheme": "25(1)",
+      "emptyLengthGuardM": 19.6,
       "iBeltScheme": "N8",
       "vBeltScheme": null,
       "computable": true,
       "confidence": "high",
-      "sourceNote": "Табл.N6: универс. полувагон груженый=схема 8; порожний 4-осн=25."
+      "sourceNote": "Табл.N6: универс. полувагон груженый=схема 8. Порожний (TARIFF_FILL_PLAN item 1, sourced-official): обычный полувагон <19.6м → схема 25(1), НЕ 25. Схема 25 даёт ≈2.09× переплату на порожнем плече (на 2444км 4-осн: 25=24281₽ vs 25(1)=11630₽). Схема 25 остаётся для агломерат/окатыши-полувагонов и крытых; длинномерный (≥19.6м) полувагон выбирает иную схему — emptyLengthGuardM фиксирует границу <19.6м."
     },
     {
       "wagon": "Полувагон",
@@ -43,12 +44,13 @@
       "shipment": "group",
       "iScheme": "8",
       "vScheme": null,
-      "emptyScheme": "25",
+      "emptyScheme": "25(1)",
+      "emptyLengthGuardM": 19.6,
       "iBeltScheme": "N8",
       "vBeltScheme": null,
       "computable": true,
       "confidence": "high",
-      "sourceNote": "Табл.N6: универс. полувагон груженый=схема 8; порожний 4-осн=25."
+      "sourceNote": "Табл.N6: универс. полувагон груженый=схема 8. Порожний (TARIFF_FILL_PLAN item 1, sourced-official): обычный полувагон <19.6м → схема 25(1), НЕ 25. Схема 25 даёт ≈2.09× переплату на порожнем плече (на 2444км 4-осн: 25=24281₽ vs 25(1)=11630₽). Схема 25 остаётся для агломерат/окатыши-полувагонов и крытых; длинномерный (≥19.6м) полувагон выбирает иную схему — emptyLengthGuardM фиксирует границу <19.6м."
     },
     {
       "wagon": "Полувагон",
@@ -57,12 +59,13 @@
       "shipment": "route",
       "iScheme": "8",
       "vScheme": null,
-      "emptyScheme": "25",
+      "emptyScheme": "25(1)",
+      "emptyLengthGuardM": 19.6,
       "iBeltScheme": "N8",
       "vBeltScheme": null,
       "computable": true,
       "confidence": "high",
-      "sourceNote": "Табл.N6: универс. полувагон груженый=схема 8; порожний 4-осн=25."
+      "sourceNote": "Табл.N6: универс. полувагон груженый=схема 8. Порожний (TARIFF_FILL_PLAN item 1, sourced-official): обычный полувагон <19.6м → схема 25(1), НЕ 25. Схема 25 даёт ≈2.09× переплату на порожнем плече (на 2444км 4-осн: 25=24281₽ vs 25(1)=11630₽). Схема 25 остаётся для агломерат/окатыши-полувагонов и крытых; длинномерный (≥19.6м) полувагон выбирает иную схему — emptyLengthGuardM фиксирует границу <19.6м."
     },
     {
       "wagon": "Полувагон",

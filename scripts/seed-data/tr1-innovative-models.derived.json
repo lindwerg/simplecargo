@@ -1,0 +1,49 @@
+{
+  "_meta": {
+    "dataset": "TR-1 2026 innovative wagon-model registry → C_INNOVATIVE assignment is SOURCED-OFFICIAL (kills fitted lever #3)",
+    "purpose": "Authoritative model→coefficient registry so the per-wagon ×0.9595 is derived from the customer-supplied wagon model string, not a caller-trusted boolean. There is NO generic 'innovative' flag in ТР-1 2026 — the 0,9595 льгота is attached to specific 25-тс-axle wagon models only.",
+    "coefficient": 0.9595,
+    "coefficientVerbatim": "0,9595",
+    "fetchedAt": "2026-06-07",
+    "verifiedAt": "2026-06-07",
+    "asOf": "2026",
+    "verifiedReal": true,
+    "confidence": "sourced-official",
+    "killsFittedLever": "Gap/Lever 3 — data half closed: the 9-полувагон + 1-hopper registry and the 0,9595 value are now SOURCED-OFFICIAL. Code-wiring half (look up `innovative` from wagon model instead of caller boolean in src/lib/tariff/computeTariffN8.ts) is OUT OF SCOPE here and still pending.",
+    "verbatimTabl6P3": "Полувагон (кроме 6-осных сочлененных вагонов). При перевозках грузов в полувагонах моделей 12-9761-02, 12-9833-01; 12-9853, 12-9869, 12-196-01, 12-196-02, 12-2143, 12-2159, 12-6744 тариф определяется по тарифным схемам, при этом к тарифной схеме N 8 применяется коэффициент 0,9595",
+    "verbatimTabl7P3": "крытый вагон для минеральных удобрений, сырья для минеральных удобрений модели 19-9835-01 (типа хоппер) → коэффициент 0,9595 к тарифной схеме N 9",
+    "cautions": [
+      "Табл.6 п.3 verbatim 9-model string + 0,9595 sourced from a SINGLE publisher (consultant.ru LAW_522347), fetched twice identical; sudact.ru official-order page did NOT render the table body, so no independent second-publisher byte-for-byte transcription exists. Residual OCR/transcription risk on raw digits remains, mitigated by ОВК manufacturer corroboration of model existence.",
+      "Registry is NON-EXHAUSTIVE for other wagon types (cisterns, fitting platforms, grain/cement carriers) — those spec tables (Табл.7/8) were not fully scanned; an unlisted innovative wagon of another type could be mis-coefficiented.",
+      "Semicolon after '12-9833-01' in source is a verbatim typesetting artifact, NOT a list-group boundary — all 9 belong to one list.",
+      "Табл.6 (scheme N 8, полувагоны) vs Табл.7 (scheme N 9, hopper) distinction matters — coef value identical (0,9595) but the scheme it multiplies differs."
+    ]
+  },
+
+  "coefficient": 0.9595,
+  "table": "Табл.6 п.3 (полувагоны, scheme N 8) + Табл.7 п.3 (хоппер-минераловоз, scheme N 9)",
+  "point": "п.3",
+
+  "models": [
+    { "model": "12-9761-02", "coef": 0.9595, "scheme": "8", "wagonType": "полувагон", "table": "Табл.6", "point": "п.3", "source": "ТР-1 2026 Табл.6 п.3 (consultant.ru LAW_522347)", "sourced": true },
+    { "model": "12-9833-01", "coef": 0.9595, "scheme": "8", "wagonType": "полувагон", "table": "Табл.6", "point": "п.3", "source": "ТР-1 2026 Табл.6 п.3 (consultant.ru LAW_522347)", "sourced": true },
+    { "model": "12-9853",    "coef": 0.9595, "scheme": "8", "wagonType": "полувагон", "table": "Табл.6", "point": "п.3", "source": "ТР-1 2026 Табл.6 п.3 (consultant.ru LAW_522347)", "sourced": true },
+    { "model": "12-9869",    "coef": 0.9595, "scheme": "8", "wagonType": "полувагон", "table": "Табл.6", "point": "п.3", "source": "ТР-1 2026 Табл.6 п.3 (consultant.ru LAW_522347)", "sourced": true },
+    { "model": "12-196-01",  "coef": 0.9595, "scheme": "8", "wagonType": "полувагон", "table": "Табл.6", "point": "п.3", "source": "ТР-1 2026 Табл.6 п.3 (consultant.ru LAW_522347)", "sourced": true },
+    { "model": "12-196-02",  "coef": 0.9595, "scheme": "8", "wagonType": "полувагон", "table": "Табл.6", "point": "п.3", "source": "ТР-1 2026 Табл.6 п.3 (consultant.ru LAW_522347)", "sourced": true },
+    { "model": "12-2143",    "coef": 0.9595, "scheme": "8", "wagonType": "полувагон", "table": "Табл.6", "point": "п.3", "source": "ТР-1 2026 Табл.6 п.3 (consultant.ru LAW_522347)", "sourced": true },
+    { "model": "12-2159",    "coef": 0.9595, "scheme": "8", "wagonType": "полувагон", "table": "Табл.6", "point": "п.3", "source": "ТР-1 2026 Табл.6 п.3 (consultant.ru LAW_522347)", "sourced": true },
+    { "model": "12-6744",    "coef": 0.9595, "scheme": "8", "wagonType": "полувагон", "table": "Табл.6", "point": "п.3", "source": "ТР-1 2026 Табл.6 п.3 (consultant.ru LAW_522347); ОВК, ось 25 тс, 77 т, серийный выпуск с фев. 2026", "sourced": true },
+    { "model": "19-9835-01", "coef": 0.9595, "scheme": "9", "wagonType": "крытый вагон-хоппер для минеральных удобрений / сырья для мин. удобрений", "table": "Табл.7", "point": "п.3", "source": "ТР-1 2026 Табл.7 п.3 (consultant.ru LAW_43726)", "sourced": true }
+  ],
+
+  "source": {
+    "primary": "Приказ ФАС России от 06.11.2025 N 894/25, Приложение N 1 (Тарифное руководство №1). Табл.6 п.3 → consultant.ru LAW_522347 (959c65157e457f9547e98a462eb531d471728e69), fetched twice identical. Табл.7 п.3 → consultant.ru LAW_43726 (701bb5903982561b40e5153eb37d627d1554979c).",
+    "official": true,
+    "corroboration": "ОВК (uniwagon.com) manufacturer listings confirm 12-6744 and 12-9853 are real innovative gondolas (25 тс axle).",
+    "minjust": "Минюст 22.12.2025 № 84708"
+  },
+
+  "confidence": "sourced-official",
+  "verifiedReal": true
+}

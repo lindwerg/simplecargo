@@ -1,0 +1,39 @@
+[
+  {
+    "aEsr": "198813",
+    "bEsr": "196004",
+    "km": 54,
+    "uchastok": "МК МЖД (Московская окружная) → Московский узел",
+    "source": "gapfill2",
+    "a": "Лихоборы",
+    "b": "Москва-Бутырская",
+    "confidence": "node-internal-published",
+    "rationale": "Малое кольцо МЖД (Лихоборы/Серебряный Бор/Угрешская/Бойня/Москва-Южный Порт/Новопролетарская) are part of the Moscow tariff node. Лихоборы physically junctions the Рижско/Савёловское направление at Москва-Бутырская/Подмосковная. Linked at the uniform published Moscow node-internal узел distance of 54 km (the same value every Moscow terminal узел uses in the kniga3 Moscow clique). Connects the 6-узел / 17-station МК ring island to the big component.",
+    "km_source": "kniga3 Moscow node-internal clique distance (54 km), not fabricated"
+  },
+  {
+    "aEsr": "210108",
+    "bEsr": "210201",
+    "km": 5,
+    "uchastok": "Тула-Лихвинская → Тула I-Курская (Тульский узел)",
+    "source": "gapfill2",
+    "a": "Тула-Лихвинская",
+    "b": "Тула I-Курская",
+    "confidence": "node-internal-published",
+    "rationale": "Тула-Лихвинская (бывш. УЗК терминус, ныне ширококолейный грузовой ввод) lies inside the Тульский узел. Linked at the published Тула node-internal узел distance of 5 km (Плеханово↔Тула I = 5 km in kniga3). Connects the 1-узел / 2-station (Рвы, Труфаново) island to the big component.",
+    "km_source": "kniga3 Тула node-internal distance (Плеханово↔Тула I = 5 km), not fabricated"
+  },
+  {
+    "aEsr": "207001",
+    "bEsr": "207105",
+    "km": 25,
+    "uchastok": "Теткино (эксп.) → Глушково (RF-вход линии Ворожба—Хутор-Михайловский)",
+    "source": "gapfill2",
+    "a": "Теткино",
+    "b": "Глушково",
+    "confidence": "border-approximate",
+    "border": true,
+    "rationale": "Теткино/Локоть «эксп.» are RF-side export stops on the Ворожба—Хутор-Михайловский line, whose track runs along (and partly across) the RF↔Ukraine border. The RF-internal junction is Глушково (207105, already in big component, on Льгов-Киевский—Глушково участок). Тёткино станция is ~25 km west of Глушково (open-source: Тёткино пос. ~25 km from райцентр Глушково; станция 3 km west of пос.). km is APPROXIMATE — exact freight tariff distance on this border line is not in free Книга-3 RF tables (interstate styk segmentation). FLAGGED: fitted-not-sourced for the precise tariff km; topology (Глушково is the parent junction) is confirmed.",
+    "km_source": "open-source settlement distance Глушково→Тёткино ≈25 km; NOT a verified Книга-3 tariff figure"
+  }
+]

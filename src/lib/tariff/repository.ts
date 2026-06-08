@@ -154,6 +154,10 @@ async function loadIndexations(): Promise<IndexationLike[]> {
     .map((r) => ({
       pct: (Number(r.multiplier) - 1) * 100,
       effectiveFrom: r.effectiveFrom as Date,
+      // Carry effectiveTo so a closed-window (already-baked) indexation self-deactivates
+      // in isIndexApplicable instead of compounding onto the indexed 2026 base — closes
+      // the double-count (TARIFF_MASTER_AUDIT.md §3 item 1, gaps C1/H19).
+      effectiveTo: r.effectiveTo ?? null,
       appliesToClass: r.appliesToClass === null ? null : Number(r.appliesToClass),
     }));
 
@@ -161,11 +165,17 @@ async function loadIndexations(): Promise<IndexationLike[]> {
   const fromIdx: IndexationLike[] = idxRows.map((r) => ({
     pct: Number(r.pct),
     effectiveFrom: r.effectiveFrom,
+    // Legacy table has no effectiveTo column → open-ended (null). Canonical windows come
+    // from tariff_coefficients above (preferred in the dedup below).
+    effectiveTo: null,
     appliesToClass: r.appliesToClass === null ? null : Number(r.appliesToClass),
   }));
 
-  // Deduplicate: if both tables contain the same (effectiveFrom, pct, appliesToClass),
-  // keep only one entry. tariff_coefficients rows are preferred (they appear first).
+  // Deduplicate on (effectiveFrom, pct, appliesToClass) — NOT effectiveTo. The legacy
+  // tariff_indexations row for the same percentage carries no window (effectiveTo=null);
+  // keeping effectiveTo OUT of the key lets the canonical tariff_coefficients row (which
+  // does carry the closing window) win, so the baked indexation correctly self-deactivates
+  // instead of the legacy open-ended duplicate re-applying it.
   const seen = new Set<string>();
   const merged: IndexationLike[] = [];
   for (const ix of [...fromCoef, ...fromIdx]) {

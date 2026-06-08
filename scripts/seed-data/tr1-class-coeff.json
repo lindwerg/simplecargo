@@ -1,0 +1,338 @@
+{
+  "_meta": {
+    "dataset": "TR-1 2026 class coefficient K1 (Табл.2) + отправочный/distance correction K4 (Табл.5, max-of-two per п.16.7)",
+    "sources": [
+      "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-1_1/tablitsa-n-2/",
+      "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-1_1/tablitsa-n-5/",
+      "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/ii/ (п.16.7 max-of-two; п.18.1.1 own-полувагон class factors)"
+    ],
+    "fetchedAt": "2026-06-07",
+    "k1Note": "K1 IS a (class, distance) table, not a scalar. Class 1: tapers 0,75 (1-1200km) → 0,55 (5001+). Class 2: flat 1,00. Class 3: 1,74 for listed ЕТСНГ positions, else 1,54 (NOT distance-dependent). Applies to the И (infrastructure) component only.",
+    "distanceCorrNote": "Таблица N 5 = K4 коэффициент по количеству вагонов в отправке × пояс дальности (повагонные/групповые/маршрутные). п.16.7 'max-of-two' is the BELT-BOUNDARY correction: at each пояс дальности boundary the tariff is the greater of (rate at prior belt's max distance × Табл.5 coeff) vs the next belt rate. For SimpleCargo повагонная single wagon → shipmentGroup '1'.",
+    "ownGondolaClassFactor": {
+      "1": 0.9346,
+      "2": 0.9592,
+      "3": 0.9774,
+      "_note": "п.18.1.1: коэффициент к И-части для полувагонов по классу груза; спец.модели 12-9761-02 и др. → дополнительно ×0,9595 к схеме N8"
+    }
+  },
+  "classCoeff": [
+    {
+      "class": 1,
+      "distFromKm": 1,
+      "distToKm": 1200,
+      "k1": 0.75
+    },
+    {
+      "class": 1,
+      "distFromKm": 1201,
+      "distToKm": 1400,
+      "k1": 0.74
+    },
+    {
+      "class": 1,
+      "distFromKm": 1401,
+      "distToKm": 1600,
+      "k1": 0.73
+    },
+    {
+      "class": 1,
+      "distFromKm": 1601,
+      "distToKm": 1800,
+      "k1": 0.72
+    },
+    {
+      "class": 1,
+      "distFromKm": 1801,
+      "distToKm": 2000,
+      "k1": 0.71
+    },
+    {
+      "class": 1,
+      "distFromKm": 2001,
+      "distToKm": 2200,
+      "k1": 0.7
+    },
+    {
+      "class": 1,
+      "distFromKm": 2201,
+      "distToKm": 2400,
+      "k1": 0.69
+    },
+    {
+      "class": 1,
+      "distFromKm": 2401,
+      "distToKm": 2600,
+      "k1": 0.68
+    },
+    {
+      "class": 1,
+      "distFromKm": 2601,
+      "distToKm": 2800,
+      "k1": 0.67
+    },
+    {
+      "class": 1,
+      "distFromKm": 2801,
+      "distToKm": 3000,
+      "k1": 0.66
+    },
+    {
+      "class": 1,
+      "distFromKm": 3001,
+      "distToKm": 3200,
+      "k1": 0.65
+    },
+    {
+      "class": 1,
+      "distFromKm": 3201,
+      "distToKm": 3400,
+      "k1": 0.64
+    },
+    {
+      "class": 1,
+      "distFromKm": 3401,
+      "distToKm": 3600,
+      "k1": 0.63
+    },
+    {
+      "class": 1,
+      "distFromKm": 3601,
+      "distToKm": 3800,
+      "k1": 0.62
+    },
+    {
+      "class": 1,
+      "distFromKm": 3801,
+      "distToKm": 4000,
+      "k1": 0.61
+    },
+    {
+      "class": 1,
+      "distFromKm": 4001,
+      "distToKm": 4200,
+      "k1": 0.6
+    },
+    {
+      "class": 1,
+      "distFromKm": 4201,
+      "distToKm": 4400,
+      "k1": 0.59
+    },
+    {
+      "class": 1,
+      "distFromKm": 4401,
+      "distToKm": 4600,
+      "k1": 0.58
+    },
+    {
+      "class": 1,
+      "distFromKm": 4601,
+      "distToKm": 4800,
+      "k1": 0.57
+    },
+    {
+      "class": 1,
+      "distFromKm": 4801,
+      "distToKm": 5000,
+      "k1": 0.56
+    },
+    {
+      "class": 1,
+      "distFromKm": 5001,
+      "distToKm": 999999,
+      "k1": 0.55
+    },
+    {
+      "class": 2,
+      "distFromKm": 0,
+      "distToKm": 999999,
+      "k1": 1.0,
+      "etsngNote": "Все позиции грузов второго тарифного класса"
+    },
+    {
+      "class": 3,
+      "distFromKm": 0,
+      "distToKm": 999999,
+      "k1": 1.74,
+      "etsngNote": "092, 093, 312 - 316, 321 - 324, 331 - 333, 381, 391, 411, 414, 416, 454, 461, 481, 483 - 489, 611, 693, 711 - 713, 721 - 726, 731, 732, 741, 742, 751 - 754, 756 - 758"
+    },
+    {
+      "class": 3,
+      "distFromKm": 0,
+      "distToKm": 999999,
+      "k1": 1.54,
+      "etsngNote": "Остальные позиции грузов третьего тарифного класса"
+    }
+  ],
+  "distanceCorr": [
+    {
+      "shipmentGroup": "1",
+      "distFromKm": 0,
+      "distToKm": 510,
+      "k": 1.08
+    },
+    {
+      "shipmentGroup": "1",
+      "distFromKm": 511,
+      "distToKm": 1000,
+      "k": 1.04
+    },
+    {
+      "shipmentGroup": "1",
+      "distFromKm": 1001,
+      "distToKm": 2000,
+      "k": 1.03
+    },
+    {
+      "shipmentGroup": "1",
+      "distFromKm": 2001,
+      "distToKm": 999999,
+      "k": 1.01
+    },
+    {
+      "shipmentGroup": "2",
+      "distFromKm": 0,
+      "distToKm": 510,
+      "k": 1.02
+    },
+    {
+      "shipmentGroup": "2",
+      "distFromKm": 511,
+      "distToKm": 1000,
+      "k": 1.01
+    },
+    {
+      "shipmentGroup": "2",
+      "distFromKm": 1001,
+      "distToKm": 2000,
+      "k": 1.01
+    },
+    {
+      "shipmentGroup": "2",
+      "distFromKm": 2001,
+      "distToKm": 999999,
+      "k": 1.0
+    },
+    {
+      "shipmentGroup": "3 - 5",
+      "distFromKm": 0,
+      "distToKm": 510,
+      "k": 1.0
+    },
+    {
+      "shipmentGroup": "3 - 5",
+      "distFromKm": 511,
+      "distToKm": 1000,
+      "k": 1.0
+    },
+    {
+      "shipmentGroup": "3 - 5",
+      "distFromKm": 1001,
+      "distToKm": 2000,
+      "k": 1.0
+    },
+    {
+      "shipmentGroup": "3 - 5",
+      "distFromKm": 2001,
+      "distToKm": 999999,
+      "k": 1.0
+    },
+    {
+      "shipmentGroup": "6 - 20",
+      "distFromKm": 0,
+      "distToKm": 510,
+      "k": 0.97
+    },
+    {
+      "shipmentGroup": "6 - 20",
+      "distFromKm": 511,
+      "distToKm": 1000,
+      "k": 0.98
+    },
+    {
+      "shipmentGroup": "6 - 20",
+      "distFromKm": 1001,
+      "distToKm": 2000,
+      "k": 1.0
+    },
+    {
+      "shipmentGroup": "6 - 20",
+      "distFromKm": 2001,
+      "distToKm": 999999,
+      "k": 1.0
+    },
+    {
+      "shipmentGroup": "Свыше 20",
+      "distFromKm": 0,
+      "distToKm": 510,
+      "k": 0.95
+    },
+    {
+      "shipmentGroup": "Свыше 20",
+      "distFromKm": 511,
+      "distToKm": 1000,
+      "k": 0.97
+    },
+    {
+      "shipmentGroup": "Свыше 20",
+      "distFromKm": 1001,
+      "distToKm": 2000,
+      "k": 0.98
+    },
+    {
+      "shipmentGroup": "Свыше 20",
+      "distFromKm": 2001,
+      "distToKm": 999999,
+      "k": 1.0
+    },
+    {
+      "shipmentGroup": "прямые",
+      "distFromKm": 0,
+      "distToKm": 510,
+      "k": 0.85
+    },
+    {
+      "shipmentGroup": "прямые",
+      "distFromKm": 511,
+      "distToKm": 1000,
+      "k": 0.89
+    },
+    {
+      "shipmentGroup": "прямые",
+      "distFromKm": 1001,
+      "distToKm": 2000,
+      "k": 0.92
+    },
+    {
+      "shipmentGroup": "прямые",
+      "distFromKm": 2001,
+      "distToKm": 999999,
+      "k": 0.95
+    },
+    {
+      "shipmentGroup": "с распылением",
+      "distFromKm": 0,
+      "distToKm": 510,
+      "k": 0.9
+    },
+    {
+      "shipmentGroup": "с распылением",
+      "distFromKm": 511,
+      "distToKm": 1000,
+      "k": 0.92
+    },
+    {
+      "shipmentGroup": "с распылением",
+      "distFromKm": 1001,
+      "distToKm": 2000,
+      "k": 0.95
+    },
+    {
+      "shipmentGroup": "с распылением",
+      "distFromKm": 2001,
+      "distToKm": 999999,
+      "k": 0.97
+    }
+  ]
+}

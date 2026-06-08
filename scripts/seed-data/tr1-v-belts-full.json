@@ -1,0 +1,12956 @@
+[
+{
+"scheme": "В1",
+"distFromKm": 0,
+"distToKm": 5,
+"rateRub": 5919.0
+},
+{
+"scheme": "В1",
+"distFromKm": 6,
+"distToKm": 10,
+"rateRub": 5958.0
+},
+{
+"scheme": "В1",
+"distFromKm": 11,
+"distToKm": 15,
+"rateRub": 5991.0
+},
+{
+"scheme": "В1",
+"distFromKm": 16,
+"distToKm": 20,
+"rateRub": 6024.0
+},
+{
+"scheme": "В1",
+"distFromKm": 21,
+"distToKm": 25,
+"rateRub": 6056.0
+},
+{
+"scheme": "В1",
+"distFromKm": 26,
+"distToKm": 30,
+"rateRub": 6089.0
+},
+{
+"scheme": "В1",
+"distFromKm": 31,
+"distToKm": 35,
+"rateRub": 6121.0
+},
+{
+"scheme": "В1",
+"distFromKm": 36,
+"distToKm": 40,
+"rateRub": 6154.0
+},
+{
+"scheme": "В1",
+"distFromKm": 41,
+"distToKm": 45,
+"rateRub": 6187.0
+},
+{
+"scheme": "В1",
+"distFromKm": 46,
+"distToKm": 50,
+"rateRub": 6219.0
+},
+{
+"scheme": "В1",
+"distFromKm": 51,
+"distToKm": 60,
+"rateRub": 6265.0
+},
+{
+"scheme": "В1",
+"distFromKm": 61,
+"distToKm": 70,
+"rateRub": 6330.0
+},
+{
+"scheme": "В1",
+"distFromKm": 71,
+"distToKm": 80,
+"rateRub": 6396.0
+},
+{
+"scheme": "В1",
+"distFromKm": 81,
+"distToKm": 90,
+"rateRub": 6461.0
+},
+{
+"scheme": "В1",
+"distFromKm": 91,
+"distToKm": 100,
+"rateRub": 6526.0
+},
+{
+"scheme": "В1",
+"distFromKm": 101,
+"distToKm": 120,
+"rateRub": 6624.0
+},
+{
+"scheme": "В1",
+"distFromKm": 121,
+"distToKm": 140,
+"rateRub": 6755.0
+},
+{
+"scheme": "В1",
+"distFromKm": 141,
+"distToKm": 160,
+"rateRub": 6886.0
+},
+{
+"scheme": "В1",
+"distFromKm": 161,
+"distToKm": 180,
+"rateRub": 6998.0
+},
+{
+"scheme": "В1",
+"distFromKm": 181,
+"distToKm": 200,
+"rateRub": 7106.0
+},
+{
+"scheme": "В1",
+"distFromKm": 201,
+"distToKm": 220,
+"rateRub": 7222.0
+},
+{
+"scheme": "В1",
+"distFromKm": 221,
+"distToKm": 240,
+"rateRub": 7322.0
+},
+{
+"scheme": "В1",
+"distFromKm": 241,
+"distToKm": 260,
+"rateRub": 7432.0
+},
+{
+"scheme": "В1",
+"distFromKm": 261,
+"distToKm": 280,
+"rateRub": 7540.0
+},
+{
+"scheme": "В1",
+"distFromKm": 281,
+"distToKm": 300,
+"rateRub": 7646.0
+},
+{
+"scheme": "В1",
+"distFromKm": 301,
+"distToKm": 330,
+"rateRub": 7779.0
+},
+{
+"scheme": "В1",
+"distFromKm": 331,
+"distToKm": 360,
+"rateRub": 7939.0
+},
+{
+"scheme": "В1",
+"distFromKm": 361,
+"distToKm": 390,
+"rateRub": 8096.0
+},
+{
+"scheme": "В1",
+"distFromKm": 391,
+"distToKm": 420,
+"rateRub": 8250.0
+},
+{
+"scheme": "В1",
+"distFromKm": 421,
+"distToKm": 450,
+"rateRub": 8423.0
+},
+{
+"scheme": "В1",
+"distFromKm": 451,
+"distToKm": 480,
+"rateRub": 8572.0
+},
+{
+"scheme": "В1",
+"distFromKm": 481,
+"distToKm": 510,
+"rateRub": 8718.0
+},
+{
+"scheme": "В1",
+"distFromKm": 511,
+"distToKm": 540,
+"rateRub": 8888.0
+},
+{
+"scheme": "В1",
+"distFromKm": 541,
+"distToKm": 570,
+"rateRub": 9029.0
+},
+{
+"scheme": "В1",
+"distFromKm": 571,
+"distToKm": 600,
+"rateRub": 9198.0
+},
+{
+"scheme": "В1",
+"distFromKm": 601,
+"distToKm": 640,
+"rateRub": 9362.0
+},
+{
+"scheme": "В1",
+"distFromKm": 641,
+"distToKm": 680,
+"rateRub": 9585.0
+},
+{
+"scheme": "В1",
+"distFromKm": 681,
+"distToKm": 720,
+"rateRub": 9771.0
+},
+{
+"scheme": "В1",
+"distFromKm": 721,
+"distToKm": 760,
+"rateRub": 9992.0
+},
+{
+"scheme": "В1",
+"distFromKm": 761,
+"distToKm": 800,
+"rateRub": 10171.0
+},
+{
+"scheme": "В1",
+"distFromKm": 801,
+"distToKm": 840,
+"rateRub": 10390.0
+},
+{
+"scheme": "В1",
+"distFromKm": 841,
+"distToKm": 880,
+"rateRub": 10609.0
+},
+{
+"scheme": "В1",
+"distFromKm": 881,
+"distToKm": 920,
+"rateRub": 10780.0
+},
+{
+"scheme": "В1",
+"distFromKm": 921,
+"distToKm": 960,
+"rateRub": 10996.0
+},
+{
+"scheme": "В1",
+"distFromKm": 961,
+"distToKm": 1000,
+"rateRub": 11161.0
+},
+{
+"scheme": "В1",
+"distFromKm": 1001,
+"distToKm": 1050,
+"rateRub": 11402.0
+},
+{
+"scheme": "В1",
+"distFromKm": 1051,
+"distToKm": 1100,
+"rateRub": 11670.0
+},
+{
+"scheme": "В1",
+"distFromKm": 1101,
+"distToKm": 1150,
+"rateRub": 11879.0
+},
+{
+"scheme": "В1",
+"distFromKm": 1151,
+"distToKm": 1200,
+"rateRub": 12144.0
+},
+{
+"scheme": "В1",
+"distFromKm": 1201,
+"distToKm": 1250,
+"rateRub": 12344.0
+},
+{
+"scheme": "В1",
+"distFromKm": 1251,
+"distToKm": 1300,
+"rateRub": 12607.0
+},
+{
+"scheme": "В1",
+"distFromKm": 1301,
+"distToKm": 1350,
+"rateRub": 12800.0
+},
+{
+"scheme": "В1",
+"distFromKm": 1351,
+"distToKm": 1400,
+"rateRub": 13060.0
+},
+{
+"scheme": "В1",
+"distFromKm": 1401,
+"distToKm": 1450,
+"rateRub": 13320.0
+},
+{
+"scheme": "В1",
+"distFromKm": 1451,
+"distToKm": 1500,
+"rateRub": 13502.0
+},
+{
+"scheme": "В1",
+"distFromKm": 1501,
+"distToKm": 1600,
+"rateRub": 13888.0
+},
+{
+"scheme": "В1",
+"distFromKm": 1601,
+"distToKm": 1700,
+"rateRub": 14315.0
+},
+{
+"scheme": "В1",
+"distFromKm": 1701,
+"distToKm": 1800,
+"rateRub": 14732.0
+},
+{
+"scheme": "В1",
+"distFromKm": 1801,
+"distToKm": 1900,
+"rateRub": 15237.0
+},
+{
+"scheme": "В1",
+"distFromKm": 1901,
+"distToKm": 2000,
+"rateRub": 15637.0
+},
+{
+"scheme": "В1",
+"distFromKm": 2001,
+"distToKm": 2100,
+"rateRub": 16028.0
+},
+{
+"scheme": "В1",
+"distFromKm": 2101,
+"distToKm": 2200,
+"rateRub": 16521.0
+},
+{
+"scheme": "В1",
+"distFromKm": 2201,
+"distToKm": 2300,
+"rateRub": 16896.0
+},
+{
+"scheme": "В1",
+"distFromKm": 2301,
+"distToKm": 2400,
+"rateRub": 17259.0
+},
+{
+"scheme": "В1",
+"distFromKm": 2401,
+"distToKm": 2500,
+"rateRub": 17742.0
+},
+{
+"scheme": "В1",
+"distFromKm": 2501,
+"distToKm": 2600,
+"rateRub": 18090.0
+},
+{
+"scheme": "В1",
+"distFromKm": 2601,
+"distToKm": 2700,
+"rateRub": 18427.0
+},
+{
+"scheme": "В1",
+"distFromKm": 2701,
+"distToKm": 2800,
+"rateRub": 18900.0
+},
+{
+"scheme": "В1",
+"distFromKm": 2801,
+"distToKm": 2900,
+"rateRub": 19221.0
+},
+{
+"scheme": "В1",
+"distFromKm": 2901,
+"distToKm": 3000,
+"rateRub": 19532.0
+},
+{
+"scheme": "В1",
+"distFromKm": 3001,
+"distToKm": 3100,
+"rateRub": 19993.0
+},
+{
+"scheme": "В1",
+"distFromKm": 3101,
+"distToKm": 3200,
+"rateRub": 20455.0
+},
+{
+"scheme": "В1",
+"distFromKm": 3201,
+"distToKm": 3300,
+"rateRub": 20917.0
+},
+{
+"scheme": "В1",
+"distFromKm": 3301,
+"distToKm": 3400,
+"rateRub": 21379.0
+},
+{
+"scheme": "В1",
+"distFromKm": 3401,
+"distToKm": 3500,
+"rateRub": 21841.0
+},
+{
+"scheme": "В1",
+"distFromKm": 3501,
+"distToKm": 3600,
+"rateRub": 22303.0
+},
+{
+"scheme": "В1",
+"distFromKm": 3601,
+"distToKm": 3700,
+"rateRub": 22765.0
+},
+{
+"scheme": "В1",
+"distFromKm": 3701,
+"distToKm": 3800,
+"rateRub": 23227.0
+},
+{
+"scheme": "В1",
+"distFromKm": 3801,
+"distToKm": 3900,
+"rateRub": 23688.0
+},
+{
+"scheme": "В1",
+"distFromKm": 3901,
+"distToKm": 4000,
+"rateRub": 24150.0
+},
+{
+"scheme": "В1",
+"distFromKm": 4001,
+"distToKm": 4100,
+"rateRub": 24612.0
+},
+{
+"scheme": "В1",
+"distFromKm": 4101,
+"distToKm": 4200,
+"rateRub": 25074.0
+},
+{
+"scheme": "В1",
+"distFromKm": 4201,
+"distToKm": 4300,
+"rateRub": 25536.0
+},
+{
+"scheme": "В1",
+"distFromKm": 4301,
+"distToKm": 4400,
+"rateRub": 25998.0
+},
+{
+"scheme": "В1",
+"distFromKm": 4401,
+"distToKm": 4500,
+"rateRub": 26460.0
+},
+{
+"scheme": "В1",
+"distFromKm": 4501,
+"distToKm": 4600,
+"rateRub": 26922.0
+},
+{
+"scheme": "В1",
+"distFromKm": 4601,
+"distToKm": 4700,
+"rateRub": 27384.0
+},
+{
+"scheme": "В1",
+"distFromKm": 4701,
+"distToKm": 4800,
+"rateRub": 27845.0
+},
+{
+"scheme": "В1",
+"distFromKm": 4801,
+"distToKm": 4900,
+"rateRub": 28307.0
+},
+{
+"scheme": "В1",
+"distFromKm": 4901,
+"distToKm": 5000,
+"rateRub": 28769.0
+},
+{
+"scheme": "В1",
+"distFromKm": 5001,
+"distToKm": 5100,
+"rateRub": 29231.0
+},
+{
+"scheme": "В1",
+"distFromKm": 5101,
+"distToKm": 5200,
+"rateRub": 29693.0
+},
+{
+"scheme": "В1",
+"distFromKm": 5201,
+"distToKm": 5300,
+"rateRub": 30155.0
+},
+{
+"scheme": "В1",
+"distFromKm": 5301,
+"distToKm": 5400,
+"rateRub": 30617.0
+},
+{
+"scheme": "В1",
+"distFromKm": 5401,
+"distToKm": 5500,
+"rateRub": 31079.0
+},
+{
+"scheme": "В1",
+"distFromKm": 5501,
+"distToKm": 5700,
+"rateRub": 31771.0
+},
+{
+"scheme": "В1",
+"distFromKm": 5701,
+"distToKm": 5900,
+"rateRub": 32695.0
+},
+{
+"scheme": "В1",
+"distFromKm": 5901,
+"distToKm": 6100,
+"rateRub": 33619.0
+},
+{
+"scheme": "В1",
+"distFromKm": 6101,
+"distToKm": 6300,
+"rateRub": 34543.0
+},
+{
+"scheme": "В1",
+"distFromKm": 6301,
+"distToKm": 6500,
+"rateRub": 35467.0
+},
+{
+"scheme": "В1",
+"distFromKm": 6501,
+"distToKm": 6700,
+"rateRub": 36390.0
+},
+{
+"scheme": "В1",
+"distFromKm": 6701,
+"distToKm": 6900,
+"rateRub": 37314.0
+},
+{
+"scheme": "В1",
+"distFromKm": 6901,
+"distToKm": 7100,
+"rateRub": 38238.0
+},
+{
+"scheme": "В1",
+"distFromKm": 7101,
+"distToKm": 7300,
+"rateRub": 39162.0
+},
+{
+"scheme": "В1",
+"distFromKm": 7301,
+"distToKm": 7500,
+"rateRub": 40085.0
+},
+{
+"scheme": "В1",
+"distFromKm": 7501,
+"distToKm": 7700,
+"rateRub": 41009.0
+},
+{
+"scheme": "В1",
+"distFromKm": 7701,
+"distToKm": 7900,
+"rateRub": 41933.0
+},
+{
+"scheme": "В1",
+"distFromKm": 7901,
+"distToKm": 8100,
+"rateRub": 42857.0
+},
+{
+"scheme": "В1",
+"distFromKm": 8101,
+"distToKm": 8300,
+"rateRub": 43780.0
+},
+{
+"scheme": "В1",
+"distFromKm": 8301,
+"distToKm": 8500,
+"rateRub": 44704.0
+},
+{
+"scheme": "В1",
+"distFromKm": 8501,
+"distToKm": 8700,
+"rateRub": 45628.0
+},
+{
+"scheme": "В1",
+"distFromKm": 8701,
+"distToKm": 8900,
+"rateRub": 46552.0
+},
+{
+"scheme": "В1",
+"distFromKm": 8901,
+"distToKm": 9100,
+"rateRub": 47475.0
+},
+{
+"scheme": "В1",
+"distFromKm": 9101,
+"distToKm": 9300,
+"rateRub": 48399.0
+},
+{
+"scheme": "В1",
+"distFromKm": 9301,
+"distToKm": 9500,
+"rateRub": 49323.0
+},
+{
+"scheme": "В1",
+"distFromKm": 9501,
+"distToKm": 9700,
+"rateRub": 50247.0
+},
+{
+"scheme": "В1",
+"distFromKm": 9701,
+"distToKm": 9900,
+"rateRub": 51171.0
+},
+{
+"scheme": "В1",
+"distFromKm": 9901,
+"distToKm": 10100,
+"rateRub": 52094.0
+},
+{
+"scheme": "В1",
+"distFromKm": 10101,
+"distToKm": 10300,
+"rateRub": 53018.0
+},
+{
+"scheme": "В1",
+"distFromKm": 10301,
+"distToKm": 10500,
+"rateRub": 53942.0
+},
+{
+"scheme": "В1",
+"distFromKm": 10501,
+"distToKm": 10700,
+"rateRub": 54866.0
+},
+{
+"scheme": "В1",
+"distFromKm": 10701,
+"distToKm": 10900,
+"rateRub": 55789.0
+},
+{
+"scheme": "В1",
+"distFromKm": 10901,
+"distToKm": 11100,
+"rateRub": 56713.0
+},
+{
+"scheme": "В1",
+"distFromKm": 11101,
+"distToKm": 11300,
+"rateRub": 57637.0
+},
+{
+"scheme": "В1",
+"distFromKm": 11301,
+"distToKm": 11500,
+"rateRub": 58561.0
+},
+{
+"scheme": "В1",
+"distFromKm": 11501,
+"distToKm": 11700,
+"rateRub": 59484.0
+},
+{
+"scheme": "В1",
+"distFromKm": 11701,
+"distToKm": 11900,
+"rateRub": 60408.0
+},
+{
+"scheme": "В10",
+"distFromKm": 0,
+"distToKm": 5,
+"rateRub": 15348.0
+},
+{
+"scheme": "В10",
+"distFromKm": 6,
+"distToKm": 10,
+"rateRub": 15524.0
+},
+{
+"scheme": "В10",
+"distFromKm": 11,
+"distToKm": 15,
+"rateRub": 15671.0
+},
+{
+"scheme": "В10",
+"distFromKm": 16,
+"distToKm": 20,
+"rateRub": 15817.0
+},
+{
+"scheme": "В10",
+"distFromKm": 21,
+"distToKm": 25,
+"rateRub": 15964.0
+},
+{
+"scheme": "В10",
+"distFromKm": 26,
+"distToKm": 30,
+"rateRub": 16111.0
+},
+{
+"scheme": "В10",
+"distFromKm": 31,
+"distToKm": 35,
+"rateRub": 16258.0
+},
+{
+"scheme": "В10",
+"distFromKm": 36,
+"distToKm": 40,
+"rateRub": 16405.0
+},
+{
+"scheme": "В10",
+"distFromKm": 41,
+"distToKm": 45,
+"rateRub": 16551.0
+},
+{
+"scheme": "В10",
+"distFromKm": 46,
+"distToKm": 50,
+"rateRub": 16698.0
+},
+{
+"scheme": "В10",
+"distFromKm": 51,
+"distToKm": 60,
+"rateRub": 16904.0
+},
+{
+"scheme": "В10",
+"distFromKm": 61,
+"distToKm": 70,
+"rateRub": 17197.0
+},
+{
+"scheme": "В10",
+"distFromKm": 71,
+"distToKm": 80,
+"rateRub": 17491.0
+},
+{
+"scheme": "В10",
+"distFromKm": 81,
+"distToKm": 90,
+"rateRub": 17785.0
+},
+{
+"scheme": "В10",
+"distFromKm": 91,
+"distToKm": 100,
+"rateRub": 18078.0
+},
+{
+"scheme": "В10",
+"distFromKm": 101,
+"distToKm": 120,
+"rateRub": 18519.0
+},
+{
+"scheme": "В10",
+"distFromKm": 121,
+"distToKm": 140,
+"rateRub": 19106.0
+},
+{
+"scheme": "В10",
+"distFromKm": 141,
+"distToKm": 160,
+"rateRub": 19693.0
+},
+{
+"scheme": "В10",
+"distFromKm": 161,
+"distToKm": 180,
+"rateRub": 20199.0
+},
+{
+"scheme": "В10",
+"distFromKm": 181,
+"distToKm": 200,
+"rateRub": 20686.0
+},
+{
+"scheme": "В10",
+"distFromKm": 201,
+"distToKm": 220,
+"rateRub": 21204.0
+},
+{
+"scheme": "В10",
+"distFromKm": 221,
+"distToKm": 240,
+"rateRub": 21658.0
+},
+{
+"scheme": "В10",
+"distFromKm": 241,
+"distToKm": 260,
+"rateRub": 22152.0
+},
+{
+"scheme": "В10",
+"distFromKm": 261,
+"distToKm": 280,
+"rateRub": 22636.0
+},
+{
+"scheme": "В10",
+"distFromKm": 281,
+"distToKm": 300,
+"rateRub": 23111.0
+},
+{
+"scheme": "В10",
+"distFromKm": 301,
+"distToKm": 330,
+"rateRub": 23710.0
+},
+{
+"scheme": "В10",
+"distFromKm": 331,
+"distToKm": 360,
+"rateRub": 24430.0
+},
+{
+"scheme": "В10",
+"distFromKm": 361,
+"distToKm": 390,
+"rateRub": 25135.0
+},
+{
+"scheme": "В10",
+"distFromKm": 391,
+"distToKm": 420,
+"rateRub": 25826.0
+},
+{
+"scheme": "В10",
+"distFromKm": 421,
+"distToKm": 450,
+"rateRub": 26607.0
+},
+{
+"scheme": "В10",
+"distFromKm": 451,
+"distToKm": 480,
+"rateRub": 27277.0
+},
+{
+"scheme": "В10",
+"distFromKm": 481,
+"distToKm": 510,
+"rateRub": 27932.0
+},
+{
+"scheme": "В10",
+"distFromKm": 511,
+"distToKm": 540,
+"rateRub": 28698.0
+},
+{
+"scheme": "В10",
+"distFromKm": 541,
+"distToKm": 570,
+"rateRub": 29332.0
+},
+{
+"scheme": "В10",
+"distFromKm": 571,
+"distToKm": 600,
+"rateRub": 30091.0
+},
+{
+"scheme": "В10",
+"distFromKm": 601,
+"distToKm": 640,
+"rateRub": 30828.0
+},
+{
+"scheme": "В10",
+"distFromKm": 641,
+"distToKm": 680,
+"rateRub": 31831.0
+},
+{
+"scheme": "В10",
+"distFromKm": 681,
+"distToKm": 720,
+"rateRub": 32666.0
+},
+{
+"scheme": "В10",
+"distFromKm": 721,
+"distToKm": 760,
+"rateRub": 33659.0
+},
+{
+"scheme": "В10",
+"distFromKm": 761,
+"distToKm": 800,
+"rateRub": 34466.0
+},
+{
+"scheme": "В10",
+"distFromKm": 801,
+"distToKm": 840,
+"rateRub": 35450.0
+},
+{
+"scheme": "В10",
+"distFromKm": 841,
+"distToKm": 880,
+"rateRub": 36433.0
+},
+{
+"scheme": "В10",
+"distFromKm": 881,
+"distToKm": 920,
+"rateRub": 37202.0
+},
+{
+"scheme": "В10",
+"distFromKm": 921,
+"distToKm": 960,
+"rateRub": 38176.0
+},
+{
+"scheme": "В10",
+"distFromKm": 961,
+"distToKm": 1000,
+"rateRub": 38916.0
+},
+{
+"scheme": "В10",
+"distFromKm": 1001,
+"distToKm": 1050,
+"rateRub": 40000.0
+},
+{
+"scheme": "В10",
+"distFromKm": 1051,
+"distToKm": 1100,
+"rateRub": 41206.0
+},
+{
+"scheme": "В10",
+"distFromKm": 1101,
+"distToKm": 1150,
+"rateRub": 42143.0
+},
+{
+"scheme": "В10",
+"distFromKm": 1151,
+"distToKm": 1200,
+"rateRub": 43336.0
+},
+{
+"scheme": "В10",
+"distFromKm": 1201,
+"distToKm": 1250,
+"rateRub": 44237.0
+},
+{
+"scheme": "В10",
+"distFromKm": 1251,
+"distToKm": 1300,
+"rateRub": 45419.0
+},
+{
+"scheme": "В10",
+"distFromKm": 1301,
+"distToKm": 1350,
+"rateRub": 46284.0
+},
+{
+"scheme": "В10",
+"distFromKm": 1351,
+"distToKm": 1400,
+"rateRub": 47454.0
+},
+{
+"scheme": "В10",
+"distFromKm": 1401,
+"distToKm": 1450,
+"rateRub": 48623.0
+},
+{
+"scheme": "В10",
+"distFromKm": 1451,
+"distToKm": 1500,
+"rateRub": 49441.0
+},
+{
+"scheme": "В10",
+"distFromKm": 1501,
+"distToKm": 1600,
+"rateRub": 51178.0
+},
+{
+"scheme": "В10",
+"distFromKm": 1601,
+"distToKm": 1700,
+"rateRub": 53099.0
+},
+{
+"scheme": "В10",
+"distFromKm": 1701,
+"distToKm": 1800,
+"rateRub": 54973.0
+},
+{
+"scheme": "В10",
+"distFromKm": 1801,
+"distToKm": 1900,
+"rateRub": 57241.0
+},
+{
+"scheme": "В10",
+"distFromKm": 1901,
+"distToKm": 2000,
+"rateRub": 59043.0
+},
+{
+"scheme": "В10",
+"distFromKm": 2001,
+"distToKm": 2100,
+"rateRub": 60797.0
+},
+{
+"scheme": "В10",
+"distFromKm": 2101,
+"distToKm": 2200,
+"rateRub": 63017.0
+},
+{
+"scheme": "В10",
+"distFromKm": 2201,
+"distToKm": 2300,
+"rateRub": 64700.0
+},
+{
+"scheme": "В10",
+"distFromKm": 2301,
+"distToKm": 2400,
+"rateRub": 66335.0
+},
+{
+"scheme": "В10",
+"distFromKm": 2401,
+"distToKm": 2500,
+"rateRub": 68507.0
+},
+{
+"scheme": "В10",
+"distFromKm": 2501,
+"distToKm": 2600,
+"rateRub": 70071.0
+},
+{
+"scheme": "В10",
+"distFromKm": 2601,
+"distToKm": 2700,
+"rateRub": 71586.0
+},
+{
+"scheme": "В10",
+"distFromKm": 2701,
+"distToKm": 2800,
+"rateRub": 73711.0
+},
+{
+"scheme": "В10",
+"distFromKm": 2801,
+"distToKm": 2900,
+"rateRub": 75155.0
+},
+{
+"scheme": "В10",
+"distFromKm": 2901,
+"distToKm": 3000,
+"rateRub": 76551.0
+},
+{
+"scheme": "В10",
+"distFromKm": 3001,
+"distToKm": 3100,
+"rateRub": 78628.0
+},
+{
+"scheme": "В10",
+"distFromKm": 3101,
+"distToKm": 3200,
+"rateRub": 80705.0
+},
+{
+"scheme": "В10",
+"distFromKm": 3201,
+"distToKm": 3300,
+"rateRub": 82781.0
+},
+{
+"scheme": "В10",
+"distFromKm": 3301,
+"distToKm": 3400,
+"rateRub": 84858.0
+},
+{
+"scheme": "В10",
+"distFromKm": 3401,
+"distToKm": 3500,
+"rateRub": 86935.0
+},
+{
+"scheme": "В10",
+"distFromKm": 3501,
+"distToKm": 3600,
+"rateRub": 89011.0
+},
+{
+"scheme": "В10",
+"distFromKm": 3601,
+"distToKm": 3700,
+"rateRub": 91088.0
+},
+{
+"scheme": "В10",
+"distFromKm": 3701,
+"distToKm": 3800,
+"rateRub": 93165.0
+},
+{
+"scheme": "В10",
+"distFromKm": 3801,
+"distToKm": 3900,
+"rateRub": 95242.0
+},
+{
+"scheme": "В10",
+"distFromKm": 3901,
+"distToKm": 4000,
+"rateRub": 97318.0
+},
+{
+"scheme": "В10",
+"distFromKm": 4001,
+"distToKm": 4100,
+"rateRub": 99395.0
+},
+{
+"scheme": "В10",
+"distFromKm": 4101,
+"distToKm": 4200,
+"rateRub": 101472.0
+},
+{
+"scheme": "В10",
+"distFromKm": 4201,
+"distToKm": 4300,
+"rateRub": 103548.0
+},
+{
+"scheme": "В10",
+"distFromKm": 4301,
+"distToKm": 4400,
+"rateRub": 105625.0
+},
+{
+"scheme": "В10",
+"distFromKm": 4401,
+"distToKm": 4500,
+"rateRub": 107702.0
+},
+{
+"scheme": "В10",
+"distFromKm": 4501,
+"distToKm": 4600,
+"rateRub": 109778.0
+},
+{
+"scheme": "В10",
+"distFromKm": 4601,
+"distToKm": 4700,
+"rateRub": 111855.0
+},
+{
+"scheme": "В10",
+"distFromKm": 4701,
+"distToKm": 4800,
+"rateRub": 113932.0
+},
+{
+"scheme": "В10",
+"distFromKm": 4801,
+"distToKm": 4900,
+"rateRub": 116008.0
+},
+{
+"scheme": "В10",
+"distFromKm": 4901,
+"distToKm": 5000,
+"rateRub": 118085.0
+},
+{
+"scheme": "В10",
+"distFromKm": 5001,
+"distToKm": 5100,
+"rateRub": 120162.0
+},
+{
+"scheme": "В10",
+"distFromKm": 5101,
+"distToKm": 5200,
+"rateRub": 122239.0
+},
+{
+"scheme": "В10",
+"distFromKm": 5201,
+"distToKm": 5300,
+"rateRub": 124315.0
+},
+{
+"scheme": "В10",
+"distFromKm": 5301,
+"distToKm": 5400,
+"rateRub": 126392.0
+},
+{
+"scheme": "В10",
+"distFromKm": 5401,
+"distToKm": 5500,
+"rateRub": 128469.0
+},
+{
+"scheme": "В10",
+"distFromKm": 5501,
+"distToKm": 5700,
+"rateRub": 131584.0
+},
+{
+"scheme": "В10",
+"distFromKm": 5701,
+"distToKm": 5900,
+"rateRub": 135737.0
+},
+{
+"scheme": "В10",
+"distFromKm": 5901,
+"distToKm": 6100,
+"rateRub": 139890.0
+},
+{
+"scheme": "В10",
+"distFromKm": 6101,
+"distToKm": 6300,
+"rateRub": 144044.0
+},
+{
+"scheme": "В10",
+"distFromKm": 6301,
+"distToKm": 6500,
+"rateRub": 148197.0
+},
+{
+"scheme": "В10",
+"distFromKm": 6501,
+"distToKm": 6700,
+"rateRub": 152351.0
+},
+{
+"scheme": "В10",
+"distFromKm": 6701,
+"distToKm": 6900,
+"rateRub": 156504.0
+},
+{
+"scheme": "В10",
+"distFromKm": 6901,
+"distToKm": 7100,
+"rateRub": 160657.0
+},
+{
+"scheme": "В10",
+"distFromKm": 7101,
+"distToKm": 7300,
+"rateRub": 164811.0
+},
+{
+"scheme": "В10",
+"distFromKm": 7301,
+"distToKm": 7500,
+"rateRub": 168964.0
+},
+{
+"scheme": "В10",
+"distFromKm": 7501,
+"distToKm": 7700,
+"rateRub": 173117.0
+},
+{
+"scheme": "В10",
+"distFromKm": 7701,
+"distToKm": 7900,
+"rateRub": 177271.0
+},
+{
+"scheme": "В10",
+"distFromKm": 7901,
+"distToKm": 8100,
+"rateRub": 181424.0
+},
+{
+"scheme": "В10",
+"distFromKm": 8101,
+"distToKm": 8300,
+"rateRub": 185578.0
+},
+{
+"scheme": "В10",
+"distFromKm": 8301,
+"distToKm": 8500,
+"rateRub": 189731.0
+},
+{
+"scheme": "В10",
+"distFromKm": 8501,
+"distToKm": 8700,
+"rateRub": 193884.0
+},
+{
+"scheme": "В10",
+"distFromKm": 8701,
+"distToKm": 8900,
+"rateRub": 198038.0
+},
+{
+"scheme": "В10",
+"distFromKm": 8901,
+"distToKm": 9100,
+"rateRub": 202191.0
+},
+{
+"scheme": "В10",
+"distFromKm": 9101,
+"distToKm": 9300,
+"rateRub": 206344.0
+},
+{
+"scheme": "В10",
+"distFromKm": 9301,
+"distToKm": 9500,
+"rateRub": 210498.0
+},
+{
+"scheme": "В10",
+"distFromKm": 9501,
+"distToKm": 9700,
+"rateRub": 214651.0
+},
+{
+"scheme": "В10",
+"distFromKm": 9701,
+"distToKm": 9900,
+"rateRub": 218805.0
+},
+{
+"scheme": "В10",
+"distFromKm": 9901,
+"distToKm": 10100,
+"rateRub": 222958.0
+},
+{
+"scheme": "В10",
+"distFromKm": 10101,
+"distToKm": 10300,
+"rateRub": 227111.0
+},
+{
+"scheme": "В10",
+"distFromKm": 10301,
+"distToKm": 10500,
+"rateRub": 231265.0
+},
+{
+"scheme": "В10",
+"distFromKm": 10501,
+"distToKm": 10700,
+"rateRub": 235418.0
+},
+{
+"scheme": "В10",
+"distFromKm": 10701,
+"distToKm": 10900,
+"rateRub": 239572.0
+},
+{
+"scheme": "В10",
+"distFromKm": 10901,
+"distToKm": 11100,
+"rateRub": 243725.0
+},
+{
+"scheme": "В10",
+"distFromKm": 11101,
+"distToKm": 11300,
+"rateRub": 247878.0
+},
+{
+"scheme": "В10",
+"distFromKm": 11301,
+"distToKm": 11500,
+"rateRub": 252032.0
+},
+{
+"scheme": "В10",
+"distFromKm": 11501,
+"distToKm": 11700,
+"rateRub": 256185.0
+},
+{
+"scheme": "В10",
+"distFromKm": 11701,
+"distToKm": 11900,
+"rateRub": 260338.0
+},
+{
+"scheme": "В11",
+"distFromKm": 0,
+"distToKm": 5,
+"rateRub": 17351.0
+},
+{
+"scheme": "В11",
+"distFromKm": 6,
+"distToKm": 10,
+"rateRub": 17554.0
+},
+{
+"scheme": "В11",
+"distFromKm": 11,
+"distToKm": 15,
+"rateRub": 17723.0
+},
+{
+"scheme": "В11",
+"distFromKm": 16,
+"distToKm": 20,
+"rateRub": 17892.0
+},
+{
+"scheme": "В11",
+"distFromKm": 21,
+"distToKm": 25,
+"rateRub": 18061.0
+},
+{
+"scheme": "В11",
+"distFromKm": 26,
+"distToKm": 30,
+"rateRub": 18230.0
+},
+{
+"scheme": "В11",
+"distFromKm": 31,
+"distToKm": 35,
+"rateRub": 18399.0
+},
+{
+"scheme": "В11",
+"distFromKm": 36,
+"distToKm": 40,
+"rateRub": 18568.0
+},
+{
+"scheme": "В11",
+"distFromKm": 41,
+"distToKm": 45,
+"rateRub": 18737.0
+},
+{
+"scheme": "В11",
+"distFromKm": 46,
+"distToKm": 50,
+"rateRub": 18906.0
+},
+{
+"scheme": "В11",
+"distFromKm": 51,
+"distToKm": 60,
+"rateRub": 19143.0
+},
+{
+"scheme": "В11",
+"distFromKm": 61,
+"distToKm": 70,
+"rateRub": 19481.0
+},
+{
+"scheme": "В11",
+"distFromKm": 71,
+"distToKm": 80,
+"rateRub": 19819.0
+},
+{
+"scheme": "В11",
+"distFromKm": 81,
+"distToKm": 90,
+"rateRub": 20157.0
+},
+{
+"scheme": "В11",
+"distFromKm": 91,
+"distToKm": 100,
+"rateRub": 20495.0
+},
+{
+"scheme": "В11",
+"distFromKm": 101,
+"distToKm": 120,
+"rateRub": 21003.0
+},
+{
+"scheme": "В11",
+"distFromKm": 121,
+"distToKm": 140,
+"rateRub": 21679.0
+},
+{
+"scheme": "В11",
+"distFromKm": 141,
+"distToKm": 160,
+"rateRub": 22355.0
+},
+{
+"scheme": "В11",
+"distFromKm": 161,
+"distToKm": 180,
+"rateRub": 22938.0
+},
+{
+"scheme": "В11",
+"distFromKm": 181,
+"distToKm": 200,
+"rateRub": 23499.0
+},
+{
+"scheme": "В11",
+"distFromKm": 201,
+"distToKm": 220,
+"rateRub": 24096.0
+},
+{
+"scheme": "В11",
+"distFromKm": 221,
+"distToKm": 240,
+"rateRub": 24618.0
+},
+{
+"scheme": "В11",
+"distFromKm": 241,
+"distToKm": 260,
+"rateRub": 25187.0
+},
+{
+"scheme": "В11",
+"distFromKm": 261,
+"distToKm": 280,
+"rateRub": 25745.0
+},
+{
+"scheme": "В11",
+"distFromKm": 281,
+"distToKm": 300,
+"rateRub": 26292.0
+},
+{
+"scheme": "В11",
+"distFromKm": 301,
+"distToKm": 330,
+"rateRub": 26982.0
+},
+{
+"scheme": "В11",
+"distFromKm": 331,
+"distToKm": 360,
+"rateRub": 27811.0
+},
+{
+"scheme": "В11",
+"distFromKm": 361,
+"distToKm": 390,
+"rateRub": 28623.0
+},
+{
+"scheme": "В11",
+"distFromKm": 391,
+"distToKm": 420,
+"rateRub": 29419.0
+},
+{
+"scheme": "В11",
+"distFromKm": 421,
+"distToKm": 450,
+"rateRub": 30318.0
+},
+{
+"scheme": "В11",
+"distFromKm": 451,
+"distToKm": 480,
+"rateRub": 31089.0
+},
+{
+"scheme": "В11",
+"distFromKm": 481,
+"distToKm": 510,
+"rateRub": 31844.0
+},
+{
+"scheme": "В11",
+"distFromKm": 511,
+"distToKm": 540,
+"rateRub": 32727.0
+},
+{
+"scheme": "В11",
+"distFromKm": 541,
+"distToKm": 570,
+"rateRub": 33457.0
+},
+{
+"scheme": "В11",
+"distFromKm": 571,
+"distToKm": 600,
+"rateRub": 34331.0
+},
+{
+"scheme": "В11",
+"distFromKm": 601,
+"distToKm": 640,
+"rateRub": 35180.0
+},
+{
+"scheme": "В11",
+"distFromKm": 641,
+"distToKm": 680,
+"rateRub": 36335.0
+},
+{
+"scheme": "В11",
+"distFromKm": 681,
+"distToKm": 720,
+"rateRub": 37297.0
+},
+{
+"scheme": "В11",
+"distFromKm": 721,
+"distToKm": 760,
+"rateRub": 38441.0
+},
+{
+"scheme": "В11",
+"distFromKm": 761,
+"distToKm": 800,
+"rateRub": 39370.0
+},
+{
+"scheme": "В11",
+"distFromKm": 801,
+"distToKm": 840,
+"rateRub": 40503.0
+},
+{
+"scheme": "В11",
+"distFromKm": 841,
+"distToKm": 880,
+"rateRub": 41635.0
+},
+{
+"scheme": "В11",
+"distFromKm": 881,
+"distToKm": 920,
+"rateRub": 42521.0
+},
+{
+"scheme": "В11",
+"distFromKm": 921,
+"distToKm": 960,
+"rateRub": 43642.0
+},
+{
+"scheme": "В11",
+"distFromKm": 961,
+"distToKm": 1000,
+"rateRub": 44495.0
+},
+{
+"scheme": "В11",
+"distFromKm": 1001,
+"distToKm": 1050,
+"rateRub": 45744.0
+},
+{
+"scheme": "В11",
+"distFromKm": 1051,
+"distToKm": 1100,
+"rateRub": 47132.0
+},
+{
+"scheme": "В11",
+"distFromKm": 1101,
+"distToKm": 1150,
+"rateRub": 48212.0
+},
+{
+"scheme": "В11",
+"distFromKm": 1151,
+"distToKm": 1200,
+"rateRub": 49586.0
+},
+{
+"scheme": "В11",
+"distFromKm": 1201,
+"distToKm": 1250,
+"rateRub": 50624.0
+},
+{
+"scheme": "В11",
+"distFromKm": 1251,
+"distToKm": 1300,
+"rateRub": 51985.0
+},
+{
+"scheme": "В11",
+"distFromKm": 1301,
+"distToKm": 1350,
+"rateRub": 52981.0
+},
+{
+"scheme": "В11",
+"distFromKm": 1351,
+"distToKm": 1400,
+"rateRub": 54328.0
+},
+{
+"scheme": "В11",
+"distFromKm": 1401,
+"distToKm": 1450,
+"rateRub": 55676.0
+},
+{
+"scheme": "В11",
+"distFromKm": 1451,
+"distToKm": 1500,
+"rateRub": 56617.0
+},
+{
+"scheme": "В11",
+"distFromKm": 1501,
+"distToKm": 1600,
+"rateRub": 58617.0
+},
+{
+"scheme": "В11",
+"distFromKm": 1601,
+"distToKm": 1700,
+"rateRub": 60830.0
+},
+{
+"scheme": "В11",
+"distFromKm": 1701,
+"distToKm": 1800,
+"rateRub": 62988.0
+},
+{
+"scheme": "В11",
+"distFromKm": 1801,
+"distToKm": 1900,
+"rateRub": 65600.0
+},
+{
+"scheme": "В11",
+"distFromKm": 1901,
+"distToKm": 2000,
+"rateRub": 67676.0
+},
+{
+"scheme": "В11",
+"distFromKm": 2001,
+"distToKm": 2100,
+"rateRub": 69696.0
+},
+{
+"scheme": "В11",
+"distFromKm": 2101,
+"distToKm": 2200,
+"rateRub": 72253.0
+},
+{
+"scheme": "В11",
+"distFromKm": 2201,
+"distToKm": 2300,
+"rateRub": 74191.0
+},
+{
+"scheme": "В11",
+"distFromKm": 2301,
+"distToKm": 2400,
+"rateRub": 76075.0
+},
+{
+"scheme": "В11",
+"distFromKm": 2401,
+"distToKm": 2500,
+"rateRub": 78576.0
+},
+{
+"scheme": "В11",
+"distFromKm": 2501,
+"distToKm": 2600,
+"rateRub": 80377.0
+},
+{
+"scheme": "В11",
+"distFromKm": 2601,
+"distToKm": 2700,
+"rateRub": 82123.0
+},
+{
+"scheme": "В11",
+"distFromKm": 2701,
+"distToKm": 2800,
+"rateRub": 84570.0
+},
+{
+"scheme": "В11",
+"distFromKm": 2801,
+"distToKm": 2900,
+"rateRub": 86233.0
+},
+{
+"scheme": "В11",
+"distFromKm": 2901,
+"distToKm": 3000,
+"rateRub": 87841.0
+},
+{
+"scheme": "В11",
+"distFromKm": 3001,
+"distToKm": 3100,
+"rateRub": 90233.0
+},
+{
+"scheme": "В11",
+"distFromKm": 3101,
+"distToKm": 3200,
+"rateRub": 92625.0
+},
+{
+"scheme": "В11",
+"distFromKm": 3201,
+"distToKm": 3300,
+"rateRub": 95017.0
+},
+{
+"scheme": "В11",
+"distFromKm": 3301,
+"distToKm": 3400,
+"rateRub": 97408.0
+},
+{
+"scheme": "В11",
+"distFromKm": 3401,
+"distToKm": 3500,
+"rateRub": 99800.0
+},
+{
+"scheme": "В11",
+"distFromKm": 3501,
+"distToKm": 3600,
+"rateRub": 102192.0
+},
+{
+"scheme": "В11",
+"distFromKm": 3601,
+"distToKm": 3700,
+"rateRub": 104584.0
+},
+{
+"scheme": "В11",
+"distFromKm": 3701,
+"distToKm": 3800,
+"rateRub": 106976.0
+},
+{
+"scheme": "В11",
+"distFromKm": 3801,
+"distToKm": 3900,
+"rateRub": 109367.0
+},
+{
+"scheme": "В11",
+"distFromKm": 3901,
+"distToKm": 4000,
+"rateRub": 111759.0
+},
+{
+"scheme": "В11",
+"distFromKm": 4001,
+"distToKm": 4100,
+"rateRub": 114151.0
+},
+{
+"scheme": "В11",
+"distFromKm": 4101,
+"distToKm": 4200,
+"rateRub": 116543.0
+},
+{
+"scheme": "В11",
+"distFromKm": 4201,
+"distToKm": 4300,
+"rateRub": 118935.0
+},
+{
+"scheme": "В11",
+"distFromKm": 4301,
+"distToKm": 4400,
+"rateRub": 121326.0
+},
+{
+"scheme": "В11",
+"distFromKm": 4401,
+"distToKm": 4500,
+"rateRub": 123718.0
+},
+{
+"scheme": "В11",
+"distFromKm": 4501,
+"distToKm": 4600,
+"rateRub": 126110.0
+},
+{
+"scheme": "В11",
+"distFromKm": 4601,
+"distToKm": 4700,
+"rateRub": 128502.0
+},
+{
+"scheme": "В11",
+"distFromKm": 4701,
+"distToKm": 4800,
+"rateRub": 130894.0
+},
+{
+"scheme": "В11",
+"distFromKm": 4801,
+"distToKm": 4900,
+"rateRub": 133285.0
+},
+{
+"scheme": "В11",
+"distFromKm": 4901,
+"distToKm": 5000,
+"rateRub": 135677.0
+},
+{
+"scheme": "В11",
+"distFromKm": 5001,
+"distToKm": 5100,
+"rateRub": 138069.0
+},
+{
+"scheme": "В11",
+"distFromKm": 5101,
+"distToKm": 5200,
+"rateRub": 140461.0
+},
+{
+"scheme": "В11",
+"distFromKm": 5201,
+"distToKm": 5300,
+"rateRub": 142853.0
+},
+{
+"scheme": "В11",
+"distFromKm": 5301,
+"distToKm": 5400,
+"rateRub": 145245.0
+},
+{
+"scheme": "В11",
+"distFromKm": 5401,
+"distToKm": 5500,
+"rateRub": 147636.0
+},
+{
+"scheme": "В11",
+"distFromKm": 5501,
+"distToKm": 5700,
+"rateRub": 151224.0
+},
+{
+"scheme": "В11",
+"distFromKm": 5701,
+"distToKm": 5900,
+"rateRub": 156008.0
+},
+{
+"scheme": "В11",
+"distFromKm": 5901,
+"distToKm": 6100,
+"rateRub": 160791.0
+},
+{
+"scheme": "В11",
+"distFromKm": 6101,
+"distToKm": 6300,
+"rateRub": 165575.0
+},
+{
+"scheme": "В11",
+"distFromKm": 6301,
+"distToKm": 6500,
+"rateRub": 170358.0
+},
+{
+"scheme": "В11",
+"distFromKm": 6501,
+"distToKm": 6700,
+"rateRub": 175142.0
+},
+{
+"scheme": "В11",
+"distFromKm": 6701,
+"distToKm": 6900,
+"rateRub": 179926.0
+},
+{
+"scheme": "В11",
+"distFromKm": 6901,
+"distToKm": 7100,
+"rateRub": 184709.0
+},
+{
+"scheme": "В11",
+"distFromKm": 7101,
+"distToKm": 7300,
+"rateRub": 189493.0
+},
+{
+"scheme": "В11",
+"distFromKm": 7301,
+"distToKm": 7500,
+"rateRub": 194276.0
+},
+{
+"scheme": "В11",
+"distFromKm": 7501,
+"distToKm": 7700,
+"rateRub": 199060.0
+},
+{
+"scheme": "В11",
+"distFromKm": 7701,
+"distToKm": 7900,
+"rateRub": 203844.0
+},
+{
+"scheme": "В11",
+"distFromKm": 7901,
+"distToKm": 8100,
+"rateRub": 208627.0
+},
+{
+"scheme": "В11",
+"distFromKm": 8101,
+"distToKm": 8300,
+"rateRub": 213411.0
+},
+{
+"scheme": "В11",
+"distFromKm": 8301,
+"distToKm": 8500,
+"rateRub": 218195.0
+},
+{
+"scheme": "В11",
+"distFromKm": 8501,
+"distToKm": 8700,
+"rateRub": 222978.0
+},
+{
+"scheme": "В11",
+"distFromKm": 8701,
+"distToKm": 8900,
+"rateRub": 227762.0
+},
+{
+"scheme": "В11",
+"distFromKm": 8901,
+"distToKm": 9100,
+"rateRub": 232545.0
+},
+{
+"scheme": "В11",
+"distFromKm": 9101,
+"distToKm": 9300,
+"rateRub": 237329.0
+},
+{
+"scheme": "В11",
+"distFromKm": 9301,
+"distToKm": 9500,
+"rateRub": 242113.0
+},
+{
+"scheme": "В11",
+"distFromKm": 9501,
+"distToKm": 9700,
+"rateRub": 246896.0
+},
+{
+"scheme": "В11",
+"distFromKm": 9701,
+"distToKm": 9900,
+"rateRub": 251680.0
+},
+{
+"scheme": "В11",
+"distFromKm": 9901,
+"distToKm": 10100,
+"rateRub": 256463.0
+},
+{
+"scheme": "В11",
+"distFromKm": 10101,
+"distToKm": 10300,
+"rateRub": 261247.0
+},
+{
+"scheme": "В11",
+"distFromKm": 10301,
+"distToKm": 10500,
+"rateRub": 266031.0
+},
+{
+"scheme": "В11",
+"distFromKm": 10501,
+"distToKm": 10700,
+"rateRub": 270814.0
+},
+{
+"scheme": "В11",
+"distFromKm": 10701,
+"distToKm": 10900,
+"rateRub": 275598.0
+},
+{
+"scheme": "В11",
+"distFromKm": 10901,
+"distToKm": 11100,
+"rateRub": 280381.0
+},
+{
+"scheme": "В11",
+"distFromKm": 11101,
+"distToKm": 11300,
+"rateRub": 285165.0
+},
+{
+"scheme": "В11",
+"distFromKm": 11301,
+"distToKm": 11500,
+"rateRub": 289949.0
+},
+{
+"scheme": "В11",
+"distFromKm": 11501,
+"distToKm": 11700,
+"rateRub": 294732.0
+},
+{
+"scheme": "В11",
+"distFromKm": 11701,
+"distToKm": 11900,
+"rateRub": 299516.0
+},
+{
+"scheme": "В12",
+"distFromKm": 0,
+"distToKm": 5,
+"rateRub": 21829.0
+},
+{
+"scheme": "В12",
+"distFromKm": 6,
+"distToKm": 10,
+"rateRub": 22095.0
+},
+{
+"scheme": "В12",
+"distFromKm": 11,
+"distToKm": 15,
+"rateRub": 22318.0
+},
+{
+"scheme": "В12",
+"distFromKm": 16,
+"distToKm": 20,
+"rateRub": 22540.0
+},
+{
+"scheme": "В12",
+"distFromKm": 21,
+"distToKm": 25,
+"rateRub": 22762.0
+},
+{
+"scheme": "В12",
+"distFromKm": 26,
+"distToKm": 30,
+"rateRub": 22984.0
+},
+{
+"scheme": "В12",
+"distFromKm": 31,
+"distToKm": 35,
+"rateRub": 23206.0
+},
+{
+"scheme": "В12",
+"distFromKm": 36,
+"distToKm": 40,
+"rateRub": 23428.0
+},
+{
+"scheme": "В12",
+"distFromKm": 41,
+"distToKm": 45,
+"rateRub": 23650.0
+},
+{
+"scheme": "В12",
+"distFromKm": 46,
+"distToKm": 50,
+"rateRub": 23872.0
+},
+{
+"scheme": "В12",
+"distFromKm": 51,
+"distToKm": 60,
+"rateRub": 24183.0
+},
+{
+"scheme": "В12",
+"distFromKm": 61,
+"distToKm": 70,
+"rateRub": 24628.0
+},
+{
+"scheme": "В12",
+"distFromKm": 71,
+"distToKm": 80,
+"rateRub": 25072.0
+},
+{
+"scheme": "В12",
+"distFromKm": 81,
+"distToKm": 90,
+"rateRub": 25516.0
+},
+{
+"scheme": "В12",
+"distFromKm": 91,
+"distToKm": 100,
+"rateRub": 25960.0
+},
+{
+"scheme": "В12",
+"distFromKm": 101,
+"distToKm": 120,
+"rateRub": 26627.0
+},
+{
+"scheme": "В12",
+"distFromKm": 121,
+"distToKm": 140,
+"rateRub": 27515.0
+},
+{
+"scheme": "В12",
+"distFromKm": 141,
+"distToKm": 160,
+"rateRub": 28404.0
+},
+{
+"scheme": "В12",
+"distFromKm": 161,
+"distToKm": 180,
+"rateRub": 29169.0
+},
+{
+"scheme": "В12",
+"distFromKm": 181,
+"distToKm": 200,
+"rateRub": 29906.0
+},
+{
+"scheme": "В12",
+"distFromKm": 201,
+"distToKm": 220,
+"rateRub": 30690.0
+},
+{
+"scheme": "В12",
+"distFromKm": 221,
+"distToKm": 240,
+"rateRub": 31376.0
+},
+{
+"scheme": "В12",
+"distFromKm": 241,
+"distToKm": 260,
+"rateRub": 32124.0
+},
+{
+"scheme": "В12",
+"distFromKm": 261,
+"distToKm": 280,
+"rateRub": 32857.0
+},
+{
+"scheme": "В12",
+"distFromKm": 281,
+"distToKm": 300,
+"rateRub": 33576.0
+},
+{
+"scheme": "В12",
+"distFromKm": 301,
+"distToKm": 330,
+"rateRub": 34482.0
+},
+{
+"scheme": "В12",
+"distFromKm": 331,
+"distToKm": 360,
+"rateRub": 35571.0
+},
+{
+"scheme": "В12",
+"distFromKm": 361,
+"distToKm": 390,
+"rateRub": 36638.0
+},
+{
+"scheme": "В12",
+"distFromKm": 391,
+"distToKm": 420,
+"rateRub": 37684.0
+},
+{
+"scheme": "В12",
+"distFromKm": 421,
+"distToKm": 450,
+"rateRub": 38865.0
+},
+{
+"scheme": "В12",
+"distFromKm": 451,
+"distToKm": 480,
+"rateRub": 39878.0
+},
+{
+"scheme": "В12",
+"distFromKm": 481,
+"distToKm": 510,
+"rateRub": 40869.0
+},
+{
+"scheme": "В12",
+"distFromKm": 511,
+"distToKm": 540,
+"rateRub": 42029.0
+},
+{
+"scheme": "В12",
+"distFromKm": 541,
+"distToKm": 570,
+"rateRub": 42988.0
+},
+{
+"scheme": "В12",
+"distFromKm": 571,
+"distToKm": 600,
+"rateRub": 44136.0
+},
+{
+"scheme": "В12",
+"distFromKm": 601,
+"distToKm": 640,
+"rateRub": 45252.0
+},
+{
+"scheme": "В12",
+"distFromKm": 641,
+"distToKm": 680,
+"rateRub": 46769.0
+},
+{
+"scheme": "В12",
+"distFromKm": 681,
+"distToKm": 720,
+"rateRub": 48033.0
+},
+{
+"scheme": "В12",
+"distFromKm": 721,
+"distToKm": 760,
+"rateRub": 49536.0
+},
+{
+"scheme": "В12",
+"distFromKm": 761,
+"distToKm": 800,
+"rateRub": 50756.0
+},
+{
+"scheme": "В12",
+"distFromKm": 801,
+"distToKm": 840,
+"rateRub": 52244.0
+},
+{
+"scheme": "В12",
+"distFromKm": 841,
+"distToKm": 880,
+"rateRub": 53732.0
+},
+{
+"scheme": "В12",
+"distFromKm": 881,
+"distToKm": 920,
+"rateRub": 54895.0
+},
+{
+"scheme": "В12",
+"distFromKm": 921,
+"distToKm": 960,
+"rateRub": 56369.0
+},
+{
+"scheme": "В12",
+"distFromKm": 961,
+"distToKm": 1000,
+"rateRub": 57489.0
+},
+{
+"scheme": "В12",
+"distFromKm": 1001,
+"distToKm": 1050,
+"rateRub": 59130.0
+},
+{
+"scheme": "В12",
+"distFromKm": 1051,
+"distToKm": 1100,
+"rateRub": 60954.0
+},
+{
+"scheme": "В12",
+"distFromKm": 1101,
+"distToKm": 1150,
+"rateRub": 62372.0
+},
+{
+"scheme": "В12",
+"distFromKm": 1151,
+"distToKm": 1200,
+"rateRub": 64177.0
+},
+{
+"scheme": "В12",
+"distFromKm": 1201,
+"distToKm": 1250,
+"rateRub": 65541.0
+},
+{
+"scheme": "В12",
+"distFromKm": 1251,
+"distToKm": 1300,
+"rateRub": 67329.0
+},
+{
+"scheme": "В12",
+"distFromKm": 1301,
+"distToKm": 1350,
+"rateRub": 68638.0
+},
+{
+"scheme": "В12",
+"distFromKm": 1351,
+"distToKm": 1400,
+"rateRub": 70408.0
+},
+{
+"scheme": "В12",
+"distFromKm": 1401,
+"distToKm": 1450,
+"rateRub": 72177.0
+},
+{
+"scheme": "В12",
+"distFromKm": 1451,
+"distToKm": 1500,
+"rateRub": 73414.0
+},
+{
+"scheme": "В12",
+"distFromKm": 1501,
+"distToKm": 1600,
+"rateRub": 76042.0
+},
+{
+"scheme": "В12",
+"distFromKm": 1601,
+"distToKm": 1700,
+"rateRub": 78949.0
+},
+{
+"scheme": "В12",
+"distFromKm": 1701,
+"distToKm": 1800,
+"rateRub": 81785.0
+},
+{
+"scheme": "В12",
+"distFromKm": 1801,
+"distToKm": 1900,
+"rateRub": 85216.0
+},
+{
+"scheme": "В12",
+"distFromKm": 1901,
+"distToKm": 2000,
+"rateRub": 87942.0
+},
+{
+"scheme": "В12",
+"distFromKm": 2001,
+"distToKm": 2100,
+"rateRub": 90597.0
+},
+{
+"scheme": "В12",
+"distFromKm": 2101,
+"distToKm": 2200,
+"rateRub": 93956.0
+},
+{
+"scheme": "В12",
+"distFromKm": 2201,
+"distToKm": 2300,
+"rateRub": 96502.0
+},
+{
+"scheme": "В12",
+"distFromKm": 2301,
+"distToKm": 2400,
+"rateRub": 98976.0
+},
+{
+"scheme": "В12",
+"distFromKm": 2401,
+"distToKm": 2500,
+"rateRub": 102263.0
+},
+{
+"scheme": "В12",
+"distFromKm": 2501,
+"distToKm": 2600,
+"rateRub": 104629.0
+},
+{
+"scheme": "В12",
+"distFromKm": 2601,
+"distToKm": 2700,
+"rateRub": 106922.0
+},
+{
+"scheme": "В12",
+"distFromKm": 2701,
+"distToKm": 2800,
+"rateRub": 110136.0
+},
+{
+"scheme": "В12",
+"distFromKm": 2801,
+"distToKm": 2900,
+"rateRub": 112321.0
+},
+{
+"scheme": "В12",
+"distFromKm": 2901,
+"distToKm": 3000,
+"rateRub": 114434.0
+},
+{
+"scheme": "В12",
+"distFromKm": 3001,
+"distToKm": 3100,
+"rateRub": 117576.0
+},
+{
+"scheme": "В12",
+"distFromKm": 3101,
+"distToKm": 3200,
+"rateRub": 120719.0
+},
+{
+"scheme": "В12",
+"distFromKm": 3201,
+"distToKm": 3300,
+"rateRub": 123861.0
+},
+{
+"scheme": "В12",
+"distFromKm": 3301,
+"distToKm": 3400,
+"rateRub": 127003.0
+},
+{
+"scheme": "В12",
+"distFromKm": 3401,
+"distToKm": 3500,
+"rateRub": 130145.0
+},
+{
+"scheme": "В12",
+"distFromKm": 3501,
+"distToKm": 3600,
+"rateRub": 133287.0
+},
+{
+"scheme": "В12",
+"distFromKm": 3601,
+"distToKm": 3700,
+"rateRub": 136430.0
+},
+{
+"scheme": "В12",
+"distFromKm": 3701,
+"distToKm": 3800,
+"rateRub": 139572.0
+},
+{
+"scheme": "В12",
+"distFromKm": 3801,
+"distToKm": 3900,
+"rateRub": 142714.0
+},
+{
+"scheme": "В12",
+"distFromKm": 3901,
+"distToKm": 4000,
+"rateRub": 145856.0
+},
+{
+"scheme": "В12",
+"distFromKm": 4001,
+"distToKm": 4100,
+"rateRub": 148998.0
+},
+{
+"scheme": "В12",
+"distFromKm": 4101,
+"distToKm": 4200,
+"rateRub": 152140.0
+},
+{
+"scheme": "В12",
+"distFromKm": 4201,
+"distToKm": 4300,
+"rateRub": 155283.0
+},
+{
+"scheme": "В12",
+"distFromKm": 4301,
+"distToKm": 4400,
+"rateRub": 158425.0
+},
+{
+"scheme": "В12",
+"distFromKm": 4401,
+"distToKm": 4500,
+"rateRub": 161567.0
+},
+{
+"scheme": "В12",
+"distFromKm": 4501,
+"distToKm": 4600,
+"rateRub": 164709.0
+},
+{
+"scheme": "В12",
+"distFromKm": 4601,
+"distToKm": 4700,
+"rateRub": 167851.0
+},
+{
+"scheme": "В12",
+"distFromKm": 4701,
+"distToKm": 4800,
+"rateRub": 170994.0
+},
+{
+"scheme": "В12",
+"distFromKm": 4801,
+"distToKm": 4900,
+"rateRub": 174136.0
+},
+{
+"scheme": "В12",
+"distFromKm": 4901,
+"distToKm": 5000,
+"rateRub": 177278.0
+},
+{
+"scheme": "В12",
+"distFromKm": 5001,
+"distToKm": 5100,
+"rateRub": 180420.0
+},
+{
+"scheme": "В12",
+"distFromKm": 5101,
+"distToKm": 5200,
+"rateRub": 183562.0
+},
+{
+"scheme": "В12",
+"distFromKm": 5201,
+"distToKm": 5300,
+"rateRub": 186704.0
+},
+{
+"scheme": "В12",
+"distFromKm": 5301,
+"distToKm": 5400,
+"rateRub": 189847.0
+},
+{
+"scheme": "В12",
+"distFromKm": 5401,
+"distToKm": 5500,
+"rateRub": 192989.0
+},
+{
+"scheme": "В12",
+"distFromKm": 5501,
+"distToKm": 5700,
+"rateRub": 197702.0
+},
+{
+"scheme": "В12",
+"distFromKm": 5701,
+"distToKm": 5900,
+"rateRub": 203986.0
+},
+{
+"scheme": "В12",
+"distFromKm": 5901,
+"distToKm": 6100,
+"rateRub": 210271.0
+},
+{
+"scheme": "В12",
+"distFromKm": 6101,
+"distToKm": 6300,
+"rateRub": 216555.0
+},
+{
+"scheme": "В12",
+"distFromKm": 6301,
+"distToKm": 6500,
+"rateRub": 222839.0
+},
+{
+"scheme": "В12",
+"distFromKm": 6501,
+"distToKm": 6700,
+"rateRub": 229124.0
+},
+{
+"scheme": "В12",
+"distFromKm": 6701,
+"distToKm": 6900,
+"rateRub": 235408.0
+},
+{
+"scheme": "В12",
+"distFromKm": 6901,
+"distToKm": 7100,
+"rateRub": 241693.0
+},
+{
+"scheme": "В12",
+"distFromKm": 7101,
+"distToKm": 7300,
+"rateRub": 247977.0
+},
+{
+"scheme": "В12",
+"distFromKm": 7301,
+"distToKm": 7500,
+"rateRub": 254261.0
+},
+{
+"scheme": "В12",
+"distFromKm": 7501,
+"distToKm": 7700,
+"rateRub": 260546.0
+},
+{
+"scheme": "В12",
+"distFromKm": 7701,
+"distToKm": 7900,
+"rateRub": 266830.0
+},
+{
+"scheme": "В12",
+"distFromKm": 7901,
+"distToKm": 8100,
+"rateRub": 273114.0
+},
+{
+"scheme": "В12",
+"distFromKm": 8101,
+"distToKm": 8300,
+"rateRub": 279399.0
+},
+{
+"scheme": "В12",
+"distFromKm": 8301,
+"distToKm": 8500,
+"rateRub": 285683.0
+},
+{
+"scheme": "В12",
+"distFromKm": 8501,
+"distToKm": 8700,
+"rateRub": 291967.0
+},
+{
+"scheme": "В12",
+"distFromKm": 8701,
+"distToKm": 8900,
+"rateRub": 298252.0
+},
+{
+"scheme": "В12",
+"distFromKm": 8901,
+"distToKm": 9100,
+"rateRub": 304536.0
+},
+{
+"scheme": "В12",
+"distFromKm": 9101,
+"distToKm": 9300,
+"rateRub": 310820.0
+},
+{
+"scheme": "В12",
+"distFromKm": 9301,
+"distToKm": 9500,
+"rateRub": 317105.0
+},
+{
+"scheme": "В12",
+"distFromKm": 9501,
+"distToKm": 9700,
+"rateRub": 323389.0
+},
+{
+"scheme": "В12",
+"distFromKm": 9701,
+"distToKm": 9900,
+"rateRub": 329674.0
+},
+{
+"scheme": "В12",
+"distFromKm": 9901,
+"distToKm": 10100,
+"rateRub": 335958.0
+},
+{
+"scheme": "В12",
+"distFromKm": 10101,
+"distToKm": 10300,
+"rateRub": 342242.0
+},
+{
+"scheme": "В12",
+"distFromKm": 10301,
+"distToKm": 10500,
+"rateRub": 348527.0
+},
+{
+"scheme": "В12",
+"distFromKm": 10501,
+"distToKm": 10700,
+"rateRub": 354811.0
+},
+{
+"scheme": "В12",
+"distFromKm": 10701,
+"distToKm": 10900,
+"rateRub": 361095.0
+},
+{
+"scheme": "В12",
+"distFromKm": 10901,
+"distToKm": 11100,
+"rateRub": 367380.0
+},
+{
+"scheme": "В12",
+"distFromKm": 11101,
+"distToKm": 11300,
+"rateRub": 373664.0
+},
+{
+"scheme": "В12",
+"distFromKm": 11301,
+"distToKm": 11500,
+"rateRub": 379948.0
+},
+{
+"scheme": "В12",
+"distFromKm": 11501,
+"distToKm": 11700,
+"rateRub": 386233.0
+},
+{
+"scheme": "В12",
+"distFromKm": 11701,
+"distToKm": 11900,
+"rateRub": 392517.0
+},
+{
+"scheme": "В13",
+"distFromKm": 0,
+"distToKm": 5,
+"rateRub": 33297.0
+},
+{
+"scheme": "В13",
+"distFromKm": 6,
+"distToKm": 10,
+"rateRub": 33710.0
+},
+{
+"scheme": "В13",
+"distFromKm": 11,
+"distToKm": 15,
+"rateRub": 34055.0
+},
+{
+"scheme": "В13",
+"distFromKm": 16,
+"distToKm": 20,
+"rateRub": 34399.0
+},
+{
+"scheme": "В13",
+"distFromKm": 21,
+"distToKm": 25,
+"rateRub": 34744.0
+},
+{
+"scheme": "В13",
+"distFromKm": 26,
+"distToKm": 30,
+"rateRub": 35088.0
+},
+{
+"scheme": "В13",
+"distFromKm": 31,
+"distToKm": 35,
+"rateRub": 35433.0
+},
+{
+"scheme": "В13",
+"distFromKm": 36,
+"distToKm": 40,
+"rateRub": 35777.0
+},
+{
+"scheme": "В13",
+"distFromKm": 41,
+"distToKm": 45,
+"rateRub": 36122.0
+},
+{
+"scheme": "В13",
+"distFromKm": 46,
+"distToKm": 50,
+"rateRub": 36466.0
+},
+{
+"scheme": "В13",
+"distFromKm": 51,
+"distToKm": 60,
+"rateRub": 36948.0
+},
+{
+"scheme": "В13",
+"distFromKm": 61,
+"distToKm": 70,
+"rateRub": 37637.0
+},
+{
+"scheme": "В13",
+"distFromKm": 71,
+"distToKm": 80,
+"rateRub": 38326.0
+},
+{
+"scheme": "В13",
+"distFromKm": 81,
+"distToKm": 90,
+"rateRub": 39015.0
+},
+{
+"scheme": "В13",
+"distFromKm": 91,
+"distToKm": 100,
+"rateRub": 39704.0
+},
+{
+"scheme": "В13",
+"distFromKm": 101,
+"distToKm": 120,
+"rateRub": 40738.0
+},
+{
+"scheme": "В13",
+"distFromKm": 121,
+"distToKm": 140,
+"rateRub": 42116.0
+},
+{
+"scheme": "В13",
+"distFromKm": 141,
+"distToKm": 160,
+"rateRub": 43494.0
+},
+{
+"scheme": "В13",
+"distFromKm": 161,
+"distToKm": 180,
+"rateRub": 44681.0
+},
+{
+"scheme": "В13",
+"distFromKm": 181,
+"distToKm": 200,
+"rateRub": 45824.0
+},
+{
+"scheme": "В13",
+"distFromKm": 201,
+"distToKm": 220,
+"rateRub": 47040.0
+},
+{
+"scheme": "В13",
+"distFromKm": 221,
+"distToKm": 240,
+"rateRub": 48104.0
+},
+{
+"scheme": "В13",
+"distFromKm": 241,
+"distToKm": 260,
+"rateRub": 49264.0
+},
+{
+"scheme": "В13",
+"distFromKm": 261,
+"distToKm": 280,
+"rateRub": 50401.0
+},
+{
+"scheme": "В13",
+"distFromKm": 281,
+"distToKm": 300,
+"rateRub": 51515.0
+},
+{
+"scheme": "В13",
+"distFromKm": 301,
+"distToKm": 330,
+"rateRub": 52921.0
+},
+{
+"scheme": "В13",
+"distFromKm": 331,
+"distToKm": 360,
+"rateRub": 54610.0
+},
+{
+"scheme": "В13",
+"distFromKm": 361,
+"distToKm": 390,
+"rateRub": 56266.0
+},
+{
+"scheme": "В13",
+"distFromKm": 391,
+"distToKm": 420,
+"rateRub": 57887.0
+},
+{
+"scheme": "В13",
+"distFromKm": 421,
+"distToKm": 450,
+"rateRub": 59719.0
+},
+{
+"scheme": "В13",
+"distFromKm": 451,
+"distToKm": 480,
+"rateRub": 61290.0
+},
+{
+"scheme": "В13",
+"distFromKm": 481,
+"distToKm": 510,
+"rateRub": 62828.0
+},
+{
+"scheme": "В13",
+"distFromKm": 511,
+"distToKm": 540,
+"rateRub": 64626.0
+},
+{
+"scheme": "В13",
+"distFromKm": 541,
+"distToKm": 570,
+"rateRub": 66113.0
+},
+{
+"scheme": "В13",
+"distFromKm": 571,
+"distToKm": 600,
+"rateRub": 67895.0
+},
+{
+"scheme": "В13",
+"distFromKm": 601,
+"distToKm": 640,
+"rateRub": 69625.0
+},
+{
+"scheme": "В13",
+"distFromKm": 641,
+"distToKm": 680,
+"rateRub": 71978.0
+},
+{
+"scheme": "В13",
+"distFromKm": 681,
+"distToKm": 720,
+"rateRub": 73939.0
+},
+{
+"scheme": "В13",
+"distFromKm": 721,
+"distToKm": 760,
+"rateRub": 76269.0
+},
+{
+"scheme": "В13",
+"distFromKm": 761,
+"distToKm": 800,
+"rateRub": 78162.0
+},
+{
+"scheme": "В13",
+"distFromKm": 801,
+"distToKm": 840,
+"rateRub": 80470.0
+},
+{
+"scheme": "В13",
+"distFromKm": 841,
+"distToKm": 880,
+"rateRub": 82778.0
+},
+{
+"scheme": "В13",
+"distFromKm": 881,
+"distToKm": 920,
+"rateRub": 84582.0
+},
+{
+"scheme": "В13",
+"distFromKm": 921,
+"distToKm": 960,
+"rateRub": 86867.0
+},
+{
+"scheme": "В13",
+"distFromKm": 961,
+"distToKm": 1000,
+"rateRub": 88604.0
+},
+{
+"scheme": "В13",
+"distFromKm": 1001,
+"distToKm": 1050,
+"rateRub": 91150.0
+},
+{
+"scheme": "В13",
+"distFromKm": 1051,
+"distToKm": 1100,
+"rateRub": 93978.0
+},
+{
+"scheme": "В13",
+"distFromKm": 1101,
+"distToKm": 1150,
+"rateRub": 96177.0
+},
+{
+"scheme": "В13",
+"distFromKm": 1151,
+"distToKm": 1200,
+"rateRub": 98978.0
+},
+{
+"scheme": "В13",
+"distFromKm": 1201,
+"distToKm": 1250,
+"rateRub": 101092.0
+},
+{
+"scheme": "В13",
+"distFromKm": 1251,
+"distToKm": 1300,
+"rateRub": 103865.0
+},
+{
+"scheme": "В13",
+"distFromKm": 1301,
+"distToKm": 1350,
+"rateRub": 105896.0
+},
+{
+"scheme": "В13",
+"distFromKm": 1351,
+"distToKm": 1400,
+"rateRub": 108641.0
+},
+{
+"scheme": "В13",
+"distFromKm": 1401,
+"distToKm": 1450,
+"rateRub": 111385.0
+},
+{
+"scheme": "В13",
+"distFromKm": 1451,
+"distToKm": 1500,
+"rateRub": 113304.0
+},
+{
+"scheme": "В13",
+"distFromKm": 1501,
+"distToKm": 1600,
+"rateRub": 117379.0
+},
+{
+"scheme": "В13",
+"distFromKm": 1601,
+"distToKm": 1700,
+"rateRub": 121888.0
+},
+{
+"scheme": "В13",
+"distFromKm": 1701,
+"distToKm": 1800,
+"rateRub": 126286.0
+},
+{
+"scheme": "В13",
+"distFromKm": 1801,
+"distToKm": 1900,
+"rateRub": 131607.0
+},
+{
+"scheme": "В13",
+"distFromKm": 1901,
+"distToKm": 2000,
+"rateRub": 135836.0
+},
+{
+"scheme": "В13",
+"distFromKm": 2001,
+"distToKm": 2100,
+"rateRub": 139954.0
+},
+{
+"scheme": "В13",
+"distFromKm": 2101,
+"distToKm": 2200,
+"rateRub": 145163.0
+},
+{
+"scheme": "В13",
+"distFromKm": 2201,
+"distToKm": 2300,
+"rateRub": 149112.0
+},
+{
+"scheme": "В13",
+"distFromKm": 2301,
+"distToKm": 2400,
+"rateRub": 152949.0
+},
+{
+"scheme": "В13",
+"distFromKm": 2401,
+"distToKm": 2500,
+"rateRub": 158047.0
+},
+{
+"scheme": "В13",
+"distFromKm": 2501,
+"distToKm": 2600,
+"rateRub": 161716.0
+},
+{
+"scheme": "В13",
+"distFromKm": 2601,
+"distToKm": 2700,
+"rateRub": 165273.0
+},
+{
+"scheme": "В13",
+"distFromKm": 2701,
+"distToKm": 2800,
+"rateRub": 170258.0
+},
+{
+"scheme": "В13",
+"distFromKm": 2801,
+"distToKm": 2900,
+"rateRub": 173647.0
+},
+{
+"scheme": "В13",
+"distFromKm": 2901,
+"distToKm": 3000,
+"rateRub": 176924.0
+},
+{
+"scheme": "В13",
+"distFromKm": 3001,
+"distToKm": 3100,
+"rateRub": 181797.0
+},
+{
+"scheme": "В13",
+"distFromKm": 3101,
+"distToKm": 3200,
+"rateRub": 186671.0
+},
+{
+"scheme": "В13",
+"distFromKm": 3201,
+"distToKm": 3300,
+"rateRub": 191544.0
+},
+{
+"scheme": "В13",
+"distFromKm": 3301,
+"distToKm": 3400,
+"rateRub": 196418.0
+},
+{
+"scheme": "В13",
+"distFromKm": 3401,
+"distToKm": 3500,
+"rateRub": 201291.0
+},
+{
+"scheme": "В13",
+"distFromKm": 3501,
+"distToKm": 3600,
+"rateRub": 206164.0
+},
+{
+"scheme": "В13",
+"distFromKm": 3601,
+"distToKm": 3700,
+"rateRub": 211038.0
+},
+{
+"scheme": "В13",
+"distFromKm": 3701,
+"distToKm": 3800,
+"rateRub": 215911.0
+},
+{
+"scheme": "В13",
+"distFromKm": 3801,
+"distToKm": 3900,
+"rateRub": 220785.0
+},
+{
+"scheme": "В13",
+"distFromKm": 3901,
+"distToKm": 4000,
+"rateRub": 225658.0
+},
+{
+"scheme": "В13",
+"distFromKm": 4001,
+"distToKm": 4100,
+"rateRub": 230531.0
+},
+{
+"scheme": "В13",
+"distFromKm": 4101,
+"distToKm": 4200,
+"rateRub": 235405.0
+},
+{
+"scheme": "В13",
+"distFromKm": 4201,
+"distToKm": 4300,
+"rateRub": 240278.0
+},
+{
+"scheme": "В13",
+"distFromKm": 4301,
+"distToKm": 4400,
+"rateRub": 245152.0
+},
+{
+"scheme": "В13",
+"distFromKm": 4401,
+"distToKm": 4500,
+"rateRub": 250025.0
+},
+{
+"scheme": "В13",
+"distFromKm": 4501,
+"distToKm": 4600,
+"rateRub": 254898.0
+},
+{
+"scheme": "В13",
+"distFromKm": 4601,
+"distToKm": 4700,
+"rateRub": 259772.0
+},
+{
+"scheme": "В13",
+"distFromKm": 4701,
+"distToKm": 4800,
+"rateRub": 264645.0
+},
+{
+"scheme": "В13",
+"distFromKm": 4801,
+"distToKm": 4900,
+"rateRub": 269519.0
+},
+{
+"scheme": "В13",
+"distFromKm": 4901,
+"distToKm": 5000,
+"rateRub": 274392.0
+},
+{
+"scheme": "В13",
+"distFromKm": 5001,
+"distToKm": 5100,
+"rateRub": 279265.0
+},
+{
+"scheme": "В13",
+"distFromKm": 5101,
+"distToKm": 5200,
+"rateRub": 284139.0
+},
+{
+"scheme": "В13",
+"distFromKm": 5201,
+"distToKm": 5300,
+"rateRub": 289012.0
+},
+{
+"scheme": "В13",
+"distFromKm": 5301,
+"distToKm": 5400,
+"rateRub": 293885.0
+},
+{
+"scheme": "В13",
+"distFromKm": 5401,
+"distToKm": 5500,
+"rateRub": 298759.0
+},
+{
+"scheme": "В13",
+"distFromKm": 5501,
+"distToKm": 5700,
+"rateRub": 306069.0
+},
+{
+"scheme": "В13",
+"distFromKm": 5701,
+"distToKm": 5900,
+"rateRub": 315816.0
+},
+{
+"scheme": "В13",
+"distFromKm": 5901,
+"distToKm": 6100,
+"rateRub": 325563.0
+},
+{
+"scheme": "В13",
+"distFromKm": 6101,
+"distToKm": 6300,
+"rateRub": 335309.0
+},
+{
+"scheme": "В13",
+"distFromKm": 6301,
+"distToKm": 6500,
+"rateRub": 345056.0
+},
+{
+"scheme": "В13",
+"distFromKm": 6501,
+"distToKm": 6700,
+"rateRub": 354803.0
+},
+{
+"scheme": "В13",
+"distFromKm": 6701,
+"distToKm": 6900,
+"rateRub": 364550.0
+},
+{
+"scheme": "В13",
+"distFromKm": 6901,
+"distToKm": 7100,
+"rateRub": 374296.0
+},
+{
+"scheme": "В13",
+"distFromKm": 7101,
+"distToKm": 7300,
+"rateRub": 384043.0
+},
+{
+"scheme": "В13",
+"distFromKm": 7301,
+"distToKm": 7500,
+"rateRub": 393790.0
+},
+{
+"scheme": "В13",
+"distFromKm": 7501,
+"distToKm": 7700,
+"rateRub": 403537.0
+},
+{
+"scheme": "В13",
+"distFromKm": 7701,
+"distToKm": 7900,
+"rateRub": 413284.0
+},
+{
+"scheme": "В13",
+"distFromKm": 7901,
+"distToKm": 8100,
+"rateRub": 423030.0
+},
+{
+"scheme": "В13",
+"distFromKm": 8101,
+"distToKm": 8300,
+"rateRub": 432777.0
+},
+{
+"scheme": "В13",
+"distFromKm": 8301,
+"distToKm": 8500,
+"rateRub": 442524.0
+},
+{
+"scheme": "В13",
+"distFromKm": 8501,
+"distToKm": 8700,
+"rateRub": 452271.0
+},
+{
+"scheme": "В13",
+"distFromKm": 8701,
+"distToKm": 8900,
+"rateRub": 462017.0
+},
+{
+"scheme": "В13",
+"distFromKm": 8901,
+"distToKm": 9100,
+"rateRub": 471764.0
+},
+{
+"scheme": "В13",
+"distFromKm": 9101,
+"distToKm": 9300,
+"rateRub": 481511.0
+},
+{
+"scheme": "В13",
+"distFromKm": 9301,
+"distToKm": 9500,
+"rateRub": 491258.0
+},
+{
+"scheme": "В13",
+"distFromKm": 9501,
+"distToKm": 9700,
+"rateRub": 501005.0
+},
+{
+"scheme": "В13",
+"distFromKm": 9701,
+"distToKm": 9900,
+"rateRub": 510751.0
+},
+{
+"scheme": "В13",
+"distFromKm": 9901,
+"distToKm": 10100,
+"rateRub": 520498.0
+},
+{
+"scheme": "В13",
+"distFromKm": 10101,
+"distToKm": 10300,
+"rateRub": 530245.0
+},
+{
+"scheme": "В13",
+"distFromKm": 10301,
+"distToKm": 10500,
+"rateRub": 539992.0
+},
+{
+"scheme": "В13",
+"distFromKm": 10501,
+"distToKm": 10700,
+"rateRub": 549739.0
+},
+{
+"scheme": "В13",
+"distFromKm": 10701,
+"distToKm": 10900,
+"rateRub": 559485.0
+},
+{
+"scheme": "В13",
+"distFromKm": 10901,
+"distToKm": 11100,
+"rateRub": 569232.0
+},
+{
+"scheme": "В13",
+"distFromKm": 11101,
+"distToKm": 11300,
+"rateRub": 578979.0
+},
+{
+"scheme": "В13",
+"distFromKm": 11301,
+"distToKm": 11500,
+"rateRub": 588726.0
+},
+{
+"scheme": "В13",
+"distFromKm": 11501,
+"distToKm": 11700,
+"rateRub": 598472.0
+},
+{
+"scheme": "В13",
+"distFromKm": 11701,
+"distToKm": 11900,
+"rateRub": 608219.0
+},
+{
+"scheme": "В14",
+"distFromKm": 0,
+"distToKm": 5,
+"rateRub": 17754.0
+},
+{
+"scheme": "В14",
+"distFromKm": 6,
+"distToKm": 10,
+"rateRub": 17967.0
+},
+{
+"scheme": "В14",
+"distFromKm": 11,
+"distToKm": 15,
+"rateRub": 18144.0
+},
+{
+"scheme": "В14",
+"distFromKm": 16,
+"distToKm": 20,
+"rateRub": 18321.0
+},
+{
+"scheme": "В14",
+"distFromKm": 21,
+"distToKm": 25,
+"rateRub": 18498.0
+},
+{
+"scheme": "В14",
+"distFromKm": 26,
+"distToKm": 30,
+"rateRub": 18676.0
+},
+{
+"scheme": "В14",
+"distFromKm": 31,
+"distToKm": 35,
+"rateRub": 18853.0
+},
+{
+"scheme": "В14",
+"distFromKm": 36,
+"distToKm": 40,
+"rateRub": 19030.0
+},
+{
+"scheme": "В14",
+"distFromKm": 41,
+"distToKm": 45,
+"rateRub": 19207.0
+},
+{
+"scheme": "В14",
+"distFromKm": 46,
+"distToKm": 50,
+"rateRub": 19385.0
+},
+{
+"scheme": "В14",
+"distFromKm": 51,
+"distToKm": 60,
+"rateRub": 19633.0
+},
+{
+"scheme": "В14",
+"distFromKm": 61,
+"distToKm": 70,
+"rateRub": 19987.0
+},
+{
+"scheme": "В14",
+"distFromKm": 71,
+"distToKm": 80,
+"rateRub": 20342.0
+},
+{
+"scheme": "В14",
+"distFromKm": 81,
+"distToKm": 90,
+"rateRub": 20696.0
+},
+{
+"scheme": "В14",
+"distFromKm": 91,
+"distToKm": 100,
+"rateRub": 21051.0
+},
+{
+"scheme": "В14",
+"distFromKm": 101,
+"distToKm": 120,
+"rateRub": 21583.0
+},
+{
+"scheme": "В14",
+"distFromKm": 121,
+"distToKm": 140,
+"rateRub": 22292.0
+},
+{
+"scheme": "В14",
+"distFromKm": 141,
+"distToKm": 160,
+"rateRub": 23001.0
+},
+{
+"scheme": "В14",
+"distFromKm": 161,
+"distToKm": 180,
+"rateRub": 23612.0
+},
+{
+"scheme": "В14",
+"distFromKm": 181,
+"distToKm": 200,
+"rateRub": 24200.0
+},
+{
+"scheme": "В14",
+"distFromKm": 201,
+"distToKm": 220,
+"rateRub": 24825.0
+},
+{
+"scheme": "В14",
+"distFromKm": 221,
+"distToKm": 240,
+"rateRub": 25373.0
+},
+{
+"scheme": "В14",
+"distFromKm": 241,
+"distToKm": 260,
+"rateRub": 25969.0
+},
+{
+"scheme": "В14",
+"distFromKm": 261,
+"distToKm": 280,
+"rateRub": 26554.0
+},
+{
+"scheme": "В14",
+"distFromKm": 281,
+"distToKm": 300,
+"rateRub": 27128.0
+},
+{
+"scheme": "В14",
+"distFromKm": 301,
+"distToKm": 330,
+"rateRub": 27851.0
+},
+{
+"scheme": "В14",
+"distFromKm": 331,
+"distToKm": 360,
+"rateRub": 28720.0
+},
+{
+"scheme": "В14",
+"distFromKm": 361,
+"distToKm": 390,
+"rateRub": 29572.0
+},
+{
+"scheme": "В14",
+"distFromKm": 391,
+"distToKm": 420,
+"rateRub": 30406.0
+},
+{
+"scheme": "В14",
+"distFromKm": 421,
+"distToKm": 450,
+"rateRub": 31349.0
+},
+{
+"scheme": "В14",
+"distFromKm": 451,
+"distToKm": 480,
+"rateRub": 32157.0
+},
+{
+"scheme": "В14",
+"distFromKm": 481,
+"distToKm": 510,
+"rateRub": 32949.0
+},
+{
+"scheme": "В14",
+"distFromKm": 511,
+"distToKm": 540,
+"rateRub": 33874.0
+},
+{
+"scheme": "В14",
+"distFromKm": 541,
+"distToKm": 570,
+"rateRub": 34639.0
+},
+{
+"scheme": "В14",
+"distFromKm": 571,
+"distToKm": 600,
+"rateRub": 35556.0
+},
+{
+"scheme": "В14",
+"distFromKm": 601,
+"distToKm": 640,
+"rateRub": 36446.0
+},
+{
+"scheme": "В14",
+"distFromKm": 641,
+"distToKm": 680,
+"rateRub": 37657.0
+},
+{
+"scheme": "В14",
+"distFromKm": 681,
+"distToKm": 720,
+"rateRub": 38665.0
+},
+{
+"scheme": "В14",
+"distFromKm": 721,
+"distToKm": 760,
+"rateRub": 39864.0
+},
+{
+"scheme": "В14",
+"distFromKm": 761,
+"distToKm": 800,
+"rateRub": 40839.0
+},
+{
+"scheme": "В14",
+"distFromKm": 801,
+"distToKm": 840,
+"rateRub": 42026.0
+},
+{
+"scheme": "В14",
+"distFromKm": 841,
+"distToKm": 880,
+"rateRub": 43214.0
+},
+{
+"scheme": "В14",
+"distFromKm": 881,
+"distToKm": 920,
+"rateRub": 44142.0
+},
+{
+"scheme": "В14",
+"distFromKm": 921,
+"distToKm": 960,
+"rateRub": 45318.0
+},
+{
+"scheme": "В14",
+"distFromKm": 961,
+"distToKm": 1000,
+"rateRub": 46211.0
+},
+{
+"scheme": "В14",
+"distFromKm": 1001,
+"distToKm": 1050,
+"rateRub": 47521.0
+},
+{
+"scheme": "В14",
+"distFromKm": 1051,
+"distToKm": 1100,
+"rateRub": 48976.0
+},
+{
+"scheme": "В14",
+"distFromKm": 1101,
+"distToKm": 1150,
+"rateRub": 50108.0
+},
+{
+"scheme": "В14",
+"distFromKm": 1151,
+"distToKm": 1200,
+"rateRub": 51549.0
+},
+{
+"scheme": "В14",
+"distFromKm": 1201,
+"distToKm": 1250,
+"rateRub": 52637.0
+},
+{
+"scheme": "В14",
+"distFromKm": 1251,
+"distToKm": 1300,
+"rateRub": 54064.0
+},
+{
+"scheme": "В14",
+"distFromKm": 1301,
+"distToKm": 1350,
+"rateRub": 55108.0
+},
+{
+"scheme": "В14",
+"distFromKm": 1351,
+"distToKm": 1400,
+"rateRub": 56521.0
+},
+{
+"scheme": "В14",
+"distFromKm": 1401,
+"distToKm": 1450,
+"rateRub": 57933.0
+},
+{
+"scheme": "В14",
+"distFromKm": 1451,
+"distToKm": 1500,
+"rateRub": 58920.0
+},
+{
+"scheme": "В14",
+"distFromKm": 1501,
+"distToKm": 1600,
+"rateRub": 61017.0
+},
+{
+"scheme": "В14",
+"distFromKm": 1601,
+"distToKm": 1700,
+"rateRub": 63337.0
+},
+{
+"scheme": "В14",
+"distFromKm": 1701,
+"distToKm": 1800,
+"rateRub": 65600.0
+},
+{
+"scheme": "В14",
+"distFromKm": 1801,
+"distToKm": 1900,
+"rateRub": 68338.0
+},
+{
+"scheme": "В14",
+"distFromKm": 1901,
+"distToKm": 2000,
+"rateRub": 70514.0
+},
+{
+"scheme": "В14",
+"distFromKm": 2001,
+"distToKm": 2100,
+"rateRub": 72632.0
+},
+{
+"scheme": "В14",
+"distFromKm": 2101,
+"distToKm": 2200,
+"rateRub": 75313.0
+},
+{
+"scheme": "В14",
+"distFromKm": 2201,
+"distToKm": 2300,
+"rateRub": 77345.0
+},
+{
+"scheme": "В14",
+"distFromKm": 2301,
+"distToKm": 2400,
+"rateRub": 79319.0
+},
+{
+"scheme": "В14",
+"distFromKm": 2401,
+"distToKm": 2500,
+"rateRub": 81942.0
+},
+{
+"scheme": "В14",
+"distFromKm": 2501,
+"distToKm": 2600,
+"rateRub": 83829.0
+},
+{
+"scheme": "В14",
+"distFromKm": 2601,
+"distToKm": 2700,
+"rateRub": 85660.0
+},
+{
+"scheme": "В14",
+"distFromKm": 2701,
+"distToKm": 2800,
+"rateRub": 88225.0
+},
+{
+"scheme": "В14",
+"distFromKm": 2801,
+"distToKm": 2900,
+"rateRub": 89969.0
+},
+{
+"scheme": "В14",
+"distFromKm": 2901,
+"distToKm": 3000,
+"rateRub": 91655.0
+},
+{
+"scheme": "В14",
+"distFromKm": 3001,
+"distToKm": 3100,
+"rateRub": 94162.0
+},
+{
+"scheme": "В14",
+"distFromKm": 3101,
+"distToKm": 3200,
+"rateRub": 96670.0
+},
+{
+"scheme": "В14",
+"distFromKm": 3201,
+"distToKm": 3300,
+"rateRub": 99177.0
+},
+{
+"scheme": "В14",
+"distFromKm": 3301,
+"distToKm": 3400,
+"rateRub": 101685.0
+},
+{
+"scheme": "В14",
+"distFromKm": 3401,
+"distToKm": 3500,
+"rateRub": 104192.0
+},
+{
+"scheme": "В14",
+"distFromKm": 3501,
+"distToKm": 3600,
+"rateRub": 106700.0
+},
+{
+"scheme": "В14",
+"distFromKm": 3601,
+"distToKm": 3700,
+"rateRub": 109207.0
+},
+{
+"scheme": "В14",
+"distFromKm": 3701,
+"distToKm": 3800,
+"rateRub": 111715.0
+},
+{
+"scheme": "В14",
+"distFromKm": 3801,
+"distToKm": 3900,
+"rateRub": 114222.0
+},
+{
+"scheme": "В14",
+"distFromKm": 3901,
+"distToKm": 4000,
+"rateRub": 116730.0
+},
+{
+"scheme": "В14",
+"distFromKm": 4001,
+"distToKm": 4100,
+"rateRub": 119237.0
+},
+{
+"scheme": "В14",
+"distFromKm": 4101,
+"distToKm": 4200,
+"rateRub": 121745.0
+},
+{
+"scheme": "В14",
+"distFromKm": 4201,
+"distToKm": 4300,
+"rateRub": 124252.0
+},
+{
+"scheme": "В14",
+"distFromKm": 4301,
+"distToKm": 4400,
+"rateRub": 126760.0
+},
+{
+"scheme": "В14",
+"distFromKm": 4401,
+"distToKm": 4500,
+"rateRub": 129267.0
+},
+{
+"scheme": "В14",
+"distFromKm": 4501,
+"distToKm": 4600,
+"rateRub": 131775.0
+},
+{
+"scheme": "В14",
+"distFromKm": 4601,
+"distToKm": 4700,
+"rateRub": 134282.0
+},
+{
+"scheme": "В14",
+"distFromKm": 4701,
+"distToKm": 4800,
+"rateRub": 136790.0
+},
+{
+"scheme": "В14",
+"distFromKm": 4801,
+"distToKm": 4900,
+"rateRub": 139297.0
+},
+{
+"scheme": "В14",
+"distFromKm": 4901,
+"distToKm": 5000,
+"rateRub": 141805.0
+},
+{
+"scheme": "В14",
+"distFromKm": 5001,
+"distToKm": 5100,
+"rateRub": 144312.0
+},
+{
+"scheme": "В14",
+"distFromKm": 5101,
+"distToKm": 5200,
+"rateRub": 146820.0
+},
+{
+"scheme": "В14",
+"distFromKm": 5201,
+"distToKm": 5300,
+"rateRub": 149327.0
+},
+{
+"scheme": "В14",
+"distFromKm": 5301,
+"distToKm": 5400,
+"rateRub": 151835.0
+},
+{
+"scheme": "В14",
+"distFromKm": 5401,
+"distToKm": 5500,
+"rateRub": 154343.0
+},
+{
+"scheme": "В14",
+"distFromKm": 5501,
+"distToKm": 5700,
+"rateRub": 158104.0
+},
+{
+"scheme": "В14",
+"distFromKm": 5701,
+"distToKm": 5900,
+"rateRub": 163119.0
+},
+{
+"scheme": "В14",
+"distFromKm": 5901,
+"distToKm": 6100,
+"rateRub": 168134.0
+},
+{
+"scheme": "В14",
+"distFromKm": 6101,
+"distToKm": 6300,
+"rateRub": 173149.0
+},
+{
+"scheme": "В14",
+"distFromKm": 6301,
+"distToKm": 6500,
+"rateRub": 178164.0
+},
+{
+"scheme": "В14",
+"distFromKm": 6501,
+"distToKm": 6700,
+"rateRub": 183179.0
+},
+{
+"scheme": "В14",
+"distFromKm": 6701,
+"distToKm": 6900,
+"rateRub": 188194.0
+},
+{
+"scheme": "В14",
+"distFromKm": 6901,
+"distToKm": 7100,
+"rateRub": 193209.0
+},
+{
+"scheme": "В14",
+"distFromKm": 7101,
+"distToKm": 7300,
+"rateRub": 198224.0
+},
+{
+"scheme": "В14",
+"distFromKm": 7301,
+"distToKm": 7500,
+"rateRub": 203239.0
+},
+{
+"scheme": "В14",
+"distFromKm": 7501,
+"distToKm": 7700,
+"rateRub": 208254.0
+},
+{
+"scheme": "В14",
+"distFromKm": 7701,
+"distToKm": 7900,
+"rateRub": 213269.0
+},
+{
+"scheme": "В14",
+"distFromKm": 7901,
+"distToKm": 8100,
+"rateRub": 218284.0
+},
+{
+"scheme": "В14",
+"distFromKm": 8101,
+"distToKm": 8300,
+"rateRub": 223299.0
+},
+{
+"scheme": "В14",
+"distFromKm": 8301,
+"distToKm": 8500,
+"rateRub": 228314.0
+},
+{
+"scheme": "В14",
+"distFromKm": 8501,
+"distToKm": 8700,
+"rateRub": 233329.0
+},
+{
+"scheme": "В14",
+"distFromKm": 8701,
+"distToKm": 8900,
+"rateRub": 238344.0
+},
+{
+"scheme": "В14",
+"distFromKm": 8901,
+"distToKm": 9100,
+"rateRub": 243359.0
+},
+{
+"scheme": "В14",
+"distFromKm": 9101,
+"distToKm": 9300,
+"rateRub": 248374.0
+},
+{
+"scheme": "В14",
+"distFromKm": 9301,
+"distToKm": 9500,
+"rateRub": 253389.0
+},
+{
+"scheme": "В14",
+"distFromKm": 9501,
+"distToKm": 9700,
+"rateRub": 258404.0
+},
+{
+"scheme": "В14",
+"distFromKm": 9701,
+"distToKm": 9900,
+"rateRub": 263419.0
+},
+{
+"scheme": "В14",
+"distFromKm": 9901,
+"distToKm": 10100,
+"rateRub": 268434.0
+},
+{
+"scheme": "В14",
+"distFromKm": 10101,
+"distToKm": 10300,
+"rateRub": 273449.0
+},
+{
+"scheme": "В14",
+"distFromKm": 10301,
+"distToKm": 10500,
+"rateRub": 278464.0
+},
+{
+"scheme": "В14",
+"distFromKm": 10501,
+"distToKm": 10700,
+"rateRub": 283479.0
+},
+{
+"scheme": "В14",
+"distFromKm": 10701,
+"distToKm": 10900,
+"rateRub": 288495.0
+},
+{
+"scheme": "В14",
+"distFromKm": 10901,
+"distToKm": 11100,
+"rateRub": 293510.0
+},
+{
+"scheme": "В14",
+"distFromKm": 11101,
+"distToKm": 11300,
+"rateRub": 298525.0
+},
+{
+"scheme": "В14",
+"distFromKm": 11301,
+"distToKm": 11500,
+"rateRub": 303540.0
+},
+{
+"scheme": "В14",
+"distFromKm": 11501,
+"distToKm": 11700,
+"rateRub": 308555.0
+},
+{
+"scheme": "В14",
+"distFromKm": 11701,
+"distToKm": 11900,
+"rateRub": 313570.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 0,
+"distToKm": 5,
+"rateRub": 38.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 6,
+"distToKm": 10,
+"rateRub": 154.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 11,
+"distToKm": 15,
+"rateRub": 250.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 16,
+"distToKm": 20,
+"rateRub": 345.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 21,
+"distToKm": 25,
+"rateRub": 441.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 26,
+"distToKm": 30,
+"rateRub": 537.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 31,
+"distToKm": 35,
+"rateRub": 633.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 36,
+"distToKm": 40,
+"rateRub": 729.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 41,
+"distToKm": 45,
+"rateRub": 825.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 46,
+"distToKm": 50,
+"rateRub": 921.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 51,
+"distToKm": 60,
+"rateRub": 1056.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 61,
+"distToKm": 70,
+"rateRub": 1248.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 71,
+"distToKm": 80,
+"rateRub": 1439.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 81,
+"distToKm": 90,
+"rateRub": 1631.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 91,
+"distToKm": 100,
+"rateRub": 1823.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 101,
+"distToKm": 120,
+"rateRub": 2111.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 121,
+"distToKm": 140,
+"rateRub": 2495.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 141,
+"distToKm": 160,
+"rateRub": 2879.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 161,
+"distToKm": 180,
+"rateRub": 3210.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 181,
+"distToKm": 200,
+"rateRub": 3528.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 201,
+"distToKm": 220,
+"rateRub": 3867.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 221,
+"distToKm": 240,
+"rateRub": 4163.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 241,
+"distToKm": 260,
+"rateRub": 4486.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 261,
+"distToKm": 280,
+"rateRub": 4803.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 281,
+"distToKm": 300,
+"rateRub": 5113.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 301,
+"distToKm": 330,
+"rateRub": 5505.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 331,
+"distToKm": 360,
+"rateRub": 5976.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 361,
+"distToKm": 390,
+"rateRub": 6437.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 391,
+"distToKm": 420,
+"rateRub": 6888.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 421,
+"distToKm": 450,
+"rateRub": 7399.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 451,
+"distToKm": 480,
+"rateRub": 7836.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 481,
+"distToKm": 510,
+"rateRub": 8265.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 511,
+"distToKm": 540,
+"rateRub": 8766.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 541,
+"distToKm": 570,
+"rateRub": 9180.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 571,
+"distToKm": 600,
+"rateRub": 9676.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 601,
+"distToKm": 640,
+"rateRub": 10158.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 641,
+"distToKm": 680,
+"rateRub": 10814.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 681,
+"distToKm": 720,
+"rateRub": 11360.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 721,
+"distToKm": 760,
+"rateRub": 12009.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 761,
+"distToKm": 800,
+"rateRub": 12536.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 801,
+"distToKm": 840,
+"rateRub": 13179.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 841,
+"distToKm": 880,
+"rateRub": 13822.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 881,
+"distToKm": 920,
+"rateRub": 14324.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 921,
+"distToKm": 960,
+"rateRub": 14961.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 961,
+"distToKm": 1000,
+"rateRub": 15445.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 1001,
+"distToKm": 1050,
+"rateRub": 16154.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 1051,
+"distToKm": 1100,
+"rateRub": 16942.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 1101,
+"distToKm": 1150,
+"rateRub": 17555.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 1151,
+"distToKm": 1200,
+"rateRub": 18335.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 1201,
+"distToKm": 1250,
+"rateRub": 18924.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 1251,
+"distToKm": 1300,
+"rateRub": 19696.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 1301,
+"distToKm": 1350,
+"rateRub": 20262.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 1351,
+"distToKm": 1400,
+"rateRub": 21026.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 1401,
+"distToKm": 1450,
+"rateRub": 21791.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 1451,
+"distToKm": 1500,
+"rateRub": 22325.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 1501,
+"distToKm": 1600,
+"rateRub": 23461.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 1601,
+"distToKm": 1700,
+"rateRub": 24717.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 1701,
+"distToKm": 1800,
+"rateRub": 25942.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 1801,
+"distToKm": 1900,
+"rateRub": 27424.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 1901,
+"distToKm": 2000,
+"rateRub": 28602.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 2001,
+"distToKm": 2100,
+"rateRub": 29749.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 2101,
+"distToKm": 2200,
+"rateRub": 31200.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 2201,
+"distToKm": 2300,
+"rateRub": 32300.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 2301,
+"distToKm": 2400,
+"rateRub": 33369.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 2401,
+"distToKm": 2500,
+"rateRub": 34789.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 2501,
+"distToKm": 2600,
+"rateRub": 35811.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 2601,
+"distToKm": 2700,
+"rateRub": 36802.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 2701,
+"distToKm": 2800,
+"rateRub": 38191.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 2801,
+"distToKm": 2900,
+"rateRub": 39135.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 2901,
+"distToKm": 3000,
+"rateRub": 40048.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 3001,
+"distToKm": 3100,
+"rateRub": 41405.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 3101,
+"distToKm": 3200,
+"rateRub": 42763.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 3201,
+"distToKm": 3300,
+"rateRub": 44120.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 3301,
+"distToKm": 3400,
+"rateRub": 45478.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 3401,
+"distToKm": 3500,
+"rateRub": 46835.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 3501,
+"distToKm": 3600,
+"rateRub": 48193.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 3601,
+"distToKm": 3700,
+"rateRub": 49551.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 3701,
+"distToKm": 3800,
+"rateRub": 50908.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 3801,
+"distToKm": 3900,
+"rateRub": 52266.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 3901,
+"distToKm": 4000,
+"rateRub": 53623.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 4001,
+"distToKm": 4100,
+"rateRub": 54981.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 4101,
+"distToKm": 4200,
+"rateRub": 56338.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 4201,
+"distToKm": 4300,
+"rateRub": 57696.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 4301,
+"distToKm": 4400,
+"rateRub": 59053.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 4401,
+"distToKm": 4500,
+"rateRub": 60411.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 4501,
+"distToKm": 4600,
+"rateRub": 61768.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 4601,
+"distToKm": 4700,
+"rateRub": 63126.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 4701,
+"distToKm": 4800,
+"rateRub": 64484.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 4801,
+"distToKm": 4900,
+"rateRub": 65841.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 4901,
+"distToKm": 5000,
+"rateRub": 67199.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 5001,
+"distToKm": 5100,
+"rateRub": 68556.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 5101,
+"distToKm": 5200,
+"rateRub": 69914.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 5201,
+"distToKm": 5300,
+"rateRub": 71271.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 5301,
+"distToKm": 5400,
+"rateRub": 72629.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 5401,
+"distToKm": 5500,
+"rateRub": 73986.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 5501,
+"distToKm": 5700,
+"rateRub": 76023.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 5701,
+"distToKm": 5900,
+"rateRub": 78738.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 5901,
+"distToKm": 6100,
+"rateRub": 81453.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 6101,
+"distToKm": 6300,
+"rateRub": 84168.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 6301,
+"distToKm": 6500,
+"rateRub": 86883.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 6501,
+"distToKm": 6700,
+"rateRub": 89598.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 6701,
+"distToKm": 6900,
+"rateRub": 92313.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 6901,
+"distToKm": 7100,
+"rateRub": 95028.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 7101,
+"distToKm": 7300,
+"rateRub": 97743.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 7301,
+"distToKm": 7500,
+"rateRub": 100459.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 7501,
+"distToKm": 7700,
+"rateRub": 103174.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 7701,
+"distToKm": 7900,
+"rateRub": 105889.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 7901,
+"distToKm": 8100,
+"rateRub": 108604.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 8101,
+"distToKm": 8300,
+"rateRub": 111319.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 8301,
+"distToKm": 8500,
+"rateRub": 114034.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 8501,
+"distToKm": 8700,
+"rateRub": 116749.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 8701,
+"distToKm": 8900,
+"rateRub": 119464.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 8901,
+"distToKm": 9100,
+"rateRub": 122179.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 9101,
+"distToKm": 9300,
+"rateRub": 124894.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 9301,
+"distToKm": 9500,
+"rateRub": 127610.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 9501,
+"distToKm": 9700,
+"rateRub": 130325.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 9701,
+"distToKm": 9900,
+"rateRub": 133040.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 9901,
+"distToKm": 10100,
+"rateRub": 135755.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 10101,
+"distToKm": 10300,
+"rateRub": 138470.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 10301,
+"distToKm": 10500,
+"rateRub": 141185.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 10501,
+"distToKm": 10700,
+"rateRub": 143900.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 10701,
+"distToKm": 10900,
+"rateRub": 146615.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 10901,
+"distToKm": 11100,
+"rateRub": 149330.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 11101,
+"distToKm": 11300,
+"rateRub": 152045.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 11301,
+"distToKm": 11500,
+"rateRub": 154760.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 11501,
+"distToKm": 11700,
+"rateRub": 157476.0
+},
+{
+"scheme": "В15-4",
+"distFromKm": 11701,
+"distToKm": 11900,
+"rateRub": 160191.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 0,
+"distToKm": 5,
+"rateRub": 69.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 6,
+"distToKm": 10,
+"rateRub": 276.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 11,
+"distToKm": 15,
+"rateRub": 449.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 16,
+"distToKm": 20,
+"rateRub": 622.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 21,
+"distToKm": 25,
+"rateRub": 794.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 26,
+"distToKm": 30,
+"rateRub": 967.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 31,
+"distToKm": 35,
+"rateRub": 1139.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 36,
+"distToKm": 40,
+"rateRub": 1312.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 41,
+"distToKm": 45,
+"rateRub": 1485.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 46,
+"distToKm": 50,
+"rateRub": 1657.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 51,
+"distToKm": 60,
+"rateRub": 1899.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 61,
+"distToKm": 70,
+"rateRub": 2244.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 71,
+"distToKm": 80,
+"rateRub": 2590.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 81,
+"distToKm": 90,
+"rateRub": 2935.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 91,
+"distToKm": 100,
+"rateRub": 3280.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 101,
+"distToKm": 120,
+"rateRub": 3798.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 121,
+"distToKm": 140,
+"rateRub": 4489.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 141,
+"distToKm": 160,
+"rateRub": 5179.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 161,
+"distToKm": 180,
+"rateRub": 5774.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 181,
+"distToKm": 200,
+"rateRub": 6347.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 201,
+"distToKm": 220,
+"rateRub": 6956.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 221,
+"distToKm": 240,
+"rateRub": 7490.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 241,
+"distToKm": 260,
+"rateRub": 8071.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 261,
+"distToKm": 280,
+"rateRub": 8641.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 281,
+"distToKm": 300,
+"rateRub": 9199.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 301,
+"distToKm": 330,
+"rateRub": 9904.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 331,
+"distToKm": 360,
+"rateRub": 10750.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 361,
+"distToKm": 390,
+"rateRub": 11580.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 391,
+"distToKm": 420,
+"rateRub": 12392.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 421,
+"distToKm": 450,
+"rateRub": 13310.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 451,
+"distToKm": 480,
+"rateRub": 14098.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 481,
+"distToKm": 510,
+"rateRub": 14868.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 511,
+"distToKm": 540,
+"rateRub": 15769.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 541,
+"distToKm": 570,
+"rateRub": 16515.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 571,
+"distToKm": 600,
+"rateRub": 17407.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 601,
+"distToKm": 640,
+"rateRub": 18275.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 641,
+"distToKm": 680,
+"rateRub": 19454.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 681,
+"distToKm": 720,
+"rateRub": 20436.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 721,
+"distToKm": 760,
+"rateRub": 21604.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 761,
+"distToKm": 800,
+"rateRub": 22553.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 801,
+"distToKm": 840,
+"rateRub": 23710.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 841,
+"distToKm": 880,
+"rateRub": 24866.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 881,
+"distToKm": 920,
+"rateRub": 25770.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 921,
+"distToKm": 960,
+"rateRub": 26915.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 961,
+"distToKm": 1000,
+"rateRub": 27786.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 1001,
+"distToKm": 1050,
+"rateRub": 29062.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 1051,
+"distToKm": 1100,
+"rateRub": 30479.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 1101,
+"distToKm": 1150,
+"rateRub": 31581.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 1151,
+"distToKm": 1200,
+"rateRub": 32985.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 1201,
+"distToKm": 1250,
+"rateRub": 34044.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 1251,
+"distToKm": 1300,
+"rateRub": 35434.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 1301,
+"distToKm": 1350,
+"rateRub": 36451.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 1351,
+"distToKm": 1400,
+"rateRub": 37827.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 1401,
+"distToKm": 1450,
+"rateRub": 39203.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 1451,
+"distToKm": 1500,
+"rateRub": 40164.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 1501,
+"distToKm": 1600,
+"rateRub": 42206.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 1601,
+"distToKm": 1700,
+"rateRub": 44466.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 1701,
+"distToKm": 1800,
+"rateRub": 46670.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 1801,
+"distToKm": 1900,
+"rateRub": 49337.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 1901,
+"distToKm": 2000,
+"rateRub": 51456.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 2001,
+"distToKm": 2100,
+"rateRub": 53519.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 2101,
+"distToKm": 2200,
+"rateRub": 56130.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 2201,
+"distToKm": 2300,
+"rateRub": 58109.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 2301,
+"distToKm": 2400,
+"rateRub": 60032.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 2401,
+"distToKm": 2500,
+"rateRub": 62587.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 2501,
+"distToKm": 2600,
+"rateRub": 64425.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 2601,
+"distToKm": 2700,
+"rateRub": 66208.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 2701,
+"distToKm": 2800,
+"rateRub": 68706.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 2801,
+"distToKm": 2900,
+"rateRub": 70405.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 2901,
+"distToKm": 3000,
+"rateRub": 72047.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 3001,
+"distToKm": 3100,
+"rateRub": 74489.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 3101,
+"distToKm": 3200,
+"rateRub": 76931.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 3201,
+"distToKm": 3300,
+"rateRub": 79374.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 3301,
+"distToKm": 3400,
+"rateRub": 81816.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 3401,
+"distToKm": 3500,
+"rateRub": 84258.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 3501,
+"distToKm": 3600,
+"rateRub": 86700.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 3601,
+"distToKm": 3700,
+"rateRub": 89143.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 3701,
+"distToKm": 3800,
+"rateRub": 91585.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 3801,
+"distToKm": 3900,
+"rateRub": 94027.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 3901,
+"distToKm": 4000,
+"rateRub": 96469.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 4001,
+"distToKm": 4100,
+"rateRub": 98912.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 4101,
+"distToKm": 4200,
+"rateRub": 101354.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 4201,
+"distToKm": 4300,
+"rateRub": 103796.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 4301,
+"distToKm": 4400,
+"rateRub": 106238.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 4401,
+"distToKm": 4500,
+"rateRub": 108681.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 4501,
+"distToKm": 4600,
+"rateRub": 111123.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 4601,
+"distToKm": 4700,
+"rateRub": 113565.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 4701,
+"distToKm": 4800,
+"rateRub": 116008.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 4801,
+"distToKm": 4900,
+"rateRub": 118450.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 4901,
+"distToKm": 5000,
+"rateRub": 120892.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 5001,
+"distToKm": 5100,
+"rateRub": 123334.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 5101,
+"distToKm": 5200,
+"rateRub": 125777.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 5201,
+"distToKm": 5300,
+"rateRub": 128219.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 5301,
+"distToKm": 5400,
+"rateRub": 130661.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 5401,
+"distToKm": 5500,
+"rateRub": 133103.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 5501,
+"distToKm": 5700,
+"rateRub": 136767.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 5701,
+"distToKm": 5900,
+"rateRub": 141651.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 5901,
+"distToKm": 6100,
+"rateRub": 146536.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 6101,
+"distToKm": 6300,
+"rateRub": 151420.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 6301,
+"distToKm": 6500,
+"rateRub": 156305.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 6501,
+"distToKm": 6700,
+"rateRub": 161189.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 6701,
+"distToKm": 6900,
+"rateRub": 166074.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 6901,
+"distToKm": 7100,
+"rateRub": 170958.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 7101,
+"distToKm": 7300,
+"rateRub": 175843.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 7301,
+"distToKm": 7500,
+"rateRub": 180728.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 7501,
+"distToKm": 7700,
+"rateRub": 185612.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 7701,
+"distToKm": 7900,
+"rateRub": 190497.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 7901,
+"distToKm": 8100,
+"rateRub": 195381.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 8101,
+"distToKm": 8300,
+"rateRub": 200266.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 8301,
+"distToKm": 8500,
+"rateRub": 205150.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 8501,
+"distToKm": 8700,
+"rateRub": 210035.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 8701,
+"distToKm": 8900,
+"rateRub": 214919.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 8901,
+"distToKm": 9100,
+"rateRub": 219804.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 9101,
+"distToKm": 9300,
+"rateRub": 224688.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 9301,
+"distToKm": 9500,
+"rateRub": 229573.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 9501,
+"distToKm": 9700,
+"rateRub": 234457.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 9701,
+"distToKm": 9900,
+"rateRub": 239342.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 9901,
+"distToKm": 10100,
+"rateRub": 244226.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 10101,
+"distToKm": 10300,
+"rateRub": 249111.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 10301,
+"distToKm": 10500,
+"rateRub": 253995.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 10501,
+"distToKm": 10700,
+"rateRub": 258880.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 10701,
+"distToKm": 10900,
+"rateRub": 263765.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 10901,
+"distToKm": 11100,
+"rateRub": 268649.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 11101,
+"distToKm": 11300,
+"rateRub": 273534.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 11301,
+"distToKm": 11500,
+"rateRub": 278418.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 11501,
+"distToKm": 11700,
+"rateRub": 283303.0
+},
+{
+"scheme": "В15-8",
+"distFromKm": 11701,
+"distToKm": 11900,
+"rateRub": 288187.0
+},
+{
+"scheme": "В2",
+"distFromKm": 0,
+"distToKm": 5,
+"rateRub": 6964.0
+},
+{
+"scheme": "В2",
+"distFromKm": 6,
+"distToKm": 10,
+"rateRub": 7016.0
+},
+{
+"scheme": "В2",
+"distFromKm": 11,
+"distToKm": 15,
+"rateRub": 7060.0
+},
+{
+"scheme": "В2",
+"distFromKm": 16,
+"distToKm": 20,
+"rateRub": 7104.0
+},
+{
+"scheme": "В2",
+"distFromKm": 21,
+"distToKm": 25,
+"rateRub": 7148.0
+},
+{
+"scheme": "В2",
+"distFromKm": 26,
+"distToKm": 30,
+"rateRub": 7191.0
+},
+{
+"scheme": "В2",
+"distFromKm": 31,
+"distToKm": 35,
+"rateRub": 7235.0
+},
+{
+"scheme": "В2",
+"distFromKm": 36,
+"distToKm": 40,
+"rateRub": 7279.0
+},
+{
+"scheme": "В2",
+"distFromKm": 41,
+"distToKm": 45,
+"rateRub": 7323.0
+},
+{
+"scheme": "В2",
+"distFromKm": 46,
+"distToKm": 50,
+"rateRub": 7367.0
+},
+{
+"scheme": "В2",
+"distFromKm": 51,
+"distToKm": 60,
+"rateRub": 7428.0
+},
+{
+"scheme": "В2",
+"distFromKm": 61,
+"distToKm": 70,
+"rateRub": 7516.0
+},
+{
+"scheme": "В2",
+"distFromKm": 71,
+"distToKm": 80,
+"rateRub": 7603.0
+},
+{
+"scheme": "В2",
+"distFromKm": 81,
+"distToKm": 90,
+"rateRub": 7691.0
+},
+{
+"scheme": "В2",
+"distFromKm": 91,
+"distToKm": 100,
+"rateRub": 7778.0
+},
+{
+"scheme": "В2",
+"distFromKm": 101,
+"distToKm": 120,
+"rateRub": 7910.0
+},
+{
+"scheme": "В2",
+"distFromKm": 121,
+"distToKm": 140,
+"rateRub": 8085.0
+},
+{
+"scheme": "В2",
+"distFromKm": 141,
+"distToKm": 160,
+"rateRub": 8260.0
+},
+{
+"scheme": "В2",
+"distFromKm": 161,
+"distToKm": 180,
+"rateRub": 8411.0
+},
+{
+"scheme": "В2",
+"distFromKm": 181,
+"distToKm": 200,
+"rateRub": 8557.0
+},
+{
+"scheme": "В2",
+"distFromKm": 201,
+"distToKm": 220,
+"rateRub": 8711.0
+},
+{
+"scheme": "В2",
+"distFromKm": 221,
+"distToKm": 240,
+"rateRub": 8847.0
+},
+{
+"scheme": "В2",
+"distFromKm": 241,
+"distToKm": 260,
+"rateRub": 8994.0
+},
+{
+"scheme": "В2",
+"distFromKm": 261,
+"distToKm": 280,
+"rateRub": 9139.0
+},
+{
+"scheme": "В2",
+"distFromKm": 281,
+"distToKm": 300,
+"rateRub": 9281.0
+},
+{
+"scheme": "В2",
+"distFromKm": 301,
+"distToKm": 330,
+"rateRub": 9459.0
+},
+{
+"scheme": "В2",
+"distFromKm": 331,
+"distToKm": 360,
+"rateRub": 9674.0
+},
+{
+"scheme": "В2",
+"distFromKm": 361,
+"distToKm": 390,
+"rateRub": 9885.0
+},
+{
+"scheme": "В2",
+"distFromKm": 391,
+"distToKm": 420,
+"rateRub": 10091.0
+},
+{
+"scheme": "В2",
+"distFromKm": 421,
+"distToKm": 450,
+"rateRub": 10324.0
+},
+{
+"scheme": "В2",
+"distFromKm": 451,
+"distToKm": 480,
+"rateRub": 10524.0
+},
+{
+"scheme": "В2",
+"distFromKm": 481,
+"distToKm": 510,
+"rateRub": 10719.0
+},
+{
+"scheme": "В2",
+"distFromKm": 511,
+"distToKm": 540,
+"rateRub": 10948.0
+},
+{
+"scheme": "В2",
+"distFromKm": 541,
+"distToKm": 570,
+"rateRub": 11137.0
+},
+{
+"scheme": "В2",
+"distFromKm": 571,
+"distToKm": 600,
+"rateRub": 11364.0
+},
+{
+"scheme": "В2",
+"distFromKm": 601,
+"distToKm": 640,
+"rateRub": 11584.0
+},
+{
+"scheme": "В2",
+"distFromKm": 641,
+"distToKm": 680,
+"rateRub": 11883.0
+},
+{
+"scheme": "В2",
+"distFromKm": 681,
+"distToKm": 720,
+"rateRub": 12132.0
+},
+{
+"scheme": "В2",
+"distFromKm": 721,
+"distToKm": 760,
+"rateRub": 12429.0
+},
+{
+"scheme": "В2",
+"distFromKm": 761,
+"distToKm": 800,
+"rateRub": 12669.0
+},
+{
+"scheme": "В2",
+"distFromKm": 801,
+"distToKm": 840,
+"rateRub": 12963.0
+},
+{
+"scheme": "В2",
+"distFromKm": 841,
+"distToKm": 880,
+"rateRub": 13256.0
+},
+{
+"scheme": "В2",
+"distFromKm": 881,
+"distToKm": 920,
+"rateRub": 13486.0
+},
+{
+"scheme": "В2",
+"distFromKm": 921,
+"distToKm": 960,
+"rateRub": 13776.0
+},
+{
+"scheme": "В2",
+"distFromKm": 961,
+"distToKm": 1000,
+"rateRub": 13997.0
+},
+{
+"scheme": "В2",
+"distFromKm": 1001,
+"distToKm": 1050,
+"rateRub": 14321.0
+},
+{
+"scheme": "В2",
+"distFromKm": 1051,
+"distToKm": 1100,
+"rateRub": 14681.0
+},
+{
+"scheme": "В2",
+"distFromKm": 1101,
+"distToKm": 1150,
+"rateRub": 14961.0
+},
+{
+"scheme": "В2",
+"distFromKm": 1151,
+"distToKm": 1200,
+"rateRub": 15317.0
+},
+{
+"scheme": "В2",
+"distFromKm": 1201,
+"distToKm": 1250,
+"rateRub": 15586.0
+},
+{
+"scheme": "В2",
+"distFromKm": 1251,
+"distToKm": 1300,
+"rateRub": 15938.0
+},
+{
+"scheme": "В2",
+"distFromKm": 1301,
+"distToKm": 1350,
+"rateRub": 16197.0
+},
+{
+"scheme": "В2",
+"distFromKm": 1351,
+"distToKm": 1400,
+"rateRub": 16546.0
+},
+{
+"scheme": "В2",
+"distFromKm": 1401,
+"distToKm": 1450,
+"rateRub": 16895.0
+},
+{
+"scheme": "В2",
+"distFromKm": 1451,
+"distToKm": 1500,
+"rateRub": 17139.0
+},
+{
+"scheme": "В2",
+"distFromKm": 1501,
+"distToKm": 1600,
+"rateRub": 17657.0
+},
+{
+"scheme": "В2",
+"distFromKm": 1601,
+"distToKm": 1700,
+"rateRub": 18230.0
+},
+{
+"scheme": "В2",
+"distFromKm": 1701,
+"distToKm": 1800,
+"rateRub": 18790.0
+},
+{
+"scheme": "В2",
+"distFromKm": 1801,
+"distToKm": 1900,
+"rateRub": 19466.0
+},
+{
+"scheme": "В2",
+"distFromKm": 1901,
+"distToKm": 2000,
+"rateRub": 20004.0
+},
+{
+"scheme": "В2",
+"distFromKm": 2001,
+"distToKm": 2100,
+"rateRub": 20528.0
+},
+{
+"scheme": "В2",
+"distFromKm": 2101,
+"distToKm": 2200,
+"rateRub": 21190.0
+},
+{
+"scheme": "В2",
+"distFromKm": 2201,
+"distToKm": 2300,
+"rateRub": 21693.0
+},
+{
+"scheme": "В2",
+"distFromKm": 2301,
+"distToKm": 2400,
+"rateRub": 22181.0
+},
+{
+"scheme": "В2",
+"distFromKm": 2401,
+"distToKm": 2500,
+"rateRub": 22829.0
+},
+{
+"scheme": "В2",
+"distFromKm": 2501,
+"distToKm": 2600,
+"rateRub": 23296.0
+},
+{
+"scheme": "В2",
+"distFromKm": 2601,
+"distToKm": 2700,
+"rateRub": 23748.0
+},
+{
+"scheme": "В2",
+"distFromKm": 2701,
+"distToKm": 2800,
+"rateRub": 24382.0
+},
+{
+"scheme": "В2",
+"distFromKm": 2801,
+"distToKm": 2900,
+"rateRub": 24813.0
+},
+{
+"scheme": "В2",
+"distFromKm": 2901,
+"distToKm": 3000,
+"rateRub": 25230.0
+},
+{
+"scheme": "В2",
+"distFromKm": 3001,
+"distToKm": 3100,
+"rateRub": 25850.0
+},
+{
+"scheme": "В2",
+"distFromKm": 3101,
+"distToKm": 3200,
+"rateRub": 26469.0
+},
+{
+"scheme": "В2",
+"distFromKm": 3201,
+"distToKm": 3300,
+"rateRub": 27089.0
+},
+{
+"scheme": "В2",
+"distFromKm": 3301,
+"distToKm": 3400,
+"rateRub": 27709.0
+},
+{
+"scheme": "В2",
+"distFromKm": 3401,
+"distToKm": 3500,
+"rateRub": 28329.0
+},
+{
+"scheme": "В2",
+"distFromKm": 3501,
+"distToKm": 3600,
+"rateRub": 28948.0
+},
+{
+"scheme": "В2",
+"distFromKm": 3601,
+"distToKm": 3700,
+"rateRub": 29568.0
+},
+{
+"scheme": "В2",
+"distFromKm": 3701,
+"distToKm": 3800,
+"rateRub": 30188.0
+},
+{
+"scheme": "В2",
+"distFromKm": 3801,
+"distToKm": 3900,
+"rateRub": 30808.0
+},
+{
+"scheme": "В2",
+"distFromKm": 3901,
+"distToKm": 4000,
+"rateRub": 31428.0
+},
+{
+"scheme": "В2",
+"distFromKm": 4001,
+"distToKm": 4100,
+"rateRub": 32047.0
+},
+{
+"scheme": "В2",
+"distFromKm": 4101,
+"distToKm": 4200,
+"rateRub": 32667.0
+},
+{
+"scheme": "В2",
+"distFromKm": 4201,
+"distToKm": 4300,
+"rateRub": 33287.0
+},
+{
+"scheme": "В2",
+"distFromKm": 4301,
+"distToKm": 4400,
+"rateRub": 33907.0
+},
+{
+"scheme": "В2",
+"distFromKm": 4401,
+"distToKm": 4500,
+"rateRub": 34527.0
+},
+{
+"scheme": "В2",
+"distFromKm": 4501,
+"distToKm": 4600,
+"rateRub": 35146.0
+},
+{
+"scheme": "В2",
+"distFromKm": 4601,
+"distToKm": 4700,
+"rateRub": 35766.0
+},
+{
+"scheme": "В2",
+"distFromKm": 4701,
+"distToKm": 4800,
+"rateRub": 36386.0
+},
+{
+"scheme": "В2",
+"distFromKm": 4801,
+"distToKm": 4900,
+"rateRub": 37006.0
+},
+{
+"scheme": "В2",
+"distFromKm": 4901,
+"distToKm": 5000,
+"rateRub": 37626.0
+},
+{
+"scheme": "В2",
+"distFromKm": 5001,
+"distToKm": 5100,
+"rateRub": 38245.0
+},
+{
+"scheme": "В2",
+"distFromKm": 5101,
+"distToKm": 5200,
+"rateRub": 38865.0
+},
+{
+"scheme": "В2",
+"distFromKm": 5201,
+"distToKm": 5300,
+"rateRub": 39485.0
+},
+{
+"scheme": "В2",
+"distFromKm": 5301,
+"distToKm": 5400,
+"rateRub": 40105.0
+},
+{
+"scheme": "В2",
+"distFromKm": 5401,
+"distToKm": 5500,
+"rateRub": 40724.0
+},
+{
+"scheme": "В2",
+"distFromKm": 5501,
+"distToKm": 5700,
+"rateRub": 41654.0
+},
+{
+"scheme": "В2",
+"distFromKm": 5701,
+"distToKm": 5900,
+"rateRub": 42894.0
+},
+{
+"scheme": "В2",
+"distFromKm": 5901,
+"distToKm": 6100,
+"rateRub": 44133.0
+},
+{
+"scheme": "В2",
+"distFromKm": 6101,
+"distToKm": 6300,
+"rateRub": 45373.0
+},
+{
+"scheme": "В2",
+"distFromKm": 6301,
+"distToKm": 6500,
+"rateRub": 46612.0
+},
+{
+"scheme": "В2",
+"distFromKm": 6501,
+"distToKm": 6700,
+"rateRub": 47852.0
+},
+{
+"scheme": "В2",
+"distFromKm": 6701,
+"distToKm": 6900,
+"rateRub": 49092.0
+},
+{
+"scheme": "В2",
+"distFromKm": 6901,
+"distToKm": 7100,
+"rateRub": 50331.0
+},
+{
+"scheme": "В2",
+"distFromKm": 7101,
+"distToKm": 7300,
+"rateRub": 51571.0
+},
+{
+"scheme": "В2",
+"distFromKm": 7301,
+"distToKm": 7500,
+"rateRub": 52810.0
+},
+{
+"scheme": "В2",
+"distFromKm": 7501,
+"distToKm": 7700,
+"rateRub": 54050.0
+},
+{
+"scheme": "В2",
+"distFromKm": 7701,
+"distToKm": 7900,
+"rateRub": 55289.0
+},
+{
+"scheme": "В2",
+"distFromKm": 7901,
+"distToKm": 8100,
+"rateRub": 56529.0
+},
+{
+"scheme": "В2",
+"distFromKm": 8101,
+"distToKm": 8300,
+"rateRub": 57769.0
+},
+{
+"scheme": "В2",
+"distFromKm": 8301,
+"distToKm": 8500,
+"rateRub": 59008.0
+},
+{
+"scheme": "В2",
+"distFromKm": 8501,
+"distToKm": 8700,
+"rateRub": 60248.0
+},
+{
+"scheme": "В2",
+"distFromKm": 8701,
+"distToKm": 8900,
+"rateRub": 61487.0
+},
+{
+"scheme": "В2",
+"distFromKm": 8901,
+"distToKm": 9100,
+"rateRub": 62727.0
+},
+{
+"scheme": "В2",
+"distFromKm": 9101,
+"distToKm": 9300,
+"rateRub": 63966.0
+},
+{
+"scheme": "В2",
+"distFromKm": 9301,
+"distToKm": 9500,
+"rateRub": 65206.0
+},
+{
+"scheme": "В2",
+"distFromKm": 9501,
+"distToKm": 9700,
+"rateRub": 66446.0
+},
+{
+"scheme": "В2",
+"distFromKm": 9701,
+"distToKm": 9900,
+"rateRub": 67685.0
+},
+{
+"scheme": "В2",
+"distFromKm": 9901,
+"distToKm": 10100,
+"rateRub": 68925.0
+},
+{
+"scheme": "В2",
+"distFromKm": 10101,
+"distToKm": 10300,
+"rateRub": 70164.0
+},
+{
+"scheme": "В2",
+"distFromKm": 10301,
+"distToKm": 10500,
+"rateRub": 71404.0
+},
+{
+"scheme": "В2",
+"distFromKm": 10501,
+"distToKm": 10700,
+"rateRub": 72644.0
+},
+{
+"scheme": "В2",
+"distFromKm": 10701,
+"distToKm": 10900,
+"rateRub": 73883.0
+},
+{
+"scheme": "В2",
+"distFromKm": 10901,
+"distToKm": 11100,
+"rateRub": 75123.0
+},
+{
+"scheme": "В2",
+"distFromKm": 11101,
+"distToKm": 11300,
+"rateRub": 76362.0
+},
+{
+"scheme": "В2",
+"distFromKm": 11301,
+"distToKm": 11500,
+"rateRub": 77602.0
+},
+{
+"scheme": "В2",
+"distFromKm": 11501,
+"distToKm": 11700,
+"rateRub": 78841.0
+},
+{
+"scheme": "В2",
+"distFromKm": 11701,
+"distToKm": 11900,
+"rateRub": 80081.0
+},
+{
+"scheme": "В3",
+"distFromKm": 0,
+"distToKm": 5,
+"rateRub": 9013.0
+},
+{
+"scheme": "В3",
+"distFromKm": 6,
+"distToKm": 10,
+"rateRub": 9078.0
+},
+{
+"scheme": "В3",
+"distFromKm": 11,
+"distToKm": 15,
+"rateRub": 9132.0
+},
+{
+"scheme": "В3",
+"distFromKm": 16,
+"distToKm": 20,
+"rateRub": 9186.0
+},
+{
+"scheme": "В3",
+"distFromKm": 21,
+"distToKm": 25,
+"rateRub": 9240.0
+},
+{
+"scheme": "В3",
+"distFromKm": 26,
+"distToKm": 30,
+"rateRub": 9294.0
+},
+{
+"scheme": "В3",
+"distFromKm": 31,
+"distToKm": 35,
+"rateRub": 9348.0
+},
+{
+"scheme": "В3",
+"distFromKm": 36,
+"distToKm": 40,
+"rateRub": 9402.0
+},
+{
+"scheme": "В3",
+"distFromKm": 41,
+"distToKm": 45,
+"rateRub": 9457.0
+},
+{
+"scheme": "В3",
+"distFromKm": 46,
+"distToKm": 50,
+"rateRub": 9511.0
+},
+{
+"scheme": "В3",
+"distFromKm": 51,
+"distToKm": 60,
+"rateRub": 9587.0
+},
+{
+"scheme": "В3",
+"distFromKm": 61,
+"distToKm": 70,
+"rateRub": 9695.0
+},
+{
+"scheme": "В3",
+"distFromKm": 71,
+"distToKm": 80,
+"rateRub": 9803.0
+},
+{
+"scheme": "В3",
+"distFromKm": 81,
+"distToKm": 90,
+"rateRub": 9911.0
+},
+{
+"scheme": "В3",
+"distFromKm": 91,
+"distToKm": 100,
+"rateRub": 10020.0
+},
+{
+"scheme": "В3",
+"distFromKm": 101,
+"distToKm": 120,
+"rateRub": 10182.0
+},
+{
+"scheme": "В3",
+"distFromKm": 121,
+"distToKm": 140,
+"rateRub": 10399.0
+},
+{
+"scheme": "В3",
+"distFromKm": 141,
+"distToKm": 160,
+"rateRub": 10615.0
+},
+{
+"scheme": "В3",
+"distFromKm": 161,
+"distToKm": 180,
+"rateRub": 10802.0
+},
+{
+"scheme": "В3",
+"distFromKm": 181,
+"distToKm": 200,
+"rateRub": 10981.0
+},
+{
+"scheme": "В3",
+"distFromKm": 201,
+"distToKm": 220,
+"rateRub": 11172.0
+},
+{
+"scheme": "В3",
+"distFromKm": 221,
+"distToKm": 240,
+"rateRub": 11340.0
+},
+{
+"scheme": "В3",
+"distFromKm": 241,
+"distToKm": 260,
+"rateRub": 11522.0
+},
+{
+"scheme": "В3",
+"distFromKm": 261,
+"distToKm": 280,
+"rateRub": 11701.0
+},
+{
+"scheme": "В3",
+"distFromKm": 281,
+"distToKm": 300,
+"rateRub": 11876.0
+},
+{
+"scheme": "В3",
+"distFromKm": 301,
+"distToKm": 330,
+"rateRub": 12097.0
+},
+{
+"scheme": "В3",
+"distFromKm": 331,
+"distToKm": 360,
+"rateRub": 12362.0
+},
+{
+"scheme": "В3",
+"distFromKm": 361,
+"distToKm": 390,
+"rateRub": 12622.0
+},
+{
+"scheme": "В3",
+"distFromKm": 391,
+"distToKm": 420,
+"rateRub": 12877.0
+},
+{
+"scheme": "В3",
+"distFromKm": 421,
+"distToKm": 450,
+"rateRub": 13165.0
+},
+{
+"scheme": "В3",
+"distFromKm": 451,
+"distToKm": 480,
+"rateRub": 13412.0
+},
+{
+"scheme": "В3",
+"distFromKm": 481,
+"distToKm": 510,
+"rateRub": 13654.0
+},
+{
+"scheme": "В3",
+"distFromKm": 511,
+"distToKm": 540,
+"rateRub": 13936.0
+},
+{
+"scheme": "В3",
+"distFromKm": 541,
+"distToKm": 570,
+"rateRub": 14170.0
+},
+{
+"scheme": "В3",
+"distFromKm": 571,
+"distToKm": 600,
+"rateRub": 14450.0
+},
+{
+"scheme": "В3",
+"distFromKm": 601,
+"distToKm": 640,
+"rateRub": 14722.0
+},
+{
+"scheme": "В3",
+"distFromKm": 641,
+"distToKm": 680,
+"rateRub": 15091.0
+},
+{
+"scheme": "В3",
+"distFromKm": 681,
+"distToKm": 720,
+"rateRub": 15400.0
+},
+{
+"scheme": "В3",
+"distFromKm": 721,
+"distToKm": 760,
+"rateRub": 15766.0
+},
+{
+"scheme": "В3",
+"distFromKm": 761,
+"distToKm": 800,
+"rateRub": 16063.0
+},
+{
+"scheme": "В3",
+"distFromKm": 801,
+"distToKm": 840,
+"rateRub": 16426.0
+},
+{
+"scheme": "В3",
+"distFromKm": 841,
+"distToKm": 880,
+"rateRub": 16789.0
+},
+{
+"scheme": "В3",
+"distFromKm": 881,
+"distToKm": 920,
+"rateRub": 17072.0
+},
+{
+"scheme": "В3",
+"distFromKm": 921,
+"distToKm": 960,
+"rateRub": 17431.0
+},
+{
+"scheme": "В3",
+"distFromKm": 961,
+"distToKm": 1000,
+"rateRub": 17704.0
+},
+{
+"scheme": "В3",
+"distFromKm": 1001,
+"distToKm": 1050,
+"rateRub": 18104.0
+},
+{
+"scheme": "В3",
+"distFromKm": 1051,
+"distToKm": 1100,
+"rateRub": 18549.0
+},
+{
+"scheme": "В3",
+"distFromKm": 1101,
+"distToKm": 1150,
+"rateRub": 18894.0
+},
+{
+"scheme": "В3",
+"distFromKm": 1151,
+"distToKm": 1200,
+"rateRub": 19335.0
+},
+{
+"scheme": "В3",
+"distFromKm": 1201,
+"distToKm": 1250,
+"rateRub": 19667.0
+},
+{
+"scheme": "В3",
+"distFromKm": 1251,
+"distToKm": 1300,
+"rateRub": 20103.0
+},
+{
+"scheme": "В3",
+"distFromKm": 1301,
+"distToKm": 1350,
+"rateRub": 20422.0
+},
+{
+"scheme": "В3",
+"distFromKm": 1351,
+"distToKm": 1400,
+"rateRub": 20853.0
+},
+{
+"scheme": "В3",
+"distFromKm": 1401,
+"distToKm": 1450,
+"rateRub": 21284.0
+},
+{
+"scheme": "В3",
+"distFromKm": 1451,
+"distToKm": 1500,
+"rateRub": 21586.0
+},
+{
+"scheme": "В3",
+"distFromKm": 1501,
+"distToKm": 1600,
+"rateRub": 22226.0
+},
+{
+"scheme": "В3",
+"distFromKm": 1601,
+"distToKm": 1700,
+"rateRub": 22935.0
+},
+{
+"scheme": "В3",
+"distFromKm": 1701,
+"distToKm": 1800,
+"rateRub": 23626.0
+},
+{
+"scheme": "В3",
+"distFromKm": 1801,
+"distToKm": 1900,
+"rateRub": 24462.0
+},
+{
+"scheme": "В3",
+"distFromKm": 1901,
+"distToKm": 2000,
+"rateRub": 25127.0
+},
+{
+"scheme": "В3",
+"distFromKm": 2001,
+"distToKm": 2100,
+"rateRub": 25774.0
+},
+{
+"scheme": "В3",
+"distFromKm": 2101,
+"distToKm": 2200,
+"rateRub": 26593.0
+},
+{
+"scheme": "В3",
+"distFromKm": 2201,
+"distToKm": 2300,
+"rateRub": 27213.0
+},
+{
+"scheme": "В3",
+"distFromKm": 2301,
+"distToKm": 2400,
+"rateRub": 27816.0
+},
+{
+"scheme": "В3",
+"distFromKm": 2401,
+"distToKm": 2500,
+"rateRub": 28617.0
+},
+{
+"scheme": "В3",
+"distFromKm": 2501,
+"distToKm": 2600,
+"rateRub": 29194.0
+},
+{
+"scheme": "В3",
+"distFromKm": 2601,
+"distToKm": 2700,
+"rateRub": 29753.0
+},
+{
+"scheme": "В3",
+"distFromKm": 2701,
+"distToKm": 2800,
+"rateRub": 30536.0
+},
+{
+"scheme": "В3",
+"distFromKm": 2801,
+"distToKm": 2900,
+"rateRub": 31069.0
+},
+{
+"scheme": "В3",
+"distFromKm": 2901,
+"distToKm": 3000,
+"rateRub": 31584.0
+},
+{
+"scheme": "В3",
+"distFromKm": 3001,
+"distToKm": 3100,
+"rateRub": 32350.0
+},
+{
+"scheme": "В3",
+"distFromKm": 3101,
+"distToKm": 3200,
+"rateRub": 33116.0
+},
+{
+"scheme": "В3",
+"distFromKm": 3201,
+"distToKm": 3300,
+"rateRub": 33881.0
+},
+{
+"scheme": "В3",
+"distFromKm": 3301,
+"distToKm": 3400,
+"rateRub": 34647.0
+},
+{
+"scheme": "В3",
+"distFromKm": 3401,
+"distToKm": 3500,
+"rateRub": 35413.0
+},
+{
+"scheme": "В3",
+"distFromKm": 3501,
+"distToKm": 3600,
+"rateRub": 36179.0
+},
+{
+"scheme": "В3",
+"distFromKm": 3601,
+"distToKm": 3700,
+"rateRub": 36945.0
+},
+{
+"scheme": "В3",
+"distFromKm": 3701,
+"distToKm": 3800,
+"rateRub": 37711.0
+},
+{
+"scheme": "В3",
+"distFromKm": 3801,
+"distToKm": 3900,
+"rateRub": 38477.0
+},
+{
+"scheme": "В3",
+"distFromKm": 3901,
+"distToKm": 4000,
+"rateRub": 39243.0
+},
+{
+"scheme": "В3",
+"distFromKm": 4001,
+"distToKm": 4100,
+"rateRub": 40008.0
+},
+{
+"scheme": "В3",
+"distFromKm": 4101,
+"distToKm": 4200,
+"rateRub": 40774.0
+},
+{
+"scheme": "В3",
+"distFromKm": 4201,
+"distToKm": 4300,
+"rateRub": 41540.0
+},
+{
+"scheme": "В3",
+"distFromKm": 4301,
+"distToKm": 4400,
+"rateRub": 42306.0
+},
+{
+"scheme": "В3",
+"distFromKm": 4401,
+"distToKm": 4500,
+"rateRub": 43072.0
+},
+{
+"scheme": "В3",
+"distFromKm": 4501,
+"distToKm": 4600,
+"rateRub": 43838.0
+},
+{
+"scheme": "В3",
+"distFromKm": 4601,
+"distToKm": 4700,
+"rateRub": 44604.0
+},
+{
+"scheme": "В3",
+"distFromKm": 4701,
+"distToKm": 4800,
+"rateRub": 45369.0
+},
+{
+"scheme": "В3",
+"distFromKm": 4801,
+"distToKm": 4900,
+"rateRub": 46135.0
+},
+{
+"scheme": "В3",
+"distFromKm": 4901,
+"distToKm": 5000,
+"rateRub": 46901.0
+},
+{
+"scheme": "В3",
+"distFromKm": 5001,
+"distToKm": 5100,
+"rateRub": 47667.0
+},
+{
+"scheme": "В3",
+"distFromKm": 5101,
+"distToKm": 5200,
+"rateRub": 48433.0
+},
+{
+"scheme": "В3",
+"distFromKm": 5201,
+"distToKm": 5300,
+"rateRub": 49199.0
+},
+{
+"scheme": "В3",
+"distFromKm": 5301,
+"distToKm": 5400,
+"rateRub": 49965.0
+},
+{
+"scheme": "В3",
+"distFromKm": 5401,
+"distToKm": 5500,
+"rateRub": 50730.0
+},
+{
+"scheme": "В3",
+"distFromKm": 5501,
+"distToKm": 5700,
+"rateRub": 51879.0
+},
+{
+"scheme": "В3",
+"distFromKm": 5701,
+"distToKm": 5900,
+"rateRub": 53411.0
+},
+{
+"scheme": "В3",
+"distFromKm": 5901,
+"distToKm": 6100,
+"rateRub": 54943.0
+},
+{
+"scheme": "В3",
+"distFromKm": 6101,
+"distToKm": 6300,
+"rateRub": 56474.0
+},
+{
+"scheme": "В3",
+"distFromKm": 6301,
+"distToKm": 6500,
+"rateRub": 58006.0
+},
+{
+"scheme": "В3",
+"distFromKm": 6501,
+"distToKm": 6700,
+"rateRub": 59538.0
+},
+{
+"scheme": "В3",
+"distFromKm": 6701,
+"distToKm": 6900,
+"rateRub": 61070.0
+},
+{
+"scheme": "В3",
+"distFromKm": 6901,
+"distToKm": 7100,
+"rateRub": 62601.0
+},
+{
+"scheme": "В3",
+"distFromKm": 7101,
+"distToKm": 7300,
+"rateRub": 64133.0
+},
+{
+"scheme": "В3",
+"distFromKm": 7301,
+"distToKm": 7500,
+"rateRub": 65665.0
+},
+{
+"scheme": "В3",
+"distFromKm": 7501,
+"distToKm": 7700,
+"rateRub": 67196.0
+},
+{
+"scheme": "В3",
+"distFromKm": 7701,
+"distToKm": 7900,
+"rateRub": 68728.0
+},
+{
+"scheme": "В3",
+"distFromKm": 7901,
+"distToKm": 8100,
+"rateRub": 70260.0
+},
+{
+"scheme": "В3",
+"distFromKm": 8101,
+"distToKm": 8300,
+"rateRub": 71792.0
+},
+{
+"scheme": "В3",
+"distFromKm": 8301,
+"distToKm": 8500,
+"rateRub": 73323.0
+},
+{
+"scheme": "В3",
+"distFromKm": 8501,
+"distToKm": 8700,
+"rateRub": 74855.0
+},
+{
+"scheme": "В3",
+"distFromKm": 8701,
+"distToKm": 8900,
+"rateRub": 76387.0
+},
+{
+"scheme": "В3",
+"distFromKm": 8901,
+"distToKm": 9100,
+"rateRub": 77918.0
+},
+{
+"scheme": "В3",
+"distFromKm": 9101,
+"distToKm": 9300,
+"rateRub": 79450.0
+},
+{
+"scheme": "В3",
+"distFromKm": 9301,
+"distToKm": 9500,
+"rateRub": 80982.0
+},
+{
+"scheme": "В3",
+"distFromKm": 9501,
+"distToKm": 9700,
+"rateRub": 82514.0
+},
+{
+"scheme": "В3",
+"distFromKm": 9701,
+"distToKm": 9900,
+"rateRub": 84045.0
+},
+{
+"scheme": "В3",
+"distFromKm": 9901,
+"distToKm": 10100,
+"rateRub": 85577.0
+},
+{
+"scheme": "В3",
+"distFromKm": 10101,
+"distToKm": 10300,
+"rateRub": 87109.0
+},
+{
+"scheme": "В3",
+"distFromKm": 10301,
+"distToKm": 10500,
+"rateRub": 88641.0
+},
+{
+"scheme": "В3",
+"distFromKm": 10501,
+"distToKm": 10700,
+"rateRub": 90172.0
+},
+{
+"scheme": "В3",
+"distFromKm": 10701,
+"distToKm": 10900,
+"rateRub": 91704.0
+},
+{
+"scheme": "В3",
+"distFromKm": 10901,
+"distToKm": 11100,
+"rateRub": 93236.0
+},
+{
+"scheme": "В3",
+"distFromKm": 11101,
+"distToKm": 11300,
+"rateRub": 94767.0
+},
+{
+"scheme": "В3",
+"distFromKm": 11301,
+"distToKm": 11500,
+"rateRub": 96299.0
+},
+{
+"scheme": "В3",
+"distFromKm": 11501,
+"distToKm": 11700,
+"rateRub": 97831.0
+},
+{
+"scheme": "В3",
+"distFromKm": 11701,
+"distToKm": 11900,
+"rateRub": 99363.0
+},
+{
+"scheme": "В4",
+"distFromKm": 0,
+"distToKm": 5,
+"rateRub": 9623.0
+},
+{
+"scheme": "В4",
+"distFromKm": 6,
+"distToKm": 10,
+"rateRub": 9705.0
+},
+{
+"scheme": "В4",
+"distFromKm": 11,
+"distToKm": 15,
+"rateRub": 9774.0
+},
+{
+"scheme": "В4",
+"distFromKm": 16,
+"distToKm": 20,
+"rateRub": 9842.0
+},
+{
+"scheme": "В4",
+"distFromKm": 21,
+"distToKm": 25,
+"rateRub": 9910.0
+},
+{
+"scheme": "В4",
+"distFromKm": 26,
+"distToKm": 30,
+"rateRub": 9979.0
+},
+{
+"scheme": "В4",
+"distFromKm": 31,
+"distToKm": 35,
+"rateRub": 10047.0
+},
+{
+"scheme": "В4",
+"distFromKm": 36,
+"distToKm": 40,
+"rateRub": 10115.0
+},
+{
+"scheme": "В4",
+"distFromKm": 41,
+"distToKm": 45,
+"rateRub": 10184.0
+},
+{
+"scheme": "В4",
+"distFromKm": 46,
+"distToKm": 50,
+"rateRub": 10252.0
+},
+{
+"scheme": "В4",
+"distFromKm": 51,
+"distToKm": 60,
+"rateRub": 10348.0
+},
+{
+"scheme": "В4",
+"distFromKm": 61,
+"distToKm": 70,
+"rateRub": 10484.0
+},
+{
+"scheme": "В4",
+"distFromKm": 71,
+"distToKm": 80,
+"rateRub": 10621.0
+},
+{
+"scheme": "В4",
+"distFromKm": 81,
+"distToKm": 90,
+"rateRub": 10758.0
+},
+{
+"scheme": "В4",
+"distFromKm": 91,
+"distToKm": 100,
+"rateRub": 10895.0
+},
+{
+"scheme": "В4",
+"distFromKm": 101,
+"distToKm": 120,
+"rateRub": 11100.0
+},
+{
+"scheme": "В4",
+"distFromKm": 121,
+"distToKm": 140,
+"rateRub": 11373.0
+},
+{
+"scheme": "В4",
+"distFromKm": 141,
+"distToKm": 160,
+"rateRub": 11646.0
+},
+{
+"scheme": "В4",
+"distFromKm": 161,
+"distToKm": 180,
+"rateRub": 11882.0
+},
+{
+"scheme": "В4",
+"distFromKm": 181,
+"distToKm": 200,
+"rateRub": 12109.0
+},
+{
+"scheme": "В4",
+"distFromKm": 201,
+"distToKm": 220,
+"rateRub": 12350.0
+},
+{
+"scheme": "В4",
+"distFromKm": 221,
+"distToKm": 240,
+"rateRub": 12561.0
+},
+{
+"scheme": "В4",
+"distFromKm": 241,
+"distToKm": 260,
+"rateRub": 12791.0
+},
+{
+"scheme": "В4",
+"distFromKm": 261,
+"distToKm": 280,
+"rateRub": 13017.0
+},
+{
+"scheme": "В4",
+"distFromKm": 281,
+"distToKm": 300,
+"rateRub": 13238.0
+},
+{
+"scheme": "В4",
+"distFromKm": 301,
+"distToKm": 330,
+"rateRub": 13517.0
+},
+{
+"scheme": "В4",
+"distFromKm": 331,
+"distToKm": 360,
+"rateRub": 13852.0
+},
+{
+"scheme": "В4",
+"distFromKm": 361,
+"distToKm": 390,
+"rateRub": 14180.0
+},
+{
+"scheme": "В4",
+"distFromKm": 391,
+"distToKm": 420,
+"rateRub": 14502.0
+},
+{
+"scheme": "В4",
+"distFromKm": 421,
+"distToKm": 450,
+"rateRub": 14865.0
+},
+{
+"scheme": "В4",
+"distFromKm": 451,
+"distToKm": 480,
+"rateRub": 15177.0
+},
+{
+"scheme": "В4",
+"distFromKm": 481,
+"distToKm": 510,
+"rateRub": 15482.0
+},
+{
+"scheme": "В4",
+"distFromKm": 511,
+"distToKm": 540,
+"rateRub": 15839.0
+},
+{
+"scheme": "В4",
+"distFromKm": 541,
+"distToKm": 570,
+"rateRub": 16134.0
+},
+{
+"scheme": "В4",
+"distFromKm": 571,
+"distToKm": 600,
+"rateRub": 16487.0
+},
+{
+"scheme": "В4",
+"distFromKm": 601,
+"distToKm": 640,
+"rateRub": 16831.0
+},
+{
+"scheme": "В4",
+"distFromKm": 641,
+"distToKm": 680,
+"rateRub": 17297.0
+},
+{
+"scheme": "В4",
+"distFromKm": 681,
+"distToKm": 720,
+"rateRub": 17686.0
+},
+{
+"scheme": "В4",
+"distFromKm": 721,
+"distToKm": 760,
+"rateRub": 18149.0
+},
+{
+"scheme": "В4",
+"distFromKm": 761,
+"distToKm": 800,
+"rateRub": 18524.0
+},
+{
+"scheme": "В4",
+"distFromKm": 801,
+"distToKm": 840,
+"rateRub": 18982.0
+},
+{
+"scheme": "В4",
+"distFromKm": 841,
+"distToKm": 880,
+"rateRub": 19440.0
+},
+{
+"scheme": "В4",
+"distFromKm": 881,
+"distToKm": 920,
+"rateRub": 19798.0
+},
+{
+"scheme": "В4",
+"distFromKm": 921,
+"distToKm": 960,
+"rateRub": 20251.0
+},
+{
+"scheme": "В4",
+"distFromKm": 961,
+"distToKm": 1000,
+"rateRub": 20596.0
+},
+{
+"scheme": "В4",
+"distFromKm": 1001,
+"distToKm": 1050,
+"rateRub": 21101.0
+},
+{
+"scheme": "В4",
+"distFromKm": 1051,
+"distToKm": 1100,
+"rateRub": 21662.0
+},
+{
+"scheme": "В4",
+"distFromKm": 1101,
+"distToKm": 1150,
+"rateRub": 22098.0
+},
+{
+"scheme": "В4",
+"distFromKm": 1151,
+"distToKm": 1200,
+"rateRub": 22654.0
+},
+{
+"scheme": "В4",
+"distFromKm": 1201,
+"distToKm": 1250,
+"rateRub": 23073.0
+},
+{
+"scheme": "В4",
+"distFromKm": 1251,
+"distToKm": 1300,
+"rateRub": 23623.0
+},
+{
+"scheme": "В4",
+"distFromKm": 1301,
+"distToKm": 1350,
+"rateRub": 24026.0
+},
+{
+"scheme": "В4",
+"distFromKm": 1351,
+"distToKm": 1400,
+"rateRub": 24571.0
+},
+{
+"scheme": "В4",
+"distFromKm": 1401,
+"distToKm": 1450,
+"rateRub": 25115.0
+},
+{
+"scheme": "В4",
+"distFromKm": 1451,
+"distToKm": 1500,
+"rateRub": 25496.0
+},
+{
+"scheme": "В4",
+"distFromKm": 1501,
+"distToKm": 1600,
+"rateRub": 26304.0
+},
+{
+"scheme": "В4",
+"distFromKm": 1601,
+"distToKm": 1700,
+"rateRub": 27199.0
+},
+{
+"scheme": "В4",
+"distFromKm": 1701,
+"distToKm": 1800,
+"rateRub": 28071.0
+},
+{
+"scheme": "В4",
+"distFromKm": 1801,
+"distToKm": 1900,
+"rateRub": 29127.0
+},
+{
+"scheme": "В4",
+"distFromKm": 1901,
+"distToKm": 2000,
+"rateRub": 29966.0
+},
+{
+"scheme": "В4",
+"distFromKm": 2001,
+"distToKm": 2100,
+"rateRub": 30783.0
+},
+{
+"scheme": "В4",
+"distFromKm": 2101,
+"distToKm": 2200,
+"rateRub": 31816.0
+},
+{
+"scheme": "В4",
+"distFromKm": 2201,
+"distToKm": 2300,
+"rateRub": 32600.0
+},
+{
+"scheme": "В4",
+"distFromKm": 2301,
+"distToKm": 2400,
+"rateRub": 33361.0
+},
+{
+"scheme": "В4",
+"distFromKm": 2401,
+"distToKm": 2500,
+"rateRub": 34372.0
+},
+{
+"scheme": "В4",
+"distFromKm": 2501,
+"distToKm": 2600,
+"rateRub": 35100.0
+},
+{
+"scheme": "В4",
+"distFromKm": 2601,
+"distToKm": 2700,
+"rateRub": 35806.0
+},
+{
+"scheme": "В4",
+"distFromKm": 2701,
+"distToKm": 2800,
+"rateRub": 36795.0
+},
+{
+"scheme": "В4",
+"distFromKm": 2801,
+"distToKm": 2900,
+"rateRub": 37467.0
+},
+{
+"scheme": "В4",
+"distFromKm": 2901,
+"distToKm": 3000,
+"rateRub": 38118.0
+},
+{
+"scheme": "В4",
+"distFromKm": 3001,
+"distToKm": 3100,
+"rateRub": 39084.0
+},
+{
+"scheme": "В4",
+"distFromKm": 3101,
+"distToKm": 3200,
+"rateRub": 40051.0
+},
+{
+"scheme": "В4",
+"distFromKm": 3201,
+"distToKm": 3300,
+"rateRub": 41018.0
+},
+{
+"scheme": "В4",
+"distFromKm": 3301,
+"distToKm": 3400,
+"rateRub": 41985.0
+},
+{
+"scheme": "В4",
+"distFromKm": 3401,
+"distToKm": 3500,
+"rateRub": 42952.0
+},
+{
+"scheme": "В4",
+"distFromKm": 3501,
+"distToKm": 3600,
+"rateRub": 43919.0
+},
+{
+"scheme": "В4",
+"distFromKm": 3601,
+"distToKm": 3700,
+"rateRub": 44885.0
+},
+{
+"scheme": "В4",
+"distFromKm": 3701,
+"distToKm": 3800,
+"rateRub": 45852.0
+},
+{
+"scheme": "В4",
+"distFromKm": 3801,
+"distToKm": 3900,
+"rateRub": 46819.0
+},
+{
+"scheme": "В4",
+"distFromKm": 3901,
+"distToKm": 4000,
+"rateRub": 47786.0
+},
+{
+"scheme": "В4",
+"distFromKm": 4001,
+"distToKm": 4100,
+"rateRub": 48753.0
+},
+{
+"scheme": "В4",
+"distFromKm": 4101,
+"distToKm": 4200,
+"rateRub": 49719.0
+},
+{
+"scheme": "В4",
+"distFromKm": 4201,
+"distToKm": 4300,
+"rateRub": 50686.0
+},
+{
+"scheme": "В4",
+"distFromKm": 4301,
+"distToKm": 4400,
+"rateRub": 51653.0
+},
+{
+"scheme": "В4",
+"distFromKm": 4401,
+"distToKm": 4500,
+"rateRub": 52620.0
+},
+{
+"scheme": "В4",
+"distFromKm": 4501,
+"distToKm": 4600,
+"rateRub": 53587.0
+},
+{
+"scheme": "В4",
+"distFromKm": 4601,
+"distToKm": 4700,
+"rateRub": 54554.0
+},
+{
+"scheme": "В4",
+"distFromKm": 4701,
+"distToKm": 4800,
+"rateRub": 55520.0
+},
+{
+"scheme": "В4",
+"distFromKm": 4801,
+"distToKm": 4900,
+"rateRub": 56487.0
+},
+{
+"scheme": "В4",
+"distFromKm": 4901,
+"distToKm": 5000,
+"rateRub": 57454.0
+},
+{
+"scheme": "В4",
+"distFromKm": 5001,
+"distToKm": 5100,
+"rateRub": 58421.0
+},
+{
+"scheme": "В4",
+"distFromKm": 5101,
+"distToKm": 5200,
+"rateRub": 59388.0
+},
+{
+"scheme": "В4",
+"distFromKm": 5201,
+"distToKm": 5300,
+"rateRub": 60355.0
+},
+{
+"scheme": "В4",
+"distFromKm": 5301,
+"distToKm": 5400,
+"rateRub": 61321.0
+},
+{
+"scheme": "В4",
+"distFromKm": 5401,
+"distToKm": 5500,
+"rateRub": 62288.0
+},
+{
+"scheme": "В4",
+"distFromKm": 5501,
+"distToKm": 5700,
+"rateRub": 63739.0
+},
+{
+"scheme": "В4",
+"distFromKm": 5701,
+"distToKm": 5900,
+"rateRub": 65672.0
+},
+{
+"scheme": "В4",
+"distFromKm": 5901,
+"distToKm": 6100,
+"rateRub": 67606.0
+},
+{
+"scheme": "В4",
+"distFromKm": 6101,
+"distToKm": 6300,
+"rateRub": 69540.0
+},
+{
+"scheme": "В4",
+"distFromKm": 6301,
+"distToKm": 6500,
+"rateRub": 71473.0
+},
+{
+"scheme": "В4",
+"distFromKm": 6501,
+"distToKm": 6700,
+"rateRub": 73407.0
+},
+{
+"scheme": "В4",
+"distFromKm": 6701,
+"distToKm": 6900,
+"rateRub": 75341.0
+},
+{
+"scheme": "В4",
+"distFromKm": 6901,
+"distToKm": 7100,
+"rateRub": 77274.0
+},
+{
+"scheme": "В4",
+"distFromKm": 7101,
+"distToKm": 7300,
+"rateRub": 79208.0
+},
+{
+"scheme": "В4",
+"distFromKm": 7301,
+"distToKm": 7500,
+"rateRub": 81141.0
+},
+{
+"scheme": "В4",
+"distFromKm": 7501,
+"distToKm": 7700,
+"rateRub": 83075.0
+},
+{
+"scheme": "В4",
+"distFromKm": 7701,
+"distToKm": 7900,
+"rateRub": 85009.0
+},
+{
+"scheme": "В4",
+"distFromKm": 7901,
+"distToKm": 8100,
+"rateRub": 86942.0
+},
+{
+"scheme": "В4",
+"distFromKm": 8101,
+"distToKm": 8300,
+"rateRub": 88876.0
+},
+{
+"scheme": "В4",
+"distFromKm": 8301,
+"distToKm": 8500,
+"rateRub": 90810.0
+},
+{
+"scheme": "В4",
+"distFromKm": 8501,
+"distToKm": 8700,
+"rateRub": 92743.0
+},
+{
+"scheme": "В4",
+"distFromKm": 8701,
+"distToKm": 8900,
+"rateRub": 94677.0
+},
+{
+"scheme": "В4",
+"distFromKm": 8901,
+"distToKm": 9100,
+"rateRub": 96611.0
+},
+{
+"scheme": "В4",
+"distFromKm": 9101,
+"distToKm": 9300,
+"rateRub": 98544.0
+},
+{
+"scheme": "В4",
+"distFromKm": 9301,
+"distToKm": 9500,
+"rateRub": 100478.0
+},
+{
+"scheme": "В4",
+"distFromKm": 9501,
+"distToKm": 9700,
+"rateRub": 102412.0
+},
+{
+"scheme": "В4",
+"distFromKm": 9701,
+"distToKm": 9900,
+"rateRub": 104345.0
+},
+{
+"scheme": "В4",
+"distFromKm": 9901,
+"distToKm": 10100,
+"rateRub": 106279.0
+},
+{
+"scheme": "В4",
+"distFromKm": 10101,
+"distToKm": 10300,
+"rateRub": 108213.0
+},
+{
+"scheme": "В4",
+"distFromKm": 10301,
+"distToKm": 10500,
+"rateRub": 110146.0
+},
+{
+"scheme": "В4",
+"distFromKm": 10501,
+"distToKm": 10700,
+"rateRub": 112080.0
+},
+{
+"scheme": "В4",
+"distFromKm": 10701,
+"distToKm": 10900,
+"rateRub": 114014.0
+},
+{
+"scheme": "В4",
+"distFromKm": 10901,
+"distToKm": 11100,
+"rateRub": 115947.0
+},
+{
+"scheme": "В4",
+"distFromKm": 11101,
+"distToKm": 11300,
+"rateRub": 117881.0
+},
+{
+"scheme": "В4",
+"distFromKm": 11301,
+"distToKm": 11500,
+"rateRub": 119815.0
+},
+{
+"scheme": "В4",
+"distFromKm": 11501,
+"distToKm": 11700,
+"rateRub": 121748.0
+},
+{
+"scheme": "В4",
+"distFromKm": 11701,
+"distToKm": 11900,
+"rateRub": 123682.0
+},
+{
+"scheme": "В5",
+"distFromKm": 0,
+"distToKm": 5,
+"rateRub": 9712.0
+},
+{
+"scheme": "В5",
+"distFromKm": 6,
+"distToKm": 10,
+"rateRub": 9803.0
+},
+{
+"scheme": "В5",
+"distFromKm": 11,
+"distToKm": 15,
+"rateRub": 9879.0
+},
+{
+"scheme": "В5",
+"distFromKm": 16,
+"distToKm": 20,
+"rateRub": 9956.0
+},
+{
+"scheme": "В5",
+"distFromKm": 21,
+"distToKm": 25,
+"rateRub": 10032.0
+},
+{
+"scheme": "В5",
+"distFromKm": 26,
+"distToKm": 30,
+"rateRub": 10108.0
+},
+{
+"scheme": "В5",
+"distFromKm": 31,
+"distToKm": 35,
+"rateRub": 10185.0
+},
+{
+"scheme": "В5",
+"distFromKm": 36,
+"distToKm": 40,
+"rateRub": 10261.0
+},
+{
+"scheme": "В5",
+"distFromKm": 41,
+"distToKm": 45,
+"rateRub": 10337.0
+},
+{
+"scheme": "В5",
+"distFromKm": 46,
+"distToKm": 50,
+"rateRub": 10414.0
+},
+{
+"scheme": "В5",
+"distFromKm": 51,
+"distToKm": 60,
+"rateRub": 10520.0
+},
+{
+"scheme": "В5",
+"distFromKm": 61,
+"distToKm": 70,
+"rateRub": 10673.0
+},
+{
+"scheme": "В5",
+"distFromKm": 71,
+"distToKm": 80,
+"rateRub": 10826.0
+},
+{
+"scheme": "В5",
+"distFromKm": 81,
+"distToKm": 90,
+"rateRub": 10978.0
+},
+{
+"scheme": "В5",
+"distFromKm": 91,
+"distToKm": 100,
+"rateRub": 11131.0
+},
+{
+"scheme": "В5",
+"distFromKm": 101,
+"distToKm": 120,
+"rateRub": 11360.0
+},
+{
+"scheme": "В5",
+"distFromKm": 121,
+"distToKm": 140,
+"rateRub": 11665.0
+},
+{
+"scheme": "В5",
+"distFromKm": 141,
+"distToKm": 160,
+"rateRub": 11970.0
+},
+{
+"scheme": "В5",
+"distFromKm": 161,
+"distToKm": 180,
+"rateRub": 12233.0
+},
+{
+"scheme": "В5",
+"distFromKm": 181,
+"distToKm": 200,
+"rateRub": 12486.0
+},
+{
+"scheme": "В5",
+"distFromKm": 201,
+"distToKm": 220,
+"rateRub": 12756.0
+},
+{
+"scheme": "В5",
+"distFromKm": 221,
+"distToKm": 240,
+"rateRub": 12991.0
+},
+{
+"scheme": "В5",
+"distFromKm": 241,
+"distToKm": 260,
+"rateRub": 13248.0
+},
+{
+"scheme": "В5",
+"distFromKm": 261,
+"distToKm": 280,
+"rateRub": 13500.0
+},
+{
+"scheme": "В5",
+"distFromKm": 281,
+"distToKm": 300,
+"rateRub": 13747.0
+},
+{
+"scheme": "В5",
+"distFromKm": 301,
+"distToKm": 330,
+"rateRub": 14059.0
+},
+{
+"scheme": "В5",
+"distFromKm": 331,
+"distToKm": 360,
+"rateRub": 14433.0
+},
+{
+"scheme": "В5",
+"distFromKm": 361,
+"distToKm": 390,
+"rateRub": 14799.0
+},
+{
+"scheme": "В5",
+"distFromKm": 391,
+"distToKm": 420,
+"rateRub": 15159.0
+},
+{
+"scheme": "В5",
+"distFromKm": 421,
+"distToKm": 450,
+"rateRub": 15564.0
+},
+{
+"scheme": "В5",
+"distFromKm": 451,
+"distToKm": 480,
+"rateRub": 15912.0
+},
+{
+"scheme": "В5",
+"distFromKm": 481,
+"distToKm": 510,
+"rateRub": 16253.0
+},
+{
+"scheme": "В5",
+"distFromKm": 511,
+"distToKm": 540,
+"rateRub": 16651.0
+},
+{
+"scheme": "В5",
+"distFromKm": 541,
+"distToKm": 570,
+"rateRub": 16981.0
+},
+{
+"scheme": "В5",
+"distFromKm": 571,
+"distToKm": 600,
+"rateRub": 17375.0
+},
+{
+"scheme": "В5",
+"distFromKm": 601,
+"distToKm": 640,
+"rateRub": 17759.0
+},
+{
+"scheme": "В5",
+"distFromKm": 641,
+"distToKm": 680,
+"rateRub": 18280.0
+},
+{
+"scheme": "В5",
+"distFromKm": 681,
+"distToKm": 720,
+"rateRub": 18714.0
+},
+{
+"scheme": "В5",
+"distFromKm": 721,
+"distToKm": 760,
+"rateRub": 19230.0
+},
+{
+"scheme": "В5",
+"distFromKm": 761,
+"distToKm": 800,
+"rateRub": 19650.0
+},
+{
+"scheme": "В5",
+"distFromKm": 801,
+"distToKm": 840,
+"rateRub": 20161.0
+},
+{
+"scheme": "В5",
+"distFromKm": 841,
+"distToKm": 880,
+"rateRub": 20672.0
+},
+{
+"scheme": "В5",
+"distFromKm": 881,
+"distToKm": 920,
+"rateRub": 21072.0
+},
+{
+"scheme": "В5",
+"distFromKm": 921,
+"distToKm": 960,
+"rateRub": 21578.0
+},
+{
+"scheme": "В5",
+"distFromKm": 961,
+"distToKm": 1000,
+"rateRub": 21962.0
+},
+{
+"scheme": "В5",
+"distFromKm": 1001,
+"distToKm": 1050,
+"rateRub": 22526.0
+},
+{
+"scheme": "В5",
+"distFromKm": 1051,
+"distToKm": 1100,
+"rateRub": 23153.0
+},
+{
+"scheme": "В5",
+"distFromKm": 1101,
+"distToKm": 1150,
+"rateRub": 23640.0
+},
+{
+"scheme": "В5",
+"distFromKm": 1151,
+"distToKm": 1200,
+"rateRub": 24260.0
+},
+{
+"scheme": "В5",
+"distFromKm": 1201,
+"distToKm": 1250,
+"rateRub": 24729.0
+},
+{
+"scheme": "В5",
+"distFromKm": 1251,
+"distToKm": 1300,
+"rateRub": 25343.0
+},
+{
+"scheme": "В5",
+"distFromKm": 1301,
+"distToKm": 1350,
+"rateRub": 25793.0
+},
+{
+"scheme": "В5",
+"distFromKm": 1351,
+"distToKm": 1400,
+"rateRub": 26401.0
+},
+{
+"scheme": "В5",
+"distFromKm": 1401,
+"distToKm": 1450,
+"rateRub": 27009.0
+},
+{
+"scheme": "В5",
+"distFromKm": 1451,
+"distToKm": 1500,
+"rateRub": 27434.0
+},
+{
+"scheme": "В5",
+"distFromKm": 1501,
+"distToKm": 1600,
+"rateRub": 28336.0
+},
+{
+"scheme": "В5",
+"distFromKm": 1601,
+"distToKm": 1700,
+"rateRub": 29335.0
+},
+{
+"scheme": "В5",
+"distFromKm": 1701,
+"distToKm": 1800,
+"rateRub": 30309.0
+},
+{
+"scheme": "В5",
+"distFromKm": 1801,
+"distToKm": 1900,
+"rateRub": 31488.0
+},
+{
+"scheme": "В5",
+"distFromKm": 1901,
+"distToKm": 2000,
+"rateRub": 32425.0
+},
+{
+"scheme": "В5",
+"distFromKm": 2001,
+"distToKm": 2100,
+"rateRub": 33337.0
+},
+{
+"scheme": "В5",
+"distFromKm": 2101,
+"distToKm": 2200,
+"rateRub": 34491.0
+},
+{
+"scheme": "В5",
+"distFromKm": 2201,
+"distToKm": 2300,
+"rateRub": 35366.0
+},
+{
+"scheme": "В5",
+"distFromKm": 2301,
+"distToKm": 2400,
+"rateRub": 36216.0
+},
+{
+"scheme": "В5",
+"distFromKm": 2401,
+"distToKm": 2500,
+"rateRub": 37345.0
+},
+{
+"scheme": "В5",
+"distFromKm": 2501,
+"distToKm": 2600,
+"rateRub": 38157.0
+},
+{
+"scheme": "В5",
+"distFromKm": 2601,
+"distToKm": 2700,
+"rateRub": 38945.0
+},
+{
+"scheme": "В5",
+"distFromKm": 2701,
+"distToKm": 2800,
+"rateRub": 40050.0
+},
+{
+"scheme": "В5",
+"distFromKm": 2801,
+"distToKm": 2900,
+"rateRub": 40800.0
+},
+{
+"scheme": "В5",
+"distFromKm": 2901,
+"distToKm": 3000,
+"rateRub": 41526.0
+},
+{
+"scheme": "В5",
+"distFromKm": 3001,
+"distToKm": 3100,
+"rateRub": 42606.0
+},
+{
+"scheme": "В5",
+"distFromKm": 3101,
+"distToKm": 3200,
+"rateRub": 43685.0
+},
+{
+"scheme": "В5",
+"distFromKm": 3201,
+"distToKm": 3300,
+"rateRub": 44765.0
+},
+{
+"scheme": "В5",
+"distFromKm": 3301,
+"distToKm": 3400,
+"rateRub": 45844.0
+},
+{
+"scheme": "В5",
+"distFromKm": 3401,
+"distToKm": 3500,
+"rateRub": 46924.0
+},
+{
+"scheme": "В5",
+"distFromKm": 3501,
+"distToKm": 3600,
+"rateRub": 48003.0
+},
+{
+"scheme": "В5",
+"distFromKm": 3601,
+"distToKm": 3700,
+"rateRub": 49083.0
+},
+{
+"scheme": "В5",
+"distFromKm": 3701,
+"distToKm": 3800,
+"rateRub": 50162.0
+},
+{
+"scheme": "В5",
+"distFromKm": 3801,
+"distToKm": 3900,
+"rateRub": 51242.0
+},
+{
+"scheme": "В5",
+"distFromKm": 3901,
+"distToKm": 4000,
+"rateRub": 52321.0
+},
+{
+"scheme": "В5",
+"distFromKm": 4001,
+"distToKm": 4100,
+"rateRub": 53401.0
+},
+{
+"scheme": "В5",
+"distFromKm": 4101,
+"distToKm": 4200,
+"rateRub": 54480.0
+},
+{
+"scheme": "В5",
+"distFromKm": 4201,
+"distToKm": 4300,
+"rateRub": 55560.0
+},
+{
+"scheme": "В5",
+"distFromKm": 4301,
+"distToKm": 4400,
+"rateRub": 56639.0
+},
+{
+"scheme": "В5",
+"distFromKm": 4401,
+"distToKm": 4500,
+"rateRub": 57719.0
+},
+{
+"scheme": "В5",
+"distFromKm": 4501,
+"distToKm": 4600,
+"rateRub": 58798.0
+},
+{
+"scheme": "В5",
+"distFromKm": 4601,
+"distToKm": 4700,
+"rateRub": 59878.0
+},
+{
+"scheme": "В5",
+"distFromKm": 4701,
+"distToKm": 4800,
+"rateRub": 60957.0
+},
+{
+"scheme": "В5",
+"distFromKm": 4801,
+"distToKm": 4900,
+"rateRub": 62037.0
+},
+{
+"scheme": "В5",
+"distFromKm": 4901,
+"distToKm": 5000,
+"rateRub": 63116.0
+},
+{
+"scheme": "В5",
+"distFromKm": 5001,
+"distToKm": 5100,
+"rateRub": 64196.0
+},
+{
+"scheme": "В5",
+"distFromKm": 5101,
+"distToKm": 5200,
+"rateRub": 65275.0
+},
+{
+"scheme": "В5",
+"distFromKm": 5201,
+"distToKm": 5300,
+"rateRub": 66355.0
+},
+{
+"scheme": "В5",
+"distFromKm": 5301,
+"distToKm": 5400,
+"rateRub": 67434.0
+},
+{
+"scheme": "В5",
+"distFromKm": 5401,
+"distToKm": 5500,
+"rateRub": 68514.0
+},
+{
+"scheme": "В5",
+"distFromKm": 5501,
+"distToKm": 5700,
+"rateRub": 70133.0
+},
+{
+"scheme": "В5",
+"distFromKm": 5701,
+"distToKm": 5900,
+"rateRub": 72292.0
+},
+{
+"scheme": "В5",
+"distFromKm": 5901,
+"distToKm": 6100,
+"rateRub": 74451.0
+},
+{
+"scheme": "В5",
+"distFromKm": 6101,
+"distToKm": 6300,
+"rateRub": 76610.0
+},
+{
+"scheme": "В5",
+"distFromKm": 6301,
+"distToKm": 6500,
+"rateRub": 78769.0
+},
+{
+"scheme": "В5",
+"distFromKm": 6501,
+"distToKm": 6700,
+"rateRub": 80928.0
+},
+{
+"scheme": "В5",
+"distFromKm": 6701,
+"distToKm": 6900,
+"rateRub": 83087.0
+},
+{
+"scheme": "В5",
+"distFromKm": 6901,
+"distToKm": 7100,
+"rateRub": 85246.0
+},
+{
+"scheme": "В5",
+"distFromKm": 7101,
+"distToKm": 7300,
+"rateRub": 87405.0
+},
+{
+"scheme": "В5",
+"distFromKm": 7301,
+"distToKm": 7500,
+"rateRub": 89564.0
+},
+{
+"scheme": "В5",
+"distFromKm": 7501,
+"distToKm": 7700,
+"rateRub": 91723.0
+},
+{
+"scheme": "В5",
+"distFromKm": 7701,
+"distToKm": 7900,
+"rateRub": 93882.0
+},
+{
+"scheme": "В5",
+"distFromKm": 7901,
+"distToKm": 8100,
+"rateRub": 96041.0
+},
+{
+"scheme": "В5",
+"distFromKm": 8101,
+"distToKm": 8300,
+"rateRub": 98200.0
+},
+{
+"scheme": "В5",
+"distFromKm": 8301,
+"distToKm": 8500,
+"rateRub": 100359.0
+},
+{
+"scheme": "В5",
+"distFromKm": 8501,
+"distToKm": 8700,
+"rateRub": 102518.0
+},
+{
+"scheme": "В5",
+"distFromKm": 8701,
+"distToKm": 8900,
+"rateRub": 104677.0
+},
+{
+"scheme": "В5",
+"distFromKm": 8901,
+"distToKm": 9100,
+"rateRub": 106836.0
+},
+{
+"scheme": "В5",
+"distFromKm": 9101,
+"distToKm": 9300,
+"rateRub": 108995.0
+},
+{
+"scheme": "В5",
+"distFromKm": 9301,
+"distToKm": 9500,
+"rateRub": 111154.0
+},
+{
+"scheme": "В5",
+"distFromKm": 9501,
+"distToKm": 9700,
+"rateRub": 113313.0
+},
+{
+"scheme": "В5",
+"distFromKm": 9701,
+"distToKm": 9900,
+"rateRub": 115472.0
+},
+{
+"scheme": "В5",
+"distFromKm": 9901,
+"distToKm": 10100,
+"rateRub": 117631.0
+},
+{
+"scheme": "В5",
+"distFromKm": 10101,
+"distToKm": 10300,
+"rateRub": 119790.0
+},
+{
+"scheme": "В5",
+"distFromKm": 10301,
+"distToKm": 10500,
+"rateRub": 121949.0
+},
+{
+"scheme": "В5",
+"distFromKm": 10501,
+"distToKm": 10700,
+"rateRub": 124108.0
+},
+{
+"scheme": "В5",
+"distFromKm": 10701,
+"distToKm": 10900,
+"rateRub": 126267.0
+},
+{
+"scheme": "В5",
+"distFromKm": 10901,
+"distToKm": 11100,
+"rateRub": 128426.0
+},
+{
+"scheme": "В5",
+"distFromKm": 11101,
+"distToKm": 11300,
+"rateRub": 130585.0
+},
+{
+"scheme": "В5",
+"distFromKm": 11301,
+"distToKm": 11500,
+"rateRub": 132744.0
+},
+{
+"scheme": "В5",
+"distFromKm": 11501,
+"distToKm": 11700,
+"rateRub": 134903.0
+},
+{
+"scheme": "В5",
+"distFromKm": 11701,
+"distToKm": 11900,
+"rateRub": 137062.0
+},
+{
+"scheme": "В6",
+"distFromKm": 0,
+"distToKm": 5,
+"rateRub": 10118.0
+},
+{
+"scheme": "В6",
+"distFromKm": 6,
+"distToKm": 10,
+"rateRub": 10227.0
+},
+{
+"scheme": "В6",
+"distFromKm": 11,
+"distToKm": 15,
+"rateRub": 10317.0
+},
+{
+"scheme": "В6",
+"distFromKm": 16,
+"distToKm": 20,
+"rateRub": 10408.0
+},
+{
+"scheme": "В6",
+"distFromKm": 21,
+"distToKm": 25,
+"rateRub": 10498.0
+},
+{
+"scheme": "В6",
+"distFromKm": 26,
+"distToKm": 30,
+"rateRub": 10589.0
+},
+{
+"scheme": "В6",
+"distFromKm": 31,
+"distToKm": 35,
+"rateRub": 10679.0
+},
+{
+"scheme": "В6",
+"distFromKm": 36,
+"distToKm": 40,
+"rateRub": 10770.0
+},
+{
+"scheme": "В6",
+"distFromKm": 41,
+"distToKm": 45,
+"rateRub": 10860.0
+},
+{
+"scheme": "В6",
+"distFromKm": 46,
+"distToKm": 50,
+"rateRub": 10951.0
+},
+{
+"scheme": "В6",
+"distFromKm": 51,
+"distToKm": 60,
+"rateRub": 11078.0
+},
+{
+"scheme": "В6",
+"distFromKm": 61,
+"distToKm": 70,
+"rateRub": 11259.0
+},
+{
+"scheme": "В6",
+"distFromKm": 71,
+"distToKm": 80,
+"rateRub": 11440.0
+},
+{
+"scheme": "В6",
+"distFromKm": 81,
+"distToKm": 90,
+"rateRub": 11621.0
+},
+{
+"scheme": "В6",
+"distFromKm": 91,
+"distToKm": 100,
+"rateRub": 11802.0
+},
+{
+"scheme": "В6",
+"distFromKm": 101,
+"distToKm": 120,
+"rateRub": 12073.0
+},
+{
+"scheme": "В6",
+"distFromKm": 121,
+"distToKm": 140,
+"rateRub": 12435.0
+},
+{
+"scheme": "В6",
+"distFromKm": 141,
+"distToKm": 160,
+"rateRub": 12797.0
+},
+{
+"scheme": "В6",
+"distFromKm": 161,
+"distToKm": 180,
+"rateRub": 13109.0
+},
+{
+"scheme": "В6",
+"distFromKm": 181,
+"distToKm": 200,
+"rateRub": 13410.0
+},
+{
+"scheme": "В6",
+"distFromKm": 201,
+"distToKm": 220,
+"rateRub": 13729.0
+},
+{
+"scheme": "В6",
+"distFromKm": 221,
+"distToKm": 240,
+"rateRub": 14009.0
+},
+{
+"scheme": "В6",
+"distFromKm": 241,
+"distToKm": 260,
+"rateRub": 14313.0
+},
+{
+"scheme": "В6",
+"distFromKm": 261,
+"distToKm": 280,
+"rateRub": 14612.0
+},
+{
+"scheme": "В6",
+"distFromKm": 281,
+"distToKm": 300,
+"rateRub": 14905.0
+},
+{
+"scheme": "В6",
+"distFromKm": 301,
+"distToKm": 330,
+"rateRub": 15275.0
+},
+{
+"scheme": "В6",
+"distFromKm": 331,
+"distToKm": 360,
+"rateRub": 15718.0
+},
+{
+"scheme": "В6",
+"distFromKm": 361,
+"distToKm": 390,
+"rateRub": 16153.0
+},
+{
+"scheme": "В6",
+"distFromKm": 391,
+"distToKm": 420,
+"rateRub": 16579.0
+},
+{
+"scheme": "В6",
+"distFromKm": 421,
+"distToKm": 450,
+"rateRub": 17061.0
+},
+{
+"scheme": "В6",
+"distFromKm": 451,
+"distToKm": 480,
+"rateRub": 17473.0
+},
+{
+"scheme": "В6",
+"distFromKm": 481,
+"distToKm": 510,
+"rateRub": 17877.0
+},
+{
+"scheme": "В6",
+"distFromKm": 511,
+"distToKm": 540,
+"rateRub": 18350.0
+},
+{
+"scheme": "В6",
+"distFromKm": 541,
+"distToKm": 570,
+"rateRub": 18741.0
+},
+{
+"scheme": "В6",
+"distFromKm": 571,
+"distToKm": 600,
+"rateRub": 19209.0
+},
+{
+"scheme": "В6",
+"distFromKm": 601,
+"distToKm": 640,
+"rateRub": 19663.0
+},
+{
+"scheme": "В6",
+"distFromKm": 641,
+"distToKm": 680,
+"rateRub": 20282.0
+},
+{
+"scheme": "В6",
+"distFromKm": 681,
+"distToKm": 720,
+"rateRub": 20797.0
+},
+{
+"scheme": "В6",
+"distFromKm": 721,
+"distToKm": 760,
+"rateRub": 21409.0
+},
+{
+"scheme": "В6",
+"distFromKm": 761,
+"distToKm": 800,
+"rateRub": 21906.0
+},
+{
+"scheme": "В6",
+"distFromKm": 801,
+"distToKm": 840,
+"rateRub": 22513.0
+},
+{
+"scheme": "В6",
+"distFromKm": 841,
+"distToKm": 880,
+"rateRub": 23119.0
+},
+{
+"scheme": "В6",
+"distFromKm": 881,
+"distToKm": 920,
+"rateRub": 23593.0
+},
+{
+"scheme": "В6",
+"distFromKm": 921,
+"distToKm": 960,
+"rateRub": 24194.0
+},
+{
+"scheme": "В6",
+"distFromKm": 961,
+"distToKm": 1000,
+"rateRub": 24650.0
+},
+{
+"scheme": "В6",
+"distFromKm": 1001,
+"distToKm": 1050,
+"rateRub": 25319.0
+},
+{
+"scheme": "В6",
+"distFromKm": 1051,
+"distToKm": 1100,
+"rateRub": 26062.0
+},
+{
+"scheme": "В6",
+"distFromKm": 1101,
+"distToKm": 1150,
+"rateRub": 26640.0
+},
+{
+"scheme": "В6",
+"distFromKm": 1151,
+"distToKm": 1200,
+"rateRub": 27376.0
+},
+{
+"scheme": "В6",
+"distFromKm": 1201,
+"distToKm": 1250,
+"rateRub": 27931.0
+},
+{
+"scheme": "В6",
+"distFromKm": 1251,
+"distToKm": 1300,
+"rateRub": 28660.0
+},
+{
+"scheme": "В6",
+"distFromKm": 1301,
+"distToKm": 1350,
+"rateRub": 29193.0
+},
+{
+"scheme": "В6",
+"distFromKm": 1351,
+"distToKm": 1400,
+"rateRub": 29915.0
+},
+{
+"scheme": "В6",
+"distFromKm": 1401,
+"distToKm": 1450,
+"rateRub": 30636.0
+},
+{
+"scheme": "В6",
+"distFromKm": 1451,
+"distToKm": 1500,
+"rateRub": 31140.0
+},
+{
+"scheme": "В6",
+"distFromKm": 1501,
+"distToKm": 1600,
+"rateRub": 32211.0
+},
+{
+"scheme": "В6",
+"distFromKm": 1601,
+"distToKm": 1700,
+"rateRub": 33395.0
+},
+{
+"scheme": "В6",
+"distFromKm": 1701,
+"distToKm": 1800,
+"rateRub": 34551.0
+},
+{
+"scheme": "В6",
+"distFromKm": 1801,
+"distToKm": 1900,
+"rateRub": 35949.0
+},
+{
+"scheme": "В6",
+"distFromKm": 1901,
+"distToKm": 2000,
+"rateRub": 37060.0
+},
+{
+"scheme": "В6",
+"distFromKm": 2001,
+"distToKm": 2100,
+"rateRub": 38142.0
+},
+{
+"scheme": "В6",
+"distFromKm": 2101,
+"distToKm": 2200,
+"rateRub": 39511.0
+},
+{
+"scheme": "В6",
+"distFromKm": 2201,
+"distToKm": 2300,
+"rateRub": 40548.0
+},
+{
+"scheme": "В6",
+"distFromKm": 2301,
+"distToKm": 2400,
+"rateRub": 41556.0
+},
+{
+"scheme": "В6",
+"distFromKm": 2401,
+"distToKm": 2500,
+"rateRub": 42896.0
+},
+{
+"scheme": "В6",
+"distFromKm": 2501,
+"distToKm": 2600,
+"rateRub": 43860.0
+},
+{
+"scheme": "В6",
+"distFromKm": 2601,
+"distToKm": 2700,
+"rateRub": 44794.0
+},
+{
+"scheme": "В6",
+"distFromKm": 2701,
+"distToKm": 2800,
+"rateRub": 46104.0
+},
+{
+"scheme": "В6",
+"distFromKm": 2801,
+"distToKm": 2900,
+"rateRub": 46995.0
+},
+{
+"scheme": "В6",
+"distFromKm": 2901,
+"distToKm": 3000,
+"rateRub": 47856.0
+},
+{
+"scheme": "В6",
+"distFromKm": 3001,
+"distToKm": 3100,
+"rateRub": 49136.0
+},
+{
+"scheme": "В6",
+"distFromKm": 3101,
+"distToKm": 3200,
+"rateRub": 50417.0
+},
+{
+"scheme": "В6",
+"distFromKm": 3201,
+"distToKm": 3300,
+"rateRub": 51697.0
+},
+{
+"scheme": "В6",
+"distFromKm": 3301,
+"distToKm": 3400,
+"rateRub": 52978.0
+},
+{
+"scheme": "В6",
+"distFromKm": 3401,
+"distToKm": 3500,
+"rateRub": 54258.0
+},
+{
+"scheme": "В6",
+"distFromKm": 3501,
+"distToKm": 3600,
+"rateRub": 55539.0
+},
+{
+"scheme": "В6",
+"distFromKm": 3601,
+"distToKm": 3700,
+"rateRub": 56819.0
+},
+{
+"scheme": "В6",
+"distFromKm": 3701,
+"distToKm": 3800,
+"rateRub": 58099.0
+},
+{
+"scheme": "В6",
+"distFromKm": 3801,
+"distToKm": 3900,
+"rateRub": 59380.0
+},
+{
+"scheme": "В6",
+"distFromKm": 3901,
+"distToKm": 4000,
+"rateRub": 60660.0
+},
+{
+"scheme": "В6",
+"distFromKm": 4001,
+"distToKm": 4100,
+"rateRub": 61941.0
+},
+{
+"scheme": "В6",
+"distFromKm": 4101,
+"distToKm": 4200,
+"rateRub": 63221.0
+},
+{
+"scheme": "В6",
+"distFromKm": 4201,
+"distToKm": 4300,
+"rateRub": 64502.0
+},
+{
+"scheme": "В6",
+"distFromKm": 4301,
+"distToKm": 4400,
+"rateRub": 65782.0
+},
+{
+"scheme": "В6",
+"distFromKm": 4401,
+"distToKm": 4500,
+"rateRub": 67063.0
+},
+{
+"scheme": "В6",
+"distFromKm": 4501,
+"distToKm": 4600,
+"rateRub": 68343.0
+},
+{
+"scheme": "В6",
+"distFromKm": 4601,
+"distToKm": 4700,
+"rateRub": 69624.0
+},
+{
+"scheme": "В6",
+"distFromKm": 4701,
+"distToKm": 4800,
+"rateRub": 70904.0
+},
+{
+"scheme": "В6",
+"distFromKm": 4801,
+"distToKm": 4900,
+"rateRub": 72185.0
+},
+{
+"scheme": "В6",
+"distFromKm": 4901,
+"distToKm": 5000,
+"rateRub": 73465.0
+},
+{
+"scheme": "В6",
+"distFromKm": 5001,
+"distToKm": 5100,
+"rateRub": 74746.0
+},
+{
+"scheme": "В6",
+"distFromKm": 5101,
+"distToKm": 5200,
+"rateRub": 76026.0
+},
+{
+"scheme": "В6",
+"distFromKm": 5201,
+"distToKm": 5300,
+"rateRub": 77306.0
+},
+{
+"scheme": "В6",
+"distFromKm": 5301,
+"distToKm": 5400,
+"rateRub": 78587.0
+},
+{
+"scheme": "В6",
+"distFromKm": 5401,
+"distToKm": 5500,
+"rateRub": 79867.0
+},
+{
+"scheme": "В6",
+"distFromKm": 5501,
+"distToKm": 5700,
+"rateRub": 81788.0
+},
+{
+"scheme": "В6",
+"distFromKm": 5701,
+"distToKm": 5900,
+"rateRub": 84349.0
+},
+{
+"scheme": "В6",
+"distFromKm": 5901,
+"distToKm": 6100,
+"rateRub": 86910.0
+},
+{
+"scheme": "В6",
+"distFromKm": 6101,
+"distToKm": 6300,
+"rateRub": 89471.0
+},
+{
+"scheme": "В6",
+"distFromKm": 6301,
+"distToKm": 6500,
+"rateRub": 92032.0
+},
+{
+"scheme": "В6",
+"distFromKm": 6501,
+"distToKm": 6700,
+"rateRub": 94593.0
+},
+{
+"scheme": "В6",
+"distFromKm": 6701,
+"distToKm": 6900,
+"rateRub": 97154.0
+},
+{
+"scheme": "В6",
+"distFromKm": 6901,
+"distToKm": 7100,
+"rateRub": 99715.0
+},
+{
+"scheme": "В6",
+"distFromKm": 7101,
+"distToKm": 7300,
+"rateRub": 102276.0
+},
+{
+"scheme": "В6",
+"distFromKm": 7301,
+"distToKm": 7500,
+"rateRub": 104836.0
+},
+{
+"scheme": "В6",
+"distFromKm": 7501,
+"distToKm": 7700,
+"rateRub": 107397.0
+},
+{
+"scheme": "В6",
+"distFromKm": 7701,
+"distToKm": 7900,
+"rateRub": 109958.0
+},
+{
+"scheme": "В6",
+"distFromKm": 7901,
+"distToKm": 8100,
+"rateRub": 112519.0
+},
+{
+"scheme": "В6",
+"distFromKm": 8101,
+"distToKm": 8300,
+"rateRub": 115080.0
+},
+{
+"scheme": "В6",
+"distFromKm": 8301,
+"distToKm": 8500,
+"rateRub": 117641.0
+},
+{
+"scheme": "В6",
+"distFromKm": 8501,
+"distToKm": 8700,
+"rateRub": 120202.0
+},
+{
+"scheme": "В6",
+"distFromKm": 8701,
+"distToKm": 8900,
+"rateRub": 122763.0
+},
+{
+"scheme": "В6",
+"distFromKm": 8901,
+"distToKm": 9100,
+"rateRub": 125324.0
+},
+{
+"scheme": "В6",
+"distFromKm": 9101,
+"distToKm": 9300,
+"rateRub": 127885.0
+},
+{
+"scheme": "В6",
+"distFromKm": 9301,
+"distToKm": 9500,
+"rateRub": 130446.0
+},
+{
+"scheme": "В6",
+"distFromKm": 9501,
+"distToKm": 9700,
+"rateRub": 133007.0
+},
+{
+"scheme": "В6",
+"distFromKm": 9701,
+"distToKm": 9900,
+"rateRub": 135568.0
+},
+{
+"scheme": "В6",
+"distFromKm": 9901,
+"distToKm": 10100,
+"rateRub": 138129.0
+},
+{
+"scheme": "В6",
+"distFromKm": 10101,
+"distToKm": 10300,
+"rateRub": 140690.0
+},
+{
+"scheme": "В6",
+"distFromKm": 10301,
+"distToKm": 10500,
+"rateRub": 143250.0
+},
+{
+"scheme": "В6",
+"distFromKm": 10501,
+"distToKm": 10700,
+"rateRub": 145811.0
+},
+{
+"scheme": "В6",
+"distFromKm": 10701,
+"distToKm": 10900,
+"rateRub": 148372.0
+},
+{
+"scheme": "В6",
+"distFromKm": 10901,
+"distToKm": 11100,
+"rateRub": 150933.0
+},
+{
+"scheme": "В6",
+"distFromKm": 11101,
+"distToKm": 11300,
+"rateRub": 153494.0
+},
+{
+"scheme": "В6",
+"distFromKm": 11301,
+"distToKm": 11500,
+"rateRub": 156055.0
+},
+{
+"scheme": "В6",
+"distFromKm": 11501,
+"distToKm": 11700,
+"rateRub": 158616.0
+},
+{
+"scheme": "В6",
+"distFromKm": 11701,
+"distToKm": 11900,
+"rateRub": 161177.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 0,
+"distToKm": 5,
+"rateRub": 25119.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 6,
+"distToKm": 10,
+"rateRub": 25286.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 11,
+"distToKm": 15,
+"rateRub": 25425.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 16,
+"distToKm": 20,
+"rateRub": 25564.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 21,
+"distToKm": 25,
+"rateRub": 25704.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 26,
+"distToKm": 30,
+"rateRub": 25843.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 31,
+"distToKm": 35,
+"rateRub": 25982.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 36,
+"distToKm": 40,
+"rateRub": 26121.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 41,
+"distToKm": 45,
+"rateRub": 26261.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 46,
+"distToKm": 50,
+"rateRub": 26400.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 51,
+"distToKm": 60,
+"rateRub": 26595.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 61,
+"distToKm": 70,
+"rateRub": 26873.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 71,
+"distToKm": 80,
+"rateRub": 27152.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 81,
+"distToKm": 90,
+"rateRub": 27430.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 91,
+"distToKm": 100,
+"rateRub": 27709.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 101,
+"distToKm": 120,
+"rateRub": 28127.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 121,
+"distToKm": 140,
+"rateRub": 28684.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 141,
+"distToKm": 160,
+"rateRub": 29241.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 161,
+"distToKm": 180,
+"rateRub": 29721.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 181,
+"distToKm": 200,
+"rateRub": 30183.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 201,
+"distToKm": 220,
+"rateRub": 30674.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 221,
+"distToKm": 240,
+"rateRub": 31104.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 241,
+"distToKm": 260,
+"rateRub": 31573.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 261,
+"distToKm": 280,
+"rateRub": 32033.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 281,
+"distToKm": 300,
+"rateRub": 32483.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 301,
+"distToKm": 330,
+"rateRub": 33051.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 331,
+"distToKm": 360,
+"rateRub": 33734.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 361,
+"distToKm": 390,
+"rateRub": 34403.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 391,
+"distToKm": 420,
+"rateRub": 35059.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 421,
+"distToKm": 450,
+"rateRub": 35799.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 451,
+"distToKm": 480,
+"rateRub": 36434.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 481,
+"distToKm": 510,
+"rateRub": 37056.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 511,
+"distToKm": 540,
+"rateRub": 37783.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 541,
+"distToKm": 570,
+"rateRub": 38384.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 571,
+"distToKm": 600,
+"rateRub": 39104.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 601,
+"distToKm": 640,
+"rateRub": 39804.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 641,
+"distToKm": 680,
+"rateRub": 40755.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 681,
+"distToKm": 720,
+"rateRub": 41547.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 721,
+"distToKm": 760,
+"rateRub": 42489.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 761,
+"distToKm": 800,
+"rateRub": 43254.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 801,
+"distToKm": 840,
+"rateRub": 44187.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 841,
+"distToKm": 880,
+"rateRub": 45120.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 881,
+"distToKm": 920,
+"rateRub": 45849.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 921,
+"distToKm": 960,
+"rateRub": 46773.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 961,
+"distToKm": 1000,
+"rateRub": 47475.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 1001,
+"distToKm": 1050,
+"rateRub": 48504.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 1051,
+"distToKm": 1100,
+"rateRub": 49648.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 1101,
+"distToKm": 1150,
+"rateRub": 50536.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 1151,
+"distToKm": 1200,
+"rateRub": 51669.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 1201,
+"distToKm": 1250,
+"rateRub": 52523.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 1251,
+"distToKm": 1300,
+"rateRub": 53644.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 1301,
+"distToKm": 1350,
+"rateRub": 54465.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 1351,
+"distToKm": 1400,
+"rateRub": 55574.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 1401,
+"distToKm": 1450,
+"rateRub": 56684.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 1451,
+"distToKm": 1500,
+"rateRub": 57459.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 1501,
+"distToKm": 1600,
+"rateRub": 59107.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 1601,
+"distToKm": 1700,
+"rateRub": 60930.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 1701,
+"distToKm": 1800,
+"rateRub": 62707.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 1801,
+"distToKm": 1900,
+"rateRub": 64858.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 1901,
+"distToKm": 2000,
+"rateRub": 66568.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 2001,
+"distToKm": 2100,
+"rateRub": 68232.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 2101,
+"distToKm": 2200,
+"rateRub": 70338.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 2201,
+"distToKm": 2300,
+"rateRub": 71934.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 2301,
+"distToKm": 2400,
+"rateRub": 73485.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 2401,
+"distToKm": 2500,
+"rateRub": 75546.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 2501,
+"distToKm": 2600,
+"rateRub": 77029.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 2601,
+"distToKm": 2700,
+"rateRub": 78467.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 2701,
+"distToKm": 2800,
+"rateRub": 80482.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 2801,
+"distToKm": 2900,
+"rateRub": 81852.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 2901,
+"distToKm": 3000,
+"rateRub": 83176.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 3001,
+"distToKm": 3100,
+"rateRub": 85146.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 3101,
+"distToKm": 3200,
+"rateRub": 87116.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 3201,
+"distToKm": 3300,
+"rateRub": 89086.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 3301,
+"distToKm": 3400,
+"rateRub": 91056.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 3401,
+"distToKm": 3500,
+"rateRub": 93026.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 3501,
+"distToKm": 3600,
+"rateRub": 94996.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 3601,
+"distToKm": 3700,
+"rateRub": 96966.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 3701,
+"distToKm": 3800,
+"rateRub": 98936.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 3801,
+"distToKm": 3900,
+"rateRub": 100906.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 3901,
+"distToKm": 4000,
+"rateRub": 102876.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 4001,
+"distToKm": 4100,
+"rateRub": 104846.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 4101,
+"distToKm": 4200,
+"rateRub": 106816.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 4201,
+"distToKm": 4300,
+"rateRub": 108785.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 4301,
+"distToKm": 4400,
+"rateRub": 110755.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 4401,
+"distToKm": 4500,
+"rateRub": 112725.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 4501,
+"distToKm": 4600,
+"rateRub": 114695.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 4601,
+"distToKm": 4700,
+"rateRub": 116665.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 4701,
+"distToKm": 4800,
+"rateRub": 118635.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 4801,
+"distToKm": 4900,
+"rateRub": 120605.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 4901,
+"distToKm": 5000,
+"rateRub": 122575.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 5001,
+"distToKm": 5100,
+"rateRub": 124545.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 5101,
+"distToKm": 5200,
+"rateRub": 126515.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 5201,
+"distToKm": 5300,
+"rateRub": 128485.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 5301,
+"distToKm": 5400,
+"rateRub": 130455.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 5401,
+"distToKm": 5500,
+"rateRub": 132425.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 5501,
+"distToKm": 5700,
+"rateRub": 135380.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 5701,
+"distToKm": 5900,
+"rateRub": 139320.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 5901,
+"distToKm": 6100,
+"rateRub": 143259.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 6101,
+"distToKm": 6300,
+"rateRub": 147199.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 6301,
+"distToKm": 6500,
+"rateRub": 151139.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 6501,
+"distToKm": 6700,
+"rateRub": 155079.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 6701,
+"distToKm": 6900,
+"rateRub": 159019.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 6901,
+"distToKm": 7100,
+"rateRub": 162959.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 7101,
+"distToKm": 7300,
+"rateRub": 166899.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 7301,
+"distToKm": 7500,
+"rateRub": 170839.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 7501,
+"distToKm": 7700,
+"rateRub": 174779.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 7701,
+"distToKm": 7900,
+"rateRub": 178718.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 7901,
+"distToKm": 8100,
+"rateRub": 182658.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 8101,
+"distToKm": 8300,
+"rateRub": 186598.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 8301,
+"distToKm": 8500,
+"rateRub": 190538.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 8501,
+"distToKm": 8700,
+"rateRub": 194478.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 8701,
+"distToKm": 8900,
+"rateRub": 198418.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 8901,
+"distToKm": 9100,
+"rateRub": 202358.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 9101,
+"distToKm": 9300,
+"rateRub": 206298.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 9301,
+"distToKm": 9500,
+"rateRub": 210237.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 9501,
+"distToKm": 9700,
+"rateRub": 214177.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 9701,
+"distToKm": 9900,
+"rateRub": 218117.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 9901,
+"distToKm": 10100,
+"rateRub": 222057.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 10101,
+"distToKm": 10300,
+"rateRub": 225997.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 10301,
+"distToKm": 10500,
+"rateRub": 229937.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 10501,
+"distToKm": 10700,
+"rateRub": 233877.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 10701,
+"distToKm": 10900,
+"rateRub": 237817.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 10901,
+"distToKm": 11100,
+"rateRub": 241757.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 11101,
+"distToKm": 11300,
+"rateRub": 245696.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 11301,
+"distToKm": 11500,
+"rateRub": 249636.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 11501,
+"distToKm": 11700,
+"rateRub": 253576.0
+},
+{
+"scheme": "В7-4",
+"distFromKm": 11701,
+"distToKm": 11900,
+"rateRub": 257516.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 0,
+"distToKm": 5,
+"rateRub": 45199.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 6,
+"distToKm": 10,
+"rateRub": 45500.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 11,
+"distToKm": 15,
+"rateRub": 45750.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 16,
+"distToKm": 20,
+"rateRub": 46001.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 21,
+"distToKm": 25,
+"rateRub": 46252.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 26,
+"distToKm": 30,
+"rateRub": 46502.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 31,
+"distToKm": 35,
+"rateRub": 46753.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 36,
+"distToKm": 40,
+"rateRub": 47003.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 41,
+"distToKm": 45,
+"rateRub": 47254.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 46,
+"distToKm": 50,
+"rateRub": 47505.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 51,
+"distToKm": 60,
+"rateRub": 47855.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 61,
+"distToKm": 70,
+"rateRub": 48356.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 71,
+"distToKm": 80,
+"rateRub": 48858.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 81,
+"distToKm": 90,
+"rateRub": 49359.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 91,
+"distToKm": 100,
+"rateRub": 49860.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 101,
+"distToKm": 120,
+"rateRub": 50612.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 121,
+"distToKm": 140,
+"rateRub": 51614.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 141,
+"distToKm": 160,
+"rateRub": 52616.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 161,
+"distToKm": 180,
+"rateRub": 53480.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 181,
+"distToKm": 200,
+"rateRub": 54311.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 201,
+"distToKm": 220,
+"rateRub": 55195.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 221,
+"distToKm": 240,
+"rateRub": 55969.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 241,
+"distToKm": 260,
+"rateRub": 56813.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 261,
+"distToKm": 280,
+"rateRub": 57640.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 281,
+"distToKm": 300,
+"rateRub": 58451.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 301,
+"distToKm": 330,
+"rateRub": 59473.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 331,
+"distToKm": 360,
+"rateRub": 60702.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 361,
+"distToKm": 390,
+"rateRub": 61906.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 391,
+"distToKm": 420,
+"rateRub": 63085.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 421,
+"distToKm": 450,
+"rateRub": 64418.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 451,
+"distToKm": 480,
+"rateRub": 65561.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 481,
+"distToKm": 510,
+"rateRub": 66679.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 511,
+"distToKm": 540,
+"rateRub": 67987.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 541,
+"distToKm": 570,
+"rateRub": 69069.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 571,
+"distToKm": 600,
+"rateRub": 70364.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 601,
+"distToKm": 640,
+"rateRub": 71623.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 641,
+"distToKm": 680,
+"rateRub": 73335.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 681,
+"distToKm": 720,
+"rateRub": 74761.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 721,
+"distToKm": 760,
+"rateRub": 76456.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 761,
+"distToKm": 800,
+"rateRub": 77833.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 801,
+"distToKm": 840,
+"rateRub": 79511.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 841,
+"distToKm": 880,
+"rateRub": 81190.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 881,
+"distToKm": 920,
+"rateRub": 82502.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 921,
+"distToKm": 960,
+"rateRub": 84164.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 961,
+"distToKm": 1000,
+"rateRub": 85427.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 1001,
+"distToKm": 1050,
+"rateRub": 87279.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 1051,
+"distToKm": 1100,
+"rateRub": 89337.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 1101,
+"distToKm": 1150,
+"rateRub": 90936.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 1151,
+"distToKm": 1200,
+"rateRub": 92973.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 1201,
+"distToKm": 1250,
+"rateRub": 94511.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 1251,
+"distToKm": 1300,
+"rateRub": 96528.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 1301,
+"distToKm": 1350,
+"rateRub": 98005.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 1351,
+"distToKm": 1400,
+"rateRub": 100002.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 1401,
+"distToKm": 1450,
+"rateRub": 101998.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 1451,
+"distToKm": 1500,
+"rateRub": 103393.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 1501,
+"distToKm": 1600,
+"rateRub": 106358.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 1601,
+"distToKm": 1700,
+"rateRub": 109637.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 1701,
+"distToKm": 1800,
+"rateRub": 112836.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 1801,
+"distToKm": 1900,
+"rateRub": 116707.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 1901,
+"distToKm": 2000,
+"rateRub": 119783.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 2001,
+"distToKm": 2100,
+"rateRub": 122777.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 2101,
+"distToKm": 2200,
+"rateRub": 126567.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 2201,
+"distToKm": 2300,
+"rateRub": 129439.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 2301,
+"distToKm": 2400,
+"rateRub": 132230.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 2401,
+"distToKm": 2500,
+"rateRub": 135938.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 2501,
+"distToKm": 2600,
+"rateRub": 138606.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 2601,
+"distToKm": 2700,
+"rateRub": 141194.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 2701,
+"distToKm": 2800,
+"rateRub": 144820.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 2801,
+"distToKm": 2900,
+"rateRub": 147285.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 2901,
+"distToKm": 3000,
+"rateRub": 149668.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 3001,
+"distToKm": 3100,
+"rateRub": 153213.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 3101,
+"distToKm": 3200,
+"rateRub": 156758.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 3201,
+"distToKm": 3300,
+"rateRub": 160303.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 3301,
+"distToKm": 3400,
+"rateRub": 163847.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 3401,
+"distToKm": 3500,
+"rateRub": 167392.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 3501,
+"distToKm": 3600,
+"rateRub": 170937.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 3601,
+"distToKm": 3700,
+"rateRub": 174482.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 3701,
+"distToKm": 3800,
+"rateRub": 178026.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 3801,
+"distToKm": 3900,
+"rateRub": 181571.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 3901,
+"distToKm": 4000,
+"rateRub": 185116.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 4001,
+"distToKm": 4100,
+"rateRub": 188660.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 4101,
+"distToKm": 4200,
+"rateRub": 192205.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 4201,
+"distToKm": 4300,
+"rateRub": 195750.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 4301,
+"distToKm": 4400,
+"rateRub": 199295.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 4401,
+"distToKm": 4500,
+"rateRub": 202839.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 4501,
+"distToKm": 4600,
+"rateRub": 206384.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 4601,
+"distToKm": 4700,
+"rateRub": 209929.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 4701,
+"distToKm": 4800,
+"rateRub": 213474.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 4801,
+"distToKm": 4900,
+"rateRub": 217018.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 4901,
+"distToKm": 5000,
+"rateRub": 220563.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 5001,
+"distToKm": 5100,
+"rateRub": 224108.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 5101,
+"distToKm": 5200,
+"rateRub": 227652.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 5201,
+"distToKm": 5300,
+"rateRub": 231197.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 5301,
+"distToKm": 5400,
+"rateRub": 234742.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 5401,
+"distToKm": 5500,
+"rateRub": 238287.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 5501,
+"distToKm": 5700,
+"rateRub": 243604.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 5701,
+"distToKm": 5900,
+"rateRub": 250693.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 5901,
+"distToKm": 6100,
+"rateRub": 257783.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 6101,
+"distToKm": 6300,
+"rateRub": 264872.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 6301,
+"distToKm": 6500,
+"rateRub": 271962.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 6501,
+"distToKm": 6700,
+"rateRub": 279051.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 6701,
+"distToKm": 6900,
+"rateRub": 286141.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 6901,
+"distToKm": 7100,
+"rateRub": 293230.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 7101,
+"distToKm": 7300,
+"rateRub": 300319.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 7301,
+"distToKm": 7500,
+"rateRub": 307409.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 7501,
+"distToKm": 7700,
+"rateRub": 314498.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 7701,
+"distToKm": 7900,
+"rateRub": 321588.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 7901,
+"distToKm": 8100,
+"rateRub": 328677.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 8101,
+"distToKm": 8300,
+"rateRub": 335767.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 8301,
+"distToKm": 8500,
+"rateRub": 342856.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 8501,
+"distToKm": 8700,
+"rateRub": 349946.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 8701,
+"distToKm": 8900,
+"rateRub": 357035.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 8901,
+"distToKm": 9100,
+"rateRub": 364125.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 9101,
+"distToKm": 9300,
+"rateRub": 371214.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 9301,
+"distToKm": 9500,
+"rateRub": 378303.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 9501,
+"distToKm": 9700,
+"rateRub": 385393.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 9701,
+"distToKm": 9900,
+"rateRub": 392482.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 9901,
+"distToKm": 10100,
+"rateRub": 399572.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 10101,
+"distToKm": 10300,
+"rateRub": 406661.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 10301,
+"distToKm": 10500,
+"rateRub": 413751.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 10501,
+"distToKm": 10700,
+"rateRub": 420840.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 10701,
+"distToKm": 10900,
+"rateRub": 427930.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 10901,
+"distToKm": 11100,
+"rateRub": 435019.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 11101,
+"distToKm": 11300,
+"rateRub": 442109.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 11301,
+"distToKm": 11500,
+"rateRub": 449198.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 11501,
+"distToKm": 11700,
+"rateRub": 456287.0
+},
+{
+"scheme": "В7-8",
+"distFromKm": 11701,
+"distToKm": 11900,
+"rateRub": 463377.0
+},
+{
+"scheme": "В8",
+"distFromKm": 0,
+"distToKm": 5,
+"rateRub": 14758.0
+},
+{
+"scheme": "В8",
+"distFromKm": 6,
+"distToKm": 10,
+"rateRub": 14906.0
+},
+{
+"scheme": "В8",
+"distFromKm": 11,
+"distToKm": 15,
+"rateRub": 15029.0
+},
+{
+"scheme": "В8",
+"distFromKm": 16,
+"distToKm": 20,
+"rateRub": 15152.0
+},
+{
+"scheme": "В8",
+"distFromKm": 21,
+"distToKm": 25,
+"rateRub": 15275.0
+},
+{
+"scheme": "В8",
+"distFromKm": 26,
+"distToKm": 30,
+"rateRub": 15398.0
+},
+{
+"scheme": "В8",
+"distFromKm": 31,
+"distToKm": 35,
+"rateRub": 15521.0
+},
+{
+"scheme": "В8",
+"distFromKm": 36,
+"distToKm": 40,
+"rateRub": 15643.0
+},
+{
+"scheme": "В8",
+"distFromKm": 41,
+"distToKm": 45,
+"rateRub": 15766.0
+},
+{
+"scheme": "В8",
+"distFromKm": 46,
+"distToKm": 50,
+"rateRub": 15889.0
+},
+{
+"scheme": "В8",
+"distFromKm": 51,
+"distToKm": 60,
+"rateRub": 16062.0
+},
+{
+"scheme": "В8",
+"distFromKm": 61,
+"distToKm": 70,
+"rateRub": 16307.0
+},
+{
+"scheme": "В8",
+"distFromKm": 71,
+"distToKm": 80,
+"rateRub": 16553.0
+},
+{
+"scheme": "В8",
+"distFromKm": 81,
+"distToKm": 90,
+"rateRub": 16799.0
+},
+{
+"scheme": "В8",
+"distFromKm": 91,
+"distToKm": 100,
+"rateRub": 17045.0
+},
+{
+"scheme": "В8",
+"distFromKm": 101,
+"distToKm": 120,
+"rateRub": 17414.0
+},
+{
+"scheme": "В8",
+"distFromKm": 121,
+"distToKm": 140,
+"rateRub": 17906.0
+},
+{
+"scheme": "В8",
+"distFromKm": 141,
+"distToKm": 160,
+"rateRub": 18398.0
+},
+{
+"scheme": "В8",
+"distFromKm": 161,
+"distToKm": 180,
+"rateRub": 18822.0
+},
+{
+"scheme": "В8",
+"distFromKm": 181,
+"distToKm": 200,
+"rateRub": 19229.0
+},
+{
+"scheme": "В8",
+"distFromKm": 201,
+"distToKm": 220,
+"rateRub": 19663.0
+},
+{
+"scheme": "В8",
+"distFromKm": 221,
+"distToKm": 240,
+"rateRub": 20043.0
+},
+{
+"scheme": "В8",
+"distFromKm": 241,
+"distToKm": 260,
+"rateRub": 20457.0
+},
+{
+"scheme": "В8",
+"distFromKm": 261,
+"distToKm": 280,
+"rateRub": 20863.0
+},
+{
+"scheme": "В8",
+"distFromKm": 281,
+"distToKm": 300,
+"rateRub": 21261.0
+},
+{
+"scheme": "В8",
+"distFromKm": 301,
+"distToKm": 330,
+"rateRub": 21763.0
+},
+{
+"scheme": "В8",
+"distFromKm": 331,
+"distToKm": 360,
+"rateRub": 22365.0
+},
+{
+"scheme": "В8",
+"distFromKm": 361,
+"distToKm": 390,
+"rateRub": 22956.0
+},
+{
+"scheme": "В8",
+"distFromKm": 391,
+"distToKm": 420,
+"rateRub": 23535.0
+},
+{
+"scheme": "В8",
+"distFromKm": 421,
+"distToKm": 450,
+"rateRub": 24189.0
+},
+{
+"scheme": "В8",
+"distFromKm": 451,
+"distToKm": 480,
+"rateRub": 24749.0
+},
+{
+"scheme": "В8",
+"distFromKm": 481,
+"distToKm": 510,
+"rateRub": 25298.0
+},
+{
+"scheme": "В8",
+"distFromKm": 511,
+"distToKm": 540,
+"rateRub": 25940.0
+},
+{
+"scheme": "В8",
+"distFromKm": 541,
+"distToKm": 570,
+"rateRub": 26471.0
+},
+{
+"scheme": "В8",
+"distFromKm": 571,
+"distToKm": 600,
+"rateRub": 27107.0
+},
+{
+"scheme": "В8",
+"distFromKm": 601,
+"distToKm": 640,
+"rateRub": 27724.0
+},
+{
+"scheme": "В8",
+"distFromKm": 641,
+"distToKm": 680,
+"rateRub": 28564.0
+},
+{
+"scheme": "В8",
+"distFromKm": 681,
+"distToKm": 720,
+"rateRub": 29264.0
+},
+{
+"scheme": "В8",
+"distFromKm": 721,
+"distToKm": 760,
+"rateRub": 30096.0
+},
+{
+"scheme": "В8",
+"distFromKm": 761,
+"distToKm": 800,
+"rateRub": 30771.0
+},
+{
+"scheme": "В8",
+"distFromKm": 801,
+"distToKm": 840,
+"rateRub": 31595.0
+},
+{
+"scheme": "В8",
+"distFromKm": 841,
+"distToKm": 880,
+"rateRub": 32419.0
+},
+{
+"scheme": "В8",
+"distFromKm": 881,
+"distToKm": 920,
+"rateRub": 33063.0
+},
+{
+"scheme": "В8",
+"distFromKm": 921,
+"distToKm": 960,
+"rateRub": 33878.0
+},
+{
+"scheme": "В8",
+"distFromKm": 961,
+"distToKm": 1000,
+"rateRub": 34498.0
+},
+{
+"scheme": "В8",
+"distFromKm": 1001,
+"distToKm": 1050,
+"rateRub": 35407.0
+},
+{
+"scheme": "В8",
+"distFromKm": 1051,
+"distToKm": 1100,
+"rateRub": 36416.0
+},
+{
+"scheme": "В8",
+"distFromKm": 1101,
+"distToKm": 1150,
+"rateRub": 37201.0
+},
+{
+"scheme": "В8",
+"distFromKm": 1151,
+"distToKm": 1200,
+"rateRub": 38201.0
+},
+{
+"scheme": "В8",
+"distFromKm": 1201,
+"distToKm": 1250,
+"rateRub": 38956.0
+},
+{
+"scheme": "В8",
+"distFromKm": 1251,
+"distToKm": 1300,
+"rateRub": 39945.0
+},
+{
+"scheme": "В8",
+"distFromKm": 1301,
+"distToKm": 1350,
+"rateRub": 40670.0
+},
+{
+"scheme": "В8",
+"distFromKm": 1351,
+"distToKm": 1400,
+"rateRub": 41650.0
+},
+{
+"scheme": "В8",
+"distFromKm": 1401,
+"distToKm": 1450,
+"rateRub": 42629.0
+},
+{
+"scheme": "В8",
+"distFromKm": 1451,
+"distToKm": 1500,
+"rateRub": 43314.0
+},
+{
+"scheme": "В8",
+"distFromKm": 1501,
+"distToKm": 1600,
+"rateRub": 44768.0
+},
+{
+"scheme": "В8",
+"distFromKm": 1601,
+"distToKm": 1700,
+"rateRub": 46378.0
+},
+{
+"scheme": "В8",
+"distFromKm": 1701,
+"distToKm": 1800,
+"rateRub": 47947.0
+},
+{
+"scheme": "В8",
+"distFromKm": 1801,
+"distToKm": 1900,
+"rateRub": 49847.0
+},
+{
+"scheme": "В8",
+"distFromKm": 1901,
+"distToKm": 2000,
+"rateRub": 51356.0
+},
+{
+"scheme": "В8",
+"distFromKm": 2001,
+"distToKm": 2100,
+"rateRub": 52826.0
+},
+{
+"scheme": "В8",
+"distFromKm": 2101,
+"distToKm": 2200,
+"rateRub": 54685.0
+},
+{
+"scheme": "В8",
+"distFromKm": 2201,
+"distToKm": 2300,
+"rateRub": 56095.0
+},
+{
+"scheme": "В8",
+"distFromKm": 2301,
+"distToKm": 2400,
+"rateRub": 57464.0
+},
+{
+"scheme": "В8",
+"distFromKm": 2401,
+"distToKm": 2500,
+"rateRub": 59283.0
+},
+{
+"scheme": "В8",
+"distFromKm": 2501,
+"distToKm": 2600,
+"rateRub": 60593.0
+},
+{
+"scheme": "В8",
+"distFromKm": 2601,
+"distToKm": 2700,
+"rateRub": 61862.0
+},
+{
+"scheme": "В8",
+"distFromKm": 2701,
+"distToKm": 2800,
+"rateRub": 63642.0
+},
+{
+"scheme": "В8",
+"distFromKm": 2801,
+"distToKm": 2900,
+"rateRub": 64851.0
+},
+{
+"scheme": "В8",
+"distFromKm": 2901,
+"distToKm": 3000,
+"rateRub": 66021.0
+},
+{
+"scheme": "В8",
+"distFromKm": 3001,
+"distToKm": 3100,
+"rateRub": 67760.0
+},
+{
+"scheme": "В8",
+"distFromKm": 3101,
+"distToKm": 3200,
+"rateRub": 69500.0
+},
+{
+"scheme": "В8",
+"distFromKm": 3201,
+"distToKm": 3300,
+"rateRub": 71239.0
+},
+{
+"scheme": "В8",
+"distFromKm": 3301,
+"distToKm": 3400,
+"rateRub": 72979.0
+},
+{
+"scheme": "В8",
+"distFromKm": 3401,
+"distToKm": 3500,
+"rateRub": 74718.0
+},
+{
+"scheme": "В8",
+"distFromKm": 3501,
+"distToKm": 3600,
+"rateRub": 76457.0
+},
+{
+"scheme": "В8",
+"distFromKm": 3601,
+"distToKm": 3700,
+"rateRub": 78197.0
+},
+{
+"scheme": "В8",
+"distFromKm": 3701,
+"distToKm": 3800,
+"rateRub": 79936.0
+},
+{
+"scheme": "В8",
+"distFromKm": 3801,
+"distToKm": 3900,
+"rateRub": 81676.0
+},
+{
+"scheme": "В8",
+"distFromKm": 3901,
+"distToKm": 4000,
+"rateRub": 83415.0
+},
+{
+"scheme": "В8",
+"distFromKm": 4001,
+"distToKm": 4100,
+"rateRub": 85154.0
+},
+{
+"scheme": "В8",
+"distFromKm": 4101,
+"distToKm": 4200,
+"rateRub": 86894.0
+},
+{
+"scheme": "В8",
+"distFromKm": 4201,
+"distToKm": 4300,
+"rateRub": 88633.0
+},
+{
+"scheme": "В8",
+"distFromKm": 4301,
+"distToKm": 4400,
+"rateRub": 90373.0
+},
+{
+"scheme": "В8",
+"distFromKm": 4401,
+"distToKm": 4500,
+"rateRub": 92112.0
+},
+{
+"scheme": "В8",
+"distFromKm": 4501,
+"distToKm": 4600,
+"rateRub": 93851.0
+},
+{
+"scheme": "В8",
+"distFromKm": 4601,
+"distToKm": 4700,
+"rateRub": 95591.0
+},
+{
+"scheme": "В8",
+"distFromKm": 4701,
+"distToKm": 4800,
+"rateRub": 97330.0
+},
+{
+"scheme": "В8",
+"distFromKm": 4801,
+"distToKm": 4900,
+"rateRub": 99069.0
+},
+{
+"scheme": "В8",
+"distFromKm": 4901,
+"distToKm": 5000,
+"rateRub": 100809.0
+},
+{
+"scheme": "В8",
+"distFromKm": 5001,
+"distToKm": 5100,
+"rateRub": 102548.0
+},
+{
+"scheme": "В8",
+"distFromKm": 5101,
+"distToKm": 5200,
+"rateRub": 104288.0
+},
+{
+"scheme": "В8",
+"distFromKm": 5201,
+"distToKm": 5300,
+"rateRub": 106027.0
+},
+{
+"scheme": "В8",
+"distFromKm": 5301,
+"distToKm": 5400,
+"rateRub": 107766.0
+},
+{
+"scheme": "В8",
+"distFromKm": 5401,
+"distToKm": 5500,
+"rateRub": 109506.0
+},
+{
+"scheme": "В8",
+"distFromKm": 5501,
+"distToKm": 5700,
+"rateRub": 112115.0
+},
+{
+"scheme": "В8",
+"distFromKm": 5701,
+"distToKm": 5900,
+"rateRub": 115594.0
+},
+{
+"scheme": "В8",
+"distFromKm": 5901,
+"distToKm": 6100,
+"rateRub": 119072.0
+},
+{
+"scheme": "В8",
+"distFromKm": 6101,
+"distToKm": 6300,
+"rateRub": 122551.0
+},
+{
+"scheme": "В8",
+"distFromKm": 6301,
+"distToKm": 6500,
+"rateRub": 126030.0
+},
+{
+"scheme": "В8",
+"distFromKm": 6501,
+"distToKm": 6700,
+"rateRub": 129509.0
+},
+{
+"scheme": "В8",
+"distFromKm": 6701,
+"distToKm": 6900,
+"rateRub": 132988.0
+},
+{
+"scheme": "В8",
+"distFromKm": 6901,
+"distToKm": 7100,
+"rateRub": 136466.0
+},
+{
+"scheme": "В8",
+"distFromKm": 7101,
+"distToKm": 7300,
+"rateRub": 139945.0
+},
+{
+"scheme": "В8",
+"distFromKm": 7301,
+"distToKm": 7500,
+"rateRub": 143424.0
+},
+{
+"scheme": "В8",
+"distFromKm": 7501,
+"distToKm": 7700,
+"rateRub": 146903.0
+},
+{
+"scheme": "В8",
+"distFromKm": 7701,
+"distToKm": 7900,
+"rateRub": 150381.0
+},
+{
+"scheme": "В8",
+"distFromKm": 7901,
+"distToKm": 8100,
+"rateRub": 153860.0
+},
+{
+"scheme": "В8",
+"distFromKm": 8101,
+"distToKm": 8300,
+"rateRub": 157339.0
+},
+{
+"scheme": "В8",
+"distFromKm": 8301,
+"distToKm": 8500,
+"rateRub": 160818.0
+},
+{
+"scheme": "В8",
+"distFromKm": 8501,
+"distToKm": 8700,
+"rateRub": 164297.0
+},
+{
+"scheme": "В8",
+"distFromKm": 8701,
+"distToKm": 8900,
+"rateRub": 167775.0
+},
+{
+"scheme": "В8",
+"distFromKm": 8901,
+"distToKm": 9100,
+"rateRub": 171254.0
+},
+{
+"scheme": "В8",
+"distFromKm": 9101,
+"distToKm": 9300,
+"rateRub": 174733.0
+},
+{
+"scheme": "В8",
+"distFromKm": 9301,
+"distToKm": 9500,
+"rateRub": 178212.0
+},
+{
+"scheme": "В8",
+"distFromKm": 9501,
+"distToKm": 9700,
+"rateRub": 181691.0
+},
+{
+"scheme": "В8",
+"distFromKm": 9701,
+"distToKm": 9900,
+"rateRub": 185169.0
+},
+{
+"scheme": "В8",
+"distFromKm": 9901,
+"distToKm": 10100,
+"rateRub": 188648.0
+},
+{
+"scheme": "В8",
+"distFromKm": 10101,
+"distToKm": 10300,
+"rateRub": 192127.0
+},
+{
+"scheme": "В8",
+"distFromKm": 10301,
+"distToKm": 10500,
+"rateRub": 195606.0
+},
+{
+"scheme": "В8",
+"distFromKm": 10501,
+"distToKm": 10700,
+"rateRub": 199084.0
+},
+{
+"scheme": "В8",
+"distFromKm": 10701,
+"distToKm": 10900,
+"rateRub": 202563.0
+},
+{
+"scheme": "В8",
+"distFromKm": 10901,
+"distToKm": 11100,
+"rateRub": 206042.0
+},
+{
+"scheme": "В8",
+"distFromKm": 11101,
+"distToKm": 11300,
+"rateRub": 209521.0
+},
+{
+"scheme": "В8",
+"distFromKm": 11301,
+"distToKm": 11500,
+"rateRub": 213000.0
+},
+{
+"scheme": "В8",
+"distFromKm": 11501,
+"distToKm": 11700,
+"rateRub": 216478.0
+},
+{
+"scheme": "В8",
+"distFromKm": 11701,
+"distToKm": 11900,
+"rateRub": 219957.0
+},
+{
+"scheme": "В9",
+"distFromKm": 0,
+"distToKm": 5,
+"rateRub": 13782.0
+},
+{
+"scheme": "В9",
+"distFromKm": 6,
+"distToKm": 10,
+"rateRub": 13943.0
+},
+{
+"scheme": "В9",
+"distFromKm": 11,
+"distToKm": 15,
+"rateRub": 14076.0
+},
+{
+"scheme": "В9",
+"distFromKm": 16,
+"distToKm": 20,
+"rateRub": 14210.0
+},
+{
+"scheme": "В9",
+"distFromKm": 21,
+"distToKm": 25,
+"rateRub": 14344.0
+},
+{
+"scheme": "В9",
+"distFromKm": 26,
+"distToKm": 30,
+"rateRub": 14477.0
+},
+{
+"scheme": "В9",
+"distFromKm": 31,
+"distToKm": 35,
+"rateRub": 14611.0
+},
+{
+"scheme": "В9",
+"distFromKm": 36,
+"distToKm": 40,
+"rateRub": 14745.0
+},
+{
+"scheme": "В9",
+"distFromKm": 41,
+"distToKm": 45,
+"rateRub": 14878.0
+},
+{
+"scheme": "В9",
+"distFromKm": 46,
+"distToKm": 50,
+"rateRub": 15012.0
+},
+{
+"scheme": "В9",
+"distFromKm": 51,
+"distToKm": 60,
+"rateRub": 15199.0
+},
+{
+"scheme": "В9",
+"distFromKm": 61,
+"distToKm": 70,
+"rateRub": 15466.0
+},
+{
+"scheme": "В9",
+"distFromKm": 71,
+"distToKm": 80,
+"rateRub": 15734.0
+},
+{
+"scheme": "В9",
+"distFromKm": 81,
+"distToKm": 90,
+"rateRub": 16001.0
+},
+{
+"scheme": "В9",
+"distFromKm": 91,
+"distToKm": 100,
+"rateRub": 16268.0
+},
+{
+"scheme": "В9",
+"distFromKm": 101,
+"distToKm": 120,
+"rateRub": 16669.0
+},
+{
+"scheme": "В9",
+"distFromKm": 121,
+"distToKm": 140,
+"rateRub": 17204.0
+},
+{
+"scheme": "В9",
+"distFromKm": 141,
+"distToKm": 160,
+"rateRub": 17738.0
+},
+{
+"scheme": "В9",
+"distFromKm": 161,
+"distToKm": 180,
+"rateRub": 18199.0
+},
+{
+"scheme": "В9",
+"distFromKm": 181,
+"distToKm": 200,
+"rateRub": 18642.0
+},
+{
+"scheme": "В9",
+"distFromKm": 201,
+"distToKm": 220,
+"rateRub": 19114.0
+},
+{
+"scheme": "В9",
+"distFromKm": 221,
+"distToKm": 240,
+"rateRub": 19527.0
+},
+{
+"scheme": "В9",
+"distFromKm": 241,
+"distToKm": 260,
+"rateRub": 19977.0
+},
+{
+"scheme": "В9",
+"distFromKm": 261,
+"distToKm": 280,
+"rateRub": 20418.0
+},
+{
+"scheme": "В9",
+"distFromKm": 281,
+"distToKm": 300,
+"rateRub": 20850.0
+},
+{
+"scheme": "В9",
+"distFromKm": 301,
+"distToKm": 330,
+"rateRub": 21396.0
+},
+{
+"scheme": "В9",
+"distFromKm": 331,
+"distToKm": 360,
+"rateRub": 22051.0
+},
+{
+"scheme": "В9",
+"distFromKm": 361,
+"distToKm": 390,
+"rateRub": 22693.0
+},
+{
+"scheme": "В9",
+"distFromKm": 391,
+"distToKm": 420,
+"rateRub": 23322.0
+},
+{
+"scheme": "В9",
+"distFromKm": 421,
+"distToKm": 450,
+"rateRub": 24033.0
+},
+{
+"scheme": "В9",
+"distFromKm": 451,
+"distToKm": 480,
+"rateRub": 24642.0
+},
+{
+"scheme": "В9",
+"distFromKm": 481,
+"distToKm": 510,
+"rateRub": 25239.0
+},
+{
+"scheme": "В9",
+"distFromKm": 511,
+"distToKm": 540,
+"rateRub": 25936.0
+},
+{
+"scheme": "В9",
+"distFromKm": 541,
+"distToKm": 570,
+"rateRub": 26513.0
+},
+{
+"scheme": "В9",
+"distFromKm": 571,
+"distToKm": 600,
+"rateRub": 27204.0
+},
+{
+"scheme": "В9",
+"distFromKm": 601,
+"distToKm": 640,
+"rateRub": 27876.0
+},
+{
+"scheme": "В9",
+"distFromKm": 641,
+"distToKm": 680,
+"rateRub": 28789.0
+},
+{
+"scheme": "В9",
+"distFromKm": 681,
+"distToKm": 720,
+"rateRub": 29549.0
+},
+{
+"scheme": "В9",
+"distFromKm": 721,
+"distToKm": 760,
+"rateRub": 30453.0
+},
+{
+"scheme": "В9",
+"distFromKm": 761,
+"distToKm": 800,
+"rateRub": 31188.0
+},
+{
+"scheme": "В9",
+"distFromKm": 801,
+"distToKm": 840,
+"rateRub": 32083.0
+},
+{
+"scheme": "В9",
+"distFromKm": 841,
+"distToKm": 880,
+"rateRub": 32978.0
+},
+{
+"scheme": "В9",
+"distFromKm": 881,
+"distToKm": 920,
+"rateRub": 33678.0
+},
+{
+"scheme": "В9",
+"distFromKm": 921,
+"distToKm": 960,
+"rateRub": 34565.0
+},
+{
+"scheme": "В9",
+"distFromKm": 961,
+"distToKm": 1000,
+"rateRub": 35238.0
+},
+{
+"scheme": "В9",
+"distFromKm": 1001,
+"distToKm": 1050,
+"rateRub": 36226.0
+},
+{
+"scheme": "В9",
+"distFromKm": 1051,
+"distToKm": 1100,
+"rateRub": 37323.0
+},
+{
+"scheme": "В9",
+"distFromKm": 1101,
+"distToKm": 1150,
+"rateRub": 38176.0
+},
+{
+"scheme": "В9",
+"distFromKm": 1151,
+"distToKm": 1200,
+"rateRub": 39263.0
+},
+{
+"scheme": "В9",
+"distFromKm": 1201,
+"distToKm": 1250,
+"rateRub": 40083.0
+},
+{
+"scheme": "В9",
+"distFromKm": 1251,
+"distToKm": 1300,
+"rateRub": 41159.0
+},
+{
+"scheme": "В9",
+"distFromKm": 1301,
+"distToKm": 1350,
+"rateRub": 41947.0
+},
+{
+"scheme": "В9",
+"distFromKm": 1351,
+"distToKm": 1400,
+"rateRub": 43012.0
+},
+{
+"scheme": "В9",
+"distFromKm": 1401,
+"distToKm": 1450,
+"rateRub": 44076.0
+},
+{
+"scheme": "В9",
+"distFromKm": 1451,
+"distToKm": 1500,
+"rateRub": 44821.0
+},
+{
+"scheme": "В9",
+"distFromKm": 1501,
+"distToKm": 1600,
+"rateRub": 46402.0
+},
+{
+"scheme": "В9",
+"distFromKm": 1601,
+"distToKm": 1700,
+"rateRub": 48151.0
+},
+{
+"scheme": "В9",
+"distFromKm": 1701,
+"distToKm": 1800,
+"rateRub": 49857.0
+},
+{
+"scheme": "В9",
+"distFromKm": 1801,
+"distToKm": 1900,
+"rateRub": 51921.0
+},
+{
+"scheme": "В9",
+"distFromKm": 1901,
+"distToKm": 2000,
+"rateRub": 53562.0
+},
+{
+"scheme": "В9",
+"distFromKm": 2001,
+"distToKm": 2100,
+"rateRub": 55159.0
+},
+{
+"scheme": "В9",
+"distFromKm": 2101,
+"distToKm": 2200,
+"rateRub": 57180.0
+},
+{
+"scheme": "В9",
+"distFromKm": 2201,
+"distToKm": 2300,
+"rateRub": 58712.0
+},
+{
+"scheme": "В9",
+"distFromKm": 2301,
+"distToKm": 2400,
+"rateRub": 60201.0
+},
+{
+"scheme": "В9",
+"distFromKm": 2401,
+"distToKm": 2500,
+"rateRub": 62178.0
+},
+{
+"scheme": "В9",
+"distFromKm": 2501,
+"distToKm": 2600,
+"rateRub": 63602.0
+},
+{
+"scheme": "В9",
+"distFromKm": 2601,
+"distToKm": 2700,
+"rateRub": 64982.0
+},
+{
+"scheme": "В9",
+"distFromKm": 2701,
+"distToKm": 2800,
+"rateRub": 66916.0
+},
+{
+"scheme": "В9",
+"distFromKm": 2801,
+"distToKm": 2900,
+"rateRub": 68230.0
+},
+{
+"scheme": "В9",
+"distFromKm": 2901,
+"distToKm": 3000,
+"rateRub": 69502.0
+},
+{
+"scheme": "В9",
+"distFromKm": 3001,
+"distToKm": 3100,
+"rateRub": 71392.0
+},
+{
+"scheme": "В9",
+"distFromKm": 3101,
+"distToKm": 3200,
+"rateRub": 73283.0
+},
+{
+"scheme": "В9",
+"distFromKm": 3201,
+"distToKm": 3300,
+"rateRub": 75173.0
+},
+{
+"scheme": "В9",
+"distFromKm": 3301,
+"distToKm": 3400,
+"rateRub": 77064.0
+},
+{
+"scheme": "В9",
+"distFromKm": 3401,
+"distToKm": 3500,
+"rateRub": 78955.0
+},
+{
+"scheme": "В9",
+"distFromKm": 3501,
+"distToKm": 3600,
+"rateRub": 80845.0
+},
+{
+"scheme": "В9",
+"distFromKm": 3601,
+"distToKm": 3700,
+"rateRub": 82736.0
+},
+{
+"scheme": "В9",
+"distFromKm": 3701,
+"distToKm": 3800,
+"rateRub": 84626.0
+},
+{
+"scheme": "В9",
+"distFromKm": 3801,
+"distToKm": 3900,
+"rateRub": 86517.0
+},
+{
+"scheme": "В9",
+"distFromKm": 3901,
+"distToKm": 4000,
+"rateRub": 88408.0
+},
+{
+"scheme": "В9",
+"distFromKm": 4001,
+"distToKm": 4100,
+"rateRub": 90298.0
+},
+{
+"scheme": "В9",
+"distFromKm": 4101,
+"distToKm": 4200,
+"rateRub": 92189.0
+},
+{
+"scheme": "В9",
+"distFromKm": 4201,
+"distToKm": 4300,
+"rateRub": 94079.0
+},
+{
+"scheme": "В9",
+"distFromKm": 4301,
+"distToKm": 4400,
+"rateRub": 95970.0
+},
+{
+"scheme": "В9",
+"distFromKm": 4401,
+"distToKm": 4500,
+"rateRub": 97861.0
+},
+{
+"scheme": "В9",
+"distFromKm": 4501,
+"distToKm": 4600,
+"rateRub": 99751.0
+},
+{
+"scheme": "В9",
+"distFromKm": 4601,
+"distToKm": 4700,
+"rateRub": 101642.0
+},
+{
+"scheme": "В9",
+"distFromKm": 4701,
+"distToKm": 4800,
+"rateRub": 103532.0
+},
+{
+"scheme": "В9",
+"distFromKm": 4801,
+"distToKm": 4900,
+"rateRub": 105423.0
+},
+{
+"scheme": "В9",
+"distFromKm": 4901,
+"distToKm": 5000,
+"rateRub": 107314.0
+},
+{
+"scheme": "В9",
+"distFromKm": 5001,
+"distToKm": 5100,
+"rateRub": 109204.0
+},
+{
+"scheme": "В9",
+"distFromKm": 5101,
+"distToKm": 5200,
+"rateRub": 111095.0
+},
+{
+"scheme": "В9",
+"distFromKm": 5201,
+"distToKm": 5300,
+"rateRub": 112985.0
+},
+{
+"scheme": "В9",
+"distFromKm": 5301,
+"distToKm": 5400,
+"rateRub": 114876.0
+},
+{
+"scheme": "В9",
+"distFromKm": 5401,
+"distToKm": 5500,
+"rateRub": 116767.0
+},
+{
+"scheme": "В9",
+"distFromKm": 5501,
+"distToKm": 5700,
+"rateRub": 119602.0
+},
+{
+"scheme": "В9",
+"distFromKm": 5701,
+"distToKm": 5900,
+"rateRub": 123384.0
+},
+{
+"scheme": "В9",
+"distFromKm": 5901,
+"distToKm": 6100,
+"rateRub": 127165.0
+},
+{
+"scheme": "В9",
+"distFromKm": 6101,
+"distToKm": 6300,
+"rateRub": 130946.0
+},
+{
+"scheme": "В9",
+"distFromKm": 6301,
+"distToKm": 6500,
+"rateRub": 134727.0
+},
+{
+"scheme": "В9",
+"distFromKm": 6501,
+"distToKm": 6700,
+"rateRub": 138508.0
+},
+{
+"scheme": "В9",
+"distFromKm": 6701,
+"distToKm": 6900,
+"rateRub": 142290.0
+},
+{
+"scheme": "В9",
+"distFromKm": 6901,
+"distToKm": 7100,
+"rateRub": 146071.0
+},
+{
+"scheme": "В9",
+"distFromKm": 7101,
+"distToKm": 7300,
+"rateRub": 149852.0
+},
+{
+"scheme": "В9",
+"distFromKm": 7301,
+"distToKm": 7500,
+"rateRub": 153633.0
+},
+{
+"scheme": "В9",
+"distFromKm": 7501,
+"distToKm": 7700,
+"rateRub": 157414.0
+},
+{
+"scheme": "В9",
+"distFromKm": 7701,
+"distToKm": 7900,
+"rateRub": 161196.0
+},
+{
+"scheme": "В9",
+"distFromKm": 7901,
+"distToKm": 8100,
+"rateRub": 164977.0
+},
+{
+"scheme": "В9",
+"distFromKm": 8101,
+"distToKm": 8300,
+"rateRub": 168758.0
+},
+{
+"scheme": "В9",
+"distFromKm": 8301,
+"distToKm": 8500,
+"rateRub": 172539.0
+},
+{
+"scheme": "В9",
+"distFromKm": 8501,
+"distToKm": 8700,
+"rateRub": 176320.0
+},
+{
+"scheme": "В9",
+"distFromKm": 8701,
+"distToKm": 8900,
+"rateRub": 180102.0
+},
+{
+"scheme": "В9",
+"distFromKm": 8901,
+"distToKm": 9100,
+"rateRub": 183883.0
+},
+{
+"scheme": "В9",
+"distFromKm": 9101,
+"distToKm": 9300,
+"rateRub": 187664.0
+},
+{
+"scheme": "В9",
+"distFromKm": 9301,
+"distToKm": 9500,
+"rateRub": 191445.0
+},
+{
+"scheme": "В9",
+"distFromKm": 9501,
+"distToKm": 9700,
+"rateRub": 195226.0
+},
+{
+"scheme": "В9",
+"distFromKm": 9701,
+"distToKm": 9900,
+"rateRub": 199008.0
+},
+{
+"scheme": "В9",
+"distFromKm": 9901,
+"distToKm": 10100,
+"rateRub": 202789.0
+},
+{
+"scheme": "В9",
+"distFromKm": 10101,
+"distToKm": 10300,
+"rateRub": 206570.0
+},
+{
+"scheme": "В9",
+"distFromKm": 10301,
+"distToKm": 10500,
+"rateRub": 210351.0
+},
+{
+"scheme": "В9",
+"distFromKm": 10501,
+"distToKm": 10700,
+"rateRub": 214132.0
+},
+{
+"scheme": "В9",
+"distFromKm": 10701,
+"distToKm": 10900,
+"rateRub": 217913.0
+},
+{
+"scheme": "В9",
+"distFromKm": 10901,
+"distToKm": 11100,
+"rateRub": 221695.0
+},
+{
+"scheme": "В9",
+"distFromKm": 11101,
+"distToKm": 11300,
+"rateRub": 225476.0
+},
+{
+"scheme": "В9",
+"distFromKm": 11301,
+"distToKm": 11500,
+"rateRub": 229257.0
+},
+{
+"scheme": "В9",
+"distFromKm": 11501,
+"distToKm": 11700,
+"rateRub": 233038.0
+},
+{
+"scheme": "В9",
+"distFromKm": 11701,
+"distToKm": 11900,
+"rateRub": 236819.0
+}
+]

@@ -105,6 +105,16 @@ const PERCENT_DIVISOR = 100;
 export interface IndexationLike {
   readonly pct: number;
   readonly effectiveFrom: Date;
+  /**
+   * End of the window in which this indexation is applied ON TOP of the base. `null` =
+   * open-ended. A non-null `effectiveTo` BEFORE `onDate` means the indexation is already
+   * baked into the as-of base tables (e.g. +13.8% 2024-12-01..2025-11-30 and +10%
+   * 2025-12-01 are embedded in the ТР-1 2026 Прил.N2 rates — DATA_ACQUISITION_REPORT.md
+   * §2 lines 38,40), so it must NOT be re-applied. Honoring it here closes the indexation
+   * double-count (TARIFF_MASTER_AUDIT.md §3 item 1, gaps C1/H19). Optional: omitted/null =
+   * open-ended (a still-live 2026+ indexation that legitimately compounds onto the base).
+   */
+  readonly effectiveTo?: Date | null;
   readonly appliesToClass: number | null;
 }
 
@@ -114,6 +124,10 @@ function isIndexApplicable(
   freightClass: FreightClass,
 ): boolean {
   if (ix.effectiveFrom.getTime() > onDate.getTime()) return false;
+  // Expired/baked indexation: its window closed before the calc date → already in the
+  // base, do NOT compound it again. (TARIFF_MASTER_AUDIT.md §3 item 1 / gap C1/H19.)
+  // null/undefined effectiveTo = open-ended (still-live indexation).
+  if (ix.effectiveTo != null && ix.effectiveTo.getTime() < onDate.getTime()) return false;
   if (ix.appliesToClass !== null && ix.appliesToClass !== freightClass) return false;
   return true;
 }

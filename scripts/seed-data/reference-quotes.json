@@ -1,0 +1,132 @@
+[
+  {
+    "id": "EF164189",
+    "source": "квитанция РЖД ГУ-27у (ЭФ 164189, тарифные отметки)",
+    "sourceFile": "ЭФ 164189 паспорт.pdf + ЭФ164189_03.06.26 электронная копия (числа подтверждены, не OCR)",
+    "asOfDate": "2026-06-03",
+    "origin": { "name": "Возрождение", "esr": "021609", "road": "Окт" },
+    "dest": { "name": "Гремячая", "esr": "612709", "road": "Прив" },
+    "cargo": "Щебень гранитный фр.70-120, не поименованный в алфавите",
+    "etsngCode": "232431",
+    "freightClass": 1,
+    "wagonType": "ПВ",
+    "ownership": "own",
+    "shipmentType": "group",
+    "traffic": "domestic",
+    "wagonCount": 15,
+    "totalWeightTons": 1072.55,
+
+    "ref": {
+      "distanceKm": 2444,
+      "scheme": "8",
+      "tariffCoeff": 0.6999,
+      "totalTariffRub": 1067770,
+      "vatNote": "Сумма платежей / «Взыскано на станции отправления» = 1 067 770 ₽ — провозная плата (НДС статус уточнить: тарифные отметки обычно без НДС)",
+      "perWagon": [
+        { "wagonNo": "64437213", "capacityT": 75.0, "netT": 73.30, "tariffRub": 70477 },
+        { "wagonNo": "64917271", "capacityT": 75.0, "netT": 73.05, "tariffRub": 70477 },
+        { "wagonNo": "62577135", "capacityT": 75.0, "netT": 73.10, "tariffRub": 70477 },
+        { "wagonNo": "60996501", "capacityT": 75.0, "netT": 73.25, "tariffRub": 70477 },
+        { "wagonNo": "62590278", "capacityT": 75.0, "netT": 73.15, "tariffRub": 70477 },
+        { "wagonNo": "62436548", "capacityT": 75.0, "netT": 73.10, "tariffRub": 70477 },
+        { "wagonNo": "60762556", "capacityT": 75.0, "netT": 73.40, "tariffRub": 70477 },
+        { "wagonNo": "62435763", "capacityT": 75.0, "netT": 73.35, "tariffRub": 70477 },
+        { "wagonNo": "53075321", "capacityT": 69.5, "netT": 67.90, "tariffRub": 72005 },
+        { "wagonNo": "55954051", "capacityT": 69.5, "netT": 67.80, "tariffRub": 72005 },
+        { "wagonNo": "55311401", "capacityT": 69.5, "netT": 67.75, "tariffRub": 72005 },
+        { "wagonNo": "55200208", "capacityT": 70.3, "netT": 68.65, "tariffRub": 72005 },
+        { "wagonNo": "62478854", "capacityT": 75.0, "netT": 72.95, "tariffRub": 73452 },
+        { "wagonNo": "52201696", "capacityT": 70.3, "netT": 68.45, "tariffRub": 72005 },
+        { "wagonNo": "62587464", "capacityT": 75.0, "netT": 73.35, "tariffRub": 70477 }
+      ]
+    },
+
+    "calibrationNotes": [
+      "Per-wagon sum verified EXACT: 9×70477 + 5×72005 + 1×73452 = 1 067 770 ₽ = квитанция «Взыскано».",
+      "Tariff differs by tier, NOT flat per wagon: 75т-cap → 70477 (но ваг.13 62478854 = 73452 при той же г/п — выяснить причину: тип/модель/масса-шаг).",
+      "Confirms: ЕТСНГ 232431 = class 1; own полувагон → схема N8; расстояние = тарифное (2444 км); вид отправки ГО=групповая влияет на коэффициент.",
+      "Engine targets for this route: distanceKm=2444, tariffCoeff=0.6999, per-wagon 75т=70477 ₽."
+    ]
+  },
+  {
+    "id": "ET201459",
+    "source": "квитанция РЖД ГУ-27у (ЭТ201459, тарифные отметки, электронная копия)",
+    "sourceFile": "ЭТ201459 Н.Челны Регионрезерв 27.04.2026.pdf",
+    "asOfDate": "2026-04-27",
+    "origin": { "name": "Исеть", "esr": "771500", "road": "Сверд" },
+    "dest": { "name": "Набережные Челны", "esr": "648503", "road": "Кбш" },
+    "cargo": "Щебень фр.5-20, не поименованный в алфавите (немытый)",
+    "etsngCode": "232431",
+    "freightClass": 1,
+    "wagonType": "ПВ",
+    "ownership": "own",
+    "shipmentType": "group",
+    "traffic": "domestic",
+    "wagonCount": 6,
+    "totalWeightTons": 410.4,
+
+    "ref": {
+      "distanceKm": 699,
+      "scheme": "8",
+      "tariffCoeff": 0.6999,
+      "totalTariffRub": 187344,
+      "vatNote": "Сумма платежей / «Взыскано» = 187 344 ₽ (провозная плата, НДС статус уточнить)",
+      "perWagon": [
+        { "wagonNo": "52270238", "capacityT": 69.5, "netT": 67.60, "tariffRub": 31224 },
+        { "wagonNo": "63256044", "capacityT": 70.0, "netT": 68.60, "tariffRub": 31224 },
+        { "wagonNo": "65165441", "capacityT": 70.0, "netT": 68.80, "tariffRub": 31224 },
+        { "wagonNo": "65877649", "capacityT": 70.0, "netT": 68.50, "tariffRub": 31224 },
+        { "wagonNo": "63255889", "capacityT": 70.0, "netT": 68.50, "tariffRub": 31224 },
+        { "wagonNo": "65599458", "capacityT": 70.0, "netT": 68.40, "tariffRub": 31224 }
+      ]
+    },
+
+    "calibrationNotes": [
+      "Per-wagon sum verified EXACT: 6×31224 = 187 344 ₽ = квитанция «Взыскано».",
+      "KEY INSIGHT: tariffCoeff=0.6999 is IDENTICAL to EF164189 despite different distance (699 vs 2444 km) → коэффициент тарифа is NOT distance-dependent; it is a fixed scenario coef (own ПВ, class 1, ГО). All distance+weight dependence lives in the N8 base rate (weight×distance table).",
+      "CORRECTION to engine: own-wagon N8 path = N8_base(weightTier, distanceKm) × 0.6999 × indexation — NOT K1-as-(class,distance)-table. Foundation engine's K1 belt assumption must be replaced by N8 weight×distance lookup for own wagons.",
+      "At 699 km, 69.5т and 70т wagons BOTH → 31224 (weight tiers coarser at short haul than at 2444 km where 75т≠69.5т). Harness must pin the N8 weight-tier boundaries.",
+      "Cross-road route Сверд→Кбш — tests backbone graph beyond a single road.",
+      "Engine targets: distanceKm=699, tariffCoeff=0.6999, per-wagon=31224 ₽."
+    ]
+  },
+  {
+    "id": "RTARIFF-Elisenvaara-Elista",
+    "source": "R-Тариф Онлайн (R-Tariff, competitor calculator) screenshot v19.49, calc date 2026-05-21",
+    "sourceFile": "screenshot R-Тариф один вагон",
+    "asOfDate": "2026-05-21",
+    "origin": { "name": "Элисенваара", "esr": "023202", "road": "Окт" },
+    "dest": { "name": "Элиста", "esr": "528706", "road": "СКВ" },
+    "cargo": "Мрамор молотый",
+    "etsngCode": "232215",
+    "gngCode": "25174100",
+    "freightClass": 1,
+    "wagonType": "ПВ",
+    "ownership": "own",
+    "wagonModel": "кроме перечисленных (classic, NOT innovative → no 0.9595)",
+    "axles": 4,
+    "capacityT": 69,
+    "shipmentType": "group",
+    "traffic": "domestic",
+    "wagonCount": 6,
+    "weightTonsPerWagon": 70,
+    "ref": {
+      "distanceKm": 3108,
+      "tariffType": "ТР1",
+      "perWagonProvoznaya_noVat": 82816,
+      "vatRub": 18219.52,
+      "perWagonWithVat": 101035.52,
+      "per1tNoVat": 1183.09,
+      "per1tWithVat": 1443.36,
+      "deliveryDays": 12
+    },
+    "calibrationNotes": [
+      "VERIFIED EXACT (0₽) by our formula: N8base(70т,3108км)=192840 × 0.69993 × 0.9346 × K1(class1,3108)=0.65 × K4(ГО)=1.01 = 82816 ₽. НДС: 82816×1.22=101035.52 ✓.",
+      "THIRD independent oracle, DIFFERENT cargo (мрамор 232215, not щебень) — confirms the class-1 own-ПВ formula generalizes across cargos.",
+      "Confirms K4=1.01 for групповая at long haul (>2000km belt), consistent with 2444km case.",
+      "Confirms НДС 22% applied last on без-НДС total.",
+      "масса 70 > г/п 69 → charged on actual 70т (за-1т 1183.09 = 82816/70). Weight row = 70.",
+      "SOURCE IS R-ТАРИФ (calculator), not a РЖД квитанция — operator HAS R-Тариф access → can generate reference for ANY route on demand (huge for coverage validation)."
+    ]
+  }
+]

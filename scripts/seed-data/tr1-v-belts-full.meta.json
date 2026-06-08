@@ -1,0 +1,30 @@
+{
+  "dataset": "TR-1 2026 — вагонная составляющая общего парка (Тарифные схемы В1-В15, за один вагон, в рублях), Приложение N 2",
+  "source": "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-2/tarify-za-polzovanie-vagonov-obshchego/",
+  "fetchedAt": "2026-06-07",
+  "verifiedAt": "2026-06-07",
+  "verifyNote": "Values cross-checked against sudact.ru for В1/В2/В3 (0-5,6-10,11-15,16-20), В1 long-distance (5901-6100=33619, 11701-11900=60408), and axle-split structure (В7-4/В7-8, В15-4/В15-8) — all exact matches. Re-exported from tr1-rate-belts.json[schemesV_belt].",
+  "schemeNote": "В7 and В15 split by axle count: В7-4/В7-8, В15-4/В15-8 (4-осные / 8-осные). Schemes В1-В6, В8-В14 are single-column.",
+  "rateNote": "rateRub = за один вагон, в рублях, без НДС. ALREADY 2026-indexed (TR-1 2026 baseline). Distance-belt only (no weight dependence).",
+  "beltNote": "Distance belts are non-uniform and widen with distance (5km belts in short range, ~200km belts at long range). 127 belts per scheme, 0-11900 km. For an intermediate distance, snap to the published belt containing it.",
+  "schemes": [
+    "В1",
+    "В10",
+    "В11",
+    "В12",
+    "В13",
+    "В14",
+    "В15-4",
+    "В15-8",
+    "В2",
+    "В3",
+    "В4",
+    "В5",
+    "В6",
+    "В7-4",
+    "В7-8",
+    "В8",
+    "В9"
+  ],
+  "rowCount": 2159
+}
