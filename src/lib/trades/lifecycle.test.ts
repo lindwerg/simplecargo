@@ -15,8 +15,10 @@ describe("canTransition", () => {
     expect(canTransition("confirmed", "draft")).toBe(true);
   });
 
-  it("rejects skipping straight from draft to active", () => {
-    expect(canTransition("draft", "active")).toBe(false);
+  it("allows skipping straight from draft to active (ГУ fast-path)", () => {
+    // Мессенджер-флоу «Запроса»: согласовали ставку → дали ГУ под заадресацию → сразу
+    // «Исполнение», минуя формальную «Заявку» (документы позже).
+    expect(canTransition("draft", "active")).toBe(true);
   });
 
   it("rejects reopening a completed deal", () => {
