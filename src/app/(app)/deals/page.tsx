@@ -68,22 +68,25 @@ export default async function DealsPage({
 
   return (
     <div className="space-y-[var(--space-section)]">
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-semibold tracking-tight text-text">Сделки</h1>
-          <p className="mt-1 text-sm text-text-secondary">
-            Единая карточка: запрос → заявка → исполнение. Перевозка, щебень или щебень с доставкой.
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button asChild>
-            <Link href="/deals/new">
-              <Plus />
-              Новая сделка
-            </Link>
-          </Button>
-        </div>
+      <header className="min-w-0">
+        <h1 className="text-xl font-semibold tracking-tight text-text">Сделки</h1>
+        <p className="mt-1 max-w-prose text-sm text-text-secondary">
+          Единая карточка: запрос → заявка → исполнение. Перевозка, щебень или щебень с доставкой.
+        </p>
       </header>
+
+      <Link
+        href="/deals/new"
+        className="group flex w-full items-center gap-3 rounded-lg border border-border bg-surface-1 px-5 py-6 transition-transform duration-[var(--duration-fast)] ease-[var(--ease-out-quad)] hover:-translate-y-[2px] active:translate-y-0 active:opacity-90 focus-visible:outline-none focus-visible:[box-shadow:var(--ring-focus)] sm:w-fit"
+      >
+        <span className="flex size-11 shrink-0 items-center justify-center rounded-md bg-accent-quiet text-accent transition-transform group-hover:scale-105">
+          <Plus className="size-5" aria-hidden />
+        </span>
+        <span className="min-w-0">
+          <span className="block text-base font-semibold text-text">Новая сделка</span>
+          <span className="block text-xs text-text-tertiary">Запрос, перевозка или щебень</span>
+        </span>
+      </Link>
 
       <section aria-label="Воронка" className="grid grid-cols-3 gap-3">
         {DEAL_STAGES.map(({ stage: s, label, subtitle }) => {
