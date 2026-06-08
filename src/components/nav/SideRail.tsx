@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { BrandMark } from "@/components/nav/BrandMark";
 import { SignOutButton } from "@/components/nav/SignOutButton";
 import { NAV_ITEMS, isActive } from "@/components/nav/nav-items";
@@ -99,7 +98,6 @@ export function SideRail({ counts }: SideRailProps) {
       </ul>
 
       <div className="flex flex-col items-center gap-1 pt-2">
-        <ThemeToggle />
         <SignOutButton />
       </div>
     </nav>

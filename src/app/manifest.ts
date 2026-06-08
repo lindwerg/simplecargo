@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 // PWA manifest (P0-9). Next serves this at /manifest.webmanifest and auto-injects
 // the <link rel="manifest"> tag. No service worker yet (deferred to Phase 6) —
-// this only makes the app installable. Colors mirror the dark default theme
-// (ADR-D19); the same hexes back the <meta name="theme-color"> in layout.tsx.
+// this only makes the app installable. Цвета — светлой темы (PWA light-only);
+// те же хексы у <meta name="theme-color"> в layout.tsx.
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "SimpleCargo",
@@ -13,8 +13,8 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: "/dashboard",
     scope: "/",
     display: "standalone",
-    background_color: "#15161a",
-    theme_color: "#15161a",
+    background_color: "#fafbfc",
+    theme_color: "#fafbfc",
     icons: [
       {
         src: "/icons/icon-192.png",
