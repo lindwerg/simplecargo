@@ -1,49 +1,203 @@
-/* Партнёры — directory grid + company card. Colors from tokens.css only. */
+/* Партнёры — фильтр-карточки + список-полоски. Цвета только из tokens.css. */
 
-.partner-card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
-  gap: var(--space-4);
-  align-items: stretch;
+.partners-surface {
+  /* Per-category accents. Quarry has no semantic token → earthy local value. */
+  --rail-client: var(--color-info);
+  --rail-carrier: var(--color-warn);
+  --rail-quarry: oklch(62% 0.085 55);
+  --rail-quarry-quiet: oklch(62% 0.085 55 / 0.14);
 }
 
-.partner-card {
-  position: relative;
+/* Quarry role badge — earthy tint (no semantic token for quarries). */
+.partner-badge--quarry {
+  color: var(--rail-quarry);
+  background: var(--rail-quarry-quiet);
+}
+
+/* ── Filter cards (Клиенты / Перевозчики / Карьеры) ───────────────────────── */
+.partner-filters {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+}
+@media (min-width: 640px) {
+  .partner-filters {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.partner-filter {
+  --rail: var(--color-border-strong);
+  --rail-quiet: var(--color-surface-3);
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: var(--space-3);
   border-radius: var(--radius-lg);
   background: var(--color-surface-2);
   border: 1px solid var(--color-border);
-  border-left-width: 3px;
-  border-left-color: var(--color-border-strong);
-  padding: var(--space-4);
-  box-shadow: var(--elev-2);
+  padding: var(--space-3) var(--space-4);
+  box-shadow: var(--elev-1);
   transition:
     transform var(--duration-fast) var(--ease-out-quad),
-    box-shadow var(--duration-fast) var(--ease-out-quad);
+    box-shadow var(--duration-fast) var(--ease-out-quad),
+    border-color var(--duration-fast) var(--ease-out-quad);
 }
-.partner-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--elev-3);
+.partner-filter--client {
+  --rail: var(--rail-client);
+  --rail-quiet: var(--color-info-quiet);
 }
-.partner-card:active {
-  transform: translateY(0);
+.partner-filter--carrier {
+  --rail: var(--rail-carrier);
+  --rail-quiet: var(--color-warn-quiet);
 }
-.partner-card:focus-within {
+.partner-filter--quarry {
+  --rail: var(--rail-quarry);
+  --rail-quiet: var(--rail-quarry-quiet);
+}
+.partner-filter:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--elev-2);
+  border-color: var(--rail);
+}
+.partner-filter:focus-visible {
+  outline: none;
+  box-shadow: var(--ring-focus);
+}
+.partner-filter--active {
+  border-color: var(--rail);
+  box-shadow:
+    inset 3px 0 0 0 var(--rail),
+    var(--elev-2);
+  background: var(--rail-quiet);
+}
+
+.partner-filter__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  color: var(--rail);
+  background: var(--rail-quiet);
+}
+.partner-filter__body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+}
+.partner-filter__label {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+}
+.partner-filter__hint {
+  font-size: var(--text-2xs);
+  color: var(--color-text-tertiary);
+  margin-top: 0.125rem;
+}
+.partner-filter__count {
+  margin-left: auto;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  color: var(--color-text);
+}
+.partner-filter:not(.partner-filter--active) .partner-filter__count {
+  color: var(--color-text-secondary);
+}
+
+/* ── Directory list of strips ─────────────────────────────────────────────── */
+.partner-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.partner-strip {
+  --rail: var(--color-border-strong);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--rail);
+  padding: var(--space-3) var(--space-4);
+  transition:
+    transform var(--duration-fast) var(--ease-out-quad),
+    box-shadow var(--duration-fast) var(--ease-out-quad),
+    background var(--duration-fast) var(--ease-out-quad);
+}
+.partner-strip--client { --rail: var(--rail-client); }
+.partner-strip--carrier { --rail: var(--rail-carrier); }
+.partner-strip--quarry { --rail: var(--rail-quarry); }
+.partner-strip:hover {
+  transform: translateX(2px);
+  background: var(--color-surface-3);
+  box-shadow: var(--elev-1);
+}
+.partner-strip:focus-within {
+  outline: none;
   box-shadow: var(--ring-focus);
 }
 
-/* Left rail tint by primary role — a quick visual sort in the grid. */
-.partner-card--client { border-left-color: var(--color-info); }
-.partner-card--owner { border-left-color: var(--color-success); }
-.partner-card--expeditor { border-left-color: var(--color-accent); }
+.partner-strip__main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.partner-strip__name {
+  font-size: var(--text-md);
+  line-height: 1.3;
+  color: var(--color-text);
+  /* keep names to two lines max so strips stay even */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.partner-strip__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.partner-strip__metrics {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+.partner-strip__chevron {
+  flex-shrink: 0;
+}
+
+/* Stack metrics under the name on narrow viewports. */
+@media (max-width: 639px) {
+  .partner-strip {
+    flex-wrap: wrap;
+  }
+  .partner-strip__main {
+    flex-basis: 100%;
+  }
+  .partner-strip__chevron {
+    display: none;
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .partner-card {
+  .partner-filter,
+  .partner-strip {
     transition: box-shadow var(--duration-fast) linear;
   }
-  .partner-card:hover {
+  .partner-filter:hover,
+  .partner-strip:hover {
     transform: none;
   }
 }
