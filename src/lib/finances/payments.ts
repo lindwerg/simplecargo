@@ -10,7 +10,7 @@ import {
   NON_BUDGET_TAX_INFO,
   type PaymentForSignPayload,
 } from "./tochka-client";
-import { sanitizePaymentPurpose } from "./payment-purpose";
+import { sanitizeCounterpartyName, sanitizePaymentPurpose } from "./payment-purpose";
 
 // Платежи: создание черновика «на подписание» + опрос статуса. Банк деньги не
 // списывает — подписывает директор в интернет-банке.
@@ -72,6 +72,9 @@ export async function createPaymentDraft(
   if (purpose.length > MAX_PURPOSE) {
     throw new PaymentError(422, `Назначение длиннее ${MAX_PURPOSE} символов`);
   }
+  // Имя получателя без «ёлочек»/кавычек — иначе Точка отбивает for-sign с 400.
+  const counterpartyName = sanitizeCounterpartyName(input.counterpartyName);
+  if (!counterpartyName) throw new PaymentError(422, "Не указан получатель");
   if (!(input.amount > 0)) throw new PaymentError(422, "Сумма должна быть больше нуля");
 
   const [account] = await db
@@ -88,7 +91,7 @@ export async function createPaymentDraft(
     bankCode: bicFromAccount || env.TOCHKA_PAYER_BIC,
     counterpartyAccountNumber: input.counterpartyAccount,
     counterpartyBankBic: input.counterpartyBankBic,
-    counterpartyName: input.counterpartyName,
+    counterpartyName,
     paymentAmount: input.amount,
     paymentDate: input.paymentDate,
     paymentPurpose: purpose,
@@ -116,7 +119,7 @@ export async function createPaymentDraft(
       paymentDate: input.paymentDate,
       paymentNumber: input.paymentNumber ?? null,
       purpose,
-      counterpartyName: input.counterpartyName,
+      counterpartyName,
       counterpartyInn: input.counterpartyInn ?? null,
       counterpartyKpp: input.counterpartyKpp ?? null,
       counterpartyAccount: input.counterpartyAccount,

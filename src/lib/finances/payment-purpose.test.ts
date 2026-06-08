@@ -1,7 +1,26 @@
 import { describe, expect, it } from "vitest";
 
-import { buildPaymentPurpose, sanitizePaymentPurpose } from "./payment-purpose";
+import {
+  buildPaymentPurpose,
+  sanitizeCounterpartyName,
+  sanitizePaymentPurpose,
+} from "./payment-purpose";
 import { vatFromGross } from "@/lib/format";
+
+describe("sanitizeCounterpartyName", () => {
+  it("убирает «ёлочки», которые Точка запрещает в имени получателя", () => {
+    expect(sanitizeCounterpartyName("ООО «Яндекс.Такси»")).toBe("ООО Яндекс.Такси");
+  });
+
+  it("убирает прямые и типографские кавычки, схлопывает пробелы", () => {
+    expect(sanitizeCounterpartyName('ООО  "Ромашка"')).toBe("ООО Ромашка");
+    expect(sanitizeCounterpartyName("ООО „Берёзка“")).toBe("ООО Берёзка");
+  });
+
+  it("обрезает слишком длинное имя", () => {
+    expect(sanitizeCounterpartyName("А".repeat(200)).length).toBeLessThanOrEqual(160);
+  });
+});
 
 describe("vatFromGross", () => {
   it("извлекает НДС из суммы с НДС", () => {

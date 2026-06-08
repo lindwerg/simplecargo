@@ -20,6 +20,26 @@ export class TochkaError extends Error {
   }
 }
 
+/** Достать человекочитаемую причину из тела ответа Точки (формат
+ *  `{ Errors: [{ message }], message }`), чтобы показать оператору, ЧТО не так,
+ *  а не просто «ошибка 400». Возвращает короткую строку или null. */
+export function tochkaErrorDetail(err: TochkaError): string | null {
+  const body = err.body as
+    | { Errors?: Array<{ message?: unknown }>; message?: unknown }
+    | string
+    | undefined;
+  if (!body) return null;
+  if (typeof body === "string") return body.slice(0, 300) || null;
+  const fromList = Array.isArray(body.Errors)
+    ? body.Errors.map((e) => (typeof e?.message === "string" ? e.message : null))
+        .filter(Boolean)
+        .join("; ")
+    : "";
+  if (fromList) return fromList.slice(0, 300);
+  if (typeof body.message === "string" && body.message) return body.message.slice(0, 300);
+  return null;
+}
+
 interface TochkaConfig {
   baseUrl: string;
   token: string;
