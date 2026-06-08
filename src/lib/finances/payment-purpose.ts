@@ -26,6 +26,22 @@ export function sanitizePaymentPurpose(s: string): string {
     .trim();
 }
 
+// Точка запрещает «ёлочки» « » (и прочие кавычки) в имени получателя — иначе
+// for-sign падает с 400 «forbidden symbols: », «». Чистим так же, как назначение.
+const MAX_COUNTERPARTY_NAME = 160;
+
+/** Имя получателя без запрещённых Точкой символов (« » " → убрать), ≤160 симв. */
+export function sanitizeCounterpartyName(s: string): string {
+  const cleaned = s
+    .replace(/[‒–—―−]/g, "-")
+    .replace(/[«»"„“”]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  return cleaned.length <= MAX_COUNTERPARTY_NAME
+    ? cleaned
+    : cleaned.slice(0, MAX_COUNTERPARTY_NAME).trimEnd();
+}
+
 /** «2026-06-01» → «01.06.2026». Невалидную/пустую дату возвращаем как есть (без времени). */
 function ruDate(value: string | null | undefined): string | null {
   if (!value) return null;
