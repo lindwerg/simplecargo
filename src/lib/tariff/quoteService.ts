@@ -9,6 +9,7 @@
 // (ЭФ164189 2444 km = 1 067 770 ₽; ЭТ201459 699 km = 187 344 ₽).
 
 import { resolveDistance } from "@/lib/distance/repository";
+import { isForeignEsr } from "@/lib/distance/foreignStations";
 import { loadEtsngFromSeed } from "@/lib/tariff/seedLoader";
 import {
   computeQuoteN8,
@@ -97,6 +98,12 @@ export async function computeRzdQuote(input: QuoteInput): Promise<QuoteResult> {
 
   // ── 3. Scope guard — refuse to price outside the validated contour ──────────
   const outOfScope: string[] = [];
+  // International (cross-border) is a DIFFERENT tariff regime, not domestic ТР-1 2026:
+  // per-administration segmentation + different VAT. Refuse a domestic price rather than
+  // silently return a wrong number — the distance (if it resolves) is still shown.
+  const international = isForeignEsr(input.originEsr) || isForeignEsr(input.destEsr);
+  if (international)
+    outOfScope.push("международная перевозка (станция СНГ/Балтии) — домашний ТР-1 2026 не применим");
   if (input.ownership !== "own")
     outOfScope.push("вагонная составляющая РЖД-парка (В) не считается — только собственный/арендованный");
   if (input.wagonType !== "полувагон")
@@ -121,6 +128,7 @@ export async function computeRzdQuote(input: QuoteInput): Promise<QuoteResult> {
       totalWithVat: null,
       warnings: [
         "Расстояние не определено: граф не нашёл тарифного маршрута (нет ребра Книги 3 или станция в карантине).",
+        ...outOfScope,
         ...dist.warnings,
         ...warnings,
       ],
