@@ -14,7 +14,6 @@ import { requestLines, requests } from "@/lib/db/schema/requests";
 import { listStoneLines } from "@/lib/trades/stoneRepository";
 import { listMonthlyRates } from "@/lib/trades/monthlyRateRepository";
 import { Button } from "@/components/ui/button";
-import { DealTabs, isDealTab, type DealTab } from "@/components/trades/DealTabs";
 import { dealStatusMeta } from "@/components/trades/dealStatusMeta";
 import { dealTypeLabel } from "@/components/trades/dealTypeMeta";
 import { stageForStatus } from "@/components/trades/dealStageMeta";
@@ -36,13 +35,11 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
 type Ctx = {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ tab?: string }>;
 };
 
-export default async function DealCardPage({ params, searchParams }: Ctx) {
+export default async function DealCardPage({ params }: Ctx) {
   const { id } = await params;
   if (!UUID_RE.test(id)) notFound();
-  const { tab } = await searchParams;
 
   const [deal] = await db
     .select({
@@ -68,9 +65,10 @@ export default async function DealCardPage({ params, searchParams }: Ctx) {
 
   if (!deal) notFound();
 
-  // Дефолт-таб по стадии воронки (draft→Запрос, confirmed→Заявка, active/completed→Исполнение);
-  // явный ?tab= уважается. cancelled (архив) открываем на «Запросе».
-  const activeTab: DealTab = isDealTab(tab) ? tab : (stageForStatus(deal.status) ?? "request");
+  // Карточка показывает ТОЛЬКО текущую стадию воронки — без вкладок-переключателей.
+  // «Заявка» и «Исполнение» появляются сами, когда сделка туда дойдёт (status меняется):
+  // draft→Запрос, confirmed→Заявка, active/completed→Исполнение, cancelled(архив)→Запрос.
+  const stage = stageForStatus(deal.status) ?? "request";
 
   const dirRows = await db
     .select({
@@ -232,9 +230,7 @@ export default async function DealCardPage({ params, searchParams }: Ctx) {
         </div>
       </header>
 
-      <DealTabs basePath={`/deals/${id}`} active={activeTab} />
-
-      {activeTab === "request" && (
+      {stage === "request" && (
         <RequestWorksheet
           dealId={id}
           status={deal.status}
@@ -245,10 +241,10 @@ export default async function DealCardPage({ params, searchParams }: Ctx) {
           initial={worksheetInitial}
         />
       )}
-      {activeTab === "application" && (
+      {stage === "application" && (
         <ApplicationTab dealId={id} directions={dirs} stoneLines={stoneLines} emailsByDir={emailsByDir} />
       )}
-      {activeTab === "execution" && <ExecutionPanel directions={dirs} />}
+      {stage === "execution" && <ExecutionPanel directions={dirs} />}
     </div>
   );
 }
