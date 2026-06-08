@@ -147,8 +147,10 @@ describe("N8 tariff engine — per-wagon breakdown sanity checks", () => {
     expect(result.wagons[0].k4Fitted).toBe(false);
   });
 
-  it("K4 at 699 km is fitted (belt-boundary uplift applied)", () => {
+  it("K4 at 699 km is SOURCED (not fitted) — exact п.16.7 base-delta mechanism", () => {
+    // Lever killed: the old SHORT_HAUL_BOUNDARY_UPLIFT fit is gone — 31224 ₽ now follows from
+    // the verbatim п.16.7 max-of-two base-delta + ×1,01 доп.индексация (decoded from R-Тариф).
     const result = computeQuoteN8(ET_WAGONS, data, 699);
-    expect(result.wagons[0].k4Fitted).toBe(true);
+    expect(result.wagons[0].k4Fitted).toBe(false);
   });
 });

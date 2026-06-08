@@ -39,6 +39,14 @@ export const OWN_GONDOLA_CLASS_FACTOR: Readonly<Record<1 | 2 | 3, number>> = {
 export const C_INNOVATIVE = 0.9595;
 
 /**
+ * Коэффициент дополнительной индексации (×1,01). Applied to EVERY loaded ТР-1 calc — every
+ * one of the 11 R-Тариф reference расчётов shows «1,01 Коэффициент дополнительной индексации»
+ * as the final factor. Earlier this was wrongly folded into «K4 = 1.01» at >2000 km, which is
+ * what made the long-haul K4 look fitted/inferred. It is a real, separate coefficient.
+ */
+export const C_DOP_INDEX = 1.01;
+
+/**
  * SOURCED-OFFICIAL innovative полувагон model registry → scheme N8 ×0.9595.
  *
  * ТР-1 2026 has NO generic "innovative" flag — the 0,9595 льгота attaches to specific
@@ -104,7 +112,6 @@ export function isInnovativeN8(
  *
  * FITTED flag is set on any K4Resolution that uses this multiplier.
  */
-const SHORT_HAUL_BOUNDARY_UPLIFT = 1.0057499686370497;
 
 // ── Data shapes ───────────────────────────────────────────────────────────────
 
@@ -174,62 +181,53 @@ function k4At(
 }
 
 /**
- * K4 отправочный with п.16.7 belt-boundary max-of-two.
+ * K4 отправочный — EXACT ТР-1 п.16.7 mechanism, decoded from 11 R-Тариф reference расчётов
+ * (scripts/seed-data/reference-quotes-rtariff.json). K4 is NOT a multiplicative factor on the
+ * final plata — it is an ADDITIVE adjustment to the Схема-8 base, taken as the larger by
+ * ABSOLUTE VALUE of two candidates (п.16.7.3 «max-of-two»):
  *
- * Long-haul (>2000 km): row '6-20' @ >2000 = 1.00 vs row '1' @ >2000 = 1.01 → max = 1.01.
- * This reproduces the 2444 km oracle exactly.
+ *   candHi = база(факт_км)            × (k_текущего_пояса − 1)
+ *   candLo = база(нижняя_граница_км)  × (k_предыдущего_пояса − 1)   [0 в первом поясе]
+ *   плата_после_K4 = база + знаковый_max(candLo, candHi)
  *
- *   ⚠️ DOCUMENTED CONTRADICTION (TARIFF_FILL_PLAN.md item 9 / Lever 2 — do NOT flip to 1.00):
- *   Verbatim п.17.1 (ТР-1 894/25) routes a групповая отправка by wagon count → row '6-20' →
- *   1.00 at >2000 km. BUT two INDEPENDENT paid oracles both demand 1.01:
- *     • ЭФ164189 Возрождение→Гремячая 2444 km (15-wag групповая) → 1 067 770 ₽ only with K4=1.01.
- *     • R-Тариф Элисенваара→Элиста 3108 km (6-wag групповая, confirmed) → 82816 ₽/ваг only with 1.01.
- *   So a "wrong wagon count" cannot be the general explanation. We keep max-of-two → 1.01
- *   (empirically oracle-validated, 2 points) and flag fitted=false, while explicitly recording
- *   that the WHY-1.01 clause is not yet source-traced (basis is empirical, see TARIFF_RULES_EXACT.md
- *   п.16.7.1-3 / 17.1 / 17.2). NEEDS-DATA: a clause promoting групповая to row 1 at long haul,
- *   or a 3rd long-haul групповая reference. Mirror note in tr1-k4-corrected._meta.
- *
- * Short-haul (≤2000 km): the sourced belt row '6-20' @ 511-1000 = 0.98 under-charges the
- * 699 km oracle by a factor of 1.0057499686370497. Applied as SHORT_HAUL_BOUNDARY_UPLIFT
- * (FITTED). The belt-boundary mechanism itself IS now sourced — п.16.7.1/16.7.2/16.7.3 (max
- * absolute value of the two corrections) + the п.17.2 floor, verbatim in
- * docs/planning/TARIFF_RULES_EXACT.md. But that verbatim max-of-two does NOT reproduce the
- * 699 km квитанция (ЭТ201459, 31224 ₽/ваг); the residual 1.00575 stays a pure fit constant
- * (most likely hiding in K1(699) or the assumed 70t weight-row, NOT in K4 — see Lever 1).
+ * Returns the EFFECTIVE factor (база + delta)/база so the caller keeps its multiplicative chain.
+ * The separate доп.индексация ×1,01 (C_DOP_INDEX) is applied by the caller. This REPLACES the
+ * old fitted SHORT_HAUL_BOUNDARY_UPLIFT (699 km) and the «K4=1.01» long-haul fold — both were
+ * numerical compensations for this exact mechanism + the missing ×1,01. Verified: all 11 R-Тариф
+ * расчётов + both квитанции (1 067 770 / 187 344) reproduce to the ruble. `fitted` now always false.
  */
 export function resolveK4(
   belts: readonly N8K4Belt[],
+  grid: readonly N8Cell[],
+  capacityT: number,
   wagonCount: number,
   distKm: number,
+  baseRate: number,
 ): K4Resolution {
   const group = k4GroupForWagons(wagonCount);
-  const inBelt = k4At(belts, group, distKm);
-  if (!inBelt) {
+  const cur = k4At(belts, group, distKm);
+  if (!cur) {
     throw new Error(`K4: нет Табл.5 строки '${group}' на ${distKm} км`);
   }
 
-  // п.16.7 belt-boundary max-of-two: row '1' (повагонная) vs. wagon-count row.
-  const row1 = k4At(belts, "1", distKm);
-  const maxOfTwo = row1 ? Math.max(inBelt.k, row1.k) : inBelt.k;
+  const candHi = baseRate * (cur.k - 1);
 
-  if (distKm > 2000) {
-    return {
-      k4: maxOfTwo,
-      basis:
-        `Табл.5 max-of-two: row '${group}'=${inBelt.k} vs row '1'=${row1?.k ?? "—"} → ${maxOfTwo} (п.16.7, sourced)`,
-      fitted: false,
-    };
+  // Lower belt boundary (510 / 1000 / 2000) = upper edge of the previous belt for this row.
+  const lowerKm = cur.distFromKm - 1;
+  const prev = belts.find((b) => b.shipmentGroup === group && b.distToKm === lowerKm);
+  let candLo = 0;
+  if (prev && lowerKm >= 1) {
+    candLo = n8base(grid, capacityT, lowerKm) * (prev.k - 1);
   }
 
-  // Short-haul: the sourced max-of-two gives 0.98 for 699 km but the oracle demands 31224.
-  // Apply the fitted belt-boundary uplift to close the gap.
-  const k4 = inBelt.k * SHORT_HAUL_BOUNDARY_UPLIFT;
+  const delta = Math.abs(candLo) >= Math.abs(candHi) ? candLo : candHi;
+  const k4 = (baseRate + delta) / baseRate;
   return {
     k4,
     basis:
-      `Табл.5 row '${group}'@${inBelt.distFromKm}-${inBelt.distToKm}=${inBelt.k} × belt-boundary uplift ${SHORT_HAUL_BOUNDARY_UPLIFT.toFixed(7)} = ${k4.toFixed(7)} (FITTED)`,
-    fitted: true,
+      `п.16.7 max(|база(${lowerKm})×${prev ? (prev.k - 1).toFixed(2) : "0"}|, ` +
+      `|база(${distKm})×${(cur.k - 1).toFixed(2)}|) = ${delta.toFixed(2)} → ×${k4.toFixed(6)} (sourced)`,
+    fitted: false,
   };
 }
 
@@ -328,13 +326,13 @@ export function computeWagonN8(
 
   const baseRate = n8base(data.n8Grid, w.capacityT, distKm);
   const k1 = computeK1N8(data.classCoeff, distKm);
-  const k4r = resolveK4(data.k4Belts, wagonCount, distKm);
+  const k4r = resolveK4(data.k4Belts, data.n8Grid, w.capacityT, wagonCount, distKm, baseRate);
 
   // Innovative resolution: derive from the SOURCED model registry when a model string is
   // supplied (lever #3 data-half), else fall back to the caller boolean (golden-test path).
   const innovative = isInnovativeN8(w.innovative, w.wagonModel);
 
-  let raw = baseRate * C_NERUD_PV * C_OWN_PV_CLASS1 * k1 * k4r.k4;
+  let raw = baseRate * C_NERUD_PV * C_OWN_PV_CLASS1 * k1 * k4r.k4 * C_DOP_INDEX;
   if (innovative) raw *= C_INNOVATIVE;
 
   return {
