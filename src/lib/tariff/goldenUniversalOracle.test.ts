@@ -288,8 +288,15 @@ describe("UNIFIED ENGINE — R-Тариф 3108km мрамор 70т loaded = 8281
 describe("PARITY: unified loadedTariff === computeQuoteN8.tariffRub", () => {
   const n8data = loadN8DataForParity();
 
-  it("70т classic @2444km: both = 72005 ₽", () => {
-    const n8r = computeQuoteN8([{ wagonNo: "t", capacityT: 70, innovative: false }], n8data, 2444);
+  it("70т classic @2444km групповая: both = 72005 ₽", () => {
+    // 6 wagons → групповая (matches the universal shipmentType:'group'). A single-wagon N8 call
+    // is повагонная, which the exact п.16.7 mechanism now (correctly) prices higher than групповая.
+    const n8Wagons: N8WagonInput[] = Array.from({ length: 6 }, (_, i) => ({
+      wagonNo: String(i + 1),
+      capacityT: 70,
+      innovative: false,
+    }));
+    const n8r = computeQuoteN8(n8Wagons, n8data, 2444);
     const unir = computeTariffPure(makeInput({ actualWeightTons: 70 }), makeSeedDataWithOwnGondola(2444));
     expect(n8r.wagons[0].tariffRub).toBe(72005);
     expect(loadedTariff(unir)).toBe(72005);
@@ -313,8 +320,13 @@ describe("PARITY: unified loadedTariff === computeQuoteN8.tariffRub", () => {
     expect(loadedTariff(unir)).toBe(n8r.wagons[0].tariffRub);
   });
 
-  it("70т classic @3108km: both = 82816 ₽ (R-Тариф мрамор)", () => {
-    const n8r = computeQuoteN8([{ wagonNo: "t", capacityT: 70, innovative: false }], n8data, 3108);
+  it("70т classic @3108km групповая: both = 82816 ₽ (R-Тариф мрамор)", () => {
+    const n8Wagons: N8WagonInput[] = Array.from({ length: 6 }, (_, i) => ({
+      wagonNo: String(i + 1),
+      capacityT: 70,
+      innovative: false,
+    }));
+    const n8r = computeQuoteN8(n8Wagons, n8data, 3108);
     const unir = computeTariffPure(
       {
         originEsr: "010800",
