@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 import { TariffCalculator } from "@/components/tariff/TariffCalculator";
+import { VoiceQuote } from "@/components/tariff/VoiceQuote";
 
 export const metadata = { title: "Калькулятор тарифа — SimpleCargo" };
 
@@ -25,6 +26,7 @@ export default async function TariffPage() {
         </p>
       </header>
 
+      <VoiceQuote />
       <TariffCalculator />
     </div>
   );

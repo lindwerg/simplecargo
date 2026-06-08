@@ -66,7 +66,7 @@ export interface QuoteResult {
   readonly warnings: readonly string[];
 }
 
-function lookupEtsng(
+export function lookupEtsng(
   code: string,
 ): { tariffClass: 1 | 2 | 3; name: string } | null {
   const catalog = loadEtsngFromSeed();
