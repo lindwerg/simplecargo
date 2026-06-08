@@ -1,0 +1,47 @@
+{
+ "_meta": {
+  "what": "Enumeration of узлы with a FIXED внутриузловой tariff distance — CLOSED at exactly 2.",
+  "provenance": "sourced-official — consultant.ru LAW_63243 (ТР-4 кн.1, Приказ МПС 55/2003), Минтранс 313/2024; verbatim cross-confirmed.",
+  "verifiedReal": true,
+  "from": "acq-uzel-other.json",
+  "answer": "Only «Московский узел» (54 км) and «Санкт-Петербургский узел» (25 км) carry a fixed-km adder. Екатеринбург/Новосибирск/Челябинск are ordinary Книга-3 ТП (no adder).",
+  "consolidatedOn": "2026-06-08"
+ },
+ "uzly": [
+  {
+   "hub": "Московский узел",
+   "esr": "000015",
+   "km": 54,
+   "exclusion": "same-radial-line: NOT added if wagon enters AND exits the узел on the same radial line of the Малое кольцо; passenger/baggage variant = 20 км",
+   "current_wording_2026": "Малое кольцо Московской ж.д. (10 radial directions, 22 connecting branches) per Минтранс №313/2024",
+   "label": "sourced-official",
+   "source": "https://www.consultant.ru/document/cons_doc_LAW_63243/7cfc044bbc8e0bf36505b5e36d4c3331affe0a1e/"
+  },
+  {
+   "hub": "Санкт-Петербургский узел",
+   "esr": "000023",
+   "km": 25,
+   "exclusion": "same-radial-line: NOT added if wagon enters AND exits on the same radial line of the СПб узел",
+   "label": "sourced-official",
+   "source": "https://www.consultant.ru/document/cons_doc_LAW_63243/7cfc044bbc8e0bf36505b5e36d4c3331affe0a1e/"
+  }
+ ],
+ "other_uzly_with_fixed_distance": [],
+ "explicitly_checked_and_NOT_fixed_km_uzly": [
+  {
+   "city": "Екатеринбург (Екатеринбург-Сортировочный)",
+   "status": "major транзитный пункт / узловая станция in Книга 3, distance read from ТП↔ТП backbone — NO fixed-km узел adder",
+   "label": "sourced-official (absence verified)"
+  },
+  {
+   "city": "Новосибирск (Инская)",
+   "status": "major sorting ТП in Книга 3 — NO fixed-km узел adder",
+   "label": "sourced-official (absence verified)"
+  },
+  {
+   "city": "Челябинск",
+   "status": "major ТП in Книга 3 — NO fixed-km узел adder",
+   "label": "sourced-official (absence verified)"
+  }
+ ]
+}

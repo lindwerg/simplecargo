@@ -1,0 +1,67 @@
+{
+  "_meta": {
+    "task": "ACQUIRE container scheme + 2026 +5% reference — validate TR-1 2026 container schemes (N85-N94) and confirm/measure the container +5% 2026 indexation",
+    "fetchedAt": "2026-06-08",
+    "asOf": "2026",
+    "found": "partial",
+    "summary": "The +5% container indexation for 2026 (excluding thermal containers) is CONFIRMED IN FORCE by multiple official-press sources — CONTRADICTING the current seed which marks it cancelled. It is a separate indexation multiplier (x1.05) applied ON TOP of the TR-1 container scheme tariff plate (schemes 85-94), NOT a clause inside the 894/25 order body. A concrete pure-TR container ruble reference total could NOT be obtained for free (calculators need JS/captcha form interaction; shared Playwright browser was contended; commercial 'from X' quotes include forwarder margin and are not TR-validation-grade).",
+    "killsLever": "Lever-3 container scheme stub: confirms plus5applied=true is the correct 2026 basis and that it stacks on the scheme plate, not the base-table +10%. Does NOT fully close it — still missing a ruble reference to validate schemes 85-94 to the kopeck."
+  },
+
+  "plus5_container_indexation_2026": {
+    "appliesFor2026": true,
+    "multiplier": 1.05,
+    "status": "IN FORCE (sourced-official-press / inferred-from-pattern)",
+    "excludes": "термические контейнеры (thermal containers) — explicitly excluded",
+    "basis": "ADDITIONAL indexation (дополнительная индексация) applied to the container transport tariff plate, i.e. x1.05 ON TOP of the TR-1 2026 container scheme result (schemes 85-94). It is NOT inside the 894/25 order text (verified: section II of приказ 894/25 on sudact contains the container Table 24 schemes but NO +5% clause). It is a parallel indexation measure like the +10% general (already baked into base tables) and the +1% targeted (приказ 88/26).",
+    "verbatim": "Дополнительная индексация тарифов на контейнерные перевозки (за исключением перевозок в термических контейнерах) предусматривается в 2026 г. на 5%",
+    "stacking": {
+      "plus10_general": "Already embedded in TR-1 2026 Приложение N2 base tables (from 2025-12-01). Do NOT re-apply to scheme A/B.",
+      "plus5_container": "x1.05 applied to the container scheme plata (A + B*KL). Non-thermal containers only.",
+      "plus1_targeted": "+1% (x1.01) targeted surcharge from приказ ФАС 88/26 (13.02.2026), effective 2026-03-01..2027-02-28, applies to тарифы/сборы/плата broadly — verify whether it also multiplies container plata."
+    },
+    "contradicts_seed": "scripts/seed-data/tr1-special-rules.json and tr1-coefficients.json currently set container +5% appliesFor2026=false / skipSeed=true citing a Dec-2025 trans.ru/rzd-partner 'cancellation expected' signal. That signal did NOT hold: the dominant later-dated official-press sources (Interfax, metalinfo, growex, dp.ru Jan-2026) confirm the +5% is provided for 2026. RECOMMEND flipping the seed to appliesFor2026=true (x1.05, exclude thermal).",
+    "confidence": "sourced-unofficial (official-press consensus; not byte-verbatim from a registered индексация приказ — the +5% lives in a separate indexation order whose registered number was not isolated for free)"
+  },
+
+  "container_schemes_table24": {
+    "source": "Приказ ФАС России от 06.11.2025 N 894/25 (ред. 13.02.2026), Приложение N1, разд. II, Таблица N 24 (подпункт 23.2 п.23), via sudact.ru — format: тарифная плата = A + B x KL (руб./контейнер), KL = distance belt factor (Книга-1)",
+    "note": "A/B already present in repo seed (tr1-special-rules.json container.schemeBased). Re-confirmed scheme numbering 85-89 (общий парк) and 90-94 (собств./аренд.) against sudact section-II structure. A/B numeric values were NOT byte-re-verified this pass (sudact Table-24 raw values not rendered in fetch; consultant.ru on time-window paywall). Treat A/B as 'extracted, re-verify before billing-grade'.",
+    "schemes": [
+      { "container": "3 т среднетоннажный", "ownership": "общий парк", "scheme": "85" },
+      { "container": "5 т среднетоннажный", "ownership": "общий парк", "scheme": "86" },
+      { "container": "10 т", "ownership": "общий парк", "scheme": "87" },
+      { "container": "крупнотоннажный 20ft (свыше 10т до 30фут)", "ownership": "общий парк", "scheme": "88" },
+      { "container": "крупнотоннажный 40ft (свыше 30 до 40фут)", "ownership": "общий парк", "scheme": "89" },
+      { "container": "3 т среднетоннажный", "ownership": "собств./аренд.", "scheme": "90" },
+      { "container": "5 т среднетоннажный", "ownership": "собств./аренд.", "scheme": "91" },
+      { "container": "10 т", "ownership": "собств./аренд.", "scheme": "92" },
+      { "container": "крупнотоннажный 20ft", "ownership": "собств./аренд.", "scheme": "93" },
+      { "container": "крупнотоннажный 40ft", "ownership": "собств./аренд.", "scheme": "94" }
+    ]
+  },
+
+  "reference_route": {
+    "found": false,
+    "route": null,
+    "scheme": null,
+    "plus5applied": null,
+    "total": null,
+    "reason": "No free source produced a pure-TR container тарифная плата to the ruble. Official РЖД calc (cargolk.rzd.ru) requires login + modern-browser gate. Free JS calculators (metallplace.ru/Rail supports containers; gruzivagon.info) require interactive form submission — the shared Playwright browser was in use by other agents the whole window ('Browser is already in use ... use --isolated'), and WebFetch cannot run their JS. Forwarder calculators (alta/altk, lmove, jdcontainer) only show commercial 'от X' prices (e.g. Moscow-Yekaterinburg 20/40ft от 142 000 ₽, Moscow-Novosibirsk от 96 000 ₽) which embed forwarder margin + terminal + plus-loads and are NOT the TR tariff plate.",
+    "commercial_only_samples_NOT_validation_grade": [
+      { "route": "Москва — Екатеринбург", "container": "20/40ft", "price_rub": "от 142000", "source": "alta.ru/altk forwarder list", "note": "commercial, includes margin — NOT TR plate" },
+      { "route": "Москва — Новосибирск", "container": "20/40ft", "price_rub": "от 96000", "source": "alta.ru/altk forwarder list", "note": "commercial, NOT TR plate" }
+    ],
+    "next_step_to_close": "Use Playwright with --isolated (or retry when shared browser frees) on metallplace.ru/Rail: select rolling stock 'Контейнер крупнотоннажный 20ft', a concrete RF station pair with known KL distance, общий парк, a class-low ETSNG, submit, read the тариф. Then check whether that calc already includes the +5% (compare to A+B*KL hand-calc) — that both validates schemes 85-94 AND reveals whether +5% is auto-applied."
+  },
+
+  "sources": [
+    { "url": "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/ii/", "official": true, "what": "TR-1 894/25 (ред.13.02.2026) Прил.N1 разд.II — container Table 24 schemes 85-94; verified NO +5% clause inside order body" },
+    { "url": "https://www.interfax.ru/russia/1053552", "official": false, "what": "Interfax: 'Дополнительная индексация тарифов на контейнерные перевозки (за исключением перевозок в термических контейнерах) предусматривается в 2026 г. на 5%'" },
+    { "url": "https://www.metalinfo.ru/ru/news/177745", "official": false, "what": "Metalinfo: FAS 5% container indexation 2026, excl. thermal containers" },
+    { "url": "https://growex-group.ru/press-center/publications/news/fas-predlagaet-indeksirovat-tarify-na-konteynernye-perevozki-na-5-v-2026-godu/", "official": false, "what": "Growex: '+5% container 2026, exception термические контейнеры'; +10% general from 2025-12-01" },
+    { "url": "https://www.dp.ru/a/2026/01/05/fas-prinjala-dokument--regulirujushhij", "official": false, "what": "DP.ru Jan-2026: final 2026 tariff doc; expert Nikitina 'перевозка контейнеров вырастет в цене на 5%'; +10% general approved Dec-2025" },
+    { "url": "https://www.consultant.ru/law/review/209630141.html", "official": false, "what": "Consultant legislative review: приказ ФАС 13.02.2026 N 88/26 — separate +1% targeted surcharge from 2026-03-01" },
+    { "url": "https://www.rzd-partner.ru/zhd-transport/news/dopindeksatsiyu-tarifov-na-konteynernye-perevozki-na-5-predlagaetsya-provesti-v-2026-godu/", "official": false, "what": "rzd-partner: +5% container draft, excl. thermal; federal portal project #161447" }
+  ]
+}

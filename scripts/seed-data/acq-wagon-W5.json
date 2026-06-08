@@ -1,0 +1,56 @@
+{
+  "_meta": {
+    "dataset": "ТР-1 2026 Табл.6 п.3 — innovative полувагон models that get coefficient 0,9595 to тарифная схема N 8. Independent cross-check of the seed list.",
+    "task": "ACQUIRE W5 — verify coefficient + full model list, write to acq-wagon-W5.json",
+    "fetchedAt": "2026-06-08",
+    "asOf": "2026",
+    "confidence": "sourced-official",
+    "primarySource": {
+      "what": "Приказ ФАС России от 06.11.2025 N 894/25, Приложение N 1, Таблица N 6, пункт 3 (полувагон) — full free text",
+      "url": "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-1_1/tablitsa-n-6/",
+      "official": false,
+      "note": "sudact.ru is an unofficial mirror but reproduces the full normative text verbatim; consultant.ru LAW_522347 is the same table but gated to commercial access / scheduled free hours."
+    },
+    "verbatim": "3. Полувагон (кроме 6-осных сочлененных вагонов). При перевозках грузов в полувагонах моделей 12-9761-02, 12-9833-01; 12-9853, 12-9869, 12-196-01, 12-196-02, 12-2143, 12-2159 тариф определяется по тарифным схемам, при этом к тарифной схеме N 8 применяется коэффициент 0,9595",
+    "coefMeaning": "Multiplier 0,9595 applied to тарифная схема N 8 (own/leased universal wagon, infrastructure+locomotive tariff) when the gondola is one of the listed models. There is NO generic 'innovative coefficient' in ТР-1 2026 — eligibility is tied to the specific model number (25 tс axle load).",
+    "DISCREPANCY_WITH_SEED": {
+      "seedFile": "scripts/seed-data/tr1-innovative-models.json",
+      "seedClaim": "9 models including 12-6744 (claimed byte-verified twice against consultant.ru LAW_522347, asserts 12-6744 added as ОВК wagon serial from Feb 2026).",
+      "finding": "The official Табл.6 п.3 text on sudact.ru lists EXACTLY 8 models. 12-6744 is NOT present anywhere on the Table 6 page, nor anywhere in the Приложение-N-1.1 table index. String '6744' returns 0 hits across the full normative text fetched.",
+      "implication": "12-6744 in the seed is UNSOURCED / likely fitted or carried over from a draft. Only 8 models are officially eligible for the 0,9595 coefficient. This directly affects FITTED LEVER #1: if the ЭФ164189 9 innovative-priced 75т wagons must each resolve to one of these 8 models for the assignment to become SOURCED, 12-6744 must NOT be relied upon."
+    },
+    "method": "Located Табл.N 6 via the order TOC (sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/), fetched the table subpage with curl, stripped HTML, extracted the single 0,9595 coefficient row and all 12-* model tokens. Verified exactly one 0,9595 occurrence in the полувагон row and zero occurrences of 6744."
+  },
+
+  "coefficient": 0.9595,
+  "table": "ТР-1 2026, Приложение N 1, Таблица N 6, пункт 3 (полувагон)",
+  "appliesToScheme": "8",
+  "modelCount": 8,
+  "models": [
+    "12-9761-02",
+    "12-9833-01",
+    "12-9853",
+    "12-9869",
+    "12-196-01",
+    "12-196-02",
+    "12-2143",
+    "12-2159"
+  ],
+  "modelsDetail": [
+    { "model": "12-9761-02", "coef": 0.9595, "scheme": "8", "wagonType": "полувагон", "sourced": true },
+    { "model": "12-9833-01", "coef": 0.9595, "scheme": "8", "wagonType": "полувагон", "sourced": true },
+    { "model": "12-9853",    "coef": 0.9595, "scheme": "8", "wagonType": "полувагон", "sourced": true },
+    { "model": "12-9869",    "coef": 0.9595, "scheme": "8", "wagonType": "полувагон", "sourced": true },
+    { "model": "12-196-01",  "coef": 0.9595, "scheme": "8", "wagonType": "полувагон", "sourced": true },
+    { "model": "12-196-02",  "coef": 0.9595, "scheme": "8", "wagonType": "полувагон", "sourced": true },
+    { "model": "12-2143",    "coef": 0.9595, "scheme": "8", "wagonType": "полувагон", "sourced": true },
+    { "model": "12-2159",    "coef": 0.9595, "scheme": "8", "wagonType": "полувагон", "sourced": true }
+  ],
+  "rejectedModels": [
+    {
+      "model": "12-6744",
+      "reason": "NOT present in official Табл.6 п.3 text (приказ ФАС 894/25 / sudact.ru). 0 occurrences of '6744' in the full fetched normative text. Seed file tr1-innovative-models.json wrongly includes it; treat as UNSOURCED."
+    }
+  ],
+  "source": "Приказ ФАС России от 06.11.2025 N 894/25, Приложение N 1, Таблица N 6, п.3 — https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-1_1/tablitsa-n-6/ (cross-ref consultant.ru LAW_522347, gated)"
+}

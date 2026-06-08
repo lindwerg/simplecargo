@@ -1,0 +1,74 @@
+{
+  "task": "ACQUIRE cistern (наливная) reference quote to validate ТР-1 2026 own-cistern schemes N19-N24 (per-TONNE)",
+  "status": "blocked",
+  "asOfDate": "2026-06-08",
+  "result": {
+    "route": null,
+    "scheme": null,
+    "perTonne": null,
+    "total": null,
+    "source": null,
+    "reason": "Every free online РЖД cistern calculator located is gated behind registration/login (subscriber-only), captcha, or is a manager call-back form rather than an instant compute. The session's shared Playwright browser was held continuously by sibling agents, so JS/bot-protected calculators (alta.ru) could not be driven. No fabricated value is returned — this computes real money."
+  },
+  "unitNote": "Own/leased cisterns charge PER TONNE (за тонну), schemes N19-N24 by tariff class of the liquid cargo — fundamentally different unit from полувагон, which charges PER WAGON (за вагон, scheme N8). A cistern reference quote must be captured as ₽/тонна (and total = perTonne × netTons), NOT ₽/вагон. Confirmed against repo tr1-scheme-classifier-extended.json: п.21.1 'наливные в цистернах — собственные по схемам N19-24 (за тонну, по классу)'. Empty own cistern return: N26 (сжиж.газ тара>7.5т/ось) else N25.",
+  "engineGap": "Rate-belts (distance×class numeric поля) for N19-N24 are NOT seeded in the repo (per uncertainNotes in tr1-scheme-classifier-extended.json: 'Для схем N9-13, N19-24, N30-31 ... числовые пояса дальности НЕ seeded → расчёт рублей для этих вагонов сегодня невозможен без доскрейпа Приложения N2'). A ruble-level reference quote is required to validate once those belts are scraped.",
+  "calculatorsEvaluated": [
+    {
+      "name": "NGE.RU — Расчет ж/д тарифа",
+      "url": "https://www.nge.ru/rrtarif.htm",
+      "fit": "BEST FIT — calculator is explicitly cistern-only: page states 'Расчет производится только для перевозки в цистернах и крытых вагонах грузов ЕТСНГ позиций групп 20, 21, 22, 43-48'. Tariff per Прейскурант 10-01.",
+      "formFields": {
+        "form": "name=tar_nge action=rrtarif.htm method=POST",
+        "tip": "wagon type select: 3=цистерна, 1=крытый",
+        "sv": "checkbox value=1 → Собственный вагон (OWN cistern supported)",
+        "st1/stnam1/dor1": "origin station code/name/road",
+        "st2/stnam2/dor2": "destination station code/name/road",
+        "kgr/grnam1": "cargo ЕТСНГ code / name",
+        "ves": "вес отправки на вагон (тн), default 60",
+        "nv": "кол-во вагонов",
+        "hidden": "nge_nds=20, lit_nds=0, bel_nds=0; addsum_unit rt='за тонну' / rv='за вагон'"
+      },
+      "popularCargoGroups": ["Бензин автомобильный", "Битум", "Газовый конденсат", "Дизельное топливо", "Керосин/Топливо реактивное", "Мазут", "Индустриальные масла", "Моторные масла", "Нефть", "Присадки к топливам", "Сжиженные газы", "Топливо печное/судовое"],
+      "blocker": "GATED: form fields are all disabled='disabled'; page states 'Расчет только для абонентов NGE.RU' with links to login (/rrtarif.htm?auth=true) and registration (reg.htm). Compute requires a subscriber account — cannot create one. Page encoding is Windows-1251.",
+      "caveat": "Uses Прейскурант 10-01 (legacy tariff base), NOT ТР-1 2026. Still validates per-tonne cistern STRUCTURE/scheme + own-wagon mechanics, but rubles would need re-indexing to 2026."
+    },
+    {
+      "name": "ГРУЗ и ВАГОН (gruzivagon.info)",
+      "url": "https://gruzivagon.info/tariff",
+      "fit": "Claims all wagon types incl. собственный; CIS coverage.",
+      "blocker": "captcha + 'Регистрация'/'Войти' login wall."
+    },
+    {
+      "name": "Альта-Софт ЖД Тариф Онлайн (alta.ru)",
+      "url": "https://www.alta.ru/railonline/",
+      "fit": "Public free calculator; HTML mentions Собственный (own wagon). JS single-page app.",
+      "blocker": "Bot-protected: curl over non-browser UA returns redirect loop (HTTP exit 47). Requires a real browser to drive; the session's shared Playwright instance was locked by sibling agents for the entire task window."
+    },
+    {
+      "name": "metallplace.ru/Rail",
+      "url": "https://metallplace.ru/Rail/",
+      "fit": "Bitrix portal, mentions Цистерна + Собственный.",
+      "blocker": "Rail tariff is part of a PAID analytics subscription (rdn tariff/auth/order endpoints); captcha on auth/subscription forms. No free instant compute."
+    },
+    {
+      "name": "ГК Глобал Логистик (glogist.ru)",
+      "url": "https://glogist.ru/new-order",
+      "blocker": "captcha-heavy; form is a /form/callback callback request (manager call-back), not an instant compute."
+    },
+    {
+      "name": "ДИККОМ (dikkom.com)",
+      "url": "https://dikkom.com/calc",
+      "blocker": "Form posts to a contact/quote endpoint (manager call-back), not an instant per-tonne compute."
+    },
+    {
+      "name": "gdevagon.ru",
+      "url": "https://www.gdevagon.ru/scripts/tarif/tariff.php",
+      "blocker": "Connection refused (ECONNREFUSED / HTTP 000)."
+    }
+  ],
+  "recommendation": "Capture the cistern reference through one of the operator's OWN authenticated channels: (1) R-Тариф Онлайн — operator already has access (see reference-quotes.json RTARIFF-Elisenvaara-Elista note) and it produces a per-tonne + per-wagon breakdown for ANY route on demand; this is the cleanest ТР-1 2026 source. (2) NGE.RU under the operator's subscriber login — best for нефтепродукт cistern routes specifically, but legacy 10-01 base. Suggested concrete route to request: дизельное топливо (ЕТСНГ group 21), собственная цистерна, ~1000 km domestic, class of cargo per ЕТСНГ; record ₽/тонна без НДС, total = ₽/тонна × нетто-тонн, the scheme number (N19-N24), distance, and НДС status.",
+  "sources": [
+    { "what": "NGE.RU cistern-only РЖД tariff calculator (form structure, cargo groups, own-wagon support, subscriber gate)", "url": "https://www.nge.ru/rrtarif.htm", "official": false },
+    { "what": "repo scheme classifier confirming N19-24 per-tonne + unseeded rate-belts", "url": "file:///Users/mishanikhinkirtill/Desktop/SimpleCargo/scripts/seed-data/tr1-scheme-classifier-extended.json", "official": false }
+  ]
+}

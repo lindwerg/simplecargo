@@ -1,0 +1,21 @@
+{
+  "_meta": {
+    "task": "Resolve EТ201459 (ЭТ201459) wagon NUMBERS to model+capacity to de-fit the innovative x0.9595 lever",
+    "result": "not-found / blocked",
+    "reason": "Wagon model is NOT encoded in the 8-digit number (digit 1=род only: 5=полувагон, digit 2=осность). Model -> number mapping lives only in АБД ПВ (official РЖД automated wagon-park DB). Every FREE web frontend gates it: gruzivagon.info returns no_user/no_premium for model + sits behind a captcha and a WAF ('Кардинал' blocks direct API calls); vgs-as.in sells the DB as a paid export (railmaps@mail.ru); vagon.by/number and estiw.ru only decode род/control-digit, not model; alta.ru/rail_tracking needs a contract.",
+    "endpoint_found": "gruzivagon.info POST /components/ajax/ajax.php?task=CheckWagon  body={wagon,recaptcha_anchor,hash=md5(JSON.stringify({wagon,recaptcha_anchor}))} -> returns html.model, html.model_id, html.date_construction, html.full_type BUT only for registered/VIP users; anonymous => error:'no_user'. Direct curl => WAF 'Обнаружена попытка взлома'.",
+    "blocking_note": "Sanctioned captcha fallback (shared Playwright browser) was occupied by a sibling agent for the entire window ('Browser is already in use'); could not drive the captcha form to obtain model rows.",
+    "next_step_to_close": "Run the gruzivagon /check form in an isolated browser, solve the image captcha, register a free account; or buy/obtain an АБД ПВ extract; then map each number below to html.model + capacity and set innovative=true iff model in {12-9761-02,12-9833-01,12-9853,12-9869,12-196-01,12-196-02,12-2143,12-2159,12-6744}.",
+    "fitted_expectation_from_receipt": "All 6 ЭТ201459 wagons priced identically at 31224 RUB/wagon classic at 699 km, so the engine currently treats them ALL as classic (no x0.9595). Resolving models would CONFIRM (all classic) or BREAK that assumption.",
+    "source_label": "not-found",
+    "date": "2026-06-08"
+  },
+  "fleet": [
+    { "number": "52270238", "rod": "полувагон (gondola)", "rod_source": "digit1=5, sourced-official (numbering standard)", "capacityT_known": "69.5/70 (from receipt fleet spec, sourced-unofficial)", "model": null, "innovative": null, "source": "АБД ПВ required — blocked (captcha+registration / paid)" },
+    { "number": "63256044", "rod": "полувагон (gondola)", "rod_source": "digit1=6, sourced-official", "capacityT_known": "69.5/70", "model": null, "innovative": null, "source": "АБД ПВ required — blocked" },
+    { "number": "65165441", "rod": "полувагон (gondola)", "rod_source": "digit1=6, sourced-official", "capacityT_known": "69.5/70", "model": null, "innovative": null, "source": "АБД ПВ required — blocked" },
+    { "number": "65877649", "rod": "полувагон (gondola)", "rod_source": "digit1=6, sourced-official", "capacityT_known": "69.5/70", "model": null, "innovative": null, "source": "АБД ПВ required — blocked" },
+    { "number": "63255889", "rod": "полувагон (gondola)", "rod_source": "digit1=6, sourced-official", "capacityT_known": "69.5/70", "model": null, "innovative": null, "source": "АБД ПВ required — blocked" },
+    { "number": "65599458", "rod": "полувагон (gondola)", "rod_source": "digit1=6, sourced-official", "capacityT_known": "69.5/70", "model": null, "innovative": null, "source": "АБД ПВ required — blocked" }
+  ]
+}

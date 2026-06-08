@@ -1,0 +1,79 @@
+{
+  "_meta": {
+    "dataset": "ACQ wagon→model registry resolution, EF 75т set 2 (the classic-vs-innovative contrast pair)",
+    "purpose": "Resolve wagon NUMBERS to MODEL+capacity to turn the FITTED innovative ×0.9595 per-wagon assignment into a SOURCED one. KEY proof sought: 62478854 (priced 73452 = classic, no ×0.9595) vs 62436548/60762556/62435763/62587464 (priced 70477 = innovative ×0.9595).",
+    "result": "NOT-FOUND for model — free public sources cannot map a running NUMBER to a MODEL.",
+    "fetchedAt": "2026-06-08",
+    "blocker": "The number→model mapping lives ONLY in the ownership/fleet registry (АБД ПВ / ГВЦ РЖД), exposed by gruzivagon.info, railwagonlocation.com, railagent.ru — all of which gate the lookup behind a captcha or login. The freight-car numbering standard itself (rmrail.ru, railwaytag.com) encodes ONLY wagon class (digit 1 = 6 → полувагон/gondola) and axle count (digit 2: 0–8 → 4-axle); it does NOT encode load capacity or model. So the digits alone cannot distinguish 75т classic from 75т innovative — model is unrecoverable for free.",
+    "sourcesTried": [
+      "gruzivagon.info/check — number→owner/model lookup exists but POST is captcha-gated (captcha.js); /api/openapi and /api/check return 404; main.js exposes only chat AJAX tasks, not the check endpoint",
+      "railwagonlocation.com /wagon/<n>, /en/wagon/<n>, /en/wagon_details/<n> — all HTTP 404 (public detail pages require auth/API key per Odya-LLC/railwagonlocation client)",
+      "railagent.ru /wagon/<n> — 404 (АБД ПВ behind login)",
+      "vagon.by/number — client-side JS decoder, no model, DB frozen at 2014; vagon.by/railcars/<n> = 404",
+      "alta.ru/check_ps — client-side checksum validator only, no model/capacity",
+      "МояКолея1520.рф /wagon/search/?q=<n> — returns 200 but ignores q and renders the full MODEL catalog; it is a model reference, NOT a number→model registry",
+      "WebSearch for each verbatim number ('62478854', '62436548' …) — zero indexed results; running numbers are not on the public web",
+      "Playwright MCP fallback — shared browser locked by a sibling agent the entire run ('Browser is already in use … use --isolated'); could not drive the captcha-gated JS forms"
+    ],
+    "whatIsSourced": "All 5 numbers are valid, well-formed 4-axle gondola (полувагон) running numbers: digit1=6 → gondola, digit2∈{0,2,3,5}→4-axle, and the control digit checks out for every one (standard weighted checksum, complete-to-10). Sourced from the freight numbering standard (rmrail.ru / railwaytag.com).",
+    "killsLeverStatus": "Lever NOT killed. The innovative ×0.9595 per-wagon assignment for set 2 remains FITTED. To source it, drive gruzivagon.info/check (or АБД ПВ) past the captcha with an interactive browser/session, or obtain АБД ПВ API access.",
+    "checksumAlgo": "weights [2,1,2,1,2,1,2] over first 7 digits; sum the decimal digits of each product; control = (10 - sum mod 10) mod 10"
+  },
+  "wagons": [
+    {
+      "number": "62436548",
+      "model": null,
+      "capacityT": null,
+      "innovative": null,
+      "expected": "innovative 75т (receipt price 70477)",
+      "decodedType": "4-axle полувагон (gondola)",
+      "controlDigitValid": true,
+      "modelResolved": false,
+      "source": "type/checksum: freight numbering standard (rmrail.ru, railwaytag.com); model: NOT-FOUND (registry captcha/login-gated)"
+    },
+    {
+      "number": "60762556",
+      "model": null,
+      "capacityT": null,
+      "innovative": null,
+      "expected": "innovative 75т (receipt price 70477)",
+      "decodedType": "4-axle полувагон (gondola)",
+      "controlDigitValid": true,
+      "modelResolved": false,
+      "source": "type/checksum: freight numbering standard (rmrail.ru, railwaytag.com); model: NOT-FOUND (registry captcha/login-gated)"
+    },
+    {
+      "number": "62435763",
+      "model": null,
+      "capacityT": null,
+      "innovative": null,
+      "expected": "innovative 75т (receipt price 70477)",
+      "decodedType": "4-axle полувагон (gondola)",
+      "controlDigitValid": true,
+      "modelResolved": false,
+      "source": "type/checksum: freight numbering standard (rmrail.ru, railwaytag.com); model: NOT-FOUND (registry captcha/login-gated)"
+    },
+    {
+      "number": "62587464",
+      "model": null,
+      "capacityT": null,
+      "innovative": null,
+      "expected": "innovative 75т (receipt price 70477)",
+      "decodedType": "4-axle полувагон (gondola)",
+      "controlDigitValid": true,
+      "modelResolved": false,
+      "source": "type/checksum: freight numbering standard (rmrail.ru, railwaytag.com); model: NOT-FOUND (registry captcha/login-gated)"
+    },
+    {
+      "number": "62478854",
+      "model": null,
+      "capacityT": null,
+      "innovative": null,
+      "expected": "CLASSIC 75т — the contrast wagon priced 73452 (no ×0.9595)",
+      "decodedType": "4-axle полувагон (gondola)",
+      "controlDigitValid": true,
+      "modelResolved": false,
+      "source": "type/checksum: freight numbering standard (rmrail.ru, railwaytag.com); model: NOT-FOUND (registry captcha/login-gated)"
+    }
+  ]
+}

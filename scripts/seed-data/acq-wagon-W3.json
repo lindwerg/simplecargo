@@ -1,0 +1,22 @@
+{
+  "_meta": {
+    "task": "Resolve EF (ЭФ164189) classic-priced gondola numbers to model+capacity to confirm none are innovative-75т",
+    "result": "not-found",
+    "summary": "All 5 numbers verified as valid 4-axle gondola (полувагон) numbers via the РЖД 8-digit check-digit algorithm. Their leading-digit family (53/55/52) is the classic-gondola block and differs from the EF innovative-75т number family (64/62/60 prefixes), which is consistent with them being priced classic on the receipt. However, the specific MODEL and exact capacity (69.5 vs 70.3т) could NOT be resolved for free: every public number→model service (railwagonlocation tracking, gruzivagon.info check, alta.ru rail_tracking, ЭТРАН/ИВЦЖА registries) is a JS/POST or authenticated dislocation tool, not a GET-resolvable page. railwagonlocation's free /carriage-container-number-check.php is only a control-digit validator and returns no model. gruzivagon.info indexes wagon MODELS by internal id, not individual numbers. The shared Playwright browser was locked by a concurrent agent for the full session, so the JS forms could not be driven.",
+    "checkDigitAlgorithm": "weights [2,1,2,1,2,1,2] over first 7 digits; sum digit-of-each-product; control=(10 - sum%10)%10",
+    "innovativeRegistryModels": ["12-9761-02","12-9833-01","12-9853","12-9869","12-196-01","12-196-02","12-2143","12-2159","12-6744"],
+    "sources": [
+      {"url":"https://www.railwagonlocation.com/ru/carriage-container-number-check.php","note":"free page = control-digit check only, no model","official":false},
+      {"url":"https://gruzivagon.info/check","note":"number check is JS/POST; site indexes models by id, not numbers","official":false},
+      {"url":"https://www.alta.ru/rail_tracking/","note":"rail tracking is a form service, no free GET model resolution","official":false},
+      {"url":"https://estiw.ru/info/equipment/opred","note":"number-system decoder: confirms 4-axle gondola from leading digits, no specific model","official":false}
+    ]
+  },
+  "wagons": [
+    {"number":"53075321","model":null,"capacityT":null,"innovative":false,"numberValid":true,"wagonType":"4-axle gondola (полувагон)","note":"classic-block prefix 53; priced classic on EF receipt; model unresolved (no free DB)","source":"check-digit validation + numbering-system decode"},
+    {"number":"55954051","model":null,"capacityT":null,"innovative":false,"numberValid":true,"wagonType":"4-axle gondola (полувагон)","note":"classic-block prefix 55; priced classic on EF receipt; model unresolved (no free DB)","source":"check-digit validation + numbering-system decode"},
+    {"number":"55311401","model":null,"capacityT":null,"innovative":false,"numberValid":true,"wagonType":"4-axle gondola (полувагон)","note":"classic-block prefix 55; priced classic on EF receipt; model unresolved (no free DB)","source":"check-digit validation + numbering-system decode"},
+    {"number":"55200208","model":null,"capacityT":null,"innovative":false,"numberValid":true,"wagonType":"4-axle gondola (полувагон)","note":"classic-block prefix 55; priced classic on EF receipt; model unresolved (no free DB)","source":"check-digit validation + numbering-system decode"},
+    {"number":"52201696","model":null,"capacityT":null,"innovative":false,"numberValid":true,"wagonType":"4-axle gondola (полувагон)","note":"classic-block prefix 52; priced classic on EF receipt; model unresolved (no free DB)","source":"check-digit validation + numbering-system decode"}
+  ]
+}

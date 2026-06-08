@@ -129,12 +129,17 @@ function getData(): DistanceData {
     edges: [...baseGraph.edges, ...cisFill, ...gapFill, ...gapFill2],
   };
 
-  // hub-distances.json shape: { hubs: [{ hub, km, esr }] }
+  // hub-distances.json shape: { hubs: [{ hub, km, esr, lines? }] }
+  // `lines` (radial-line → member stations) drives the ТР-4 same-radial-line exclusion:
+  // computeDistance suppresses the +54/+25 km adder when a wagon enters AND exits the узел on
+  // the same line. The membership is curated in hub-distances.json (Москва 11 / СПб 9 lines);
+  // earlier this loader DROPPED `lines`, leaving the exclusion permanently dormant.
   const hubFile = loadJson<{ hubs: HubEntry[] }>("hub-distances.json");
   const hubs: HubEntry[] = (hubFile.hubs ?? []).map((h) => ({
     hub: h.hub,
     km: h.km,
     esr: h.esr,
+    ...(h.lines ? { lines: h.lines } : {}),
   }));
 
   // special-distances.json shape: { overrides: [{ a, b, km }] }

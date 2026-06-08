@@ -1,0 +1,47 @@
+[
+  {
+    "number": 64437213,
+    "model": null,
+    "capacityT": null,
+    "innovative": null,
+    "typeDecode": "4-axle полувагон (gondola): leading digit 6 = полувагон; confirmed via vagon.by/estiw number-range decoder",
+    "source": "estiw.ru/info/equipment/opred (number-range decode only); model/innovative require АБД ПВ (login-gated)",
+    "resolved": false
+  },
+  {
+    "number": 64917271,
+    "model": null,
+    "capacityT": null,
+    "innovative": null,
+    "typeDecode": "4-axle полувагон (gondola): leading digit 6 = полувагон (range-inferred)",
+    "source": "blocked: railwagonlocation/gruzivagon/vagon1520/gdevagon all require login or JS/captcha; WebFetch returns no per-number data",
+    "resolved": false
+  },
+  {
+    "number": 62577135,
+    "model": null,
+    "capacityT": null,
+    "innovative": null,
+    "typeDecode": "4-axle полувагон (gondola): leading digit 6 = полувагон (range-inferred)",
+    "source": "blocked: per-number model lookup gated behind authenticated АБД ПВ databases",
+    "resolved": false
+  },
+  {
+    "number": 60996501,
+    "model": null,
+    "capacityT": null,
+    "innovative": null,
+    "typeDecode": "4-axle полувагон (gondola): leading digit 6 = полувагон (range-inferred)",
+    "source": "blocked: per-number model lookup gated behind authenticated АБД ПВ databases",
+    "resolved": false
+  },
+  {
+    "number": 62590278,
+    "model": null,
+    "capacityT": null,
+    "innovative": null,
+    "typeDecode": "4-axle полувагон (gondola): leading digit 6 = полувагон (range-inferred)",
+    "source": "blocked: per-number model lookup gated behind authenticated АБД ПВ databases",
+    "resolved": false
+  }
+]
