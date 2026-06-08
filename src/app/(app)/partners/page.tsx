@@ -46,33 +46,42 @@ export default async function PartnersPage({ searchParams }: PageProps) {
 
   return (
     <div className="partners-surface flex flex-col gap-6">
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-xl text-text" style={{ fontWeight: "var(--weight-bold)" }}>
-            Партнёры
-          </h1>
-          <p className="mt-1 text-sm text-text-secondary">
-            База контрагентов: клиенты, перевозчики и карьеры — с контактами, договорами и историей
-            сделок. Одна компания может быть в нескольких категориях.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Link
-            href="/partners/from-bank"
-            className="inline-flex h-10 items-center gap-2 rounded-[var(--radius-md)] bg-surface-3 px-4 text-sm font-medium text-text transition-colors duration-[var(--duration-fast)] hover:bg-surface-2 focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
-          >
-            <Landmark className="size-4" aria-hidden strokeWidth={2.2} />
-            Из банка
-          </Link>
-          <Link
-            href="/partners/new"
-            className="inline-flex h-10 items-center gap-2 rounded-[var(--radius-md)] bg-accent px-4 text-sm font-semibold text-text-inverse transition-colors duration-[var(--duration-fast)] hover:bg-accent-hover focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
-          >
-            <Plus className="size-4" aria-hidden strokeWidth={2.2} />
-            Добавить партнёра
-          </Link>
-        </div>
+      <header>
+        <h1 className="text-xl text-text" style={{ fontWeight: "var(--weight-bold)" }}>
+          Партнёры
+        </h1>
+        <p className="mt-1 text-sm text-text-secondary">
+          База контрагентов: клиенты, перевозчики и карьеры — с контактами, договорами и историей
+          сделок. Одна компания может быть в нескольких категориях.
+        </p>
       </header>
+
+      <section aria-label="Действия" className="grid grid-cols-2 gap-3">
+        <Link
+          href="/partners/from-bank"
+          className="group flex items-center gap-3 rounded-lg border border-border bg-surface-1 px-5 py-6 transition-transform duration-[var(--duration-fast)] ease-[var(--ease-out-quad)] hover:-translate-y-[2px] active:translate-y-0 active:opacity-90 focus-visible:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
+        >
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-md bg-surface-2 text-text-secondary transition-colors group-hover:text-text">
+            <Landmark className="size-5" aria-hidden />
+          </span>
+          <span className="min-w-0">
+            <span className="block text-base font-semibold text-text">Из банка</span>
+            <span className="block text-xs text-text-tertiary">Контрагенты из выписки</span>
+          </span>
+        </Link>
+        <Link
+          href="/partners/new"
+          className="group flex items-center gap-3 rounded-lg border border-border bg-surface-1 px-5 py-6 transition-transform duration-[var(--duration-fast)] ease-[var(--ease-out-quad)] hover:-translate-y-[2px] active:translate-y-0 active:opacity-90 focus-visible:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
+        >
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-md bg-accent-quiet text-accent transition-transform group-hover:scale-105">
+            <Plus className="size-5" aria-hidden />
+          </span>
+          <span className="min-w-0">
+            <span className="block text-base font-semibold text-text">Добавить партнёра</span>
+            <span className="block text-xs text-text-tertiary">Новая компания вручную</span>
+          </span>
+        </Link>
+      </section>
 
       <div className="flex flex-col gap-3">
         <PartnersTabs role={role} search={search} counts={counts} />
