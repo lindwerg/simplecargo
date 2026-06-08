@@ -9,8 +9,10 @@ import { StationField, type StationValue } from "@/components/common/StationFiel
 // ── Серверные формы ответа (зеркало MatrixResult / VoiceResponse) ───────────────
 interface MatrixCell {
   tariffNoVat: number;
-  provisionNoVat: number;
   tariffWithVat: number;
+  inventoryNoVat: number;
+  inventoryWithVat: number;
+  provisionNoVat: number;
   provisionWithVat: number;
 }
 interface MatrixRow {
@@ -30,7 +32,7 @@ interface MatrixResult {
   etsngName: string | null;
   classicCapacityT: number;
   innovativeCapacityT: number;
-  markupPct: number;
+  ownerCoeff: number;
   vatRate: number;
   rows: MatrixRow[];
   warnings: string[];
@@ -85,7 +87,7 @@ export function VoiceQuote() {
   const [dest, setDest] = React.useState<StationValue>({ raw: "", esr: null });
   const [classicCapT, setClassicCapT] = React.useState("70");
   const [innovCapT, setInnovCapT] = React.useState("75");
-  const [markupPct, setMarkupPct] = React.useState("15");
+  const [ownerCoeff, setOwnerCoeff] = React.useState("1.15");
 
   const [recording, setRecording] = React.useState(false);
   const [parsing, setParsing] = React.useState(false);
@@ -111,7 +113,8 @@ export function VoiceQuote() {
         ? `Назван груз «${intent.etsngHint.trim()}» — расчёт по умолчанию для щебня (класс 1). Иной груз задайте в основном калькуляторе.`
         : null,
     );
-    if (intent.markupPct != null) setMarkupPct(String(intent.markupPct));
+    // «предоставление под +15» → коэффициент собственника 1.15.
+    if (intent.markupPct != null) setOwnerCoeff(String(1 + intent.markupPct / 100));
     if (intent.classicCapacityT != null) setClassicCapT(String(intent.classicCapacityT));
     if (intent.innovativeCapacityT != null) setInnovCapT(String(intent.innovativeCapacityT));
     setOrigin({ raw: o.name ?? intent.originRaw ?? "", esr: o.esr });
@@ -187,7 +190,7 @@ export function VoiceQuote() {
           destEsr: dest.esr,
           classicCapacityT: Number(classicCapT) || undefined,
           innovativeCapacityT: Number(innovCapT) || undefined,
-          markupPct: markupPct === "" ? undefined : Number(markupPct),
+          ownerCoeff: ownerCoeff === "" ? undefined : Number(ownerCoeff),
         }),
       });
       const json = await res.json();
@@ -287,12 +290,12 @@ export function VoiceQuote() {
           />
         </label>
         <label className="flex flex-col gap-1.5">
-          <span className="text-2xs text-text-tertiary">Предоставление, %</span>
+          <span className="text-2xs text-text-tertiary">Коэфф. собственника ×</span>
           <input
             className={cn(fieldClass, "tabular-nums")}
-            value={markupPct}
-            inputMode="numeric"
-            onChange={(e) => setMarkupPct(e.target.value.replace(/[^\d-]/g, ""))}
+            value={ownerCoeff}
+            inputMode="decimal"
+            onChange={(e) => setOwnerCoeff(e.target.value.replace(/[^\d.]/g, ""))}
           />
         </label>
       </div>
@@ -365,9 +368,14 @@ function MatrixView({
 
       {supported ? (
         <>
+          <div className="rounded-[var(--radius-sm)] border border-accent/30 bg-accent-quiet p-2 text-2xs text-text-secondary">
+            <span className="font-medium text-accent">⚠ Инвентарный тариф и предоставление — «проверяется».</span>{" "}
+            Считаются из официальных таблиц И1+В4, но НЕ сверены до рубля с R-Тарифом общего парка.
+            Собственный тариф (нижняя строка) — выверен. Ставка предоставления = инвентарный × {matrix.ownerCoeff}.
+          </div>
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-2xs text-text-tertiary">
-              Ставка предоставления = тариф + {matrix.markupPct}% · крупным; тариф РЖД — мелким
+              Крупным — <span className="text-accent">предоставление</span>; ниже — инвентарный (И+В); внизу — собственный тариф
             </p>
             <div className="inline-flex overflow-hidden rounded-pill border border-border text-2xs">
               <button
@@ -440,11 +448,13 @@ function MatrixView({
 
 function Cell({ cell, withVat }: { cell: MatrixCell; withVat: boolean }) {
   const tariff = withVat ? cell.tariffWithVat : cell.tariffNoVat;
+  const inventory = withVat ? cell.inventoryWithVat : cell.inventoryNoVat;
   const provision = withVat ? cell.provisionWithVat : cell.provisionNoVat;
   return (
     <td className="px-2 py-2 text-right tabular-nums">
       <div className="text-sm font-semibold text-accent">{rub(provision)}</div>
-      <div className="text-2xs text-text-tertiary">тариф {rub(tariff)}</div>
+      <div className="text-2xs text-text-secondary">инв. {rub(inventory)}</div>
+      <div className="text-2xs text-text-tertiary">свой {rub(tariff)}</div>
     </td>
   );
 }

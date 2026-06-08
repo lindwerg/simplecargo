@@ -153,10 +153,12 @@ export async function POST(request: Request): Promise<Response> {
 
     let matrix: MatrixResult | null = null;
     if (origin.status === "exact" && origin.esr && dest.status === "exact" && dest.esr) {
+      // «предоставление под +15» → коэффициент собственника 1.15 (× к инвентарному тарифу).
+      const ownerCoeff = intent.markupPct != null ? 1 + intent.markupPct / 100 : undefined;
       matrix = await computeQuoteMatrix({
         originEsr: origin.esr,
         destEsr: dest.esr,
-        ...(intent.markupPct != null ? { markupPct: intent.markupPct } : {}),
+        ...(ownerCoeff != null ? { ownerCoeff } : {}),
         ...(intent.classicCapacityT != null
           ? { classicCapacityT: intent.classicCapacityT }
           : {}),
