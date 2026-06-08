@@ -4,9 +4,12 @@ import { ArrowLeft, Pencil } from "lucide-react";
 
 import { getPartnerDossier, PartnerError } from "@/lib/partners/repository";
 import { getPartnerFinance, listPartnerMail } from "@/lib/partners/general";
+import { getPartnerAnalytics } from "@/lib/partners/analytics";
 import { PartnerTabs, resolvePartnerTab } from "@/components/partners/PartnerTabs";
 import { GeneralInfoTab } from "@/components/partners/GeneralInfoTab";
-import { PartnerDossier } from "@/components/partners/PartnerDossier";
+import { ContractTab } from "@/components/partners/ContractTab";
+import { HistoryTab } from "@/components/partners/HistoryTab";
+import { AnalyticsTab } from "@/components/partners/AnalyticsTab";
 import { DeletePartnerButton } from "@/components/partners/DeletePartnerButton";
 import { RoleBadges } from "@/components/partners/RoleBadges";
 
@@ -93,9 +96,22 @@ export default async function PartnerDetailPage({ params, searchParams }: PagePr
           documents={dossier.documents}
         />
       )}
-      {activeTab === "history" && <PartnerDossier dossier={dossier} />}
-      {activeTab === "contract" && <TabPlaceholder title="ИИ-чат по договору" />}
-      {activeTab === "analytics" && <TabPlaceholder title="Аналитика по отгрузкам" />}
+      {activeTab === "history" && <HistoryTab dossier={dossier} />}
+      {activeTab === "contract" && (
+        <ContractTab
+          counterpartyId={partner.id}
+          contracts={dossier.documents
+            .filter((d) => d.kind === "contract")
+            .map((d) => ({
+              id: d.id,
+              title: d.title,
+              docRef: d.docRef,
+              originalFilename: d.originalFilename,
+              mimeType: d.mimeType,
+            }))}
+        />
+      )}
+      {activeTab === "analytics" && <AnalyticsTabLoader counterpartyId={partner.id} roles={partner.roles} />}
       {activeTab === "materials" && <TabPlaceholder title="Каталог щебня и паспорта" />}
     </div>
   );
@@ -125,4 +141,16 @@ async function GeneralInfoTabLoader({
       documents={documents}
     />
   );
+}
+
+// Loads shipment analytics only for the Analytics tab. Server Component.
+async function AnalyticsTabLoader({
+  counterpartyId,
+  roles,
+}: {
+  counterpartyId: string;
+  roles: string[];
+}) {
+  const analytics = await getPartnerAnalytics(counterpartyId, roles);
+  return <AnalyticsTab analytics={analytics} roles={roles} />;
 }

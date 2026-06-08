@@ -5,6 +5,7 @@ import { counterparties } from "@/lib/db/schema/counterparties";
 import { counterpartyContacts } from "@/lib/db/schema/counterpartyContacts";
 import { counterpartyDocuments } from "@/lib/db/schema/counterpartyDocuments";
 import { requests } from "@/lib/db/schema/requests";
+import { orders } from "@/lib/db/schema/orders";
 import { deals } from "@/lib/db/schema/deals";
 import { counterpartyContracts, priceProtocols } from "@/lib/db/schema/pricing";
 import { normalizeEmail } from "./schema";
@@ -447,6 +448,15 @@ export interface DossierRequest {
   createdAt: Date;
 }
 
+export interface DossierOrder {
+  id: string;
+  orderNumber: string | null;
+  title: string | null;
+  status: string;
+  quoteStatus: string;
+  createdAt: Date;
+}
+
 export interface DossierDirection {
   id: string;
   displayName: string | null;
@@ -503,6 +513,7 @@ export interface PartnerDossier {
   contacts: ContactRow[];
   documents: DocumentRow[];
   requests: DossierRequest[];
+  orders: DossierOrder[];
   directions: DossierDirection[];
   deals: DossierDeal[];
   dealsSummary: DealsSummary;
@@ -543,7 +554,7 @@ export async function getPartnerDossier(id: string): Promise<PartnerDossier> {
   const partner = partnerRows[0];
   if (!partner) throw new PartnerError(404, "Компания не найдена");
 
-  const [contacts, documents, requestRows, dirResult, dealRows, contractRows, protocolRows] =
+  const [contacts, documents, requestRows, orderRows, dirResult, dealRows, contractRows, protocolRows] =
     await Promise.all([
       listContacts(id),
       listDocuments(id),
@@ -559,6 +570,18 @@ export async function getPartnerDossier(id: string): Promise<PartnerDossier> {
         .from(requests)
         .where(eq(requests.clientSuggestedId, id))
         .orderBy(desc(requests.createdAt)),
+      db
+        .select({
+          id: orders.id,
+          orderNumber: orders.orderNumber,
+          title: orders.title,
+          status: orders.status,
+          quoteStatus: orders.quoteStatus,
+          createdAt: orders.createdAt,
+        })
+        .from(orders)
+        .where(eq(orders.clientSuggestedId, id))
+        .orderBy(desc(orders.createdAt)),
       // Directions where the company is client, primary owner, or a bound owner.
       db.execute<DirRow>(sql`
         SELECT DISTINCT
@@ -658,6 +681,7 @@ export async function getPartnerDossier(id: string): Promise<PartnerDossier> {
       linesCount: r.linesCount,
       createdAt: r.createdAt,
     })),
+    orders: orderRows,
     directions: dirResult.rows.map((d) => ({
       id: d.id,
       displayName: d.display_name,
