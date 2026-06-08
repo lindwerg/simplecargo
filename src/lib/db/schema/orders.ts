@@ -27,6 +27,16 @@ export const orders = pgTable(
     title: text("title"), // human label for proactive deals ("Щебень Асбест → Тюмень")
     status: text("status").notNull().default("draft"), // draft|confirmed|active|completed|cancelled
 
+    // quoteStatus — под-статус стадии «Запрос» (живёт поверх status=draft): quoting (просчёт) →
+    // quoted (цена дана клиенту) → won (прошли, ждём заявку/ГУ). Архив = status=cancelled,
+    // переход в Заявку = status=confirmed, ГУ/заадресация = status=active.
+    quoteStatus: text("quote_status").notNull().default("quoting"),
+    quotedAt: timestamp("quoted_at", { withTimezone: true }), // когда отдали цену клиенту
+    // guNumber — номер ГУ (заявка РЖД под заадресацию). Появление ГУ = стадия «Исполнение».
+    guNumber: text("gu_number"),
+    // lostReason — причина, по которой запрос ушёл в архив («не прошли» / «неактуально»).
+    lostReason: text("lost_reason"),
+
     // dealType — denormalised cache of the deal composition, derived from the attached
     // directions / stone lines (deriveDealType). NULL until the first component is added.
     // stone_only | wagons_only | stone_with_transport.
@@ -64,6 +74,7 @@ export const orders = pgTable(
     // NOTE: drizzle-kit does not emit the WHERE clause — added by hand in the migration.
     uniqueIndex("ux_orders_request").on(t.requestId).where(sql`${t.requestId} IS NOT NULL`),
     check("ck_orders_status", sql`${t.status} IN ('draft','confirmed','active','completed','cancelled')`),
+    check("ck_orders_quote_status", sql`${t.quoteStatus} IN ('quoting','quoted','won')`),
     check("ck_orders_channel", sql`${t.channel} IN ('inbound','proactive')`),
     check(
       "ck_orders_deal_type",

@@ -8,7 +8,9 @@
 export type DealStatus = "draft" | "confirmed" | "active" | "completed" | "cancelled";
 
 export const TRANSITIONS: Record<DealStatus, readonly DealStatus[]> = {
-  draft: ["confirmed", "cancelled"],
+  // draft→active — мессенджер-флоу «Запроса»: согласовали ставку → дали ГУ под заадресацию,
+  // сразу в «Исполнение», минуя формальную «Заявку» (документы позже).
+  draft: ["confirmed", "active", "cancelled"],
   confirmed: ["active", "draft", "cancelled"],
   active: ["completed", "cancelled"],
   completed: [],

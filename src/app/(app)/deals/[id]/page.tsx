@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { asc, desc, eq } from "drizzle-orm";
+import { alias } from "drizzle-orm/pg-core";
 import { ArrowLeft, Mail, Plus } from "lucide-react";
 import { format, toZonedTime } from "date-fns-tz";
 import { ru } from "date-fns/locale";
@@ -16,6 +17,9 @@ import { Button } from "@/components/ui/button";
 import { DealTabs, isDealTab, type DealTab } from "@/components/trades/DealTabs";
 import { dealStatusMeta } from "@/components/trades/dealStatusMeta";
 import { dealTypeLabel } from "@/components/trades/dealTypeMeta";
+import { stageForStatus } from "@/components/trades/dealStageMeta";
+import { RequestWorksheet } from "@/components/trades/RequestWorksheet";
+import type { CargoType } from "@/components/trades/requestTypes";
 import { StoneSection, type StoneLineView } from "@/components/trades/StoneSection";
 import { MonthlyRateGrid, type MonthlyRateView } from "@/components/trades/MonthlyRateGrid";
 import { directionStatusMeta } from "@/components/directions/statusMeta";
@@ -39,7 +43,6 @@ export default async function DealCardPage({ params, searchParams }: Ctx) {
   const { id } = await params;
   if (!UUID_RE.test(id)) notFound();
   const { tab } = await searchParams;
-  const activeTab: DealTab = isDealTab(tab) ? tab : "application";
 
   const [deal] = await db
     .select({
@@ -47,6 +50,8 @@ export default async function DealCardPage({ params, searchParams }: Ctx) {
       orderNumber: orders.orderNumber,
       title: orders.title,
       status: orders.status,
+      quoteStatus: orders.quoteStatus,
+      guNumber: orders.guNumber,
       dealType: orders.dealType,
       channel: orders.channel,
       requestId: orders.requestId,
@@ -62,6 +67,10 @@ export default async function DealCardPage({ params, searchParams }: Ctx) {
     .limit(1);
 
   if (!deal) notFound();
+
+  // Дефолт-таб по стадии воронки (draft→Запрос, confirmed→Заявка, active/completed→Исполнение);
+  // явный ?tab= уважается. cancelled (архив) открываем на «Запросе».
+  const activeTab: DealTab = isDealTab(tab) ? tab : (stageForStatus(deal.status) ?? "request");
 
   const dirRows = await db
     .select({
@@ -118,6 +127,72 @@ export default async function DealCardPage({ params, searchParams }: Ctx) {
         .orderBy(asc(requestLines.sortOrder))
     : [];
 
+  // Префилл рабочей карточки «Запрос»: первичное направление (старейшее) + первичная щебёночная
+  // линия. Так карточка показывает уже введённое (непрерывность Запрос↔Заявка). Имена контрагентов
+  // тянем через alias-джоины counterparties (клиент/собственник).
+  const clientCp = alias(counterparties, "client_cp");
+  const ownerCp = alias(counterparties, "owner_cp");
+  const [primaryDir] = await db
+    .select({
+      originRaw: directions.stationOriginRaw,
+      originEsr: directions.stationOriginEsr,
+      destRaw: directions.stationDestRaw,
+      destEsr: directions.stationDestEsr,
+      rateClient: directions.rateClient,
+      rateOwner: directions.rateOwner,
+      wagonCountPlanned: directions.wagonCountPlanned,
+      clientCounterpartyId: directions.clientCounterpartyId,
+      clientName: clientCp.nameCanonical,
+      ownerCounterpartyId: directions.ownerCounterpartyId,
+      ownerName: ownerCp.nameCanonical,
+    })
+    .from(directions)
+    .leftJoin(clientCp, eq(directions.clientCounterpartyId, clientCp.id))
+    .leftJoin(ownerCp, eq(directions.ownerCounterpartyId, ownerCp.id))
+    .where(eq(directions.orderId, id))
+    .orderBy(asc(directions.createdAt))
+    .limit(1);
+
+  const primaryStone = stoneLines[0];
+  const firstReqLine = requestLineRows[0];
+  const cargoType: CargoType =
+    (deal.dealType as CargoType | null) ??
+    (primaryDir && primaryStone
+      ? "stone_with_transport"
+      : primaryStone
+        ? "stone_only"
+        : "wagons_only");
+
+  const worksheetInitial = {
+    cargoType,
+    origin: primaryDir
+      ? { raw: primaryDir.originRaw ?? "", esr: primaryDir.originEsr }
+      : firstReqLine
+        ? { raw: firstReqLine.originRaw ?? "", esr: null }
+        : null,
+    dest: primaryDir
+      ? { raw: primaryDir.destRaw ?? "", esr: primaryDir.destEsr }
+      : firstReqLine
+        ? { raw: firstReqLine.destRaw ?? "", esr: null }
+        : null,
+    rateClient: primaryDir?.rateClient ?? null,
+    rateOwner: primaryDir?.rateOwner ?? null,
+    wagonCount: primaryDir?.wagonCountPlanned ?? null,
+    priceSale: primaryStone?.priceSale ?? null,
+    pricePurchase: primaryStone?.pricePurchase ?? null,
+    tonnage: primaryStone?.tonnage ?? null,
+    fraction: primaryStone?.fraction ?? null,
+    client: primaryDir?.clientCounterpartyId
+      ? { id: primaryDir.clientCounterpartyId, name: primaryDir.clientName }
+      : null,
+    owner: primaryDir?.ownerCounterpartyId
+      ? { id: primaryDir.ownerCounterpartyId, name: primaryDir.ownerName }
+      : null,
+    quarry: primaryStone?.quarrySupplierId
+      ? { id: primaryStone.quarrySupplierId, name: primaryStone.quarryName }
+      : null,
+  };
+
   const meta = dealStatusMeta(deal.status);
   const created = format(toZonedTime(deal.createdAt, "Europe/Moscow"), "d MMMM yyyy, HH:mm", {
     locale: ru,
@@ -160,12 +235,14 @@ export default async function DealCardPage({ params, searchParams }: Ctx) {
       <DealTabs basePath={`/deals/${id}`} active={activeTab} />
 
       {activeTab === "request" && (
-        <RequestTab
-          requestId={deal.requestId}
-          requestNumber={deal.requestNumber}
+        <RequestWorksheet
+          dealId={id}
+          status={deal.status}
+          quoteStatus={deal.quoteStatus}
+          guNumber={deal.guNumber}
+          dealType={(deal.dealType as CargoType | null) ?? null}
           clientName={deal.clientName}
-          channel={deal.channel}
-          lines={requestLineRows}
+          initial={worksheetInitial}
         />
       )}
       {activeTab === "application" && (
@@ -214,106 +291,6 @@ async function ExecutionPanel({ directions: dirs }: { directions: DirRow[] }) {
         </div>
       ))}
     </div>
-  );
-}
-
-type RequestLineView = {
-  id: string;
-  originRaw: string | null;
-  destRaw: string | null;
-  wagonsRequested: number | null;
-  targetRatePerWagon: string | null;
-  targetRateRaw: string | null;
-};
-
-const RUB = new Intl.NumberFormat("ru-RU");
-
-// Desired (SUGGESTED, D16) rate text for a request line: flat ₽ → raw string → «—».
-function desiredRateText(line: RequestLineView): string {
-  if (line.targetRatePerWagon != null) {
-    const n = Number(line.targetRatePerWagon);
-    if (Number.isFinite(n) && n > 0) return `${RUB.format(n)} ₽/ваг`;
-  }
-  return line.targetRateRaw ?? "—";
-}
-
-function RequestTab({
-  requestId,
-  requestNumber,
-  clientName,
-  channel,
-  lines,
-}: {
-  requestId: string | null;
-  requestNumber: string | null;
-  clientName: string | null;
-  channel: string;
-  lines: RequestLineView[];
-}) {
-  if (!requestId) {
-    return (
-      <TabPlaceholder
-        title="Запрос"
-        text={
-          channel === "proactive"
-            ? "Сделка создана вручную (проактивная продажа) — исходного запроса клиента нет."
-            : "Исходный запрос клиента появится здесь после конверсии запроса в сделку (Фаза 3)."
-        }
-      />
-    );
-  }
-
-  return (
-    <section className="space-y-4 rounded-[var(--radius-lg)] border border-border bg-surface-1 p-6">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <h2 className="label-caps">Исходный запрос</h2>
-          <span className="font-mono text-sm text-text">{requestNumber ?? requestId.slice(0, 8)}</span>
-        </div>
-        <Link href={`/requests/${requestId}`} className="text-sm text-accent hover:underline">
-          К запросу →
-        </Link>
-      </div>
-
-      <p className="text-sm text-text-secondary">
-        Клиент: <span className="text-text">{clientName ?? "не задан"}</span>
-      </p>
-
-      {lines.length === 0 ? (
-        <p className="text-sm text-text-tertiary">В запросе нет строк.</p>
-      ) : (
-        <div className="overflow-hidden rounded-lg border border-border-subtle">
-          <table className="w-full border-collapse text-sm">
-            <thead>
-              <tr className="border-b border-border-subtle text-left">
-                <th className="label-caps px-4 py-2.5 font-medium">Маршрут</th>
-                <th className="label-caps px-4 py-2.5 text-right font-medium">Вагонов</th>
-                <th className="label-caps px-4 py-2.5 text-right font-medium">Желаемая ставка</th>
-              </tr>
-            </thead>
-            <tbody>
-              {lines.map((l) => (
-                <tr key={l.id} className="border-b border-border-subtle last:border-0">
-                  <td className="px-4 py-3 text-text">
-                    {l.originRaw ?? "—"} → {l.destRaw ?? "—"}
-                  </td>
-                  <td className="px-4 py-3 text-right [font-variant-numeric:tabular-nums] text-text-secondary">
-                    {l.wagonsRequested ?? "—"}
-                  </td>
-                  <td className="px-4 py-3 text-right [font-variant-numeric:tabular-nums] text-text-secondary">
-                    {desiredRateText(l)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-      <p className="text-xs text-text-tertiary">
-        Желаемые ставки клиента — справочно (D16). Подтверждённые ставки задаются на вкладке
-        «Заявка».
-      </p>
-    </section>
   );
 }
 
