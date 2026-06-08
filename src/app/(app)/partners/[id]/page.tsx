@@ -5,11 +5,13 @@ import { ArrowLeft, Pencil } from "lucide-react";
 import { getPartnerDossier, PartnerError } from "@/lib/partners/repository";
 import { getPartnerFinance, listPartnerMail } from "@/lib/partners/general";
 import { getPartnerAnalytics } from "@/lib/partners/analytics";
+import { listPartnerMaterials } from "@/lib/partners/materials";
 import { PartnerTabs, resolvePartnerTab } from "@/components/partners/PartnerTabs";
 import { GeneralInfoTab } from "@/components/partners/GeneralInfoTab";
 import { ContractTab } from "@/components/partners/ContractTab";
 import { HistoryTab } from "@/components/partners/HistoryTab";
 import { AnalyticsTab } from "@/components/partners/AnalyticsTab";
+import { MaterialsTab } from "@/components/partners/MaterialsTab";
 import { DeletePartnerButton } from "@/components/partners/DeletePartnerButton";
 import { RoleBadges } from "@/components/partners/RoleBadges";
 
@@ -18,15 +20,6 @@ export const dynamic = "force-dynamic";
 interface PageProps {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ tab?: string }>;
-}
-
-function TabPlaceholder({ title }: { title: string }) {
-  return (
-    <div className="rounded-[var(--radius-md)] border border-dashed border-border bg-surface-1 px-4 py-10 text-center">
-      <p className="text-sm text-text-secondary">{title}</p>
-      <p className="mt-1 text-xs text-text-tertiary">Раздел появится в ближайшем обновлении.</p>
-    </div>
-  );
 }
 
 export default async function PartnerDetailPage({ params, searchParams }: PageProps) {
@@ -112,7 +105,7 @@ export default async function PartnerDetailPage({ params, searchParams }: PagePr
         />
       )}
       {activeTab === "analytics" && <AnalyticsTabLoader counterpartyId={partner.id} roles={partner.roles} />}
-      {activeTab === "materials" && <TabPlaceholder title="Каталог щебня и паспорта" />}
+      {activeTab === "materials" && <MaterialsTabLoader counterpartyId={partner.id} />}
     </div>
   );
 }
@@ -153,4 +146,33 @@ async function AnalyticsTabLoader({
 }) {
   const analytics = await getPartnerAnalytics(counterpartyId, roles);
   return <AnalyticsTab analytics={analytics} roles={roles} />;
+}
+
+// Loads the quarry materials catalog only for the Materials tab. Server Component.
+async function MaterialsTabLoader({ counterpartyId }: { counterpartyId: string }) {
+  const materials = await listPartnerMaterials(counterpartyId);
+  return (
+    <MaterialsTab
+      counterpartyId={counterpartyId}
+      initialMaterials={materials.map((m) => ({
+        id: m.id,
+        materialName: m.materialName,
+        fraction: m.fraction,
+        gost: m.gost,
+        strengthGrade: m.strengthGrade,
+        flakiness: m.flakiness,
+        frostResistance: m.frostResistance,
+        radioactivityClass: m.radioactivityClass,
+        abrasion: m.abrasion,
+        bulkDensity: m.bulkDensity,
+        passportFields: m.passportFields,
+        pricePerTon: m.pricePerTon,
+        currency: m.currency,
+        locationRaw: m.locationRaw,
+        passportDocumentId: m.passportDocumentId,
+        quarryRaw: m.quarryRaw,
+        notes: m.notes,
+      }))}
+    />
+  );
 }
