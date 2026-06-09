@@ -46,8 +46,9 @@ export default async function PartnersPage({ searchParams }: PageProps) {
 
   return (
     <div className="partners-surface flex flex-col gap-6">
-      <header>
-        <h1 className="text-xl text-text" style={{ fontWeight: "var(--weight-bold)" }}>
+      <header className="min-w-0">
+        <p className="label-caps">База</p>
+        <h1 className="mt-1 break-words text-xl font-semibold tracking-tight text-text">
           Партнёры
         </h1>
         <p className="mt-1 text-sm text-text-secondary">

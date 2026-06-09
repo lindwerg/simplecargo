@@ -1,20 +1,46 @@
 "use client";
 
 import * as React from "react";
-import { Plus, Trash2, Calculator, Loader2, AlertTriangle } from "lucide-react";
+import { Plus, Trash2, Calculator, Loader2, AlertTriangle, ArrowLeftRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { StationField, type StationValue } from "@/components/common/StationField";
 
 // Common нерудные ЕТСНГ positions (all class 1) — the SimpleCargo core cargo set.
-const ETSNG_PRESETS: ReadonlyArray<{ code: string; label: string }> = [
-  { code: "232431", label: "Щебень (не поименованный) — 232431" },
-  { code: "232395", label: "Щебень гранитный — 232395" },
-  { code: "232408", label: "Щебень из гравия — 232408" },
-  { code: "232087", label: "Гравий — 232087" },
-  { code: "231000", label: "Песок / земля / глина — 231000" },
-  { code: "281000", label: "Цемент — 281000" },
+const ETSNG_PRESETS: ReadonlyArray<{ code: string; label: string; short: string }> = [
+  { code: "232431", label: "Щебень (не поименованный) — 232431", short: "Щебень" },
+  { code: "232395", label: "Щебень гранитный — 232395", short: "Гранитный" },
+  { code: "232408", label: "Щебень из гравия — 232408", short: "Из гравия" },
+  { code: "232087", label: "Гравий — 232087", short: "Гравий" },
+  { code: "231000", label: "Песок / земля / глина — 231000", short: "Песок" },
+  { code: "281000", label: "Цемент — 281000", short: "Цемент" },
 ];
+
+// Быстрые конфигурации отправки: одно касание — готовый состав групп.
+const WAGON_PRESETS: ReadonlyArray<{ label: string; groups: WagonGroup[] }> = [
+  { label: "1×70", groups: [{ capacityT: "70", count: "1", innovative: false }] },
+  { label: "6×70", groups: [{ capacityT: "70", count: "6", innovative: false }] },
+  { label: "20×70", groups: [{ capacityT: "70", count: "20", innovative: false }] },
+  { label: "6×75 ⚡", groups: [{ capacityT: "75", count: "6", innovative: true }] },
+  { label: "20×75 ⚡", groups: [{ capacityT: "75", count: "20", innovative: true }] },
+];
+
+// Быстрые коэффициенты собственника для ставки предоставления (+% к инвентарному И+В).
+const COEFF_PRESETS: ReadonlyArray<{ label: string; value: string }> = [
+  { label: "+10%", value: "1.1" },
+  { label: "+15%", value: "1.15" },
+  { label: "+20%", value: "1.2" },
+];
+
+const chipClass =
+  "inline-flex h-8 items-center rounded-pill border px-3 text-2xs font-medium transition-colors " +
+  "focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]";
+
+function chipState(active: boolean): string {
+  return active
+    ? "border-accent bg-accent-quiet text-accent"
+    : "border-border text-text-secondary hover:text-text";
+}
 
 interface WagonGroup {
   capacityT: string;
@@ -32,6 +58,19 @@ interface PerWagon {
   tariffRub: number;
 }
 
+interface QuoteProvision {
+  ownerCoeff: number;
+  perGroup: ReadonlyArray<{
+    capacityT: number;
+    count: number;
+    inventoryNoVat: number;
+    provisionNoVat: number;
+  }>;
+  inventoryTotalNoVat: number;
+  provisionTotalNoVat: number;
+  provisionTotalWithVat: number;
+}
+
 interface QuoteResult {
   scope: "supported" | "out-of-scope";
   confidence: "green" | "yellow" | "red";
@@ -45,6 +84,8 @@ interface QuoteResult {
   totalNoVat: number | null;
   vatRate: number;
   totalWithVat: number | null;
+  provision: QuoteProvision | null;
+  provisionRedReason: string | null;
   warnings: string[];
 }
 
@@ -78,6 +119,8 @@ export function TariffCalculator() {
   const [groups, setGroups] = React.useState<WagonGroup[]>([
     { capacityT: "70", count: "1", innovative: false },
   ]);
+  // Коэффициент собственника для отдельного блока «Предоставление» (× к инвентарному И+В).
+  const [ownerCoeff, setOwnerCoeff] = React.useState<string>("1.15");
 
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
@@ -93,6 +136,25 @@ export function TariffCalculator() {
   }
   function removeGroup(i: number) {
     setGroups((g) => (g.length > 1 ? g.filter((_, idx) => idx !== i) : g));
+  }
+  function swapStations() {
+    setOrigin(dest);
+    setDest(origin);
+  }
+  function applyWagonPreset(preset: { groups: WagonGroup[] }) {
+    setGroups(preset.groups.map((g) => ({ ...g })));
+  }
+  /** Активен ли пресет (для подсветки чипа): один-в-один совпадение состава групп. */
+  function presetActive(preset: { groups: WagonGroup[] }): boolean {
+    return (
+      groups.length === preset.groups.length &&
+      groups.every(
+        (g, i) =>
+          g.capacityT === preset.groups[i].capacityT &&
+          g.count === preset.groups[i].count &&
+          g.innovative === preset.groups[i].innovative,
+      )
+    );
   }
 
   async function submit() {
@@ -118,6 +180,7 @@ export function TariffCalculator() {
             count: Number(g.count),
             innovative: g.innovative,
           })),
+          ...(Number(ownerCoeff) > 0 ? { ownerCoeff: Number(ownerCoeff) } : {}),
         }),
       });
       const json = await res.json();
@@ -137,31 +200,36 @@ export function TariffCalculator() {
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
       {/* ── Ввод ─────────────────────────────────────────────────────────────── */}
       <section className="rounded-[var(--radius-lg)] border border-border bg-surface-1 p-4 md:p-5">
-        <p className="label-caps">Маршрут</p>
+        <div className="flex items-center justify-between">
+          <p className="label-caps">Маршрут</p>
+          <button
+            type="button"
+            onClick={swapStations}
+            className="inline-flex items-center gap-1.5 text-2xs text-text-tertiary transition-colors hover:text-text focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
+          >
+            <ArrowLeftRight className="size-3.5" aria-hidden /> поменять местами
+          </button>
+        </div>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
           <StationField label="Откуда" value={origin} onChange={setOrigin} />
           <StationField label="Куда" value={dest} onChange={setDest} />
         </div>
 
         <p className="label-caps mt-5">Груз</p>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2">
-          <label className="flex flex-col gap-1.5">
-            <span className="text-2xs text-text-tertiary">Номенклатура (ЕТСНГ)</span>
-            <select
-              className={fieldClass}
-              value={ETSNG_PRESETS.some((p) => p.code === etsng) ? etsng : "custom"}
-              onChange={(e) => {
-                if (e.target.value !== "custom") setEtsng(e.target.value);
-              }}
+        <div className="mt-3 flex flex-wrap gap-1.5" role="group" aria-label="Быстрый выбор груза">
+          {ETSNG_PRESETS.map((p) => (
+            <button
+              key={p.code}
+              type="button"
+              title={p.label}
+              onClick={() => setEtsng(p.code)}
+              className={cn(chipClass, chipState(etsng === p.code))}
             >
-              {ETSNG_PRESETS.map((p) => (
-                <option key={p.code} value={p.code}>
-                  {p.label}
-                </option>
-              ))}
-              <option value="custom">Другой код…</option>
-            </select>
-          </label>
+              {p.short}
+            </button>
+          ))}
+        </div>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
           <label className="flex flex-col gap-1.5">
             <span className="text-2xs text-text-tertiary">Код ЕТСНГ</span>
             <input
@@ -172,9 +240,28 @@ export function TariffCalculator() {
               placeholder="232431"
             />
           </label>
+          <div className="flex flex-col justify-end gap-1.5 pb-2.5 text-2xs text-text-tertiary">
+            {ETSNG_PRESETS.find((p) => p.code === etsng)?.label ?? "Произвольный код ЕТСНГ"}
+          </div>
         </div>
 
         <p className="label-caps mt-5">Вагоны</p>
+        <div
+          className="mt-3 flex flex-wrap gap-1.5"
+          role="group"
+          aria-label="Быстрые конфигурации отправки"
+        >
+          {WAGON_PRESETS.map((p) => (
+            <button
+              key={p.label}
+              type="button"
+              onClick={() => applyWagonPreset(p)}
+              className={cn(chipClass, "tabular-nums", chipState(presetActive(p)))}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
           <label className="flex flex-col gap-1.5">
             <span className="text-2xs text-text-tertiary">Собственность</span>
@@ -253,6 +340,36 @@ export function TariffCalculator() {
           >
             <Plus className="size-3.5" aria-hidden /> добавить группу вагонов
           </button>
+        </div>
+
+        <p className="label-caps mt-5">Предоставление</p>
+        <p className="mt-1 text-2xs text-text-tertiary">
+          Ставка предоставления = инвентарный тариф И+В × коэффициент собственника. Считается
+          отдельным блоком, к провозной плате не прибавляется.
+        </p>
+        <div className="mt-3 grid grid-cols-[1fr_auto] items-end gap-3">
+          <label className="flex flex-col gap-1.5">
+            <span className="text-2xs text-text-tertiary">Коэфф. собственника ×</span>
+            <input
+              className={cn(fieldClass, "tabular-nums")}
+              value={ownerCoeff}
+              inputMode="decimal"
+              onChange={(e) => setOwnerCoeff(e.target.value.replace(/[^\d.]/g, ""))}
+              placeholder="1.15"
+            />
+          </label>
+          <div className="flex gap-1.5 pb-0.5" role="group" aria-label="Быстрый коэффициент">
+            {COEFF_PRESETS.map((p) => (
+              <button
+                key={p.value}
+                type="button"
+                onClick={() => setOwnerCoeff(p.value)}
+                className={cn(chipClass, "tabular-nums", chipState(ownerCoeff === p.value))}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         <button
@@ -361,9 +478,10 @@ function Result({ result }: { result: QuoteResult }) {
             </table>
           </div>
 
-          {/* Totals */}
+          {/* Totals — провозная плата собственного парка */}
           <div className="space-y-1 rounded-[var(--radius-sm)] border border-border/60 bg-surface-2 p-3">
-            <Row label={`Провозная плата (${result.wagonCount} ваг., без НДС)`} value={rub(result.totalNoVat)} />
+            <p className="label-caps mb-2">Провозная плата (свой вагон)</p>
+            <Row label={`Тариф (${result.wagonCount} ваг., без НДС)`} value={rub(result.totalNoVat)} />
             <Row label={`НДС ${result.vatRate}%`} value={rub(result.totalWithVat! - result.totalNoVat)} />
             <div className="mt-1 flex items-baseline justify-between border-t border-border/60 pt-2">
               <span className="text-sm font-medium text-text">Итого с НДС</span>
@@ -372,6 +490,47 @@ function Result({ result }: { result: QuoteResult }) {
               </span>
             </div>
           </div>
+
+          {/* Предоставление — отдельный блок (инвентарный И+В × коэффициент собственника) */}
+          {result.provision && (
+            <div className="space-y-1 rounded-[var(--radius-sm)] border border-border/60 bg-surface-2 p-3">
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <p className="label-caps">Предоставление</p>
+                <span className="rounded-pill bg-accent-quiet px-2 py-0.5 text-2xs font-medium text-accent">
+                  проверяется
+                </span>
+              </div>
+              {result.provision.perGroup.map((g, i) => (
+                <Row
+                  key={i}
+                  label={`Инвентарный И+В ${g.capacityT} т${g.count > 1 ? ` ×${g.count}` : ""}`}
+                  value={`${rub(g.inventoryNoVat)}/ваг`}
+                />
+              ))}
+              <Row
+                label={`Инвентарный итого (${result.wagonCount} ваг., без НДС)`}
+                value={rub(result.provision.inventoryTotalNoVat)}
+              />
+              <div className="mt-1 flex items-baseline justify-between border-t border-border/60 pt-2">
+                <span className="text-sm font-medium text-text">
+                  Предоставление ×{result.provision.ownerCoeff} (без НДС)
+                </span>
+                <span className="num text-xl font-semibold tabular-nums text-accent">
+                  {rub(result.provision.provisionTotalNoVat)}
+                </span>
+              </div>
+              <Row
+                label={`Предоставление с НДС ${result.vatRate}%`}
+                value={rub(result.provision.provisionTotalWithVat)}
+              />
+            </div>
+          )}
+          {result.provisionRedReason && (
+            <div className="rounded-[var(--radius-sm)] border border-danger/30 bg-surface-2 p-3 text-2xs text-text-secondary">
+              <span className="font-medium text-danger">Предоставление не выдано:</span>{" "}
+              {result.provisionRedReason}
+            </div>
+          )}
         </>
       ) : (
         <div className="rounded-[var(--radius-sm)] border border-accent/30 bg-accent-quiet p-3 text-2xs text-text-secondary">

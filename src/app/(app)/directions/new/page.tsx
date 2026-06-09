@@ -21,7 +21,7 @@ export default async function NewDirectionPage({ searchParams }: Ctx) {
     .from(counterparties)
     .orderBy(asc(counterparties.nameCanonical));
 
-  const backHref = dealId ? `/deals/${dealId}?tab=application` : "/directions";
+  const backHref = dealId ? `/deals/${dealId}?tab=application` : "/deals";
 
   return (
     <div className="mx-auto max-w-3xl space-y-[var(--space-section)]">

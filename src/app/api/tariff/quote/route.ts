@@ -15,6 +15,8 @@ const quoteSchema = z.object({
   etsngCode: z.string().trim().min(1, "Код ЕТСНГ"),
   ownership: z.enum(["own", "rzd"]),
   wagonType: z.string().trim().min(1, "Тип вагона"),
+  // Коэффициент собственника: включает отдельный блок «инвентарный И+В + предоставление».
+  ownerCoeff: z.coerce.number().positive("Коэффициент > 0").max(10).optional(),
   wagons: z
     .array(
       z.object({

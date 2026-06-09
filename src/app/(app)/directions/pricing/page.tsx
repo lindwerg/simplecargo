@@ -45,7 +45,7 @@ export default async function PriceProtocolsPage() {
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <Link
-            href="/directions"
+            href="/deals"
             className="inline-flex items-center gap-1.5 text-sm text-text-secondary transition-colors hover:text-text"
           >
             <ArrowLeft className="size-4" aria-hidden />
