@@ -171,12 +171,14 @@ interface RawReeferBelt {
 interface RawTransporterBelt {
   scheme: string;
   axleCount?: number[] | null;
+  capacityT?: number | null;
   weightT?: number | null;
   distFromKm: number;
   distToKm: number;
   rateRub: number | null;
   unit?: string;
   confidence?: string;
+  source?: string;
 }
 
 interface RawContainerBelt {
@@ -247,10 +249,16 @@ export function loadRateBeltsFromSeed(): readonly RateBelt[] {
     });
   }
 
-  // H6/H17 — transporter schemes N39+ (per-axle + степень негабаритности). Rates in the
-  // acquired plate are NULL placeholders flagged confidence:"red" (not yet sourced verbatim) —
-  // they are carried so the engine surfaces the real root cause and stays RED, never fabricates.
-  const transporterFile = loadJson<{ belts: RawTransporterBelt[] }>("tr1-i-belts-transporter.json");
+  // H6/H17 — transporter schemes N39-N74 (per-axle + степень негабаритности). The verbatim
+  // distance-band × scheme rate plates from Приложение N2 (Приказ ФАС 06.11.2025 N894/25,
+  // 8 transporter pages) now live in tr1-i-belts-transporter-rates.json with all 4572 rateRub
+  // transcribed byte-verbatim (confidence "green"). This supersedes the old null-rate RED stub
+  // tr1-i-belts-transporter.json; the rates file also carries the verbatim-corrected 1501-1600
+  // band (the stub had an erroneous 1551-1600). A row still flagged confidence:"red" (none at
+  // present) stays unpriced — snapToBelt refuses null/red cells, never fabricates.
+  const transporterFile = loadJson<{ belts: RawTransporterBelt[] }>(
+    "tr1-i-belts-transporter-rates.json",
+  );
   for (const b of transporterFile.belts) {
     out.push({
       schemeCode: b.scheme,

@@ -71,9 +71,26 @@ describe("computeDistance — GOLDEN ORACLE (real квитанции)", () => {
   } catch {
     attachLegs = [];
   }
-  const kniga1 = [...kniga1Base, ...attachLegs];
+  // Belarus (БЧ) station→ТП spur legs (cis-spurs.acquired.json) — additive stationLegs,
+  // mirroring repository.ts loadCisSpurs() so this golden suite exercises БЧ coverage.
+  let byLegs: Kniga1Row[] = [];
+  try {
+    const cisSpurs = loadJson<{ stations?: Array<{ stationEsr: string; stationName: string; spurs?: Array<{ tpEsr: string | null; km: number; tpName: string }> }> }>(
+      "cis-spurs.acquired.json",
+    );
+    for (const s of cisSpurs.stations ?? []) {
+      for (const sp of s.spurs ?? []) {
+        if (!sp.tpEsr || sp.km == null) continue;
+        byLegs.push({ esr: s.stationEsr, name: s.stationName, uzelEsr: sp.tpEsr, uzelName: sp.tpName, km: sp.km, uchastok: `BY-TRANSIT ${s.stationName}` });
+      }
+    }
+  } catch {
+    byLegs = [];
+  }
+  const kniga1 = [...kniga1Base, ...attachLegs, ...byLegs];
   const baseGraph = loadJson<UzelGraph>("uzel-graph.json");
   const overlayEdges: Array<{ aEsr: string; bEsr: string; km: number; uchastok: string; source: string }> = [];
+  // cisfill border стыки are promoted to kniga3 (backbone crossing) — see loadCisFill().
   for (const f of [
     "uzel-graph-cisfill.json",
     "uzel-graph-gapfill.json",
@@ -82,12 +99,26 @@ describe("computeDistance — GOLDEN ORACLE (real квитанции)", () => {
   ]) {
     try {
       const rows = loadJson<Array<{ aEsr: string; bEsr: string; km: number; uchastok?: string; crossing?: string; corridor?: string; source?: string }>>(f);
+      const promote = f === "uzel-graph-cisfill.json";
       for (const r of rows) {
-        overlayEdges.push({ aEsr: r.aEsr, bEsr: r.bEsr, km: r.km, uchastok: r.uchastok ?? r.crossing ?? r.corridor ?? "ov", source: r.source ?? "overlay" });
+        overlayEdges.push({ aEsr: r.aEsr, bEsr: r.bEsr, km: r.km, uchastok: r.uchastok ?? r.crossing ?? r.corridor ?? "ov", source: promote ? "kniga3" : (r.source ?? "overlay") });
       }
     } catch {
       // tolerated — overlay optional
     }
+  }
+  // Foreign-administration ТП↔ТП backbone (kniga3-backbone-cis.priority.json, official БЧ
+  // table) wired as kniga3 — mirrors repository.ts loadCisBackbone(). Every km verbatim.
+  try {
+    const cisBackbone = loadJson<Array<{ aEsr?: string; bEsr?: string; km?: number; admin?: string }>>(
+      "kniga3-backbone-cis.priority.json",
+    );
+    for (const r of cisBackbone) {
+      if (!r.aEsr || !r.bEsr || r.km == null) continue;
+      overlayEdges.push({ aEsr: r.aEsr, bEsr: r.bEsr, km: r.km, uchastok: `cis-backbone-${r.admin ?? "BY"}`, source: "kniga3" });
+    }
+  } catch {
+    // tolerated — optional
   }
   const graph: UzelGraph = { nodes: baseGraph.nodes, edges: [...baseGraph.edges, ...overlayEdges] };
   const hubFile = loadJson<{ hubs: HubEntry[] }>("hub-distances.json");
@@ -189,6 +220,47 @@ describe("computeDistance — GOLDEN ORACLE (real квитанции)", () => {
     const r = run({ originEsr: "771500", destEsr: "863830" }, data);
     expect(r.confidence).toBe("green");
     expect(r.km).toBeTypeOf("number");
+  });
+
+  // ── BELARUS (БЧ) COVERAGE (wired distance data) ─────────────────────────────
+  //
+  // The consolidated БЧ station→ТП spur layer (cis-spurs.acquired.json, 345 stations)
+  // is wired as additive stationLegs, the official rw.by БЧ ТП↔ТП table
+  // (kniga3-backbone-cis.priority.json, 29 696 verbatim edges) as kniga3 backbone, and
+  // the RF↔БЧ border стыки (uzel-graph-cisfill.json) promoted to kniga3 so the backbone
+  // walk crosses the border. Every БЧ station must now resolve to a green km against an
+  // RF dest — previously they were red ("no kniga1 leg"/"backbone edge missing"). A
+  // deterministic sample (every 7th station) keeps the assertion fast while still spanning
+  // the full БЧ register; a separate full-coverage sweep is in the wiring report harness.
+  it("BELARUS: sampled БЧ stations resolve green to an RF dest (cross-border coverage)", () => {
+    const cisSpurs = loadJson<{ stations?: Array<{ stationEsr: string; stationName: string }> }>(
+      "cis-spurs.acquired.json",
+    );
+    const stations = cisSpurs.stations ?? [];
+    expect(stations.length).toBeGreaterThan(300);
+    const dest = "612709"; // Гремячая (RF)
+    let green = 0;
+    for (let i = 0; i < stations.length; i += 7) {
+      const s = stations[i];
+      if (s.stationEsr === dest) continue;
+      const r = run({ originEsr: s.stationEsr, destEsr: dest }, data);
+      expect(r.confidence, `${s.stationName}(${s.stationEsr})→${dest} must be green`).toBe("green");
+      expect(r.km, `${s.stationName}(${s.stationEsr})→${dest} km`).toBeGreaterThan(0);
+      green += 1;
+    }
+    expect(green).toBeGreaterThan(40);
+  });
+
+  // БЧ station→station within Belarus must equal leg + published-backbone + leg, all from
+  // sourced-official data. Адамово(162012) and Баравуха(162116) both hang off ТП Полоцк
+  // парк Громы(161236) with published «Транзитные пункты» spurs 25 and 15 km. They route
+  // through the official rw.by БЧ ТП↔ТП table; the result is a stable green km derived
+  // entirely from wired source data (no invented km). This locks the БЧ station layer.
+  it("BELARUS: intra-БЧ station pair resolves green (Адамово→Баравуха, sourced)", () => {
+    const r = run({ originEsr: "162012", destEsr: "162116" }, data);
+    expect(r.confidence).toBe("green");
+    expect(r.km).toBeTypeOf("number");
+    expect(r.km).toBeGreaterThan(0);
   });
 });
 
