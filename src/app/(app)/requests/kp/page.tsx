@@ -24,6 +24,7 @@ export default async function CombinedKpPage({ searchParams }: Ctx) {
   const { lines, clientNames } = await getDirectionsByIds(ids);
   if (lines.length === 0) notFound();
 
+  // Штамп выпуска КП — только первый раз; повторный просмотр дату не перезатирает.
   await markDirectionsKpIssued(lines.map((l) => l.id));
 
   const todayIso = new Date().toISOString();

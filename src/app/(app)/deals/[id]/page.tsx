@@ -137,6 +137,8 @@ export default async function DealCardPage({ params }: Ctx) {
       destRaw: directions.stationDestRaw,
       destEsr: directions.stationDestEsr,
       rateClient: directions.rateClient,
+      // Целевая ставка клиента из запроса (suggestion-only, D16/H1) — подсказка в воркшите.
+      rateClientSuggested: directions.rateClientSuggested,
       rateOwner: directions.rateOwner,
       wagonCountPlanned: directions.wagonCountPlanned,
       clientCounterpartyId: directions.clientCounterpartyId,
@@ -174,6 +176,7 @@ export default async function DealCardPage({ params }: Ctx) {
         ? { raw: firstReqLine.destRaw ?? "", esr: null }
         : null,
     rateClient: primaryDir?.rateClient ?? null,
+    rateClientSuggested: primaryDir?.rateClientSuggested ?? null,
     rateOwner: primaryDir?.rateOwner ?? null,
     wagonCount: primaryDir?.wagonCountPlanned ?? null,
     priceSale: primaryStone?.priceSale ?? null,
