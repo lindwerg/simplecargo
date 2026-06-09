@@ -55,11 +55,15 @@ export function PartnerForm({ initial }: PartnerFormProps) {
 
     setSaving(true);
     try {
+      // PATCH различает «очищено» (null → стереть в БД) и «не передано» (undefined);
+      // в POST пустые поля просто не отправляем.
+      const trimmedInn = inn.trim();
+      const trimmedNotes = notes.trim();
       const payload = {
         name: name.trim(),
         roles: Array.from(roles),
-        inn: inn.trim() || undefined,
-        notes: notes.trim() || undefined,
+        inn: isEdit ? (trimmedInn === "" ? null : trimmedInn) : trimmedInn || undefined,
+        notes: isEdit ? (trimmedNotes === "" ? null : trimmedNotes) : trimmedNotes || undefined,
       };
       const resp = await fetch(isEdit ? `/api/partners/${initial!.id}` : "/api/partners", {
         method: isEdit ? "PATCH" : "POST",

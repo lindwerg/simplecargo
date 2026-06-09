@@ -30,6 +30,7 @@ interface SentResult {
   sent: { carrierName: string; email: string }[];
   skipped: { reason: string }[];
   quotesCreated: number;
+  quotesUpdated: number; // повторный RFQ обновил существующие опросы (без дублей)
 }
 
 /** "Опрос перевозчиков" — pick carriers (role=carrier) + lines, send RFQ by e-mail. */
@@ -212,7 +213,8 @@ export function CarrierOutreach({ requestId, lines }: CarrierOutreachProps) {
       )}
       {result && (
         <div className="rounded-[var(--radius-md)] bg-success-quiet px-3 py-2 text-sm text-success">
-          Отправлено: {result.sent.length} ({result.quotesCreated} опросов записано).
+          Отправлено: {result.sent.length} ({result.quotesCreated} опросов записано
+          {result.quotesUpdated > 0 ? `, ${result.quotesUpdated} обновлено` : ""}).
           {result.skipped.length > 0 && (
             <ul className="mt-1 text-warn">
               {result.skipped.map((s, i) => (

@@ -120,6 +120,21 @@ export async function markFileQuarantined(fileId: string): Promise<void> {
     .where(sql`${ingestedFiles.id} = ${fileId}`);
 }
 
+// Startup-sweep: письма, застрявшие в 'processing' (воркер упал посреди разбора).
+// На старте воркера никакая обработка не идёт, поэтому все такие ряды — сироты.
+export async function listStuckProcessingFiles(): Promise<
+  { id: string; filename: string | null; senderEmail: string | null }[]
+> {
+  return db
+    .select({
+      id: ingestedFiles.id,
+      filename: ingestedFiles.filename,
+      senderEmail: ingestedFiles.senderEmail,
+    })
+    .from(ingestedFiles)
+    .where(and(eq(ingestedFiles.status, "processing"), eq(ingestedFiles.sourceType, "E")));
+}
+
 // ── inbound invoice (pending) ────────────────────────────────────────────────
 function toDate(iso: string | null): Date | null {
   if (!iso) return null;

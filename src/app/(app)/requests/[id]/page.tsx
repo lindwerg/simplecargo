@@ -10,8 +10,10 @@ import { ConvertToTradeButton, type ConvertLine } from "@/components/trades/Conv
 import { hasTransportShape } from "@/lib/trades/conversionScenario";
 import { RequestWorklist, type WorklistLine } from "@/components/requests/RequestWorklist";
 import { CarrierOutreach, type OutreachLine } from "@/components/requests/CarrierOutreach";
+import { OwnerQuotesPanel } from "@/components/requests/OwnerQuotesPanel";
 import { ReviewConfirmBanner } from "@/components/requests/ReviewConfirmBanner";
 import { formatRateExpression, type RateKind } from "@/lib/pricing/rate-expression";
+import { listOwnerQuotesForRequest } from "@/lib/rfq/quotes";
 import { getRequest, RequestError } from "@/lib/requests/repository";
 
 const TARIFF_KINDS = new Set<RateKind>(["tariff_indicative", "tariff_plus_markup"]);
@@ -51,6 +53,9 @@ export default async function RequestDetailPage({ params }: Ctx) {
     if (e instanceof RequestError && e.status === 404) notFound();
     throw e;
   }
+
+  // результат опроса перевозчиков (request_owner_quotes) — блок «Ставки перевозчиков»
+  const ownerQuotes = await listOwnerQuotesForRequest(id);
 
   const status = data.status as RequestStatus;
   const isTemp = !data.clientSuggestedId;
@@ -158,6 +163,8 @@ export default async function RequestDetailPage({ params }: Ctx) {
       />
 
       <CarrierOutreach requestId={id} lines={outreachLines} />
+
+      <OwnerQuotesPanel quotes={ownerQuotes} />
 
       {data.notes && (
         <section className="flex flex-col gap-1">
