@@ -121,6 +121,8 @@ export function TariffCalculator() {
   ]);
   // Коэффициент собственника для отдельного блока «Предоставление» (× к инвентарному И+В).
   const [ownerCoeff, setOwnerCoeff] = React.useState<string>("1.15");
+  // Предоставление — опционально (галочка): выключено → блок не считается и не показывается.
+  const [withProvision, setWithProvision] = React.useState<boolean>(true);
 
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
@@ -180,7 +182,7 @@ export function TariffCalculator() {
             count: Number(g.count),
             innovative: g.innovative,
           })),
-          ...(Number(ownerCoeff) > 0 ? { ownerCoeff: Number(ownerCoeff) } : {}),
+          ...(withProvision && Number(ownerCoeff) > 0 ? { ownerCoeff: Number(ownerCoeff) } : {}),
         }),
       });
       const json = await res.json();
@@ -342,35 +344,50 @@ export function TariffCalculator() {
           </button>
         </div>
 
-        <p className="label-caps mt-5">Предоставление</p>
-        <p className="mt-1 text-2xs text-text-tertiary">
-          Ставка предоставления = инвентарный тариф И+В × коэффициент собственника. Считается
-          отдельным блоком, к провозной плате не прибавляется.
-        </p>
-        <div className="mt-3 grid grid-cols-[1fr_auto] items-end gap-3">
-          <label className="flex flex-col gap-1.5">
-            <span className="text-2xs text-text-tertiary">Коэфф. собственника ×</span>
+        <div className="mt-5 flex items-center justify-between gap-3">
+          <p className="label-caps">Предоставление</p>
+          <label className="inline-flex cursor-pointer items-center gap-1.5">
             <input
-              className={cn(fieldClass, "tabular-nums")}
-              value={ownerCoeff}
-              inputMode="decimal"
-              onChange={(e) => setOwnerCoeff(e.target.value.replace(/[^\d.]/g, ""))}
-              placeholder="1.15"
+              type="checkbox"
+              checked={withProvision}
+              onChange={(e) => setWithProvision(e.target.checked)}
+              className="size-4 accent-[var(--color-accent)]"
             />
+            <span className="text-2xs text-text-secondary">считать предоставление</span>
           </label>
-          <div className="flex gap-1.5 pb-0.5" role="group" aria-label="Быстрый коэффициент">
-            {COEFF_PRESETS.map((p) => (
-              <button
-                key={p.value}
-                type="button"
-                onClick={() => setOwnerCoeff(p.value)}
-                className={cn(chipClass, "tabular-nums", chipState(ownerCoeff === p.value))}
-              >
-                {p.label}
-              </button>
-            ))}
-          </div>
         </div>
+        {withProvision && (
+          <>
+            <p className="mt-1 text-2xs text-text-tertiary">
+              Ставка предоставления = инвентарный тариф И+В × коэффициент собственника. Считается
+              отдельным блоком, к провозной плате не прибавляется.
+            </p>
+            <div className="mt-3 grid grid-cols-[1fr_auto] items-end gap-3">
+              <label className="flex flex-col gap-1.5">
+                <span className="text-2xs text-text-tertiary">Коэфф. собственника ×</span>
+                <input
+                  className={cn(fieldClass, "tabular-nums")}
+                  value={ownerCoeff}
+                  inputMode="decimal"
+                  onChange={(e) => setOwnerCoeff(e.target.value.replace(/[^\d.]/g, ""))}
+                  placeholder="1.15"
+                />
+              </label>
+              <div className="flex gap-1.5 pb-0.5" role="group" aria-label="Быстрый коэффициент">
+                {COEFF_PRESETS.map((p) => (
+                  <button
+                    key={p.value}
+                    type="button"
+                    onClick={() => setOwnerCoeff(p.value)}
+                    className={cn(chipClass, "tabular-nums", chipState(ownerCoeff === p.value))}
+                  >
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
 
         <button
           type="button"
@@ -414,6 +431,10 @@ export function TariffCalculator() {
 
 function Result({ result }: { result: QuoteResult }) {
   const conf = CONF_LABEL[result.confidence];
+  // Все главные цифры — ЗА ВАГОН; суммы по отправке только пояснительной строкой.
+  const withVat = (n: number): number => Math.round(n * (1 + result.vatRate / 100));
+  const grouped = collapse(result.perWagon);
+  const singleGroup = grouped.length === 1;
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
@@ -478,17 +499,41 @@ function Result({ result }: { result: QuoteResult }) {
             </table>
           </div>
 
-          {/* Totals — провозная плата собственного парка */}
+          {/* Провозная плата — ЗА ВАГОН (суммы по отправке только справочной строкой) */}
           <div className="space-y-1 rounded-[var(--radius-sm)] border border-border/60 bg-surface-2 p-3">
-            <p className="label-caps mb-2">Провозная плата (свой вагон)</p>
-            <Row label={`Тариф (${result.wagonCount} ваг., без НДС)`} value={rub(result.totalNoVat)} />
-            <Row label={`НДС ${result.vatRate}%`} value={rub(result.totalWithVat! - result.totalNoVat)} />
-            <div className="mt-1 flex items-baseline justify-between border-t border-border/60 pt-2">
-              <span className="text-sm font-medium text-text">Итого с НДС</span>
-              <span className="num text-xl font-semibold tabular-nums text-accent">
-                {rub(result.totalWithVat!)}
-              </span>
-            </div>
+            <p className="label-caps mb-2">Провозная плата · за вагон</p>
+            {grouped.map((g, i) => (
+              <React.Fragment key={i}>
+                <Row
+                  label={`Тариф за вагон ${g.capacityT} т${g.innovative ? " ⚡" : ""} (без НДС)`}
+                  value={rub(g.tariffRub)}
+                />
+                <Row
+                  label={`НДС ${result.vatRate}%`}
+                  value={rub(withVat(g.tariffRub) - g.tariffRub)}
+                />
+                {!singleGroup && (
+                  <Row
+                    label={`За вагон ${g.capacityT} т с НДС`}
+                    value={rub(withVat(g.tariffRub))}
+                  />
+                )}
+              </React.Fragment>
+            ))}
+            {singleGroup && (
+              <div className="mt-1 flex items-baseline justify-between border-t border-border/60 pt-2">
+                <span className="text-sm font-medium text-text">За вагон с НДС</span>
+                <span className="num text-xl font-semibold tabular-nums text-accent">
+                  {rub(withVat(grouped[0].tariffRub))}
+                </span>
+              </div>
+            )}
+            {result.wagonCount > 1 && (
+              <p className="mt-1 text-2xs text-text-tertiary">
+                Вся отправка ({result.wagonCount} ваг.): {rub(result.totalNoVat)} без НДС ·{" "}
+                {rub(result.totalWithVat!)} с НДС
+              </p>
+            )}
           </div>
 
           {/* Предоставление — отдельный блок (инвентарный И+В × коэффициент собственника) */}
@@ -501,28 +546,41 @@ function Result({ result }: { result: QuoteResult }) {
                 </span>
               </div>
               {result.provision.perGroup.map((g, i) => (
-                <Row
-                  key={i}
-                  label={`Инвентарный И+В ${g.capacityT} т${g.count > 1 ? ` ×${g.count}` : ""}`}
-                  value={`${rub(g.inventoryNoVat)}/ваг`}
-                />
+                <React.Fragment key={i}>
+                  <Row
+                    label={`Инвентарный И+В за вагон ${g.capacityT} т`}
+                    value={rub(g.inventoryNoVat)}
+                  />
+                  {result.provision!.perGroup.length > 1 && (
+                    <Row
+                      label={`Предоставление за вагон ${g.capacityT} т (без НДС)`}
+                      value={rub(g.provisionNoVat)}
+                    />
+                  )}
+                </React.Fragment>
               ))}
-              <Row
-                label={`Инвентарный итого (${result.wagonCount} ваг., без НДС)`}
-                value={rub(result.provision.inventoryTotalNoVat)}
-              />
-              <div className="mt-1 flex items-baseline justify-between border-t border-border/60 pt-2">
-                <span className="text-sm font-medium text-text">
-                  Предоставление ×{result.provision.ownerCoeff} (без НДС)
-                </span>
-                <span className="num text-xl font-semibold tabular-nums text-accent">
-                  {rub(result.provision.provisionTotalNoVat)}
-                </span>
-              </div>
-              <Row
-                label={`Предоставление с НДС ${result.vatRate}%`}
-                value={rub(result.provision.provisionTotalWithVat)}
-              />
+              {result.provision.perGroup.length === 1 && (
+                <>
+                  <div className="mt-1 flex items-baseline justify-between border-t border-border/60 pt-2">
+                    <span className="text-sm font-medium text-text">
+                      Предоставление ×{result.provision.ownerCoeff} за вагон (без НДС)
+                    </span>
+                    <span className="num text-xl font-semibold tabular-nums text-accent">
+                      {rub(result.provision.perGroup[0].provisionNoVat)}
+                    </span>
+                  </div>
+                  <Row
+                    label={`За вагон с НДС ${result.vatRate}%`}
+                    value={rub(withVat(result.provision.perGroup[0].provisionNoVat))}
+                  />
+                </>
+              )}
+              {result.wagonCount > 1 && (
+                <p className="mt-1 text-2xs text-text-tertiary">
+                  Вся отправка ({result.wagonCount} ваг.): {rub(result.provision.provisionTotalNoVat)}{" "}
+                  без НДС · {rub(result.provision.provisionTotalWithVat)} с НДС
+                </p>
+              )}
             </div>
           )}
           {result.provisionRedReason && (
