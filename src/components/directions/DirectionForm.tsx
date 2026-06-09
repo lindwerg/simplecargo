@@ -277,7 +277,7 @@ export function DirectionForm({ counterparties, initial, directionId, orderId }:
           setPending(false);
           return;
         }
-        router.push(!isEdit && orderId ? `/deals/${orderId}?tab=application` : "/directions");
+        router.push(!isEdit && orderId ? `/deals/${orderId}?tab=application` : "/deals");
         router.refresh();
       } catch {
         setError(SUBMIT_ERROR);
@@ -588,7 +588,7 @@ export function DirectionForm({ counterparties, initial, directionId, orderId }:
           type="button"
           variant="outline"
           disabled={pending}
-          onClick={() => router.push("/directions")}
+          onClick={() => router.push("/deals")}
         >
           Отмена
         </Button>

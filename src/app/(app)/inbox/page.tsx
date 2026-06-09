@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Inbox as InboxIcon } from "lucide-react";
+import { Inbox as InboxIcon, Plus, ShieldAlert } from "lucide-react";
 
 import { auth } from "@/lib/auth";
 import { LiveRefresh } from "@/components/realtime/LiveRefresh";
@@ -39,7 +39,7 @@ export default async function InboxPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-[var(--space-section)]">
       <LiveRefresh />
       <header className="min-w-0">
         <p className="label-caps">Почта · ИИ</p>
@@ -60,6 +60,33 @@ export default async function InboxPage() {
           )}
         </p>
       </header>
+
+      <section aria-label="Действия" className="grid grid-cols-2 gap-3">
+        <Link
+          href="/deals/new"
+          className="group flex items-center gap-3 rounded-lg border border-border bg-surface-1 px-5 py-6 transition-transform duration-[var(--duration-fast)] ease-[var(--ease-out-quad)] hover:-translate-y-[2px] active:translate-y-0 active:opacity-90 focus-visible:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
+        >
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-md bg-accent-quiet text-accent transition-transform group-hover:scale-105">
+            <Plus className="size-5" aria-hidden />
+          </span>
+          <span className="min-w-0">
+            <span className="block text-base font-semibold text-text">Новая сделка</span>
+            <span className="block text-xs text-text-tertiary">Создать из письма вручную</span>
+          </span>
+        </Link>
+        <Link
+          href="/inbox/review"
+          className="group flex items-center gap-3 rounded-lg border border-border bg-surface-1 px-5 py-6 transition-transform duration-[var(--duration-fast)] ease-[var(--ease-out-quad)] hover:-translate-y-[2px] active:translate-y-0 active:opacity-90 focus-visible:outline-none focus-visible:[box-shadow:var(--ring-focus)]"
+        >
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-md bg-surface-2 text-text-secondary transition-colors group-hover:text-text">
+            <ShieldAlert className="size-5" aria-hidden />
+          </span>
+          <span className="min-w-0">
+            <span className="block text-base font-semibold text-text">Требует проверки</span>
+            <span className="block text-xs text-text-tertiary">Письма, которые ИИ не разобрал</span>
+          </span>
+        </Link>
+      </section>
 
       <section className="rounded-lg border border-border bg-surface-1 p-4">
         <EmailList

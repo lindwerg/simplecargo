@@ -16,6 +16,8 @@ import {
   type N8WagonInput,
 } from "@/lib/tariff/computeTariffN8";
 import { loadN8TariffData } from "@/lib/tariff/n8Data";
+import { computeInventory } from "@/lib/tariff/computeInventory";
+import { loadInventoryTariffData } from "@/lib/tariff/inventoryData";
 
 /** Domestic НДС from 2026-01-01 (ТР-1 tariffs are без НДС; applied last). */
 export const VAT_RATE_DOMESTIC = 22;
@@ -38,6 +40,11 @@ export interface QuoteInput {
   readonly ownership: "own" | "rzd";
   /** Только 'полувагон' валидирован; иное → out-of-scope. */
   readonly wagonType: string;
+  /**
+   * Коэффициент собственника (× к инвентарному И+В) — если задан, дополнительно
+   * считаются инвентарный тариф и ставка предоставления (отдельный блок, не сумма).
+   */
+  readonly ownerCoeff?: number;
 }
 
 export interface QuotePerWagon {
@@ -48,6 +55,25 @@ export interface QuotePerWagon {
   readonly k4: number;
   readonly k4Fitted: boolean;
   readonly tariffRub: number;
+}
+
+/**
+ * Блок «Предоставление» — отдельный от провозной платы расчёт для собственника:
+ * инвентарный тариф И+В (⚠️ «проверяется») и ставка предоставления = инвентарный ×
+ * коэффициент собственника. Суммы по всей отправке (perWagonProvision × count).
+ */
+export interface QuoteProvision {
+  readonly ownerCoeff: number;
+  /** Инвентарный И+В за вагон по группам г/п, ₽ без НДС (как в запросе wagons[]). */
+  readonly perGroup: ReadonlyArray<{
+    readonly capacityT: number;
+    readonly count: number;
+    readonly inventoryNoVat: number;
+    readonly provisionNoVat: number;
+  }>;
+  readonly inventoryTotalNoVat: number;
+  readonly provisionTotalNoVat: number;
+  readonly provisionTotalWithVat: number;
 }
 
 export interface QuoteResult {
@@ -63,7 +89,67 @@ export interface QuoteResult {
   readonly totalNoVat: number | null;
   readonly vatRate: number;
   readonly totalWithVat: number | null;
+  /** null — коэффициент не задан или инвентарный red (см. provisionRedReason). */
+  readonly provision: QuoteProvision | null;
+  /** Причина, по которой инвентарный/предоставление не выданы (red). */
+  readonly provisionRedReason: string | null;
   readonly warnings: readonly string[];
+}
+
+/** Род вагона UI («полувагон») → код схемы инвентарного парка («ПВ»). */
+const WAGON_TYPE_CODE: Readonly<Record<string, string>> = {
+  полувагон: "ПВ",
+  платформа: "ПЛ",
+  крытый: "КР",
+  цистерна: "ЦС",
+};
+
+/**
+ * Инвентарный И+В + ставка предоставления по группам вагонов. Отдельный блок:
+ * НЕ суммируется с провозной платой собственного парка. red инвентарного не
+ * валит расчёт — возвращается причина.
+ */
+function computeProvision(
+  wagons: readonly QuoteWagon[],
+  wagonType: string,
+  distKm: number,
+  ownerCoeff: number,
+): { provision: QuoteProvision | null; redReason: string | null } {
+  const code = WAGON_TYPE_CODE[wagonType.trim().toLowerCase()] ?? wagonType.trim();
+  const invData = loadInventoryTariffData();
+  const wagonCount = wagons.reduce((s, w) => s + w.count, 0);
+
+  const perGroup: Array<{
+    capacityT: number;
+    count: number;
+    inventoryNoVat: number;
+    provisionNoVat: number;
+  }> = [];
+  for (const w of wagons) {
+    const inv = computeInventory(code, w.capacityT, distKm, wagonCount, invData);
+    if (inv.confidence === "red" || inv.inventoryNoVat === null) {
+      return { provision: null, redReason: inv.redReason };
+    }
+    perGroup.push({
+      capacityT: w.capacityT,
+      count: w.count,
+      inventoryNoVat: inv.inventoryNoVat,
+      provisionNoVat: Math.round(inv.inventoryNoVat * ownerCoeff),
+    });
+  }
+
+  const inventoryTotalNoVat = perGroup.reduce((s, g) => s + g.inventoryNoVat * g.count, 0);
+  const provisionTotalNoVat = perGroup.reduce((s, g) => s + g.provisionNoVat * g.count, 0);
+  return {
+    provision: {
+      ownerCoeff,
+      perGroup,
+      inventoryTotalNoVat,
+      provisionTotalNoVat,
+      provisionTotalWithVat: Math.round(provisionTotalNoVat * (1 + VAT_RATE_DOMESTIC / 100)),
+    },
+    redReason: null,
+  };
 }
 
 export function lookupEtsng(
@@ -126,6 +212,8 @@ export async function computeRzdQuote(input: QuoteInput): Promise<QuoteResult> {
       totalNoVat: null,
       vatRate: VAT_RATE_DOMESTIC,
       totalWithVat: null,
+      provision: null,
+      provisionRedReason: null,
       warnings: [
         "Расстояние не определено: граф не нашёл тарифного маршрута (нет ребра Книги 3 или станция в карантине).",
         ...outOfScope,
@@ -149,6 +237,8 @@ export async function computeRzdQuote(input: QuoteInput): Promise<QuoteResult> {
       totalNoVat: null,
       vatRate: VAT_RATE_DOMESTIC,
       totalWithVat: null,
+      provision: null,
+      provisionRedReason: null,
       warnings: [
         "Расчёт провозной платы пропущен — параметры вне валидированного до-рубля контура:",
         ...outOfScope,
@@ -198,6 +288,22 @@ export async function computeRzdQuote(input: QuoteInput): Promise<QuoteResult> {
   const confidence: "green" | "yellow" | "red" =
     dist.confidence === "green" ? "green" : dist.confidence === "yellow" ? "yellow" : "red";
 
+  // ── 6. Предоставление (отдельный блок) — только если задан коэффициент ───────
+  // Инвентарная цепочка (0,77 × 0,909 …) выверена только для нерудных класс-1 —
+  // считаем её на том же валидированном контуре, что и провозную плату.
+  let provision: QuoteProvision | null = null;
+  let provisionRedReason: string | null = null;
+  if (input.ownerCoeff !== undefined && input.ownerCoeff > 0) {
+    const p = computeProvision(input.wagons, input.wagonType, dist.km, input.ownerCoeff);
+    provision = p.provision;
+    provisionRedReason = p.redReason;
+    if (provision) {
+      warnings.push(
+        "Инвентарный И+В и предоставление — «проверяется»: посчитаны из официальных таблиц, сверены с двумя эталонами R-Тариф, но не выверены до рубля на всех плечах.",
+      );
+    }
+  }
+
   return {
     scope: "supported",
     confidence,
@@ -211,6 +317,8 @@ export async function computeRzdQuote(input: QuoteInput): Promise<QuoteResult> {
     totalNoVat,
     vatRate: VAT_RATE_DOMESTIC,
     totalWithVat,
+    provision,
+    provisionRedReason,
     warnings: [...dist.warnings, ...warnings],
   };
 }
