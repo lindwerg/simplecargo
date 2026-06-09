@@ -107,10 +107,12 @@ describe("computeTariffPure — Scenario A: КР rzd повагонная class 
     expect(r.emptyRun).toBe(0);
   });
 
-  it("applies K3=0.876 (огнеупоры class 2)", () => {
+  it("applies K3=0.876 (огнеупоры class 2) + ×1.04 class surcharge + ×1.01 доп.индексация", () => {
     const r = computeTariffPure(INPUT_A, makeDataA());
     // iComponent = 87619 × 1.0 (K1) × 0.876 (K3) × 1.0 (K4) × 1.0 (innovative)
-    expect(r.iComponent).toBeCloseTo(87619 * 0.876, 1);
+    //              × 1.04 (class-2 surcharge п.3.3) × 1.01 (доп.индексация)
+    // Both the ×1.04 and ×1.01 apply to class 2/3 on the universal path (sourced 894/25).
+    expect(r.iComponent).toBeCloseTo(87619 * 0.876 * 1.04 * 1.01, 1);
   });
 
   it("applies 22% НДС last", () => {

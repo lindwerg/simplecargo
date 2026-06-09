@@ -214,10 +214,14 @@ describe("Universal engine — Scenario 2: Цистерна own class2, 800km (p
     expect(r.iComponent).toBeGreaterThan(50000);
   });
 
-  it("poroznhiy component comes from empty-run belt (scheme '25', 800km)", () => {
-    // With empty coefficients (no ×1.1) emptyRun = raw belt value.
+  it("NO порожний leg in цистерна provNoVat (per-tonne схема 19 = loaded chain only)", () => {
+    // ENGINE FIX 3: own/rented nalivnye цистерны (N19-N24) price PER TONNE and the R-Тариф
+    // provNoVat is the LOADED chain only — there is no separate порожний (empty-run) leg in it
+    // (reference-quotes-batch-0609.json CIS-C3 has none). The cistern branch returns emptyRun=0.
     const r = computeTariffPure(INPUT_S2, makeSeedData(800));
-    expect(r.emptyRun).toBeGreaterThan(0);
+    expect(r.emptyRun).toBe(0);
+    // provNoVat (preIndex) is therefore the loaded per-tonne чейн × масса only.
+    expect(r.preIndex).toBe(r.iComponent);
   });
 });
 

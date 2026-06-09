@@ -16,11 +16,12 @@
 
 | Gate | Result | Evidence |
 |---|---|---|
-| `npx vitest run src/lib/tariff src/lib/distance --reporter=dot` | **194 passed (15 files), 0 failed** | run 2026-06-09, 487 ms, setup 0 ms (hermetic, DB-free) |
+| `npx vitest run src/lib/tariff src/lib/distance --reporter=dot` | **223 passed (17 files), 0 failed, 0 skipped** | run 2026-06-09, ~485 ms, setup 0 ms (hermetic, DB-free) |
 | `npx tsc --noEmit --pretty false` | **exit 0, 0 errors** | run 2026-06-09 |
-| Golden oracles to the kopeck | **ALL EXACT** | see §1 |
-| Belt cells added this effort | **10 container plates (verbatim) + 1 RED placeholder** | `tr1-i-belts-container.json` |
-| Fabricated numbers | **ZERO** (attested by all 5 sub-agents) | §6 |
+| Golden oracles to the kopeck | **ALL EXACT** (1067770 / 187344 / 82816 / 101035.52) | see §1 |
+| Batch 2026-06-09 cases to the kopeck | **13/13 GREEN** (INV-1, INV-6_20, C3-a..d, C2-a/b, PL-C2-a/b, PL-C3-a/b, CIS-C3) | see §1.5 CERTIFICATION MATRIX |
+| Belt cells added (prior effort) | **10 container plates (verbatim) + 1 RED placeholder** | `tr1-i-belts-container.json` |
+| Fabricated numbers | **ZERO** (attested) | §6 |
 
 **Headline:** The class-1 нерудные own-полувагон path remains certified to the kopeck and is now derived from
 verbatim ТР-1 text (the hard-fitted 699 km uplift `1.0057499686370497` is DELETED — gap C4 closed). The
@@ -59,6 +60,55 @@ These are the golden oracles. They are asserted in the test suite and pass to th
 - **Indexation double-count (gaps C1/C2/H19) closed:** `indexFactor()` = 1.0 for an as-of-2026 calc;
   `computeTariff.test.ts` now asserts `postIndex ≈ preIndex = 50700` instead of the prior ~25% (1.138×1.10)
   overcharge.
+
+---
+
+## 1.5. CERTIFICATION MATRIX — род × класс (batch 2026-06-09)
+
+> This is the headline deliverable of the 2026-06-09 R-Тариф v19.59 batch. Every cell below was driven from the
+> 13 reference quotes in [`scripts/seed-data/reference-quotes-batch-0609.json`](../../scripts/seed-data/reference-quotes-batch-0609.json)
+> (full coefficient breakdowns) and locked in `goldenBatch0609.test.ts` (26 tests) + `goldenBatch0609Inventory.test.ts`.
+> GREEN = reproduces R-Тариф **to the kopeck** with the cited case ID. YELLOW = the engine computes a sourced
+> number but no R-Тариф reference quote exists at that matrix point. RED = primary datum missing, no number emitted.
+
+| Род × класс | Status | Case ID(s) | R-Тариф provNoVat (₽) | What it certifies |
+|---|---|---|---|---|
+| **ПВ class-1** (own, нерудные) | 🟢 GREEN | `goldenN8`/`goldenProdPath`/`goldenRtariff` (ЭФ164189, ЭТ201459, Элисенваара→Элиста) | 1067770 / 187344 / 82816 (→101035.52 с НДС) | N8 grid base, K4 п.16.7 max-of-two, ×0.9346 ПВ class-1 род coef, нерудный 0.69993, НДС 22% — UNCHANGED, not regressed |
+| **ПВ class-2** (own) | 🟢 GREEN | `C2-a`, `C2-b` | 147018, 153865 | billable-mass floor (14т→58т МВН), ×0.9592 ПВ class-2 род coef, K1 class-2=1.00, жб/стеновые 0.91, ×1.04 class-2 surcharge, ×1.01 доп.индекс |
+| **ПВ class-3** (own) | 🟢 GREEN | `C3-a`, `C3-b`, `C3-c`, `C3-d` | 265327, 206291, 198995, 163573 | weight-dependent base (14т vs 69т), billable floor (14т→25т МВН), ×0.9774 ПВ class-3 род coef, K1 class-3=1.54, маты 1.04 / лёгкая пром 0.75, ×1.04 + ×1.01 |
+| **Платформа class-2** (own) | 🟢 GREEN | `PL-C2-a`, `PL-C2-b` | 153271, 160409 | SAME chain as ПВ **минус** род coef (платформа does NOT get 0.9592) → платформа > полувагон; жб 0.91, ×1.04 + ×1.01 |
+| **Платформа class-3** (own) | 🟢 GREEN | `PL-C3-a`, `PL-C3-b` | 218748, 271462 | NO род coef, NO commodity coef (сваи металлические 371070 — none), K1 class-3=1.54, ×1.04 + ×1.01 |
+| **Цистерна class-3** (own, приватная) | 🟢 GREEN | `CIS-C3` | 391135 | схема 19 **ЗА ТОННУ** × масса(67т), NO мин.норма (billable=факт), K1 class-3=**1.74** (кислота, not 1.54), кислоты 0.81, NO род coef, ×1.01 |
+| **Инвентарный ПВ повагонная** (общий парк, И+В) | 🟢 GREEN | `INV-1` | 110170 | Схема8(груженый, **БЕЗ** род coef) + Схема25(1)(порожний 60% дист=845км, per-axle ×4) + СхемаВ4(×1.01) − скидка 754; K4 1-ваг base-delta |
+| **Инвентарный ПВ групповая** (общий парк, И+В) | 🟢 GREEN | `INV-6_20` | 105804 | same И+В rebuild, K4 6–20 ваг **negative** base-delta (−1625.12 / −127.34) |
+| **ПВ class-1 inventory** (общий парк) | 🟡 YELLOW | — | — | И1+В chain computes; нерудный class-1 inventory not in this batch (INV cases are class-1 нерудные but certify the И+В *structure*, not class-1-specific inventory provision banding) |
+| **КР (крытый), any class** | 🔴 RED | — | — | п.1.5 ×0.909 coefficient NOT in Табл.4 list for КР; alternative coefficient unverified |
+| **ЦС/реф/транспортёр** (non-acid specialized) | 🔴 RED | — | — | 1D scheme number not pinned in Табл.N7 |
+| **Empty container positioning** | 🔴 RED | — | — | Табл.N24 covers loaded only |
+
+### Newly-certified rules (locked this batch, all verbatim from `_meta.decoded` breakdowns)
+
+1. **Billable mass floor** — расчётная масса = `max(фактическая, мин.весовая норма)`; Схема8 base read from the
+   N8 weight×distance grid by BILLABLE mass, not by г/п. Per-cargo МВН: 685127→14т, 631184→25т, 254040→58т,
+   371070→21т, нерудные→г/п(~70т), цистерна→none. Verified base selections: C3-d 14→25т→base134609; C2-a
+   14→58т→base156489. ЕТСНГ catalog МВН (`etsng-classes.json`) matches `tr1-min-weight-norms.json` verbatim.
+2. **Gondola-only род coef** — «Коэффициент на перевозку грузов N-го класса В ПОЛУВАГОНАХ» applies to ПВ ONLY:
+   class1=0.9346, class2=0.9592, class3=0.9774. Платформа and цистерна do NOT receive it (proven by
+   PL-C2-b 160409 > C2-b 153865, same everything else).
+3. **Platform path** — identical chain to gondola minus the род coef; commodity coef per cargo (свая 371070 none).
+4. **Cistern схема 19** — per-tonne base × mass, no мин.норма, K1 class-3=**1.74** (acid position, not 1.54),
+   кислоты 0.81, no род coef.
+5. **Inventory И+В rebuild** — provNoVat = Схема8(loaded, no род coef) + Схема25(1)(порожний 60% дист, per-axle
+   ×оси) + СхемаВ4(×1.01) − скидка 754; K4 is the п.16.7 base-delta (positive for 1-ваг повагонная, negative for
+   6–20 ваг групповая). `loadedNoVat` field carries the LOADED-chain-only «провозная плата без НДС».
+6. **Ordering (class 2/3)** — base → +K4 base-delta → ×род(ПВ only) → ×K1(cls2=1.00, cls3=1.54/1.74) → ×commodity
+   → ×1.04 class surcharge → ×1.01 доп.индексация → НДС 22% last. The ×1.04 + ×1.01 are gated to class 2/3 ONLY
+   on the universal path — applying them to class 1 would double-count against the K4=1.01 calibration and was
+   caught regressing 82816→83644 before being gated.
+
+**Net: 13/13 batch cases GREEN to the kopeck; all 4 pre-existing certified oracles (1067770 / 187344 / 82816 /
+101035.52) still EXACT (`goldenN8`/`goldenProdPath`/`goldenRtariff` all pass). The certified род×class surface is
+now ПВ {1,2,3} + платформа {2,3} + цистерна {3} + инвентарный {повагонная, групповая}.**
 
 ---
 
@@ -195,6 +245,18 @@ To promote YELLOW → GREEN and close the operator-blocked RED gaps, the operato
 7. **2026 domestic НДС confirmation (M2):** confirm 22% vs 20% against primary source (universal-path systematic
    risk if 20%). The R-Тариф oracle uses **22%** (101 035.52 / 82 816 = 1.22) — consistent, but obtain the
    primary-source citation.
+8. **Full минимальная весовая норма (МВН) table (batch 2026-06-09):** only 5 cargoes are pinned from this batch's
+   breakdowns (685127→14т, 631184→25т, 254040→58т, 371070→21т, нерудные→г/п~70т; цистерна→none). The billable-mass
+   floor is GREEN only for these; every other cargo needs its МВН from the ЕТСНГ catalog / Табл.4 to avoid an
+   under-bill. The engine raises a YELLOW «расчётная масса не подтверждена» flag for numeric-МВН роды
+   (полувагон/платформа class 2/3) when МВН is missing — cistern-exempt. Source to obtain: full per-ЕТСНГ МВН
+   table verbatim into `tr1-min-weight-norms.json` (currently matches `etsng-classes.json` only for the certified subset).
+9. **Unsourced commodity coefficients (per-cargo):** the commodity multipliers certified this batch are
+   нерудные 0.69993, жб/стеновые(254040) 0.91, лёгкая пром(631184) 0.75, кислоты(481232) 0.81, маты(685127) 1.04,
+   сваи(371070) none. **Any cargo outside this set has NO verified commodity coef** → it must be looked up verbatim
+   in `tr1-commodity-coef-verify.json` / ТР-1 Табл.4 before a quote for it can be GREEN; until then such a cargo is
+   YELLOW (engine emits the sourced subset only) or RED. The class-3 K1 split (1.54 for сваи/маты vs 1.74 for
+   кислота — position-dependent) lives in `tr1-class-coeff.json`; new class-3 cargoes need their K1 position confirmed there.
 
 ---
 

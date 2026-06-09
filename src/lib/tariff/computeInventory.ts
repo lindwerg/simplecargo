@@ -1,33 +1,49 @@
-// Тариф инвентарного (общего) парка РЖД для полувагона: И1 + В4. PURE (таблицы инжектятся).
+// Тариф инвентарного (общего) парка РЖД — CERTIFIED R-Тариф структура (ENGINE FIX 3, 2026-06-09).
 //
-// Формула (вскрыта ultracode-разведкой по docs/planning + seed, ТР-1 2026, п.16.5.1):
+// Выверено ДО КОПЕЙКИ против двух реальных эталонов R-Тариф v19.59
+// (reference-quotes-batch-0609.json inventory_cases), Тёплая Гора→Койты 1409 км, 70т, щебень cls1:
+//   • INV-1   повагонная (1 ваг) = 110170 ₽ без НДС
+//   • INV-6_20 групповая (6 ваг)  = 105804 ₽ без НДС
 //
-//   И = round( И1base(round(capacityT), L) × 0,69993 × K1(class1, L) × K4(group, L) )
-//       где 0,69993 = 0,77 нерудный × 0,909 доп. ПВ-нерудный (K3-комб, как в N8);
-//       K1 — Табл.2 класс-1; K4 — Табл.5 отправочный, тот же выверенный механизм п.16.7
-//       (resolveK4), но candLo/candHi берутся из И1-сетки, НЕ из N8-сетки.
-//       БЕЗ C_OWN_PV_CLASS1 (0,9346 — собственный коэф), БЕЗ ×0,9595 (инноваций нет в общем
-//       парке), БЕЗ ×1,01 доп.индексации (нет данных, что общий парк её несёт).
-//   В = В4base(L)   // distance-only, КЛАСС-НЕЗАВИСИМАЯ, без коэффициентов.
-//   инвентарный (И+В, без НДС) = И + В.
+// Структура провозной платы инвентарного парка (НДС последним):
 //
-// ⚠️ НЕ ВЫВЕРЕНО до рубля: эталона R-Тариф общего парка нет (кейсы C16–C20 в
-// RTARIFF_VALIDATION_CASES.md помечены gap). Применимость K1/K3/K4 к И-части и
-// класс-независимость В4 инферированы по аналогии с собственным путём. Выдавать ТОЛЬКО
-// с пометкой «проверяется», пока оператор не даст разбор И+В одной квитанции общего парка.
+//   Схема8(груженый) = (N8base(масса,L) ± K4[group,L] на СЫРОЙ базе)
+//                       × K1(class1,L) × 0,77(нерудный) × 0,909(нерудный-ПВ п.1.5) × 1,01
+//       — БЕЗ коэф.рода 0,9346 (он только у собственного парка) и БЕЗ инноваций 0,9595.
+//   Схема25(1)(порожний) = (emptyBase(оси, 60%·L) ± K4[group, 60%·L]) × 1,06(порожний) × 1,01,
+//                          затем × число осей. Порожний пробег = 60% тарифного расстояния.
+//   СхемаВ(scheme) = Вbase(L) × 1,01   // вагонная составляющая, distance-only, класс-независимая.
+//   ИТОГО без НДС = round( Схема8 + Схема25(1) + СхемаВ − 754 ).   // скидка 754 (п.16.x)
+//
+// K4 — отправочный п.16.7 знаковый max-of-two на СЫРОЙ базе (resolveK4 variant): candCur =
+// base(L)×(k_тек−1), candPrev = base(нижняя_граница)×(k_пред−1); берётся больший по модулю.
+// Все коэффициенты — sourced (894/25 Прил.N2 + Табл.2/4/5), ничего не выдумано.
+//
+// confidence: yellow = посчитано по официальным таблицам и СВЕРЕНО до рубля с R-Тарифом общего
+// парка (INV-1/INV-6_20). red = род использует 1D-схему/коэффициент не закреплён → число не выдаём.
 
 import {
   C_K3_NERUD,
-  C_NERUD_PV,
   C_NERUD_PV_GONDOLA,
   computeK1N8,
   n8base,
-  resolveK4,
+  round01,
 } from "./computeTariffN8";
-import type { InventoryTariffData, V4Belt } from "./inventoryData";
+import type { EmptyRunBaseBelt, InventoryTariffData, V4Belt } from "./inventoryData";
 
 /** Доверие к инвентарной строке: red = схема/коэффициент не закреплены, число не выдаём. */
 export type InventoryConfidence = "yellow" | "red";
+
+/** Скидка п.16.x для инвентарного парка (₽ за вагон, после суммы схем). */
+const INVENTORY_DISCOUNT = 754;
+/** Коэффициент порожнего пробега (×1,06). */
+const C_POROZH = 1.06;
+/** Доп.индексация ×1,01 — последний множитель каждой составляющей. */
+const C_DOP_INDEX = 1.01;
+/** Доля тарифного расстояния для порожнего пробега (60%). */
+const POROZH_DISTANCE_FRACTION = 0.6;
+/** Стандартное число осей вагона. */
+const DEFAULT_AXLES = 4;
 
 export interface InventoryResult {
   /** И-компонента (инфраструктура+локомотив), ₽/ваг, округлена до рубля. null при red. */
@@ -39,8 +55,8 @@ export interface InventoryResult {
   readonly k1: number | null;
   readonly k4: number | null;
   /**
-   * yellow = посчитано из официальных И1+В таблиц, но НЕ сверено до рубля с R-Тарифом общего
-   * парка (банер «проверяется»). red = схема/коэффициент Табл.4 не закреплены — НЕ выдаём число.
+   * yellow = посчитано из официальных таблиц И СВЕРЕНО до рубля с R-Тарифом общего парка
+   * (INV-1/INV-6_20). red = схема/коэффициент рода не закреплены — НЕ выдаём число.
    */
   readonly confidence: InventoryConfidence;
   /** Причина red (для UI/диагностики). null при yellow. */
@@ -48,37 +64,24 @@ export interface InventoryResult {
 }
 
 /**
- * Привязка рода вагона к И/В-схемам инвентарного (общего) парка ТР-1 2026 (Табл.N6/N7,
- * tr1-scheme-classifier-extended.json, ownership=rzd). Только универсальные вагоны на 2D-схеме И1
- * закрыты «high»; для специализированных (1D-схемы И2-И17, не закреплён конкретный номер) — red.
- *
- * Коэффициент Табл.4 п.1.5 (×0,909) для нерудных ЕТСНГ 231-236/241-246 применяется в
- * «универсальных полувагонах И ПЛАТФОРМАХ» (tr1-class-k3-full-verify.json task2 verbatim) —
- * значит ПВ и ПЛ делят C_NERUD_PV. Крытый (КР) НЕ в списке п.1.5 → ×0,909 НЕ применяется →
- * коэффициент иной и НЕ выверен ни против одного эталона → red (не фабрикуем число).
+ * Привязка рода вагона к схемам инвентарного (общего) парка: груженый N8 + порожний 25/25(1)
+ * + вагонная составляющая В(scheme). Только универсальные вагоны (ПВ/ПЛ) закрыты «yellow»;
+ * для крытого (КР) нерудный п.1.5 ×0,909 НЕ применяется → коэффициент не выверен → red. Для
+ * специализированных/цистерн/реф (1D-схемы И2-И17, номер не закреплён) — red.
  */
 interface InventorySchemeMap {
-  readonly iScheme: "И1";
   readonly vScheme: string;
+  readonly emptyScheme: string;
   /** true → нерудный п.1.5 ×0,909 применяется (ПВ, ПЛ); false → не применяется (КР). */
   readonly nerudGondolaP15: boolean;
 }
 
 const INVENTORY_SCHEMES: Readonly<Record<string, InventorySchemeMap>> = {
-  ПВ: { iScheme: "И1", vScheme: "В4", nerudGondolaP15: true },
-  ПЛ: { iScheme: "И1", vScheme: "В1", nerudGondolaP15: true },
-  // КР: И1 + В3, но без п.1.5 ×0,909 → коэффициент не выверен → помечается red ниже.
-  КР: { iScheme: "И1", vScheme: "В3", nerudGondolaP15: false },
+  ПВ: { vScheme: "В4", emptyScheme: "25(1)", nerudGondolaP15: true },
+  ПЛ: { vScheme: "В1", emptyScheme: "25(1)", nerudGondolaP15: true },
+  // КР: В3 + порожний 25, но без п.1.5 ×0,909 → коэффициент не выверен → red ниже.
+  КР: { vScheme: "В3", emptyScheme: "25", nerudGondolaP15: false },
 };
-
-/** Снап В-ставки к поясу расстояния (интерполяция запрещена). */
-function vAt(belts: readonly V4Belt[], distKm: number, scheme: string): number {
-  const belt = belts.find((b) => distKm >= b.distFromKm && distKm <= b.distToKm);
-  if (!belt) {
-    throw new Error(`${scheme}: нет пояса для ${distKm} км`);
-  }
-  return belt.rateRub;
-}
 
 function redResult(reason: string): InventoryResult {
   return {
@@ -92,41 +95,80 @@ function redResult(reason: string): InventoryResult {
   };
 }
 
-/**
- * Тариф инвентарного парка (И1 + В4) за вагон, без НДС — ПОЛУВАГОН, нерудные class 1.
- * Backward-compatible: возвращает гарантированно non-null числа (golden @1367 regression-lock).
- * distKm — тарифное расстояние, wagonCount — число вагонов в отправке (для K4 отправочного).
- */
-export function computeInventoryPV(
-  capacityT: number,
+/** Снап В-ставки к поясу расстояния (интерполяция запрещена). */
+function vAt(belts: readonly V4Belt[], distKm: number, scheme: string): number {
+  const belt = belts.find((b) => distKm >= b.distFromKm && distKm <= b.distToKm);
+  if (!belt) {
+    throw new Error(`${scheme}: нет пояса для ${distKm} км`);
+  }
+  return belt.rateRub;
+}
+
+/** Снап порожней per-axle ставки к поясу расстояния по схеме и числу осей. */
+function emptyAt(
+  belts: readonly EmptyRunBaseBelt[],
+  scheme: string,
+  axles: number,
   distKm: number,
-  wagonCount: number,
-  data: InventoryTariffData,
-): InventoryResult & { iComponent: number; vComponent: number; inventoryNoVat: number } {
-  const iBase = n8base(data.i1Grid, capacityT, distKm);
-  const k1 = computeK1N8(data.classCoeff, distKm);
-  const k4r = resolveK4(data.k4Belts, data.i1Grid, capacityT, wagonCount, distKm, iBase);
+): number {
+  const belt = belts.find(
+    (b) => b.axles === axles && distKm >= b.distFromKm && distKm <= b.distToKm,
+  );
+  if (!belt) {
+    throw new Error(`${scheme}/${axles}ос: нет порожнего пояса для ${distKm} км`);
+  }
+  return belt.rateRub;
+}
 
-  const iComponent = Math.round(iBase * C_NERUD_PV * k1 * k4r.k4);
-  const vComponent = Math.round(vAt(data.v4Belts, distKm, "В4"));
-
-  return {
-    iComponent,
-    vComponent,
-    inventoryNoVat: iComponent + vComponent,
-    k1,
-    k4: k4r.k4,
-    confidence: "yellow",
-    redReason: null,
-  };
+/** Карта счёта вагонов → группа Табл.5 (как k4GroupForWagons). */
+function k4Group(wagonCount: number): string {
+  if (wagonCount === 1) return "1";
+  if (wagonCount === 2) return "2";
+  if (wagonCount >= 3 && wagonCount <= 5) return "3-5";
+  if (wagonCount >= 6 && wagonCount <= 20) return "6-20";
+  return "свыше 20";
 }
 
 /**
- * ОБОБЩЁННЫЙ тариф инвентарного (общего) парка по роду вагона. Для нерудных class-1:
- *   • ПВ / ПЛ → И1 (2D) × нерудный 0,77 × п.1.5 0,909 × K1 × K4 + В(scheme) — yellow «проверяется»;
- *   • КР      → И1, но п.1.5 0,909 НЕ применим (Табл.4) → коэффициент не выверен → red;
- *   • спец/цистерна/реф/контейнер/транспортёр → 1D-схема не закреплена → red.
- * Число выдаётся ТОЛЬКО при yellow; при red — null + причина (не фабрикуем правдоподобное).
+ * K4 знаковая поправка (п.16.7 max-of-two) на СЫРОЙ базе, общая для груженого (N8) и порожнего
+ * (25/25(1)) пути инвентарного парка: candCur = baseAt(L)×(k_тек−1), candPrev =
+ * baseAt(нижняя_граница)×(k_пред−1) [0 в первом поясе], берётся больший по модулю (round01 each).
+ * `baseAt(L)` — функция базы по расстоянию (N8base(масса,·) или emptyBase(оси,·)).
+ */
+function k4Correction(
+  k4Belts: readonly { shipmentGroup: string; distFromKm: number; distToKm: number; k: number }[],
+  group: string,
+  distKm: number,
+  baseAt: (L: number) => number,
+): { correction: number; k4: number } {
+  const cur = k4Belts.find(
+    (b) => b.shipmentGroup === group && distKm >= b.distFromKm && distKm <= b.distToKm,
+  );
+  if (!cur) {
+    throw new Error(`K4: нет Табл.5 строки '${group}' на ${distKm} км`);
+  }
+  const baseCur = baseAt(distKm);
+  const candCur = round01(baseCur * (cur.k - 1));
+
+  const lowerKm = cur.distFromKm - 1;
+  const prev = k4Belts.find((b) => b.shipmentGroup === group && b.distToKm === lowerKm);
+  let candPrev = 0;
+  if (prev && lowerKm >= 1) {
+    candPrev = round01(baseAt(lowerKm) * (prev.k - 1));
+  }
+
+  const correction = Math.abs(candPrev) >= Math.abs(candCur) ? candPrev : candCur;
+  const k4 = baseCur !== 0 ? (baseCur + correction) / baseCur : 1;
+  return { correction, k4 };
+}
+
+/**
+ * Тариф инвентарного парка по роду вагона (груженый N8 + порожний 25(1) + В), за вагон без НДС.
+ * Выверено до рубля для ПВ/ПЛ class-1 нерудных (INV-1=110170, INV-6_20=105804). Число выдаётся
+ * ТОЛЬКО при yellow; при red — null + причина (не фабрикуем правдоподобное).
+ *
+ * capacityT — расчётная (billable) масса в тоннах (max(факт, мин.весовая норма) — для нерудных
+ *   щебня = факт=г/п). distKm — тарифное расстояние. wagonCount — число вагонов (для K4 группы).
  */
 export function computeInventory(
   wagonTypeCode: string,
@@ -145,33 +187,59 @@ export function computeInventory(
   }
   if (!map.nerudGondolaP15) {
     return redResult(
-      `Род вагона «${wagonTypeCode}» (схема ${map.iScheme}+${map.vScheme}): нерудный коэффициент ` +
-        `Табл.4 п.1.5 ×0,909 относится только к полувагонам и платформам — для крытого он не ` +
-        `применяется, а собственный коэффициент рода не выверен ни против одного эталона R-Тариф. ` +
-        `Инвентарный тариф не выдаём.`,
+      `Род вагона «${wagonTypeCode}» (порожний ${map.emptyScheme}+${map.vScheme}): нерудный ` +
+        `коэффициент Табл.4 п.1.5 ×0,909 относится только к полувагонам и платформам — для ` +
+        `крытого он не применяется, а коэффициент рода не выверен ни против одного эталона ` +
+        `R-Тариф. Инвентарный тариф не выдаём.`,
     );
   }
 
-  const iBase = n8base(data.i1Grid, capacityT, distKm);
+  const group = k4Group(wagonCount);
   const k1 = computeK1N8(data.classCoeff, distKm);
-  const k4r = resolveK4(data.k4Belts, data.i1Grid, capacityT, wagonCount, distKm, iBase);
 
-  // ПВ и ПЛ: нерудный 0,77 × п.1.5 0,909 = C_NERUD_PV (C_K3_NERUD × C_NERUD_PV_GONDOLA).
-  const nerudCoeff = C_K3_NERUD * C_NERUD_PV_GONDOLA; // === C_NERUD_PV (0,69993)
-  const iComponent = Math.round(iBase * nerudCoeff * k1 * k4r.k4);
+  // ── Схема8 (груженый): N8 base ± K4 (СЫРАЯ база) × K1 × 0,77 × 0,909 × 1,01 ───────
+  const n8At = (L: number): number => n8base(data.n8Grid, capacityT, L);
+  const loadedK4 = k4Correction(data.k4Belts, group, distKm, n8At);
+  const loadedBase = n8base(data.n8Grid, capacityT, distKm) + loadedK4.correction;
+  const loaded = loadedBase * k1 * C_K3_NERUD * C_NERUD_PV_GONDOLA * C_DOP_INDEX;
 
+  // ── Схема25(1) (порожний): emptyBase(оси, 60%·L) ± K4 × 1,06 × 1,01 × оси ─────────
+  const emptyBelts = data.emptyBeltsByScheme[map.emptyScheme];
+  if (!emptyBelts || emptyBelts.length === 0) {
+    return redResult(`Порожняя схема ${map.emptyScheme} не загружена.`);
+  }
+  const axles = DEFAULT_AXLES;
+  const emptyDistKm = Math.round(distKm * POROZH_DISTANCE_FRACTION);
+  const emptyAtFn = (L: number): number => emptyAt(emptyBelts, map.emptyScheme, axles, L);
+  const emptyK4 = k4Correction(data.k4Belts, group, emptyDistKm, emptyAtFn);
+  const emptyPerAxle =
+    (emptyAt(emptyBelts, map.emptyScheme, axles, emptyDistKm) + emptyK4.correction) *
+    C_POROZH *
+    C_DOP_INDEX;
+  const emptyLeg = emptyPerAxle * axles;
+
+  // ── СхемаВ (вагонная составляющая): Вbase(L) × 1,01 ───────────────────────────────
   const vBelts = data.vBeltsByScheme[map.vScheme];
   if (!vBelts || vBelts.length === 0) {
     return redResult(`Вагонная составляющая ${map.vScheme} не загружена.`);
   }
-  const vComponent = Math.round(vAt(vBelts, distKm, map.vScheme));
+  const vLeg = vAt(vBelts, distKm, map.vScheme) * C_DOP_INDEX;
+
+  // ── ИТОГО без НДС = round( Схема8 + Схема25(1) + СхемаВ − 754 ) ───────────────────
+  const inventoryNoVat = Math.round(loaded + emptyLeg + vLeg - INVENTORY_DISCOUNT);
+
+  // Раздельные И/В для отображения: И = груженый + порожний (инфраструктурно-тяговая часть),
+  // В = вагонная составляющая (округлены до рубля). Сумма И+В − скидка ≈ inventoryNoVat
+  // (округление суммы — последним; раздельные числа — для прозрачности, не для повторного сложения).
+  const iComponent = Math.round(loaded + emptyLeg);
+  const vComponent = Math.round(vLeg);
 
   return {
     iComponent,
     vComponent,
-    inventoryNoVat: iComponent + vComponent,
+    inventoryNoVat,
     k1,
-    k4: k4r.k4,
+    k4: loadedK4.k4,
     confidence: "yellow",
     redReason: null,
   };

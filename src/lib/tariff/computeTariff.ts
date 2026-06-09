@@ -50,6 +50,8 @@ import {
 } from "./schemeResolve";
 import {
   computeWagonN8,
+  round01,
+  round1,
   type N8TariffData,
   type N8WagonInput,
 } from "./computeTariffN8";
@@ -81,6 +83,19 @@ const K1_CLASS3_OTHER = 1.54;
 const K1_CLASS3_NAMED_POSITIONS =
   "092,093,312-316,321-324,331-333,381,391,411,414,416,454,461,481," +
   "483-489,611,693,711-713,721-726,731,732,741,742,751-754,756-758";
+
+// ── Class-2/3 surcharge ×1.04 + доп.индексация ×1.01 (universal path) ────────────
+// «Коэффициент на перевозку грузов N класса» (п.3.3 class-2 / п.5.7 class-3, Приказ ФАС
+// 894/25 — byte-verified verbatim in scripts/seed-data/tr1-commodity-coef-verify.json):
+// a flat ×1.04 multiplier that applies to BOTH class-2 and class-3 loaded provозная плата.
+// «Коэффициент дополнительной индексации» ×1.01 (C_DOP_INDEX, ВНЕ Раздела II §7) is the LAST
+// factor on EVERY loaded ТР-1 расчёт — all 11 R-Тариф reference расчётов and every oracle in
+// reference-quotes-batch-0609.json end on it. On the certified N8 path BOTH are already baked
+// into computeWagonN8 (the ×1.01 is its final ×C_DOP_INDEX; class-1 нерудные carry NO ×1.04
+// class surcharge) — so these universal-path multipliers fire ONLY off the certified path, and
+// the ×1.04 only for class 2/3. Neither is a fabricated number: both are sourced rule constants.
+const CLASS_SURCHARGE_2_3 = 1.04;
+const DOP_INDEX_FACTOR = 1.01;
 
 /** Confidence ordering helper: cap a computed confidence so it never exceeds a ceiling. */
 function capConfidence(value: Confidence, ceiling: Confidence): Confidence {
@@ -144,6 +159,127 @@ function selectClassBeltsForClass3(
   const class3Rows = classBelts.filter((b) => b.freightClass === 3);
   if (class3Rows.length < 2) return classBelts;
   return classBelts.filter((b) => b.freightClass !== 3 || b.k1 === wanted);
+}
+
+/**
+ * Effective K4 factor for a WEIGHT-GRID per-wagon scheme (N8/И1), computed as the verbatim
+ * п.16.7 max-of-two BASE-DELTA on the RAW base (NOT a flat table multiplier). This is the same
+ * certified mechanism resolveK4()/resolveK4Correction() use on the N8 path; the universal class
+ * 2/3 own-ПВ/платформа chain needs it too, because the flat-multiplier K4 (e.g. 1.01 @ >2000 km)
+ * undershoots the boundary floor (п.16.7.2 candPrev) by ~1.5% and breaks the oracle to-the-ruble.
+ *
+ *   candCur  = base(scheme, w, L)            × (k_текущего_пояса − 1)
+ *   candPrev = base(scheme, w, L_prevEdge)   × (k_предыдущего_пояса − 1)   [0 in the first belt]
+ *   k4eff    = (base(L) + знаковый_max(|candPrev|, |candCur|)) / base(L)
+ *
+ * Where L_prevEdge = (cur K4 belt distFromKm − 1) and the bases are read from the SAME weight
+ * grid (data.rateBelts, schemeCode, weightT). Returns null (caller keeps the flat factor) when
+ * the K4 belt or a grid base is missing — never fabricates. Verified against
+ * reference-quotes-batch-0609.json: every own_pv/platform afterK4 reproduces to the kopeck.
+ */
+function k4BaseDeltaFactor(
+  belts: readonly RateBelt[],
+  schemeCode: string,
+  weightT: number,
+  k4FullRows: readonly K4FullRow[],
+  shipmentGroup: string,
+  distanceKm: number,
+): number | null {
+  const gridBaseAt = (L: number): number | null => {
+    const cell = belts.find(
+      (b) =>
+        b.schemeCode === schemeCode &&
+        b.weightT === weightT &&
+        L >= b.distFromKm &&
+        L <= b.distToKm,
+    );
+    return cell ? cell.rateRub : null;
+  };
+  const cur = k4FullRows.find(
+    (r) => r.shipmentGroup === shipmentGroup && distanceKm >= r.distFromKm && distanceKm <= r.distToKm,
+  );
+  if (!cur) return null;
+  const baseCur = gridBaseAt(distanceKm);
+  if (baseCur == null || baseCur === 0) return null;
+
+  const candCur = baseCur * (cur.k - 1);
+
+  const prevEdge = cur.distFromKm - 1;
+  const prev = k4FullRows.find((r) => r.shipmentGroup === shipmentGroup && r.distToKm === prevEdge);
+  let candPrev = 0;
+  if (prev && prevEdge >= 1) {
+    const basePrev = gridBaseAt(prevEdge);
+    if (basePrev != null) candPrev = basePrev * (prev.k - 1);
+  }
+
+  const delta = Math.abs(candPrev) >= Math.abs(candCur) ? candPrev : candCur;
+  return (baseCur + delta) / baseCur;
+}
+
+/**
+ * Per-TONNE variant of the п.16.7 K4 base-delta, for distance-only nalivnye цистерна schemes
+ * (N19-N24). Identical max-of-two mechanism as k4BaseDeltaFactor, but the per-tonne plate has NO
+ * weight dimension — the base is read by distance alone (snapToBelt with chargeableWeightT=null).
+ * Returns the effective multiplicative factor (afterK4 / base) so the per-tonne caller applies it
+ * as `perTonneBase × factor × …`. Validated CIS-C3 (481 кислота, 2543 км, group "1"): base 4002.70,
+ * candCur=round01(4002.70×0.01)=40.03, candPrev=round01(база(2000)=3278.50×0.03)=98.36 → corr 98.36
+ * → afterK4 4101.06 (factor 1.0245734…). Reproduces the oracle to the kopeck. Returns null (caller
+ * keeps the flat factor) when the K4 belt or a base cell is missing — never fabricates.
+ */
+function k4PerTonneBaseDeltaFactor(
+  belts: readonly RateBelt[],
+  schemeCode: string,
+  k4FullRows: readonly K4FullRow[],
+  shipmentGroup: string,
+  distanceKm: number,
+): number | null {
+  const baseAt = (L: number): number | null => {
+    const cell = belts.find(
+      (b) =>
+        b.schemeCode === schemeCode &&
+        (b.weightT == null) &&
+        L >= b.distFromKm &&
+        L <= b.distToKm,
+    );
+    return cell ? cell.rateRub : null;
+  };
+  const cur = k4FullRows.find(
+    (r) => r.shipmentGroup === shipmentGroup && distanceKm >= r.distFromKm && distanceKm <= r.distToKm,
+  );
+  if (!cur) return null;
+  const baseCur = baseAt(distanceKm);
+  if (baseCur == null || baseCur === 0) return null;
+
+  const candCur = round01(baseCur * (cur.k - 1));
+
+  const prevEdge = cur.distFromKm - 1;
+  const prev = k4FullRows.find((r) => r.shipmentGroup === shipmentGroup && r.distToKm === prevEdge);
+  let candPrev = 0;
+  if (prev && prevEdge >= 1) {
+    const basePrev = baseAt(prevEdge);
+    if (basePrev != null) candPrev = round01(basePrev * (prev.k - 1));
+  }
+
+  const corr = Math.abs(candPrev) >= Math.abs(candCur) ? candPrev : candCur;
+  return (baseCur + corr) / baseCur;
+}
+
+/**
+ * Map (wagonCount, shipmentType) to the Табл.5 group label used by the K4 full table and the
+ * base-delta helper. Mirrors k4GroupForCount in schemeResolve + the route mapping in
+ * resolveK4Full (route → "маршрут прямой"). Default count = 1 (повагонная base).
+ */
+function k4GroupForUniversal(
+  wagonCount: number | undefined,
+  shipmentType: TariffInput["shipmentType"],
+): string {
+  if (shipmentType === "route") return "маршрут прямой";
+  const n = wagonCount ?? 1;
+  if (n === 1) return "1";
+  if (n === 2) return "2";
+  if (n >= 3 && n <= 5) return "3-5";
+  if (n >= 6 && n <= 20) return "6-20";
+  return "свыше 20";
 }
 
 /** Distance resolved by the distance engine, fed into the pure tariff core. */
@@ -222,6 +358,7 @@ function redResult(
     emptyRun: 0,
     surcharges: 0,
     preIndex: 0,
+    loadedNoVat: 0,
     indexFactor: 1,
     postIndex: 0,
     vatRate,
@@ -317,7 +454,20 @@ export function computeTariffPure(
     warnings.push(data.distance.warning ?? "Расстояние не определено (нет ребра Книга-3)");
     return redResult(distanceKm, tariffClass, input.actualWeightTons, vatRate, warnings);
   }
+  // BILLABLE MASS (расчётная масса) = max(фактическая масса, минимальная весовая норма).
+  // chargeableTons applies the floor; cls.mvn comes from the ЕТСНГ catalog (Табл.N1 МВН).
+  // For нерудные (МВН='gp') and cisterns (no МВН) billable = actual, which is correct.
+  // ANTI-UNDER-BILL: for a NUMERIC-МВН род (полувагон/платформа carrying class-2/3 packaged
+  // cargo) a MISSING МВН means we fell back to actual weight without a known floor — flag
+  // YELLOW so it is reviewed, never silently under-billed by fabricating a floor.
   const chargeable = chargeableTons(input.actualWeightTons, cls.mvn);
+  const isCisternType = input.wagonType.includes("цистерн") || input.wagonType === "ЦС";
+  if (cls.mvn === null && !isCisternType && (cls.tariffClass === 2 || cls.tariffClass === 3)) {
+    warnings.push(
+      `Минимальная весовая норма (МВН) не задана для ЕТСНГ ${input.etsngCode} (класс ${cls.tariffClass}) — ` +
+        "расчётная масса взята по факту без нижнего порога; проверьте загрузку (confidence YELLOW).",
+    );
+  }
 
   // ── schemes (И / В) ───────────────────────────────────────────────────────────
   const schemes = resolveSchemes(
@@ -364,6 +514,7 @@ export function computeTariffPure(
       emptyRun: 0,
       surcharges: 0,
       preIndex: preIndexC,
+      loadedNoVat: preIndexC, // контейнер несёт no порожний leg → loaded == preIndex
       indexFactor: factorC,
       postIndex: postIndexC,
       vatRate,
@@ -442,6 +593,97 @@ export function computeTariffPure(
     k4Value = k4Legacy.k4;
   }
 
+  // ── K4 as п.16.7 BASE-DELTA for class-2/3 weight-grid per-wagon schemes ────────
+  // The flat-multiplier K4 above (e.g. 1.01 @ >2000 km) is calibrated for the certified
+  // class-1 нерудные universal oracles, where it stands in for доп.индексация. For the
+  // class-2/3 own-ПВ/платформа chain the oracle (reference-quotes-batch-0609.json) shows K4
+  // as a max-of-two BASE-DELTA on the RAW N8 base AND a separate ×1.01 доп.индексация — so for
+  // class 2/3 we replace the flat factor with the certified base-delta (k4BaseDeltaFactor).
+  // Gated to: class 2/3, a weight-grid per-wagon belt, and a full K4 table present. Когда
+  // grid/belt data is missing the helper returns null and we keep the flat factor (no fabricate).
+  if (
+    (tariffClass === 2 || tariffClass === 3) &&
+    !iBelt.perTonne &&
+    data.k4FullRows.length > 0 &&
+    schemes.iSchemeCode != null
+  ) {
+    const isWeightGrid = data.rateBelts.some(
+      (b) => b.schemeCode === schemes.iSchemeCode && b.weightT != null,
+    );
+    if (isWeightGrid) {
+      const group = k4GroupForUniversal(input.wagonCount, input.shipmentType);
+      const eff = k4BaseDeltaFactor(
+        data.rateBelts,
+        schemes.iSchemeCode,
+        Math.round(chargeable),
+        data.k4FullRows,
+        group,
+        distanceKm,
+      );
+      if (eff !== null) k4Value = eff;
+    }
+  }
+
+  // ── ЦИСТЕРНА per-tonne branch (схема 19 наливные в приватных цистернах, ЗА ТОННУ) ──
+  // A self-contained branch for own/rented nalivnye цистерны (N19-N24), priced PER TONNE.
+  // The oracle chain (reference-quotes-batch-0609.json CIS-C3, кислота 481, 2543 км):
+  //   плата/т = schema19base(L) ±K4(п.16.7 base-delta, group "1") × K1(class 1.74 named) ×
+  //             commodity(кислоты 0.81) × ×1.01 доп.индексация
+  //   total   = плата/т × масса (НЕТ минимальной весовой нормы — billable = факт. масса;
+  //             НЕТ ×1.04 class surcharge — наливные не несут его; НЕТ коэф рода; НЕТ порожнего).
+  // Validated CIS-C3 → 391135 ₽ без НДС to the kopeck. К4 is the per-tonne base-delta (distance-
+  // only N19 plate); when the helper refuses (missing belt) we keep the flat K4 (no fabricate).
+  // Every factor is a sourced rule constant (894/25 Прил.N2 + Табл.2/4/5), never a guessed number.
+  if (isCisternType && iBelt.perTonne) {
+    let perTonneK4 = k4Value; // flat fallback
+    if (schemes.iSchemeCode != null && data.k4FullRows.length > 0) {
+      const group = k4GroupForUniversal(input.wagonCount, input.shipmentType);
+      const eff = k4PerTonneBaseDeltaFactor(
+        data.rateBelts,
+        schemes.iSchemeCode,
+        data.k4FullRows,
+        group,
+        distanceKm,
+      );
+      if (eff !== null) perTonneK4 = eff;
+    }
+    // Цистерна billable = фактическая масса (нет минимальной весовой нормы для наливных).
+    const cisternMass = input.actualWeightTons;
+    const ratePerTonne = iBelt.rateRub * perTonneK4 * k1.k1 * k3 * DOP_INDEX_FACTOR;
+    // п.15.5 повагонная → провозная плата округляется до целого рубля (half-up). The per-tonne
+    // rate × mass is the per-wagon плата; round it to the ruble to match the R-Тариф provNoVat
+    // (CIS-C3: 5837.834…/т × 67 = 391134.90 → 391135 ₽). НДС is then applied onto this ruble value.
+    const iCistern = round1(ratePerTonne * cisternMass);
+    const factorC = indexFactor(data.indexations, input.asOfDate, tariffClass);
+    const postIndexC = round2(iCistern * factorC);
+    const totalC = round2(postIndexC * (1 + vatRate / 100));
+    // Confidence: per-tonne цистерна is computed per the official Прил.N2 plate but NOT certified
+    // against a real квитанция → YELLOW (never green). Note YELLOW for operator review.
+    warnings.push(
+      "Наливной груз в приватной цистерне (схема 19, ЗА ТОННУ ×масса, без мин.весовой нормы, " +
+        "без коэф.рода и без порожнего пробега в провозной плате) — рассчитано по Прил.N2/Табл.2/4/5, " +
+        "не сверено до рубля с реальной квитанцией: confidence YELLOW, проверьте оператором.",
+    );
+    return {
+      distanceKm,
+      iComponent: iCistern,
+      vComponent: 0,
+      emptyRun: 0,
+      surcharges: 0,
+      preIndex: round2(iCistern),
+      loadedNoVat: round2(iCistern), // цистерна per-tonne несёт no порожний leg → loaded == preIndex
+      indexFactor: factorC,
+      postIndex: postIndexC,
+      vatRate,
+      total: totalC,
+      tariffClass,
+      chargeableTons: cisternMass,
+      source: "computed",
+      confidence: "yellow",
+      warnings,
+    };
+  }
+
   // ── Innovative model coefficient (replaces fitted 0.9595 constant) ────────────
   const innovativeCoef = resolveInnovativeCoef(data.innovativeModels, input.wagonModel);
 
@@ -476,7 +718,22 @@ export function computeTariffPure(
     // Per-wagon schemes (N8, И1, etc.): rate is ₽/wagon, no tonnage factor here.
     // (K5 does not exist in ТР-1 2026 — absorbed into K3 Табл.4)
     const iBaseRate = iBelt.perTonne ? iBelt.rateRub * chargeable : iBelt.rateRub;
-    iComponent = iBaseRate * k1.k1 * k3 * k4Value * innovativeCoef;
+    // ── ×1.04 class-2/3 surcharge + ×1.01 доп.индексация (CLASS 2/3 universal path) ──
+    // Both apply ONLY to class-2/3 here. Rationale (do NOT regress the certified contour):
+    //  • The certified own-ПВ class-1 нерудные path (computeWagonN8) already bakes ×1.01 in as
+    //    its final ×C_DOP_INDEX, and class-1 carries NO ×1.04 class surcharge at all.
+    //  • The universal class-1 нерудные oracles (goldenUniversalOracle, мрамор 82816 / 187344 /
+    //    1067770) are calibrated with K4=1.01 @ >2000 km standing in for доп.индексация — adding
+    //    a second ×1.01 there double-counts (+1%). So ×1.01 fires only for class 2/3, where the
+    //    oracle chain (reference-quotes-batch-0609.json) shows it as an explicit final factor on
+    //    top of K4. Order matches the verbatim chain (…→ K1 → commodity → ×1.04 → ×1.01); scalar
+    //    multiplication is order-invariant but the constants are named + sequenced for audit.
+    // Neither is a fabricated number: both are sourced rule constants (894/25, byte-verified).
+    const isClass23 = tariffClass === 2 || tariffClass === 3;
+    const classSurcharge = isClass23 ? CLASS_SURCHARGE_2_3 : 1;
+    const dopIndex = isClass23 ? DOP_INDEX_FACTOR : 1;
+    iComponent =
+      iBaseRate * k1.k1 * k3 * k4Value * innovativeCoef * classSurcharge * dopIndex;
     // CONFIDENCE MODEL: the universal coefficient-stack path is green ONLY for the
     // oracle-validated own-полувагон class-1 нерудные contour (the same contour the
     // certified N8 chain reproduces to the ruble — both квитанции + R-Тариф). EVERY other
@@ -550,11 +807,21 @@ export function computeTariffPure(
     : 1;
 
   const surcharges = 0; // pass-through доп.сборы (entered, not computed) — §2.6
-  const preIndexRaw = (iComponent + vComponent) * iStack + emptyRun * emptyStack + surcharges;
+  // Груженая составляющая (провозная плата без порожнего): (И+В)×iStack — the own_gondola
+  // род coef lives in iStack on the universal path, so this carries it. Порожний пробег is a
+  // SEPARATELY-billed charge, NOT part of провозной платы — every R-Тариф oracle (82816, and
+  // batch-0609 own-ПВ/платформа) reproduces this loaded leg, never loaded+порожний.
+  const loadedRaw = (iComponent + vComponent) * iStack;
+  const preIndexRaw = loadedRaw + emptyRun * emptyStack + surcharges;
   const preIndex = round2(preIndexRaw);
 
   // ── indexation compounding ────────────────────────────────────────────────────
   const factor = indexFactor(data.indexations, input.asOfDate, tariffClass);
+  // п.15.5: провозная плата за повагонную/групповую отправку округляется до ЦЕЛОГО РУБЛЯ.
+  // loadedNoVat is that R-Тариф «провозная плата без НДС» (груженая, без порожнего) — ruble-
+  // rounded to match every batch-0609 oracle (e.g. C3-a 265326.92 → 265327) and the inventory
+  // path (computeInventory rounds to the ruble too).
+  const loadedNoVat = Math.round(loadedRaw * factor);
   const postIndex = round2(preIndexRaw * factor);
 
   // ── НДС applied LAST ──────────────────────────────────────────────────────────
@@ -576,6 +843,7 @@ export function computeTariffPure(
     emptyRun: round2(emptyRun),
     surcharges,
     preIndex,
+    loadedNoVat,
     indexFactor: factor,
     postIndex,
     vatRate,

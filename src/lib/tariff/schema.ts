@@ -60,9 +60,18 @@ export interface TariffBreakdown {
   vComponent: number;
   emptyRun: number;
   surcharges: number;
-  preIndex: number; // без НДС, before indexation
+  preIndex: number; // без НДС, before indexation (груженый + порожний leg)
+  /**
+   * Провозная плата без НДС и БЕЗ порожнего пробега (груженая составляющая после стека
+   * коэффициентов, до индексации). This is the R-Тариф «провозная плата» for own wagons —
+   * the порожний пробег is a SEPARATELY-billed charge, not part of провозной платы. Equals
+   * round((iComponent + vComponent) × iStack); for цистерна/контейнер branches it equals the
+   * branch iComponent (which already carries no empty leg). With empty indexations
+   * loadedNoVat × indexFactor is the after-index loaded плата.
+   */
+  loadedNoVat: number; // без НДС, без порожнего, before indexation
   indexFactor: number; // ∏(1 + index_i/100)
-  postIndex: number; // без НДС, after indexation
+  postIndex: number; // без НДС, after indexation (груженый + порожний leg)
   vatRate: number; // 22 domestic / 0 export
   total: number; // с НДС
   tariffClass: FreightClass;
