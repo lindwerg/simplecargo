@@ -1,19 +1,20 @@
 import Link from "next/link";
-import { Briefcase, Mountain, Truck } from "lucide-react";
+import { Boxes, Briefcase, Mountain, Truck } from "lucide-react";
 
 import type { PartnerRoleCounts } from "@/lib/partners/repository";
 import { cn } from "@/lib/utils";
 
-type FilterRole = "client" | "carrier" | "quarry";
+type FilterRole = "client" | "carrier" | "quarry" | "other";
 
 const FILTERS: { role: FilterRole; label: string; hint: string; Icon: typeof Briefcase }[] = [
   { role: "client", label: "Клиенты", hint: "заказывают перевозку", Icon: Briefcase },
   { role: "carrier", label: "Перевозчики", hint: "дают и берут вагоны", Icon: Truck },
   { role: "quarry", label: "Карьеры", hint: "щебень и погрузка", Icon: Mountain },
+  { role: "other", label: "Прочие", hint: "собственники, экспедиторы и др.", Icon: Boxes },
 ];
 
 interface PartnersTabsProps {
-  /** active role tab — "client" | "carrier" | "quarry" */
+  /** active role tab — "client" | "carrier" | "quarry" | "other" */
   role: string;
   /** preserved search query */
   search: string;
@@ -21,7 +22,7 @@ interface PartnersTabsProps {
   counts: PartnerRoleCounts;
 }
 
-/** URL-state filter cards splitting the partner book into Клиенты / Перевозчики / Карьеры. */
+/** URL-state filter cards splitting the partner book into Клиенты / Перевозчики / Карьеры / Прочие. */
 export function PartnersTabs({ role, search, counts }: PartnersTabsProps) {
   const buildHref = (tabRole: string): string => {
     const params = new URLSearchParams();

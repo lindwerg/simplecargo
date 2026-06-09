@@ -73,6 +73,39 @@ describe("updatePartnerSchema", () => {
   it("still rejects an explicitly empty roles array", () => {
     expect(updatePartnerSchema.safeParse({ roles: [] }).success).toBe(false);
   });
+
+  it("keeps inn/notes undefined when the fields are not sent", () => {
+    const parsed = updatePartnerSchema.safeParse({ name: "X" });
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.inn).toBeUndefined();
+      expect(parsed.data.notes).toBeUndefined();
+    }
+  });
+
+  it("accepts explicit null as «поле очищено»", () => {
+    const parsed = updatePartnerSchema.safeParse({ inn: null, notes: null });
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.inn).toBeNull();
+      expect(parsed.data.notes).toBeNull();
+    }
+  });
+
+  it("turns a blank string into null (clears the value)", () => {
+    const parsed = updatePartnerSchema.safeParse({ inn: "   ", notes: "" });
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.inn).toBeNull();
+      expect(parsed.data.notes).toBeNull();
+    }
+  });
+
+  it("keeps a non-empty value trimmed", () => {
+    const parsed = updatePartnerSchema.safeParse({ inn: " 6603001234 " });
+    expect(parsed.success).toBe(true);
+    if (parsed.success) expect(parsed.data.inn).toBe("6603001234");
+  });
 });
 
 describe("contactSchema", () => {
