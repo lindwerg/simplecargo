@@ -14,8 +14,8 @@ export const dynamic = "force-dynamic";
 type Ctx = { params: Promise<{ id: string }> };
 
 // PATCH — move a deal across the funnel: цена дана (quoted) → прошли (won) →
-// Заявка (confirmed) → ГУ/заадресация (active) → Архив (cancelled). Status changes
-// are gated by the lifecycle state machine (canTransition).
+// Заявка (confirmed) → ГУ/заадресация (active) → Завершена (completed) | Архив
+// (cancelled). Status changes are gated by the lifecycle state machine (canTransition).
 export async function PATCH(request: Request, ctx: Ctx): Promise<Response> {
   try {
     const user = await requireWriter(request.headers);

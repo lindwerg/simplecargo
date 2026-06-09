@@ -18,6 +18,7 @@ import { dealStatusMeta } from "@/components/trades/dealStatusMeta";
 import { dealTypeLabel } from "@/components/trades/dealTypeMeta";
 import { stageForStatus } from "@/components/trades/dealStageMeta";
 import { RequestWorksheet } from "@/components/trades/RequestWorksheet";
+import { RequestLifecyclePanel } from "@/components/trades/RequestLifecyclePanel";
 import type { CargoType } from "@/components/trades/requestTypes";
 import { StoneSection, type StoneLineView } from "@/components/trades/StoneSection";
 import { MonthlyRateGrid, type MonthlyRateView } from "@/components/trades/MonthlyRateGrid";
@@ -245,6 +246,9 @@ export default async function DealCardPage({ params }: Ctx) {
         <ApplicationTab dealId={id} directions={dirs} stoneLines={stoneLines} emailsByDir={emailsByDir} />
       )}
       {stage === "execution" && <ExecutionPanel directions={dirs} />}
+      {/* Лайфцикл доступен на всех стадиях (на «Запросе» панель живёт внутри воркшита):
+          с «Заявки» — дать ГУ/в архив, с «Исполнения» — завершить сделку. */}
+      {stage !== "request" && <RequestLifecyclePanel dealId={id} status={deal.status} />}
     </div>
   );
 }
