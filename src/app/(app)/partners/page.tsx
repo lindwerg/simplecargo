@@ -11,14 +11,15 @@ import "@/components/partners/partners.css";
 
 export const dynamic = "force-dynamic";
 
-const PARTNER_TABS = new Set(["client", "carrier", "quarry"]);
+const PARTNER_TABS = new Set(["client", "carrier", "quarry", "other"]);
 
-const EMPTY_COUNTS = { client: 0, carrier: 0, quarry: 0 } as const;
+const EMPTY_COUNTS = { client: 0, carrier: 0, quarry: 0, other: 0 } as const;
 
 const EMPTY_COPY: Record<string, { title: string; cta: string }> = {
   client: { title: "Клиентов пока нет", cta: "клиента" },
   carrier: { title: "Перевозчиков пока нет", cta: "перевозчика" },
   quarry: { title: "Карьеров пока нет", cta: "карьер" },
+  other: { title: "Прочих партнёров пока нет", cta: "партнёра" },
 };
 
 interface PageProps {
@@ -28,7 +29,7 @@ interface PageProps {
 export default async function PartnersPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const search = params.search?.trim() ?? "";
-  // Three categories (Клиенты / Перевозчики / Карьеры). Default to Клиенты.
+  // Four categories (Клиенты / Перевозчики / Карьеры / Прочие). Default to Клиенты.
   const role = PARTNER_TABS.has(params.role?.trim() ?? "") ? (params.role as string).trim() : "client";
   const emptyCopy = EMPTY_COPY[role] ?? EMPTY_COPY.client;
 

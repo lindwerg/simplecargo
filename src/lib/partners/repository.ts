@@ -54,8 +54,14 @@ interface ListRow {
   [column: string]: unknown;
 }
 
+// Псевдо-роль «Прочие»: компании без одной из трёх основных категорий
+// (собственники ПС, экспедиторы, грузоотправители/получатели и т.п.) — иначе они
+// невидимы в справочнике.
+const NOT_MAIN_ROLES_FILTER = sql`NOT (COALESCE(c.roles, '{}') && ARRAY['client','carrier','quarry']::text[])`;
+
 // Directory list for /partners. Optional fuzzy search (trigram + substring) and a
-// role filter (roles @> ARRAY[role]). Aggregate counts power the card metrics.
+// role filter (roles @> ARRAY[role]; "other" → none of the three main categories).
+// Aggregate counts power the card metrics.
 export async function listPartners(opts: {
   search?: string | undefined;
   role?: string | undefined;
@@ -63,7 +69,12 @@ export async function listPartners(opts: {
   const search = opts.search?.trim() ?? "";
   const role = opts.role?.trim() ?? "";
 
-  const roleFilter = role ? sql`AND c.roles @> ARRAY[${role}]::text[]` : sql``;
+  const roleFilter =
+    role === "other"
+      ? sql`AND ${NOT_MAIN_ROLES_FILTER}`
+      : role
+        ? sql`AND c.roles @> ARRAY[${role}]::text[]`
+        : sql``;
   const searchFilter = search
     ? sql`AND (c.name_canonical ILIKE ${"%" + search + "%"} OR similarity(c.name_canonical, ${search}) > 0.2)`
     : sql``;
@@ -101,12 +112,14 @@ export interface PartnerRoleCounts {
   client: number;
   carrier: number;
   quarry: number;
+  other: number;
 }
 
 interface CountsRow {
   client: number;
   carrier: number;
   quarry: number;
+  other: number;
   [column: string]: unknown;
 }
 
@@ -124,7 +137,8 @@ export async function countPartnersByRole(opts: {
     SELECT
       count(*) FILTER (WHERE c.roles @> ARRAY['client']::text[])::int  AS client,
       count(*) FILTER (WHERE c.roles @> ARRAY['carrier']::text[])::int AS carrier,
-      count(*) FILTER (WHERE c.roles @> ARRAY['quarry']::text[])::int  AS quarry
+      count(*) FILTER (WHERE c.roles @> ARRAY['quarry']::text[])::int  AS quarry,
+      count(*) FILTER (WHERE ${NOT_MAIN_ROLES_FILTER})::int            AS other
     FROM counterparties c
     WHERE TRUE ${searchFilter}
   `);
@@ -134,6 +148,7 @@ export async function countPartnersByRole(opts: {
     client: row?.client ?? 0,
     carrier: row?.carrier ?? 0,
     quarry: row?.quarry ?? 0,
+    other: row?.other ?? 0,
   };
 }
 
@@ -192,7 +207,64 @@ export async function updatePartner(
   return { id };
 }
 
+// «1 сделка / 2 сделки / 5 сделок» — для человекочитаемого отказа удаления.
+function pluralRu(n: number, one: string, few: string, many: string): string {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return `${n} ${one}`;
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return `${n} ${few}`;
+  return `${n} ${many}`;
+}
+
+interface DeleteBlockersRow {
+  deals_count: number;
+  directions_count: number;
+  owner_quotes_count: number;
+  invoices_count: number;
+  [column: string]: unknown;
+}
+
+// Refuses to delete a company that still has history. Without this check the bare
+// DELETE either 500s on the deals FK (NO ACTION → 23503) or silently nulls the
+// links on directions / inbound_invoices (onDelete: set null) — losing history.
 export async function deletePartner(id: string): Promise<{ id: string }> {
+  const blockers = await db.execute<DeleteBlockersRow>(sql`
+    SELECT
+      (SELECT count(*)::int FROM deals dl
+         WHERE dl.client_id = ${id} OR dl.owner_id = ${id}) AS deals_count,
+      (SELECT count(*)::int FROM directions d
+         WHERE d.client_counterparty_id = ${id} OR d.owner_counterparty_id = ${id}) AS directions_count,
+      (SELECT count(*)::int FROM request_owner_quotes q WHERE q.owner_id = ${id}) AS owner_quotes_count,
+      (SELECT count(*)::int FROM inbound_invoices ii WHERE ii.counterparty_id = ${id}) AS invoices_count
+  `);
+  const row = blockers.rows[0];
+  const parts: string[] = [];
+  if (row) {
+    if (row.deals_count > 0) parts.push(pluralRu(row.deals_count, "сделка", "сделки", "сделок"));
+    if (row.directions_count > 0) {
+      parts.push(pluralRu(row.directions_count, "направление", "направления", "направлений"));
+    }
+    if (row.owner_quotes_count > 0) {
+      parts.push(
+        pluralRu(
+          row.owner_quotes_count,
+          "ставка собственника",
+          "ставки собственника",
+          "ставок собственника",
+        ),
+      );
+    }
+    if (row.invoices_count > 0) {
+      parts.push(pluralRu(row.invoices_count, "входящий счёт", "входящих счёта", "входящих счетов"));
+    }
+  }
+  if (parts.length > 0) {
+    throw new PartnerError(
+      409,
+      `У партнёра ${parts.join(", ")} — удаление запрещено, связи будут потеряны`,
+    );
+  }
+
   const deleted = await db
     .delete(counterparties)
     .where(eq(counterparties.id, id))
@@ -700,12 +772,22 @@ export async function getPartnerDossier(id: string): Promise<PartnerDossier> {
 }
 
 // Drizzle wraps the pg error; the SQLSTATE may live on the error or its `.cause`.
-function isUniqueViolation(error: unknown): boolean {
-  const has23505 = (e: unknown): boolean =>
-    typeof e === "object" && e !== null && "code" in e && (e as { code?: string }).code === "23505";
-  if (has23505(error)) return true;
+function hasSqlState(error: unknown, code: string): boolean {
+  const matches = (e: unknown): boolean =>
+    typeof e === "object" && e !== null && "code" in e && (e as { code?: string }).code === code;
+  if (matches(error)) return true;
   if (typeof error === "object" && error !== null && "cause" in error) {
-    return has23505((error as { cause?: unknown }).cause);
+    return matches((error as { cause?: unknown }).cause);
   }
   return false;
+}
+
+function isUniqueViolation(error: unknown): boolean {
+  return hasSqlState(error, "23505");
+}
+
+// FK violation (23503) — safety net for the delete route: any reference we did not
+// pre-count above must still surface as a friendly 409, not a generic 500.
+export function isForeignKeyViolation(error: unknown): boolean {
+  return hasSqlState(error, "23503");
 }
