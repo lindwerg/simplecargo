@@ -27,7 +27,7 @@ export default function ReportsPage() {
           </span>
           <span className="min-w-0">
             <span className="block text-base font-semibold text-text">Выписка по счёту</span>
-            <span className="block text-xs text-text-tertiary">Скачать за период</span>
+            <span className="block text-xs text-text-tertiary">Фильтр и выгрузка за период</span>
           </span>
         </Link>
         <Link

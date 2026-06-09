@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { desc, eq } from "drizzle-orm";
+import { count, desc, eq, inArray } from "drizzle-orm";
 import { Calculator, Handshake, Inbox, Plus, Wallet } from "lucide-react";
 
 import { auth } from "@/lib/auth";
@@ -14,7 +14,6 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/button";
 import { SignOutButton } from "@/components/nav/SignOutButton";
 import { dealStatusMeta } from "@/components/trades/dealStatusMeta";
-import { stageForStatus } from "@/components/trades/dealStageMeta";
 import { getFinanceSummary } from "@/lib/finances/repository";
 import { countUnresolvedQuarantine } from "@/lib/mail-intake/quarantine-repo";
 
@@ -46,25 +45,36 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  // Сделки: один запрос — и счётчик воронки, и последние пять.
-  let dealRows: DealRow[] = [];
+  // Сделки: точный счётчик воронки отдельным count() и последние пять с LIMIT —
+  // дашборд не тянет всю таблицу orders по мере роста базы.
+  // Статусы воронки зеркалят stageForStatus (draft/confirmed/active/completed).
+  const FUNNEL_STATUSES = ["draft", "confirmed", "active", "completed"] as const;
+  let funnelCount = 0;
+  let recentDeals: DealRow[] = [];
   try {
-    dealRows = await db
-      .select({
-        id: orders.id,
-        orderNumber: orders.orderNumber,
-        status: orders.status,
-        clientName: counterparties.nameCanonical,
-        createdAt: orders.createdAt,
-      })
-      .from(orders)
-      .leftJoin(counterparties, eq(orders.clientSuggestedId, counterparties.id))
-      .orderBy(desc(orders.createdAt));
+    const [funnelRows, recent] = await Promise.all([
+      db
+        .select({ value: count() })
+        .from(orders)
+        .where(inArray(orders.status, [...FUNNEL_STATUSES])),
+      db
+        .select({
+          id: orders.id,
+          orderNumber: orders.orderNumber,
+          status: orders.status,
+          clientName: counterparties.nameCanonical,
+          createdAt: orders.createdAt,
+        })
+        .from(orders)
+        .leftJoin(counterparties, eq(orders.clientSuggestedId, counterparties.id))
+        .orderBy(desc(orders.createdAt))
+        .limit(RECENT_DEALS_LIMIT),
+    ]);
+    funnelCount = funnelRows[0]?.value ?? 0;
+    recentDeals = recent;
   } catch {
     // таблиц может не быть на самом раннем деплое — пустой список
   }
-  const funnelCount = dealRows.filter((r) => stageForStatus(r.status) !== null).length;
-  const recentDeals = dealRows.slice(0, RECENT_DEALS_LIMIT);
 
   // Финансы: остаток и чистый поток за месяц из Точки.
   let totalBalance = 0;
@@ -159,7 +169,7 @@ export default async function DashboardPage() {
         <StatTile
           label="Остаток на счетах"
           value={<Money value={totalBalance} />}
-          variant="positive"
+          variant={totalBalance < 0 ? "negative" : "positive"}
           href="/finances"
         />
         <StatTile
@@ -181,7 +191,7 @@ export default async function DashboardPage() {
           <h2 id="recent-deals-heading" className="label-caps">
             Последние сделки
           </h2>
-          {dealRows.length > 0 && (
+          {recentDeals.length > 0 && (
             <Link href="/deals" className="text-xs text-accent hover:underline">
               Все сделки →
             </Link>

@@ -128,7 +128,12 @@ function computeProvision(
   for (const w of wagons) {
     const inv = computeInventory(code, w.capacityT, distKm, wagonCount, invData);
     if (inv.confidence === "red" || inv.inventoryNoVat === null) {
-      return { provision: null, redReason: inv.redReason };
+      return {
+        provision: null,
+        redReason:
+          inv.redReason ??
+          `инвентарный тариф для рода вагона «${wagonType}» не закреплён — занесите ставку вручную`,
+      };
     }
     perGroup.push({
       capacityT: w.capacityT,
