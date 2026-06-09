@@ -260,3 +260,42 @@ No km, edge, or classification was invented in this pass. The floor clamps chain
   published direct edge to floor against (e.g. Вяртсиля, §6.5) remain open, each needing the specific source named
   in §3/§6.5. The engine degrades conservatively (chained/global-MIN value, green→verification flag) rather than
   fabricate km.
+
+---
+
+## 8. Скоростные / высокоскоростные линии exclusion (ТР-1 2026 §I п.4 / ТР-4 §2)
+
+The ТР-4 §2 «без … скоростных линий» / ТР-1 2026 §I п.4 «в обход … скоростных линий для всех грузов»
+exclusion is now **implemented and wired** (the twin of the малодеятельные/обходные mechanism, at edge
+level). Full rule-extraction + result writeup: [`SKOROSTNYE_RULE.md`](./SKOROSTNYE_RULE.md).
+
+**Mechanism.** `tr4-skorostnye-edges.json` → `loadSkorostnye()` (`repository.ts:353`) →
+`CompiledGraph.skorostnyeEdges` (`computeDistance.ts:234`) → `backboneTerminal` skips those edges in both
+the direct-AS-IS guard (`:404`) and the kniga3 Dijkstra relaxation (`:423`).
+
+**Edges excluded (sourced).** 5 consecutive Москва–СПб главный ход (Сапсан) узел↔узел edges:
+Ховрино–Тверь (060001↔061502), Тверь–Бологое (061502↔050009), Бологое–Окуловка (050009↔053703),
+Окуловка–Чудово (053703↔042003), Чудово–СПб (042003↔000023). Cited to ТР-4 Книга 3 «Общие положения»
+(Приказ МПС 15.07.2003 N55) + ru.wikipedia Сапсан/Октябрьская ж.д. HS classification.
+
+**Does КС→Бологое compute 801 BY THE RULE?** **No — `bologoeByRuleKm` = 539** (anchor temporarily
+disabled). The exclusion is oracle-safe but the 539 undercut rides the PUBLISHED, non-HS edge
+Хийтola(022404)↔Окуловка(053703)=429 (a side узел edge into the corridor, NOT itself a скоростная линия),
+plus a 70 km dest-spur. The 5 sourced главный-ход edges are not on that path, so banning them changes
+nothing; the nearest legal in-graph alternative is 851 (via Дно), never 801. **The verified anchor
+(`special-distances.json` 022207/050009=801) MUST STAY.** No bypass edge was fabricated — `loadSkorostnye()`
+explicitly SKIPS the `binding_shortcut` Хийтola↔Окуловка edge because classifying it скоростная would be
+inventing a line designation with no primary source.
+
+**Generalization.** Mechanically yes for routes that traverse the главный ход узел-to-узел; the КС→Бологое
+case is the documented limit (a non-HS side edge touching the corridor escapes edge-level exclusion).
+
+**Residual.** (1) The real Хийтola→СПб→(Дно/Новосокольники)→Бологое 801-corridor edges are absent from
+`kniga3-full.json` and must be acquired before the anchor can be retired. (2) Only Москва–СПб (Сапсан) is
+sourced; ВСМ Москва–СПб and other скоростное движение are not yet in the seed and each needs its own
+РЖД/Минтранс citation. Pinned by the by-RULE test in `aymCrimeaCoverage.test.ts` so a future graph
+acquisition that introduces the 801-corridor edges visibly flips the assertion.
+
+**No regression.** All 51 distance tests pass; the 4 km oracles (2444/699/3108/1432), the 17 tariff oracles,
+and АЯМ/Crimea coverage are unmoved — the exclusion set is empty for every non-Сапсан pair, so it is a no-op
+everywhere else.

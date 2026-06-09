@@ -16,6 +16,7 @@ import type {
   DistanceData,
   HubEntry,
   Kniga1Row,
+  SkorostnayaEdge,
   SpecialOverride,
   UzelClass,
   UzelEdge,
@@ -326,6 +327,46 @@ function loadCisSpurs(): Kniga1Row[] {
   return out;
 }
 
+/** Raw row shape of tr4-skorostnye-edges.json `.edges` (high-speed-line узел-pair edges). */
+interface SkorostnayaEdgeRow {
+  readonly aEsr?: string;
+  readonly bEsr?: string;
+  readonly binding_shortcut?: boolean;
+}
+
+/**
+ * Loads the скоростные/высокоскоростные-линии edge exclusion list
+ * (tr4-skorostnye-edges.json `.edges`). Each entry is a узел-pair edge of OUR graph
+ * that lies on a public высокоскоростная/скоростная линия (ТР-1 2026 §I п.4 «в обход …
+ * скоростных линий»; ТР-4 Книга-3 «… скоростных линий …»). Returned as узел-pair keys
+ * that computeDistance excludes from the backbone freight walk.
+ *
+ * NO-FABRICATION GUARD: an edge flagged `binding_shortcut` is the published kniga3
+ * ТП↔ТП undercut edge (Хийтola↔Окуловка=429) that is NOT itself a designated скоростная
+ * линия — the seed file's own `caution` field marks it "UNVERIFIED as a physically-
+ * traversed HS segment". We SKIP such edges here: excluding it would be classifying a
+ * non-HS published edge as HS (fabrication), and the analysis (analyze-skorostnye.mjs)
+ * confirms banning it changes nothing (the route re-routes Хийтola→Ручьи→Окуловка=429
+ * or strands to 851 via Дно, never 801). Only genuinely-sourced HS edges are excluded.
+ * Missing/empty file is tolerated (returns [] → the exclusion is a no-op).
+ */
+function loadSkorostnye(): SkorostnayaEdge[] {
+  let file: { edges?: SkorostnayaEdgeRow[] };
+  try {
+    file = loadJson<{ edges?: SkorostnayaEdgeRow[] }>("tr4-skorostnye-edges.json");
+  } catch {
+    return [];
+  }
+  const rows = Array.isArray(file.edges) ? file.edges : [];
+  const out: SkorostnayaEdge[] = [];
+  for (const r of rows) {
+    if (!r.aEsr || !r.bEsr) continue;
+    if (r.binding_shortcut) continue; // not itself a designated HS line — never fabricate
+    out.push({ aEsr: r.aEsr, bEsr: r.bEsr });
+  }
+  return out;
+}
+
 /** Raw shape of one узел entry in tr4-uzel-class.json (under `uzly`). */
 interface Tr4UzelClassEntry {
   readonly class: string;
@@ -502,7 +543,12 @@ function getData(): DistanceData {
 
   const uzelClass = loadUzelClass();
 
-  const compiled = compileGraph(kniga1, graph);
+  // Скоростные-линии edge exclusion (ТР-1 2026 §I п.4 «в обход … скоростных линий»):
+  // узел-pair edges on a public высокоскоростная/скоростная линия that freight must
+  // bypass. compileGraph records them as a pairKey set; backboneTerminal skips them.
+  const skorostnye = loadSkorostnye();
+
+  const compiled = compileGraph(kniga1, graph, skorostnye);
 
   cachedData = { kniga1, graph, hubs, specials, uzelClass, compiled };
   return cachedData;

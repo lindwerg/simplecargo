@@ -146,6 +146,19 @@ export interface CompiledGraph {
   readonly backboneNodes: Set<string>;
   readonly directBackbone: Map<string, number>;
   readonly nodeName: Map<string, string>;
+  /**
+   * Скоростные/высокоскоростные-линии edge exclusion set (ТР-1 2026 §I п.4 «в обход …
+   * скоростных линий», ТР-4 Книга-3 «… скоростных линий …»). Keyed by `pairKey(a,b)`
+   * over the узел-pair edges that lie on a public высокоскоростная/скоростная линия
+   * (source: scripts/seed-data/tr4-skorostnye-edges.json). The backbone walk must NOT
+   * traverse these edges for FREIGHT tariff distance, exactly as it refuses обходные/
+   * малодеятельные legs. Empty set = no-op (conservative; never regresses an oracle).
+   * Only edges carrying their own primary-source HS citation are included — the
+   * binding_shortcut undercut edge (Хийтola↔Окуловка) is a published kniga3 ТП↔ТП edge
+   * that is NOT itself a designated скоростная линия, so it is NOT in this set (excluding
+   * it would mean fabricating a non-HS edge as HS — forbidden by the no-fabrication rule).
+   */
+  readonly skorostnyeEdges: Set<string>;
 }
 
 function pairKey(a: string, b: string): string {
@@ -167,9 +180,16 @@ function pushUndirected(
   listB.push({ to: a, km });
 }
 
+/** One скоростная/высокоскоростная-линия узел-pair edge to exclude from freight routing. */
+export interface SkorostnayaEdge {
+  readonly aEsr: string;
+  readonly bEsr: string;
+}
+
 export function compileGraph(
   kniga1: ReadonlyArray<Kniga1Row>,
   graph: UzelGraph,
+  skorostnye: ReadonlyArray<SkorostnayaEdge> = [],
 ): CompiledGraph {
   const stationLegs = new Map<string, UzelLeg[]>();
   for (const r of kniga1) {
@@ -207,7 +227,25 @@ export function compileGraph(
   const nodeName = new Map<string, string>();
   for (const n of graph.nodes) nodeName.set(n.esr, n.name);
 
-  return { stationLegs, backboneAdj, bridgeAdj, backboneNodes, directBackbone, nodeName };
+  // Скоростные-линии exclusion set: узел-pair keys whose edge lies on a public
+  // высокоскоростная/скоростная линия (ТР-1 2026 §I п.4 / ТР-4 Книга-3). The backbone
+  // walk skips these for freight; see backboneTerminal. Only edges that ACTUALLY exist
+  // in the graph are recorded (a key for a non-existent edge is harmless but pointless).
+  const skorostnyeEdges = new Set<string>();
+  for (const e of skorostnye) {
+    if (!e.aEsr || !e.bEsr) continue;
+    skorostnyeEdges.add(pairKey(e.aEsr, e.bEsr));
+  }
+
+  return {
+    stationLegs,
+    backboneAdj,
+    bridgeAdj,
+    backboneNodes,
+    directBackbone,
+    nodeName,
+    skorostnyeEdges,
+  };
 }
 
 // ── Min-heap priority queue (Dijkstra) ────────────────────────────────────────
@@ -357,7 +395,13 @@ function backboneTerminal(g: CompiledGraph, a: string, b: string): BackboneResul
   if (a === b) return { km: 0, path: [a] };
 
   const direct = g.directBackbone.get(pairKey(a, b));
-  if (direct != null) {
+  // Скоростные-линии exclusion (ТР-1 2026 §I п.4 «в обход … скоростных линий»): a
+  // freight tariff route may not be priced over a высокоскоростная/скоростная линия.
+  // If the published direct (a,b) edge IS a скоростная-линия edge, we do NOT return it
+  // here — we fall through to the kniga3 Dijkstra (which also skips скоростные edges)
+  // so the search is forced onto the legal обход. When the set is empty (default) this
+  // is a no-op and the direct edge is returned as before — no oracle can move.
+  if (direct != null && !g.skorostnyeEdges.has(pairKey(a, b))) {
     return { km: direct, path: [a, b] };
   }
 
@@ -375,6 +419,8 @@ function backboneTerminal(g: CompiledGraph, a: string, b: string): BackboneResul
     const neighbors = g.backboneAdj.get(u);
     if (neighbors) {
       for (const { to, km } of neighbors) {
+        // Skip скоростные-линии edges — freight is routed AROUND them (ТР-1 §I п.4).
+        if (g.skorostnyeEdges.has(pairKey(u, to))) continue;
         let nd = d + km;
         // Anti-undercut floor: a chain from the source узел `a` to `to` may never be
         // shorter than the PUBLISHED direct edge a↔to. If it is, the chain used an
