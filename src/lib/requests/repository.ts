@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 
 import { db } from "@/lib/db/client";
 import { counterparties } from "@/lib/db/schema/counterparties";
@@ -399,6 +399,8 @@ export async function transitionLines(
 }
 
 // ── markLinesKpIssued — stamp "КП по этому плечу выпущено" after a КП render ──
+// Штампуем только пустой kp_issued_at: дата ПЕРВОГО выпуска сохраняется навсегда,
+// повторный просмотр страницы КП её не перезатирает.
 export async function markLinesKpIssued(
   requestId: string,
   lineIds: string[],
@@ -407,18 +409,25 @@ export async function markLinesKpIssued(
   const updated = await db
     .update(requestLines)
     .set({ kpIssuedAt: new Date() })
-    .where(and(eq(requestLines.requestId, requestId), inArray(requestLines.id, lineIds)))
+    .where(
+      and(
+        eq(requestLines.requestId, requestId),
+        inArray(requestLines.id, lineIds),
+        isNull(requestLines.kpIssuedAt),
+      ),
+    )
     .returning({ id: requestLines.id });
   return { requestId, count: updated.length };
 }
 
-// stamp by line id only (cross-request board selection — KISS, no request scoping)
+// stamp by line id only (cross-request board selection — KISS, no request scoping);
+// как и выше — только первый выпуск, уже проставленная дата не двигается.
 export async function markDirectionsKpIssued(lineIds: string[]): Promise<{ count: number }> {
   if (lineIds.length === 0) return { count: 0 };
   const updated = await db
     .update(requestLines)
     .set({ kpIssuedAt: new Date() })
-    .where(inArray(requestLines.id, lineIds))
+    .where(and(inArray(requestLines.id, lineIds), isNull(requestLines.kpIssuedAt)))
     .returning({ id: requestLines.id });
   return { count: updated.length };
 }

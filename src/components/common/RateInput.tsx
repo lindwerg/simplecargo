@@ -15,6 +15,8 @@ interface RateInputProps {
    * "applied" action — NEVER auto-written into `value` (D16/H1).
    */
   suggested?: number | null;
+  /** Подпись подсказки, напр. "клиент просил". По умолчанию — "предложено". */
+  suggestedLabel?: string;
   disabled?: boolean;
   placeholder?: string;
   /** Unit caption, e.g. "₽ / т" or "₽ / ваг". */
@@ -34,6 +36,7 @@ export function RateInput({
   value,
   onChange,
   suggested,
+  suggestedLabel = "предложено",
   disabled,
   placeholder,
   unit,
@@ -70,7 +73,7 @@ export function RateInput({
             "hover:text-accent focus:outline-none",
           )}
         >
-          предложено: <span className="tabular-nums text-text-secondary">{formatRub(suggested!)}</span>
+          {suggestedLabel}: <span className="tabular-nums text-text-secondary">{formatRub(suggested!)}</span>
           <span className="text-accent">— применить</span>
         </button>
       )}

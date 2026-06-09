@@ -98,25 +98,43 @@ describe("formatRateExpression", () => {
     );
   });
 
-  it("formats an indicative markup as +X% к тарифу", () => {
+  it("formats an indicative markup as +X% к тарифу (дефолт — действующий ТР-1)", () => {
     expect(formatRateExpression({ kind: "tariff_indicative", markupPct: 10 })).toBe(
-      "+10% к тарифу 10-01",
+      "+10% к тарифу ТР-1",
     );
   });
 
   it("formats a zero markup as по тарифу", () => {
     expect(formatRateExpression({ kind: "tariff_plus_markup", markupPct: 0 })).toBe(
-      "по тарифу 10-01",
+      "по тарифу ТР-1",
     );
   });
 
   it("formats a null markup as по тарифу", () => {
-    expect(formatRateExpression({ kind: "tariff_indicative" })).toBe("по тарифу 10-01");
+    expect(formatRateExpression({ kind: "tariff_indicative" })).toBe("по тарифу ТР-1");
   });
 
   it("formats a negative markup with its sign", () => {
     expect(formatRateExpression({ kind: "tariff_plus_markup", markupPct: -15 })).toBe(
-      "-15% к тарифу 10-01",
+      "-15% к тарифу ТР-1",
+    );
+  });
+
+  it("uses an explicit tariffRef from the client's request over the default", () => {
+    expect(formatRateExpression({ kind: "tariff_indicative", markupPct: 10, tariffRef: "10-01" })).toBe(
+      "+10% к тарифу 10-01",
+    );
+    expect(formatRateExpression({ kind: "tariff_plus_markup", markupPct: 0, tariffRef: "10-01" })).toBe(
+      "по тарифу 10-01",
+    );
+  });
+
+  it("falls back to ТР-1 when tariffRef is null or blank", () => {
+    expect(formatRateExpression({ kind: "tariff_indicative", markupPct: 5, tariffRef: null })).toBe(
+      "+5% к тарифу ТР-1",
+    );
+    expect(formatRateExpression({ kind: "tariff_indicative", markupPct: 5, tariffRef: "  " })).toBe(
+      "+5% к тарифу ТР-1",
     );
   });
 });
