@@ -1,7 +1,18 @@
 "use client";
 
 import * as React from "react";
-import { Plus, Trash2, Calculator, Loader2, AlertTriangle, ArrowLeftRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import {
+  Plus,
+  Trash2,
+  Calculator,
+  Loader2,
+  AlertTriangle,
+  ArrowLeftRight,
+  Copy,
+  Check,
+  Handshake,
+} from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { StationField, type StationValue } from "@/components/common/StationField";
@@ -91,6 +102,40 @@ interface QuoteResult {
 
 const rub = (n: number): string => `${Math.round(n).toLocaleString("ru-RU")} ₽`;
 
+/**
+ * Текстовая выжимка расчёта — единый формат для буфера обмена (вставить в письмо)
+ * и для авто-разбора ИИ при создании сделки (/deals/new?prefill=…). Все цифры за вагон.
+ */
+function buildQuoteSummary(
+  origin: StationValue,
+  dest: StationValue,
+  groups: WagonGroup[],
+  result: QuoteResult,
+): string {
+  const withVat = (n: number): number => Math.round(n * (1 + result.vatRate / 100));
+  const wagonsTxt = groups
+    .map((g) => `${g.count} пв ${g.capacityT} т${g.innovative ? " (иннов.)" : ""}`)
+    .join(" + ");
+  const lines: string[] = [
+    `Запрос: ${origin.raw} → ${dest.raw}, ${wagonsTxt}.`,
+    ...(result.etsngName ? [`Груз: ${result.etsngName} (класс ${result.tariffClass ?? "—"}).`] : []),
+    ...(result.distanceKm !== null ? [`Тарифное расстояние: ${result.distanceKm} км.`] : []),
+  ];
+  for (const w of collapse(result.perWagon)) {
+    lines.push(
+      `РЖД-тариф за вагон ${w.capacityT} т: ${rub(w.tariffRub)} без НДС (${rub(withVat(w.tariffRub))} с НДС).`,
+    );
+  }
+  if (result.provision) {
+    for (const g of result.provision.perGroup) {
+      lines.push(
+        `Предоставление ×${result.provision.ownerCoeff} за вагон ${g.capacityT} т: ${rub(g.provisionNoVat)} без НДС (${rub(withVat(g.provisionNoVat))} с НДС).`,
+      );
+    }
+  }
+  return lines.join("\n");
+}
+
 const LEG_RU: Record<string, string> = {
   "spur-origin": "Подвоз к ТП (отправление)",
   backbone: "ТП ↔ ТП (Книга 3)",
@@ -111,6 +156,7 @@ const CONF_LABEL: Record<string, { ru: string; cls: string }> = {
 };
 
 export function TariffCalculator() {
+  const router = useRouter();
   const [origin, setOrigin] = React.useState<StationValue>({ raw: "", esr: null });
   const [dest, setDest] = React.useState<StationValue>({ raw: "", esr: null });
   const [etsng, setEtsng] = React.useState<string>(ETSNG_PRESETS[0].code);
@@ -127,6 +173,26 @@ export function TariffCalculator() {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [result, setResult] = React.useState<QuoteResult | null>(null);
+  const [copied, setCopied] = React.useState(false);
+
+  /** Скопировать текстовую выжимку расчёта (вставить в письмо/чат). */
+  async function copySummary() {
+    if (!result) return;
+    try {
+      await navigator.clipboard.writeText(buildQuoteSummary(origin, dest, groups, result));
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setError("Не удалось скопировать — скопируйте вручную.");
+    }
+  }
+
+  /** Перенести расчёт в новую сделку: ИИ-intake разберёт выжимку в направления. */
+  function toNewDeal() {
+    if (!result) return;
+    const text = buildQuoteSummary(origin, dest, groups, result);
+    router.push(`/deals/new?prefill=${encodeURIComponent(text)}`);
+  }
 
   const canSubmit = Boolean(origin.esr && dest.esr) && groups.length > 0 && !loading;
 
@@ -422,7 +488,38 @@ export function TariffCalculator() {
             <p className="text-2xs">Точно до рубля: собственный полувагон, класс 1 (нерудные).</p>
           </div>
         ) : (
-          <Result result={result} />
+          <>
+            <Result result={result} />
+            {/* Расчёт — не тупик: в письмо (копия) или сразу в сделку (ИИ-разбор выжимки). */}
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={copySummary}
+                className={cn(
+                  "inline-flex h-10 items-center justify-center gap-2 rounded-[var(--radius-md)] border border-border px-3 text-sm",
+                  "text-text-secondary transition-colors hover:text-text focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]",
+                )}
+              >
+                {copied ? (
+                  <Check className="size-4 text-success" aria-hidden />
+                ) : (
+                  <Copy className="size-4" aria-hidden />
+                )}
+                {copied ? "Скопировано" : "Скопировать расчёт"}
+              </button>
+              <button
+                type="button"
+                onClick={toNewDeal}
+                className={cn(
+                  "inline-flex h-10 items-center justify-center gap-2 rounded-[var(--radius-md)] border border-accent/40 bg-accent-quiet px-3 text-sm font-medium",
+                  "text-accent transition-colors hover:border-accent focus:outline-none focus-visible:[box-shadow:var(--ring-focus)]",
+                )}
+              >
+                <Handshake className="size-4" aria-hidden />
+                В новую сделку
+              </button>
+            </div>
+          </>
         )}
       </section>
     </div>
