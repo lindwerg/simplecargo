@@ -6,6 +6,7 @@ import { Check, X, Mail, Paperclip } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { AttachmentChips } from "@/components/inbox/AttachmentChips";
+import { AttachQuoteForm } from "@/components/requests/AttachQuoteForm";
 import type { QuarantineItem } from "@/lib/mail-intake/quarantine-repo";
 
 // Operator-facing copy for each reason: WHAT it is + WHAT TO DO. The raw reason
@@ -217,6 +218,13 @@ export function QuarantineList({ items }: QuarantineListProps) {
                   <span className="font-medium text-text">Что делать: </span>
                   {info.hint}
                 </p>
+
+                {/* CARRIER_QUOTE_MANUAL — привязка ставки к запросу прямо из карточки */}
+                {it.reasonCode === "CARRIER_QUOTE_MANUAL" && (
+                  <div className="pl-4">
+                    <AttachQuoteForm quarantineId={it.id} senderEmail={it.senderEmail} />
+                  </div>
+                )}
 
                 {/* documents — open the actual files that arrived */}
                 {it.documents.length > 0 && (

@@ -3,11 +3,12 @@
 // per (line × carrier) so the operator can track who was polled. Carrier =
 // owner = role `carrier` (operator decision #4).
 
-import { inArray } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 
 import { db } from "@/lib/db/client";
 import { counterparties } from "@/lib/db/schema/counterparties";
 import { requestOwnerQuotes } from "@/lib/db/schema/requestOwnerQuotes";
+import { planQuoteUpsert } from "@/lib/rfq/quote-logic";
 import { listContacts } from "@/lib/partners/repository";
 import { getRequest } from "@/lib/requests/repository";
 import { buildOwnerLetterForRequest, type OwnerLetterRoute } from "@/lib/documents/ownerLetter";
@@ -33,6 +34,7 @@ export interface OutreachResult {
   sent: { carrierId: string; carrierName: string; email: string }[];
   skipped: { carrierId: string; reason: string }[];
   quotesCreated: number;
+  quotesUpdated: number; // повторный RFQ — обновили существующий polled-ряд, не дубль
 }
 
 function fmtDate(d: Date | null): string | null {
@@ -94,7 +96,7 @@ export async function sendRfqToCarriers(
     .where(inArray(counterparties.id, input.carrierIds));
   const nameById = new Map(carriers.map((c) => [c.id, c.name]));
 
-  const result: OutreachResult = { sent: [], skipped: [], quotesCreated: 0 };
+  const result: OutreachResult = { sent: [], skipped: [], quotesCreated: 0, quotesUpdated: 0 };
 
   for (const carrierId of input.carrierIds) {
     const carrierName = nameById.get(carrierId);
@@ -124,18 +126,49 @@ export async function sendRfqToCarriers(
     // record one polled quote per selected line for this carrier. Store the REAL
     // outbound Message-ID so a carrier's reply (In-Reply-To/References) threads
     // straight back to these rows (matchCarrierQuote in intake-repo).
-    const rows = selectedLines.map((line) => ({
-      requestLineId: line.id,
-      ownerId: carrierId,
-      status: "polled" as const,
-      polledVia: "email" as const,
-      polledAt: new Date(),
-      sourceMessageId: messageId,
-    }));
-    if (rows.length > 0) {
-      await db.insert(requestOwnerQuotes).values(rows);
-      result.quotesCreated += rows.length;
-    }
+    //
+    // Повторная отправка RFQ НЕ плодит дубли: существующий polled-ряд пары
+    // (line, carrier) обновляется свежим Message-ID/polledAt; вставляются только
+    // пары без единого ряда. Ряды с ответом/решением не трогаем (planQuoteUpsert).
+    const lineIds = selectedLines.map((l) => l.id);
+    const existing = await db
+      .select({
+        id: requestOwnerQuotes.id,
+        requestLineId: requestOwnerQuotes.requestLineId,
+        status: requestOwnerQuotes.status,
+      })
+      .from(requestOwnerQuotes)
+      .where(
+        and(
+          eq(requestOwnerQuotes.ownerId, carrierId),
+          inArray(requestOwnerQuotes.requestLineId, lineIds),
+        ),
+      );
+    const plan = planQuoteUpsert(lineIds, existing, { updatableStatuses: ["polled"] });
+
+    const polledAt = new Date();
+    await db.transaction(async (tx) => {
+      if (plan.updateIds.length > 0) {
+        await tx
+          .update(requestOwnerQuotes)
+          .set({ sourceMessageId: messageId, polledAt, updatedAt: polledAt })
+          .where(inArray(requestOwnerQuotes.id, plan.updateIds));
+      }
+      if (plan.insertLineIds.length > 0) {
+        await tx.insert(requestOwnerQuotes).values(
+          plan.insertLineIds.map((lineId) => ({
+            requestLineId: lineId,
+            ownerId: carrierId,
+            status: "polled" as const,
+            polledVia: "email" as const,
+            polledAt,
+            sourceMessageId: messageId,
+          })),
+        );
+      }
+    });
+    result.quotesCreated += plan.insertLineIds.length;
+    result.quotesUpdated += plan.updateIds.length;
 
     result.sent.push({ carrierId, carrierName, email });
   }
