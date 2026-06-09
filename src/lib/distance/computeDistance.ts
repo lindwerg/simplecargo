@@ -466,6 +466,104 @@ function filterBackBranches(
   return legs.filter((l) => !isBackBranch(uzelClass.get(l.uzelEsr)));
 }
 
+// ── Layer 2: geometric обходной detector (RF-wide generalization) ─────────────
+//
+// RF_ROUTING_GENERALIZATION.md §6.2. A purely data-derived pre-filter that
+// generalizes the ring/branch-junction (mechanism A) обходной case from the 7
+// hand-classified узлы (Layer 1) to ALL RF узлы, WITHOUT inventing a km or a class.
+//
+// It fires ONLY on a same-участок узел W that is simultaneously:
+//   (i)  OFF the physical section — W is NOT «between» the station and any peer
+//        мagistral leg (no peer P with spur(W)+spur(P) ≈ published edge(W,P)); and
+//   (ii) an UNDERCUT — W's spur is shorter than every surviving on-section leg, so
+//        using it would shortcut the legal section end (W is a соединительная/обходная
+//        ветвь в узле — exactly the ТР-4 «без учёта обходных и соединительных ветвей
+//        в узлах» case). When W is not the cheapest, the drop is a no-op and skipped.
+// and only when ≥1 on-section (colinear) peer leg survives (never drop the last
+// leg; never act when there is no mainline alternative — conservative).
+//
+// Monotone-safe by construction: it can only remove a leg that is provably both
+// off-section AND an illegal undercut, so it can never flip a colinear mainline end
+// (Алнаши/Котельниково/Светлоград) and therefore cannot regress 2444/699/3108. On
+// 1432 the oracle узлы (Тверь/Поварово II) are colinear-between peers (spur sums hit
+// the published edge), so Layer 2 does NOT fire there — the certified Layer 1 hand
+// class still drives that route. Proof + RF widening targets in §5/§6 of the spec.
+
+const COLINEAR_BAND_KM = 1; // ТР-4 1 km rounding band for the spur-sum == edge test
+
+/** Published section edge between two узлы: kniga3 direct, else a single kniga1/kniga3 adj hop. */
+function sectionEdgeKm(g: CompiledGraph, a: string, b: string): number | null {
+  if (a === b) return 0;
+  const direct = g.directBackbone.get(pairKey(a, b));
+  if (direct != null) return direct;
+  for (const list of [g.backboneAdj.get(a), g.bridgeAdj.get(a)]) {
+    if (!list) continue;
+    for (const e of list) if (e.to === b) return e.km;
+  }
+  return null;
+}
+
+/**
+ * A leg W is «on-section» (a legitimate mainline end of its участок) iff the station
+ * lies BETWEEN W and some same-участок peer P: spur(W) + spur(P) ≈ published edge(W,P)
+ * within the 1 km band. Such a узел is a genuine section terminal and must be kept.
+ */
+function isOnSection(g: CompiledGraph, w: UzelLeg, group: ReadonlyArray<UzelLeg>): boolean {
+  for (const p of group) {
+    if (p.uzelEsr === w.uzelEsr) continue;
+    const edge = sectionEdgeKm(g, w.uzelEsr, p.uzelEsr);
+    if (edge == null) continue;
+    if (Math.abs(w.km + p.km - edge) <= COLINEAR_BAND_KM) return true;
+  }
+  return false;
+}
+
+/**
+ * filterGeometricObhodnoy — Layer 2 (RF_ROUTING_GENERALIZATION §6.2). Drops a leg W
+ * iff it is OFF-section (no colinear-between peer P with spur(W)+spur(P) ≈ edge(W,P))
+ * AND its spur is SHORTER than every surviving on-section (colinear) leg — i.e. W is
+ * a соединительная/обходная ветвь whose use would undercut the legal section end and
+ * actually move the engine's MIN. When W's spur is not the cheapest, dropping it is a
+ * no-op, so the filter stays inert (never narrows a route it does not change). It
+ * never removes a colinear mainline end and never removes the last leg. Class-agnostic,
+ * km-derived, no new data. Applied AFTER certified Layer 1 in the candidate-prep step.
+ */
+function filterGeometricObhodnoy(g: CompiledGraph, legs: UzelLeg[]): UzelLeg[] {
+  if (legs.length < 2) return legs;
+
+  // Group by участок; the off-section test is meaningful only within one section.
+  const byUchastok = new Map<string, UzelLeg[]>();
+  for (const l of legs) {
+    const key = l.uchastok || "";
+    const arr = byUchastok.get(key);
+    if (arr) arr.push(l);
+    else byUchastok.set(key, [l]);
+  }
+
+  const dropped = new Set<UzelLeg>();
+  for (const group of byUchastok.values()) {
+    if (group.length < 2) continue;
+    const onSection = group.filter((l) => isOnSection(g, l, group));
+    if (onSection.length === 0) continue; // no mainline alternative → conservative, keep all
+    // Among the on-section (colinear-between) legs the engine's MIN already picks the
+    // legal section end. Any leg that is NOT colinear-between any peer is geometrically
+    // OFF the physical section — a соединительная/обходная ветвь в узле (ТР-4 «без учёта
+    // обходных и соединительных ветвей в узлах»). Drop it iff (a) at least one on-section
+    // peer survives AND (b) the off-section leg is SHORTER than every surviving on-section
+    // leg (so dropping it actually changes the MIN — otherwise the drop is a harmless
+    // no-op that we skip to keep the filter inert). This is the unambiguous, fully
+    // edge-derived ring/branch-junction case; it never touches a colinear mainline end.
+    const minOnSection = Math.min(...onSection.map((l) => l.km));
+    for (const w of group) {
+      if (onSection.includes(w)) continue; // colinear mainline end — never drop
+      if (w.km < minOnSection) dropped.add(w); // off-section AND would undercut the legal end
+    }
+  }
+
+  if (dropped.size === 0) return legs;
+  return legs.filter((l) => !dropped.has(l));
+}
+
 // ── ТР-4 rounding ─────────────────────────────────────────────────────────────
 
 function roundKm(km: number): number {
@@ -541,8 +639,12 @@ export function computeDistance(input: DistanceInput, data: DistanceData): Dista
   // directional back-branch attachments when a clean магистраль leg of that участок
   // exists. Class-driven only; unclassified groups are left intact so the calibrated
   // km oracles (2444/3108) never regress. Applied to both origin and dest legs.
-  const oLegsFiltered = filterBackBranches([...oLegs], data.uzelClass);
-  const dLegsFiltered = filterBackBranches([...dLegs], data.uzelClass);
+  // Layer 1 (certified, class-driven): drop the 7 hand-classified back-branches.
+  // Layer 2 (RF-wide geometric): drop any same-участок узел that is geometrically
+  // OFF the physical section AND would undercut the colinear mainline end — the
+  // ring/branch-junction обходной class, generalized from data with no new class.
+  const oLegsFiltered = filterGeometricObhodnoy(g, filterBackBranches([...oLegs], data.uzelClass));
+  const dLegsFiltered = filterGeometricObhodnoy(g, filterBackBranches([...dLegs], data.uzelClass));
 
   let bestKm = Infinity;
   let bestLegs: DistanceLeg[] = [];

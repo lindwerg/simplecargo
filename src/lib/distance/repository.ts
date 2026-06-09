@@ -149,6 +149,48 @@ function loadKniga1Adjacency(): UzelEdge[] {
   }));
 }
 
+/** Raw row shape of kniga1-transit-attach.json (RF station-coverage attach legs). */
+interface TransitAttachRow {
+  readonly esr: string;
+  readonly name: string;
+  readonly uzelEsr: string;
+  readonly uzelName: string;
+  readonly km: number;
+  readonly uchastok?: string;
+  readonly source?: string;
+}
+
+/**
+ * Loads the RF station-coverage attach legs (kniga1-transit-attach.json). These are
+ * Книга-1 legs for RF stations that have NO участок leg in kniga1-sections.json,
+ * derived ONLY from the station CSV's own published «Транзитные пункты» offsets:
+ *   • SELF-ТП  — a station that IS a Книга-3 backbone узел gets a 0-km self-leg.
+ *   • TRANSIT  — a station's published "Name-km" nearest-ТП offsets become attach legs.
+ * They are appended to `kniga1` as extra `stationLegs` (NOT узел-graph edges), so they
+ * add resolution for the new station ONLY and cannot move any existing route — the
+ * 4 distance + 17 tariff oracles are unaffected. No invented km/ESR (every km is the
+ * CSV's own offset; SELF-ТП km is 0 by definition). Missing/empty file is tolerated.
+ */
+function loadTransitAttach(): Kniga1Row[] {
+  let rows: TransitAttachRow[];
+  try {
+    rows = loadJson<TransitAttachRow[]>("kniga1-transit-attach.json");
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(rows)) return [];
+  return rows
+    .filter((r) => r && r.esr && r.uzelEsr && r.km != null)
+    .map((r) => ({
+      esr: r.esr,
+      name: r.name,
+      uzelEsr: r.uzelEsr,
+      uzelName: r.uzelName,
+      km: r.km,
+      uchastok: r.uchastok ?? "transit-attach",
+    }));
+}
+
 /** Raw shape of one узел entry in tr4-uzel-class.json (under `uzly`). */
 interface Tr4UzelClassEntry {
   readonly class: string;
@@ -192,7 +234,12 @@ let cachedData: DistanceData | null = null;
 function getData(): DistanceData {
   if (cachedData) return cachedData;
 
-  const kniga1 = loadJson<Kniga1Row[]>("kniga1-sections.json");
+  const kniga1Base = loadJson<Kniga1Row[]>("kniga1-sections.json");
+  // RF station-coverage attach legs (kniga1-transit-attach.json): extra stationLegs
+  // for RF stations with no участок leg, derived from the CSV's own «Транзитные пункты»
+  // offsets. Appended to stationLegs only — never to the узел graph — so existing
+  // routes (and all km oracles) are unaffected. See loadTransitAttach() doc.
+  const kniga1 = [...kniga1Base, ...loadTransitAttach()];
   const baseGraph = loadJson<UzelGraph>("uzel-graph.json");
 
   // Merge cross-border bridge edges (uzel-graph-cisfill.json) into the узел graph

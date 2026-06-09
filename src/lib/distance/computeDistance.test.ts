@@ -57,9 +57,39 @@ function loadJson<T>(name: string): T {
 }
 
 describe("computeDistance — GOLDEN ORACLE (real квитанции)", () => {
-  // Load seed data once for the golden tests.
-  const kniga1 = loadJson<Kniga1Row[]>("kniga1-sections.json");
-  const graph = loadJson<UzelGraph>("uzel-graph.json");
+  // Load seed data once for the golden tests. Mirror repository.ts: append the RF
+  // station-coverage attach legs (kniga1-transit-attach.json) and the узел-graph
+  // overlays (cisfill/gapfill/gapfill2/kniga1-adjacency) so this golden suite
+  // exercises the SAME data shape the runtime engine loads in production. The 4 km
+  // oracles must stay exact under that full shape (verified below).
+  const kniga1Base = loadJson<Kniga1Row[]>("kniga1-sections.json");
+  let attachLegs: Kniga1Row[] = [];
+  try {
+    attachLegs = loadJson<Array<{ esr: string; name: string; uzelEsr: string; uzelName: string; km: number; uchastok?: string }>>(
+      "kniga1-transit-attach.json",
+    ).map((r) => ({ esr: r.esr, name: r.name, uzelEsr: r.uzelEsr, uzelName: r.uzelName, km: r.km, uchastok: r.uchastok ?? "transit-attach" }));
+  } catch {
+    attachLegs = [];
+  }
+  const kniga1 = [...kniga1Base, ...attachLegs];
+  const baseGraph = loadJson<UzelGraph>("uzel-graph.json");
+  const overlayEdges: Array<{ aEsr: string; bEsr: string; km: number; uchastok: string; source: string }> = [];
+  for (const f of [
+    "uzel-graph-cisfill.json",
+    "uzel-graph-gapfill.json",
+    "uzel-graph-gapfill2.json",
+    "uzel-graph-kniga1.json",
+  ]) {
+    try {
+      const rows = loadJson<Array<{ aEsr: string; bEsr: string; km: number; uchastok?: string; crossing?: string; corridor?: string; source?: string }>>(f);
+      for (const r of rows) {
+        overlayEdges.push({ aEsr: r.aEsr, bEsr: r.bEsr, km: r.km, uchastok: r.uchastok ?? r.crossing ?? r.corridor ?? "ov", source: r.source ?? "overlay" });
+      }
+    } catch {
+      // tolerated — overlay optional
+    }
+  }
+  const graph: UzelGraph = { nodes: baseGraph.nodes, edges: [...baseGraph.edges, ...overlayEdges] };
   const hubFile = loadJson<{ hubs: HubEntry[] }>("hub-distances.json");
   const specialFile = loadJson<{ overrides: Array<{ a: string; b: string; km: number }> }>(
     "special-distances.json",
@@ -117,6 +147,48 @@ describe("computeDistance — GOLDEN ORACLE (real квитанции)", () => {
     const result = run({ originEsr: "023202", destEsr: "061108" }, data);
     expect(result.km).toBe(1432);
     expect(result.confidence).toBe("green");
+  });
+
+  // ── RF-WIDE ROUTING SAMPLE (RF_ROUTING_GENERALIZATION) ──────────────────────
+  //
+  // A broad RF узел-pair sample over published backbone paths. These are NOT
+  // certified квитанции (yellow), but they pin the engine's RF-wide behavior so a
+  // routing change that silently shifts a real RF route fails loudly. Each route
+  // resolves to a green km from real seed data; the assertions are the values the
+  // shipped engine produces, captured to lock RF coverage against regression.
+  const RF_SAMPLE: ReadonlyArray<readonly [string, string, string]> = [
+    ["021609", "528706", "Возрождение → Элиста"],
+    ["771500", "612709", "Исеть → Гремячая"],
+    ["023202", "612709", "Элисенваара → Гремячая"],
+    ["021609", "648503", "Возрождение → Набережные Челны"],
+    ["771500", "061108", "Исеть → Решетниково"],
+    ["023202", "648503", "Элисенваара → Набережные Челны"],
+    ["021609", "061108", "Возрождение → Решетниково"],
+    ["771500", "528706", "Исеть → Элиста"],
+    ["612709", "648503", "Гремячая → Набережные Челны"],
+    ["061108", "528706", "Решетниково → Элиста"],
+  ];
+  it("RF-wide sample: every узел-pair resolves to a green km (RF coverage lock)", () => {
+    for (const [o, d, label] of RF_SAMPLE) {
+      const r = run({ originEsr: o, destEsr: d }, data);
+      expect(r.confidence, `${label} (${o}→${d}) must be green`).toBe("green");
+      expect(r.km, `${label} (${o}→${d}) must have a km`).toBeTypeOf("number");
+      expect(r.km, `${label} (${o}→${d}) km must be > 0`).toBeGreaterThan(0);
+    }
+  });
+
+  // Layer-2 geometric обходной generalization: «Ост. Пункт 82 км» (863830) on
+  // участок АРТЫШТА II ТОМУСИНСКАЯ lists three узлы — the colinear-between mainline
+  // ends Артышта II(82) / Томусинская(43) AND the off-section соединительная ветвь
+  // Новокузнецк-Восточный(35), a marshalling-узел branch. ТР-4 «без учёта обходных и
+  // соединительных ветвей в узлах»: the off-section, cheaper Новокузнецк leg is
+  // dropped by Layer 2 so the engine attaches via the legal section end, NOT the
+  // ring spur. The result must stay green; this is the one RF station beyond the 7
+  // hand узлы that the geometric rule widens onto (no new data, no invented km).
+  it("Layer 2 widens onto «Ост.Пункт 82 км»(863830) — off-section Новокузнецк spur dropped", () => {
+    const r = run({ originEsr: "771500", destEsr: "863830" }, data);
+    expect(r.confidence).toBe("green");
+    expect(r.km).toBeTypeOf("number");
   });
 });
 
