@@ -16,11 +16,13 @@ const MODES: readonly [Mode, string, typeof Sparkles][] = [
 
 interface NewDealEntryProps {
   counterparties: CounterpartyOption[];
+  /** Предзаполнение ИИ-приёма текстом (например, выжимка расчёта из калькулятора). */
+  prefill?: { text?: string };
 }
 
 // Two ways to start a deal: AI intake (voice/file/text → Сделка with directions) or the
 // plain manual form. AI is the default; the segmented control swaps to the manual form.
-export function NewDealEntry({ counterparties }: NewDealEntryProps) {
+export function NewDealEntry({ counterparties, prefill }: NewDealEntryProps) {
   const [mode, setMode] = React.useState<Mode>("ai");
 
   return (
@@ -51,7 +53,7 @@ export function NewDealEntry({ counterparties }: NewDealEntryProps) {
       </div>
 
       {mode === "ai" ? (
-        <IntakeStudio target="deal" />
+        <IntakeStudio target="deal" {...(prefill?.text ? { prefill } : {})} />
       ) : (
         <NewDealForm counterparties={counterparties} />
       )}
