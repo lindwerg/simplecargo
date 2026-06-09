@@ -3,12 +3,11 @@ import { and, eq, ne, inArray, sql } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { counterparties } from "@/lib/db/schema/counterparties";
 import { directions } from "@/lib/db/schema/directions";
-import { orders } from "@/lib/db/schema/orders";
 import {
   directionClientBindings,
   directionOwnerBindings,
 } from "@/lib/db/schema/directionBindings";
-import { deriveDealType } from "@/lib/trades/derive";
+import { recacheDealType } from "@/lib/trades/repository";
 import { evaluateActivation } from "./activation";
 import { canTransition, type DirectionStatus } from "./lifecycle";
 import type {
@@ -76,18 +75,6 @@ function defaultDisplayName(displayName: string | undefined, originRaw: string, 
   return displayName ?? `${originRaw} → ${destRaw}`;
 }
 
-// Re-cache orders.deal_type from the deal's transport-direction count (Фаза 1). Stone
-// lines (hasStone) arrive in Фаза 2 — false for now. Runs inside the caller's tx so the
-// dealType cache stays consistent with the deal composition.
-async function recacheOrderDealType(tx: Tx, orderId: string): Promise<void> {
-  const [{ n }] = await tx
-    .select({ n: sql<number>`count(*)::int` })
-    .from(directions)
-    .where(eq(directions.orderId, orderId));
-  const next = deriveDealType(false, n > 0);
-  await tx.update(orders).set({ dealType: next, updatedAt: new Date() }).where(eq(orders.id, orderId));
-}
-
 export async function createDirection(
   input: CreateDirectionInput,
   userId: string,
@@ -128,8 +115,9 @@ export async function createDirection(
       })
       .returning({ id: directions.id });
 
-    // Keep the deal's deal_type cache in sync when the direction joins an order.
-    if (input.orderId) await recacheOrderDealType(tx, input.orderId);
+    // Keep the deal's deal_type cache in sync when the direction joins an order
+    // (recacheDealType учитывает оба компонента: направления И щебёночные линии).
+    if (input.orderId) await recacheDealType(tx, input.orderId);
 
     return { id: inserted[0].id };
   });

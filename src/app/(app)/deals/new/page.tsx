@@ -10,7 +10,13 @@ export const dynamic = "force-dynamic";
 
 // Proactive deal creation. Two paths: AI intake (voice/file/text → Сделка with directions,
 // type auto-derived) or the manual form. Both create an orders row, channel='proactive'.
-export default async function NewDealPage() {
+// ?prefill=<text> (e.g. выжимка из калькулятора тарифа) auto-runs the AI text intake.
+export default async function NewDealPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ prefill?: string }>;
+}) {
+  const { prefill } = await searchParams;
   const cps = await db
     .select({ id: counterparties.id, name: counterparties.nameCanonical })
     .from(counterparties)
@@ -33,7 +39,10 @@ export default async function NewDealPage() {
         </p>
       </header>
 
-      <NewDealEntry counterparties={cps} />
+      <NewDealEntry
+        counterparties={cps}
+        {...(prefill?.trim() ? { prefill: { text: prefill.trim() } } : {})}
+      />
     </div>
   );
 }
