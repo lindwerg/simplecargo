@@ -468,7 +468,7 @@ function Result({ result }: { result: QuoteResult }) {
                     <td className="px-2 py-1.5 text-right tabular-nums">{r.n8.toLocaleString("ru-RU")}</td>
                     <td className="px-2 py-1.5 text-right tabular-nums">{r.k1}</td>
                     <td className="px-2 py-1.5 text-right tabular-nums">
-                      {r.k4}
+                      {Number.isInteger(r.k4) ? r.k4 : r.k4.toFixed(3)}
                       {r.k4Fitted ? "*" : ""}
                     </td>
                     <td className="px-2 py-1.5 text-right tabular-nums text-text">{rub(r.tariffRub)}</td>
