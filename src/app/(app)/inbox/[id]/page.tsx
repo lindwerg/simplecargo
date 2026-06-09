@@ -9,6 +9,7 @@ import { MarkReadOnMount } from "@/components/inbox/MarkReadOnMount";
 import { LetterActions } from "@/components/inbox/LetterActions";
 import { formatMailDate } from "@/components/inbox/mail-format";
 import { getInboxEmailDetail } from "@/lib/mail-intake/inbox-repo";
+import { getSavedDislocationSummary } from "@/lib/mail-intake/apply-dislocation";
 
 export const metadata = { title: "Письмо" };
 export const dynamic = "force-dynamic";
@@ -20,6 +21,10 @@ export default async function InboxEmailPage({ params }: { params: Promise<{ id:
   const { id } = await params;
   const email = await getInboxEmailDetail(id);
   if (!email) notFound();
+
+  // Сохранённый разбор дислокации (wagon_movements по письму) — чтобы счётчики
+  // «груж/порож» были видны после перезагрузки, а не один рендер после клика.
+  const savedDislocation = await getSavedDislocationSummary(email.id);
 
   const when = formatMailDate(email.receivedAt);
 
@@ -93,6 +98,7 @@ export default async function InboxEmailPage({ params }: { params: Promise<{ id:
         emailId={email.id}
         directionId={email.directionId}
         directionLabel={email.directionLabel}
+        savedDislocation={savedDislocation}
       />
     </div>
   );

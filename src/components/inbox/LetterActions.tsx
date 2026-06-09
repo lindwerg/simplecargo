@@ -30,12 +30,20 @@ interface LetterActionsProps {
   emailId: string;
   directionId: string | null;
   directionLabel: string | null;
+  // Сохранённый разбор дислокации (wagon_movements по письму) — счётчики
+  // груж/порож видны и после перезагрузки страницы, не только сразу после клика.
+  savedDislocation?: DislocationSummary | null;
 }
 
 /** Блок «Действия» на странице письма: создать запрос/заявку из письма (форма с
  *  ИИ-предзаполнением), привязать к направлению, разобрать дислокацию в направление
  *  (пономерной список + счётчики). */
-export function LetterActions({ emailId, directionId, directionLabel }: LetterActionsProps) {
+export function LetterActions({
+  emailId,
+  directionId,
+  directionLabel,
+  savedDislocation,
+}: LetterActionsProps) {
   return (
     <section className="flex flex-col gap-4 rounded-lg border border-border bg-surface-2 p-4">
       <div className="space-y-2">
@@ -61,22 +69,31 @@ export function LetterActions({ emailId, directionId, directionLabel }: LetterAc
 
       <div className="space-y-1.5 border-t border-border-subtle pt-3">
         <p className="label-caps">Дислокация</p>
-        <DislocationControl emailId={emailId} />
+        <DislocationControl emailId={emailId} savedSummary={savedDislocation ?? null} />
       </div>
     </section>
   );
 }
 
-/** Привязка письма-дислокации к направлению с разбором пономерного списка вагонов. */
-function DislocationControl({ emailId }: { emailId: string }) {
+/** Привязка письма-дислокации к направлению с разбором пономерного списка вагонов.
+ *  savedSummary — уже сохранённый разбор (после перезагрузки страницы). */
+function DislocationControl({
+  emailId,
+  savedSummary,
+}: {
+  emailId: string;
+  savedSummary: DislocationSummary | null;
+}) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<DirectionMatch[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [summary, setSummary] = useState<DislocationSummary | null>(null);
-  const [savedToBinding, setSavedToBinding] = useState(false);
+  const [summary, setSummary] = useState<DislocationSummary | null>(savedSummary);
+  // Для сохранённого разбора подсказку «не записан в направление» не показываем —
+  // фактический статус привязки знает только свежий ответ API.
+  const [savedToBinding, setSavedToBinding] = useState(savedSummary != null);
 
   async function search(q: string) {
     setQuery(q);

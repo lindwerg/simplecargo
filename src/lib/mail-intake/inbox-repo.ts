@@ -359,8 +359,12 @@ function isXlsxAttachment(filename: string, mimeType: string): boolean {
 }
 
 /** Текст письма для распознавания ИИ: тело + таблицы из xlsx-вложений. Используется
- *  для предзаполнения «Создать запрос/заявку» из письма. */
-export async function getEmailExtractableText(id: string): Promise<string> {
+ *  для предзаполнения «Создать запрос/заявку» из письма (первый лист) и для разбора
+ *  дислокаций (allSheets=true — вагоны часто разложены по листам книги). */
+export async function getEmailExtractableText(
+  id: string,
+  opts?: { allSheets?: boolean },
+): Promise<string> {
   const parts: string[] = [];
   const body = await getEmailText(id);
   if (body && body.trim().length > 0) parts.push(body.trim());
@@ -373,7 +377,7 @@ export async function getEmailExtractableText(id: string): Promise<string> {
     if (!bytes) continue;
     try {
       const ab = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
-      const table = await xlsxToText(ab);
+      const table = await xlsxToText(ab, { allSheets: opts?.allSheets ?? false });
       if (table && table.trim().length > 0) parts.push(`\n[${a.filename}]\n${table.trim()}`);
     } catch {
       // нечитаемое вложение — пропускаем, тело уже есть

@@ -2,9 +2,7 @@ import { z } from "zod";
 
 import { apiFail, apiOk } from "@/lib/api/response";
 import { AuthError, requireWriter } from "@/lib/api/session";
-import { getEmailExtractableText, setInboxLink } from "@/lib/mail-intake/inbox-repo";
-import { parseDislocation } from "@/lib/mail-intake/parse-dislocation";
-import { mergeExpectedWagons } from "@/lib/directions/repository";
+import { applyDislocationToDirection } from "@/lib/mail-intake/apply-dislocation";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -16,9 +14,9 @@ const bodySchema = z.object({
 });
 
 // POST — привязать письмо-дислокацию к направлению: разбираем пономерной список
-// вагонов из тела/вложений, линкуем письмо к направлению и (если активная
-// owner-привязка одна) дописываем номера в expected_wagon_ids — дальше схема
-// раскладывает вагоны по направлению сама.
+// вагонов из тела/вложений, линкуем письмо к направлению, дописываем номера в
+// expected_wagon_ids активной owner-привязки и сохраняем разбор в wagon_movements.
+// Общая логика с авто-роутингом оркестратора — в apply-dislocation.ts.
 export async function POST(request: Request, ctx: Ctx): Promise<Response> {
   try {
     await requireWriter(request.headers);
@@ -27,20 +25,13 @@ export async function POST(request: Request, ctx: Ctx): Promise<Response> {
     const parsed = bodySchema.safeParse(await request.json().catch(() => null));
     if (!parsed.success) return apiFail("Укажите направление", 400);
 
-    const text = await getEmailExtractableText(id);
-    const summary = parseDislocation(text);
-
-    await setInboxLink(id, parsed.data.directionId);
-    const merge = await mergeExpectedWagons(
-      parsed.data.directionId,
-      summary.wagons.map((w) => w.number),
-    );
+    const result = await applyDislocationToDirection(id, parsed.data.directionId);
 
     return apiOk({
       directionId: parsed.data.directionId,
-      summary,
-      savedToBinding: merge.saved,
-      expectedCount: merge.expectedCount,
+      summary: result.summary,
+      savedToBinding: result.savedToBinding,
+      expectedCount: result.expectedCount,
     });
   } catch (error: unknown) {
     if (error instanceof AuthError) return apiFail(error.message, error.status);

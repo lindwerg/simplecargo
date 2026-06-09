@@ -39,6 +39,23 @@ describe("parseDislocation", () => {
     expect(s.wagons.map((w) => w.number).sort()).toEqual([VALID_A, VALID_B].sort());
   });
 
+  it("«ВЫГРУЖЕН» — порожний, а не гружёный (подстрока ГРУЖ не должна ловиться)", () => {
+    const s = parseDislocation(`${VALID_A}  ст. Дёма  ВЫГРУЖЕН`);
+    expect(s.total).toBe(1);
+    expect(s.wagons[0].loaded).toBe(false);
+    expect(s.loaded).toBe(0);
+    expect(s.empty).toBe(1);
+  });
+
+  it("«ВЫГРУЖЕНА НА ПП» и «РАЗГРУЖЕН» — тоже порожние", () => {
+    const s = parseDislocation(
+      [`${VALID_A}  ВЫГРУЖЕНА НА ПП`, `${VALID_B}  РАЗГРУЖЕН на станции`].join("\n"),
+    );
+    expect(s.total).toBe(2);
+    expect(s.loaded).toBe(0);
+    expect(s.empty).toBe(2);
+  });
+
   it("помечает состояние null, когда в строке нет признака гружёный/порожний", () => {
     const s = parseDislocation(`${VALID_A}  ст. Кузнецк  прибытие`);
     expect(s.total).toBe(1);
