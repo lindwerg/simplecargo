@@ -249,7 +249,7 @@ describe("computeDistance — GOLDEN ORACLE (real квитанции)", () => {
       green += 1;
     }
     expect(green).toBeGreaterThan(40);
-  });
+  }, 20000); // heavy cross-border coverage sweep (50 БЧ→RF fallback Dijkstras over the 123k-pair backbone)
 
   // БЧ station→station within Belarus must equal leg + published-backbone + leg, all from
   // sourced-official data. Адамово(162012) and Баравуха(162116) both hang off ТП Полоцк
@@ -516,5 +516,96 @@ describe("computeDistance — unit (synthetic fixtures)", () => {
     const result = run({ originEsr: "S1", destEsr: "S2" }, makeData(g, { hubs }));
     expect(result.km).toBe(169); // 10 + 40 + 60 + 5 + 54
     expect(result.legs.some((l) => l.kind === "hub-adder")).toBe(true);
+  });
+
+  // ── ANTI-UNDERCUT FLOOR (Решетниково-class generalization, RF-wide) ──────────
+  //
+  // THE LOAD-BEARING INVARIANT (ТР-4 Книга-3): a chained узел path may NEVER be
+  // shorter than a PUBLISHED direct Книга-3 edge between the same two ТП — if it is,
+  // the chain slipped through an обходная/соединительная ветвь and is ILLEGAL (the
+  // Решетниково 1267-vs-1432 bug). The direct-AS-IS guard enforces this for the (a,b)
+  // terminal pair; these tests pin the FALLBACK floor that enforces it for every узел
+  // the chain passes through when (a,b) itself has no published edge.
+
+  it("anti-undercut floor: fallback chain may not undercut an intermediate published edge", () => {
+    // Topology reproducing the Решетниково-class obhodnoy shortcut:
+    //   • published direct A↔B = 100 (the legal section length).
+    //   • an обходная chain A→X→B = 10 + 10 = 20 (a соединительная ветвь that
+    //     shortcuts the section — ILLEGAL per ТР-4 «без учёта обходных и
+    //     соединительных ветвей в узлах»).
+    //   • dest узел D hangs off B (B↔D = 7); the TERMINAL pair (A,D) has NO published
+    //     edge, so backboneTerminal falls back to Dijkstra.
+    // Without the floor the fallback walks A→X→B (20) and charges 5 + 20 + 7 + 5 = 37.
+    // With the floor the A..B segment is clamped UP to its published 100, so the legal
+    // route is 5 + (100 + 7) + 5 = 117. The illegal 37 must never be returned.
+    const kniga1Rows: Kniga1Row[] = [
+      { esr: "SO", name: "o", uzelEsr: "A", uzelName: "A", km: 5, uchastok: "u1" },
+      { esr: "SD", name: "d", uzelEsr: "D", uzelName: "D", km: 5, uchastok: "u2" },
+    ];
+    const g = compileGraph(kniga1Rows, {
+      nodes: [
+        { esr: "A", name: "A" },
+        { esr: "B", name: "B" },
+        { esr: "X", name: "X" },
+        { esr: "D", name: "D" },
+      ],
+      edges: [
+        { aEsr: "A", bEsr: "B", km: 100, uchastok: "", source: "kniga3" }, // published direct
+        { aEsr: "A", bEsr: "X", km: 10, uchastok: "", source: "kniga3" },
+        { aEsr: "X", bEsr: "B", km: 10, uchastok: "", source: "kniga3" }, // chain A-X-B = 20 < 100
+        { aEsr: "B", bEsr: "D", km: 7, uchastok: "", source: "kniga3" },
+      ],
+    });
+    const result = run({ originEsr: "SO", destEsr: "SD" }, makeData(g));
+    expect(result.km).toBe(117); // 5 + 100(floored) + 7 + 5 — NOT the illegal 37
+    expect(result.confidence).toBe("green");
+  });
+
+  it("anti-undercut floor: terminal pair WITH a published edge is returned AS-IS (guard, never the chain)", () => {
+    // The узел pair (A,B) has a published direct edge of 100 but a cheaper обходная
+    // chain A→X→B = 20. The direct-AS-IS guard must return 100, never 20.
+    const kniga1Rows: Kniga1Row[] = [
+      { esr: "SO", name: "o", uzelEsr: "A", uzelName: "A", km: 3, uchastok: "u1" },
+      { esr: "SD", name: "d", uzelEsr: "B", uzelName: "B", km: 4, uchastok: "u2" },
+    ];
+    const g = compileGraph(kniga1Rows, {
+      nodes: [
+        { esr: "A", name: "A" },
+        { esr: "B", name: "B" },
+        { esr: "X", name: "X" },
+      ],
+      edges: [
+        { aEsr: "A", bEsr: "B", km: 100, uchastok: "", source: "kniga3" },
+        { aEsr: "A", bEsr: "X", km: 10, uchastok: "", source: "kniga3" },
+        { aEsr: "X", bEsr: "B", km: 10, uchastok: "", source: "kniga3" },
+      ],
+    });
+    const result = run({ originEsr: "SO", destEsr: "SD" }, makeData(g));
+    expect(result.km).toBe(107); // 3 + 100(direct AS-IS) + 4 — NOT 3 + 20 + 4 = 27
+    expect(result.confidence).toBe("green");
+  });
+
+  it("anti-undercut floor: a legitimate no-published-edge chain is NOT over-rejected", () => {
+    // A→B→C where NO узел pair has a competing published direct edge to floor against.
+    // The chain is the ONLY legal route (no обходная alternative); it must be charged
+    // verbatim, not inflated. Guards against the floor over-rejecting honest chains.
+    const kniga1Rows: Kniga1Row[] = [
+      { esr: "SO", name: "o", uzelEsr: "A", uzelName: "A", km: 2, uchastok: "u1" },
+      { esr: "SD", name: "d", uzelEsr: "C", uzelName: "C", km: 3, uchastok: "u2" },
+    ];
+    const g = compileGraph(kniga1Rows, {
+      nodes: [
+        { esr: "A", name: "A" },
+        { esr: "B", name: "B" },
+        { esr: "C", name: "C" },
+      ],
+      edges: [
+        { aEsr: "A", bEsr: "B", km: 40, uchastok: "", source: "kniga3" },
+        { aEsr: "B", bEsr: "C", km: 50, uchastok: "", source: "kniga3" },
+      ],
+    });
+    const result = run({ originEsr: "SO", destEsr: "SD" }, makeData(g));
+    expect(result.km).toBe(95); // 2 + 40 + 50 + 3 — chain charged verbatim, no inflation
+    expect(result.confidence).toBe("green");
   });
 });

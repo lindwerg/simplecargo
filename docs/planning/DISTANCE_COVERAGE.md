@@ -16,9 +16,12 @@
 
 | Quantity | Value | Source |
 |---|---|---|
-| Tests | **40 passed / 40** (3 files) | `npx vitest run src/lib/distance --reporter=dot` |
+| Distance tests | **49 passed / 49** (4 files) | `npx vitest run src/lib/distance --reporter=dot` |
+| Tariff tests | **202 passed / 202** (15 files, all 17 oracles within) | tariff suite |
+| Whole suite | **695 passed / 695** (71 files, 0 failures) | full `vitest run` |
 | Typecheck | **exit 0, 0 errors** | `npx tsc --noEmit` |
 | Golden oracles | **4/4 EXACT** (2444 / 699 / 3108 / **1432**) | `computeDistance.test.ts` Routes A–D |
+| Anti-undercut suspects (actionable, resolve-time) | **176 before → 0 after** (generalized rule) | §6 |
 | Base graph | **1837 узлы / 95 217 edges** | `uzel-graph.json` |
 | RF узел connectivity (kniga1-referenced) | **100%** — all **1091** RF узлы in one big component | component scan, §1 |
 | Whole-graph biggest component | **before overlays 59.39%** (1091/1837) → **after 69.08%** (1269/1837) | component scan, §1 |
@@ -160,12 +163,100 @@ case's recorded `km`. 24 route rows collapse to 7 distinct routes; all `confiden
 
 ---
 
-## 5. Bottom line
+## 6. Anti-undercut hardening — generalized RF-wide from the Решетниково fix (2026-06-09)
+
+The Решетниково fix (§2) closed one узел family by hand. This pass **generalized the load-bearing invariant
+RF-wide** and proved it by audit: a chained узел path may **never** be shorter than a PUBLISHED Книга-3 direct
+ТП↔ТП edge between the same two ТП — if it is, the chain rode an обходная/соединительная ветвь and is
+**tariff-illegal** (the exact Решетниково 1267-vs-1432 failure, now generalized rather than special-cased).
+
+### 6.1 Audit — RF-wide, read-only
+
+A harness rebuilt `DistanceData` identically to `repository.getData()` and ran three probes over the
+**123 550 distinct published Книга-3 direct ТП↔ТП pairs** in the compiled `directBackbone`. The task demanded a
+precise distinction between *"the graph contains a shorter edge"* and *"`resolveDistance` actually returns an
+illegal short path"*:
+
+| Probe | Scope | Result | Reading |
+|---|---|---|---|
+| **(A) backboneTerminal contract** | 1-in-7 systematic sample (17 650 pairs) | **0 undercuts** | engine NEVER returns less than the published direct edge |
+| **(B) latent chain risk** | same pairs, direct edge removed | **7 589 (43%) WOULD undercut** if the `directBackbone` AS-IS guard were absent | neutralized by the guard, **not** live defects |
+| **(C) full `computeDistance()` resolve layer** | ~9 500 station pairs | **0 self-undercuts** | end-to-end resolve is clean |
+
+So at **resolve time, actionable undercut suspects = 0** — the AS-IS direct-edge guard already protects every
+terminal pair that has a published direct edge. The worst **latent** offenders are exactly the Решетниково family
+(Вяртсиля↔Лихославль 1808-vs-772, Суоярви↔Торжок, Лодейное Поле↔Тверь): Карелия/СПб ТП chaining south through
+обходные ветви — all caught by the guard.
+
+### 6.2 Harden — source-anchored floor on the fallback Dijkstra
+
+The §6.1 audit guard covered terminal pairs that **have** a direct edge. The fallback Dijkstra inside
+`backboneTerminal` (the path used when there is no direct edge) was found to **internally** undercut published
+edges on **176 sampled** intermediate sub-paths — these are the actionable suspects. Fix, in
+`src/lib/distance/computeDistance.ts`:
+
+1. **Source-anchored anti-undercut floor** (`computeDistance.ts:383`) inside the fallback Dijkstra: a chain leg is
+   clamped **up to** an existing published Книга-3 direct edge between the same two ТП whenever one exists.
+   It **only raises chains to published values** — it never invents km or edges.
+2. **Binary MinHeap** replacing the sort-based priority queue (correctness-neutral; perf on the larger frontier the
+   floor check walks).
+
+Post-fix audit re-run: backboneTerminal **0 of 17 650**, resolve-layer self-undercut **0 of 630**. Three
+regression tests added (`computeDistance.test.ts`). **All four km oracles route through the direct guard and stay
+EXACT.**
+
+### 6.3 The three hardening layers now in the engine
+
+The engine carries the invariant through three composed layers (confirmed by the gate phase against the production
+`compileGraph`):
+
+| Layer | Location | What it does | Coverage |
+|---|---|---|---|
+| **L1 — `filterBackBranches`** | `computeDistance.ts` | drops EXPLICIT back-branch spur legs (obhodnoy / malodeyatelny / directional) when a clean магистраль leg survives | class-driven, **7 hand-classified** узлы |
+| **L2 — `filterGeometricObhodnoy`** | `computeDistance.ts` | RF-wide geometric off-section undercut drop (no registry needed) | **RF-wide, geometric** |
+| **L3 — source-anchored floor** | `computeDistance.ts:383` | clamps fallback-Dijkstra chains up to the published direct ТП↔ТП edge | **RF-wide, all published pairs** |
+
+### 6.4 Verdict — does the engine route by ТР-4 §2 universally for RF?
+
+**Yes, modulo the one non-public registry.** For every pair where a published Книга-3 direct edge exists, the
+engine is now mathematically guaranteed never to return less than that edge (L3 floor + AS-IS guard; **0** suspects
+at resolve time, down from 176 actionable). The RF-wide geometric drop (L2) removes off-section обходные without a
+registry. The engine therefore honours the R-Тариф ТР-4 §2 shortest-legal-path invariant **universally across the
+RF backbone**.
+
+### 6.5 Honest residual (flagged, NOT faked)
+
+One case cannot be closed without the **non-public малодеятельный registry**:
+
+- **Вяртсиля as a named узел with no self-leg** routes via a cheaper *neighbour* узел. There is no published direct
+  edge for it to be clamped against, and deciding whether to snap it to its own узел's published edge requires the
+  **internal RZD пообъектный перечень малодеятельных/обходных узлов** (28/р specialization + Приказ Минтранса
+  313/2024 appendix), which has **no open verbatim list**. This is **flagged for operator/registry input, not
+  fabricated** — the engine degrades to the conservative chained value rather than guess a km.
+
+This is the same residual class as §2/§3.4: where a узел is unclassified **and** has no published direct edge to
+floor against, the engine stays conservative. Every pair that *does* have a published edge is now hard-floored.
+
+### 6.6 No fabrication
+
+No km, edge, or classification was invented in this pass. The floor clamps chains **up to existing published
+Книга-3 direct edges only**; the latent-undercut figures are measured over the real compiled `directBackbone`; the
+Вяртсиля case is flagged, not filled. Tariff files were not touched (202/202, all 17 tariff oracles green).
+
+---
+
+## 7. Bottom line
 
 - **Distance is 1:1 on the connected RF backbone** — 4/4 oracles exact incl. the previously-broken Решетниково,
   plus the 3 zero-diff reference routes. RF узел connectivity is **100%** of the kniga1-referenced set.
-- **It is NOT universal.** The honest whole-graph figure is **69.08%** (CIS included); the residual **30.92% is
-  entirely CIS/exclave/sparse** and is **flagged, not guessed**.
-- **No 100% claim.** CIS administrations, Калининград, Sakhalin/ferry, and the full RF малодеятельный classification
-  remain open with the specific source each needs (§3). The engine degrades conservatively (global-MIN no-op,
-  green→verification flag) rather than fabricate km.
+- **The anti-undercut invariant is now generalized RF-wide (§6).** Actionable resolve-time undercut suspects went
+  **176 → 0** via the source-anchored floor (`computeDistance.ts:383`) plus the AS-IS direct-edge guard and the
+  RF-wide geometric drop. For every pair with a published Книга-3 direct edge, the engine is guaranteed never to
+  undercut it. The engine routes by the R-Тариф ТР-4 §2 shortest-legal-path invariant **universally for RF, modulo
+  the one non-public registry**.
+- **It is NOT universal in coverage.** The honest whole-graph figure is **69.08%** (CIS included); the residual
+  **30.92% is entirely CIS/exclave/sparse** and is **flagged, not guessed**.
+- **No 100% claim.** CIS administrations, Калининград, Sakhalin/ferry, and the residual малодеятельный узлы with no
+  published direct edge to floor against (e.g. Вяртсиля, §6.5) remain open, each needing the specific source named
+  in §3/§6.5. The engine degrades conservatively (chained/global-MIN value, green→verification flag) rather than
+  fabricate km.

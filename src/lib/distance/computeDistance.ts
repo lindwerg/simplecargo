@@ -210,6 +210,66 @@ export function compileGraph(
   return { stationLegs, backboneAdj, bridgeAdj, backboneNodes, directBackbone, nodeName };
 }
 
+// ── Min-heap priority queue (Dijkstra) ────────────────────────────────────────
+//
+// A binary min-heap keyed by km. Replaces the previous `pq.sort()`-per-pop pattern
+// (O(V²·logV)) so the узел Dijkstra stays fast even when the anti-undercut floor in
+// backboneTerminal adds extra relaxations — the floor can re-push a node when a
+// later (still-legal) path arrives, and an O(n) sort per pop turned that churn into
+// a timeout on the dense RF/БЧ graph. Lazy deletion (stale entries skipped on pop)
+// keeps it allocation-light and correct.
+class MinHeap {
+  private readonly km: number[] = [];
+  private readonly node: string[] = [];
+
+  get size(): number {
+    return this.km.length;
+  }
+
+  push(km: number, node: string): void {
+    const k = this.km;
+    const n = this.node;
+    k.push(km);
+    n.push(node);
+    let i = k.length - 1;
+    while (i > 0) {
+      const p = (i - 1) >> 1;
+      if (k[p] <= k[i]) break;
+      [k[p], k[i]] = [k[i], k[p]];
+      [n[p], n[i]] = [n[i], n[p]];
+      i = p;
+    }
+  }
+
+  pop(): [number, string] | undefined {
+    const k = this.km;
+    const n = this.node;
+    if (k.length === 0) return undefined;
+    const topKm = k[0];
+    const topNode = n[0];
+    const lastKm = k.pop() as number;
+    const lastNode = n.pop() as string;
+    if (k.length > 0) {
+      k[0] = lastKm;
+      n[0] = lastNode;
+      let i = 0;
+      const len = k.length;
+      for (;;) {
+        const l = 2 * i + 1;
+        const r = l + 1;
+        let s = i;
+        if (l < len && k[l] < k[s]) s = l;
+        if (r < len && k[r] < k[s]) s = r;
+        if (s === i) break;
+        [k[s], k[i]] = [k[i], k[s]];
+        [n[s], n[i]] = [n[i], n[s]];
+        i = s;
+      }
+    }
+    return [topKm, topNode];
+  }
+}
+
 // ── Last-mile bridging ────────────────────────────────────────────────────────
 
 interface BridgeResult {
@@ -223,11 +283,11 @@ function toBackbone(g: CompiledGraph, uzel: string): BridgeResult[] {
     return [{ node: uzel, bridgeKm: 0 }];
   }
   const dist = new Map<string, number>([[uzel, 0]]);
-  const pq: Array<[number, string]> = [[0, uzel]];
+  const pq = new MinHeap();
+  pq.push(0, uzel);
   const reached = new Map<string, number>();
-  while (pq.length) {
-    pq.sort((x, y) => x[0] - y[0]);
-    const top = pq.shift();
+  while (pq.size) {
+    const top = pq.pop();
     if (!top) break;
     const [d, u] = top;
     if (d > (dist.get(u) ?? Infinity)) continue;
@@ -241,7 +301,7 @@ function toBackbone(g: CompiledGraph, uzel: string): BridgeResult[] {
         const nd = d + km;
         if (nd < (dist.get(to) ?? Infinity)) {
           dist.set(to, nd);
-          pq.push([nd, to]);
+          pq.push(nd, to);
         }
       }
     }
@@ -262,7 +322,36 @@ interface BackboneResult {
 
 /**
  * Returns the published kniga3 edge AS-IS if it exists; otherwise falls back to
- * Dijkstra over kniga3 edges only. A published direct edge is NEVER undercut.
+ * Dijkstra over kniga3 edges only. A published direct edge is NEVER undercut —
+ * not just for the (a,b) terminal pair (handled by the direct-AS-IS guard below),
+ * but ALSO for every узел the fallback chain touches.
+ *
+ * ── ANTI-UNDERCUT FLOOR (Решетниково-class generalization, RF-wide) ──────────────
+ *
+ * THE RULE (ТР-4 Книга-3 общие положения): тарифное расстояние is the SHORTEST path
+ * over the designated ТП network «без учёта обходных и соединительных ветвей в узлах».
+ * THE LOAD-BEARING INVARIANT: a chained узел path may NEVER be shorter than a PUBLISHED
+ * direct Книга-3 ТП↔ТП edge between the same two ТП — if it is, the chain slipped through
+ * an обходная/соединительная ветвь and is ILLEGAL (this is exactly the Решетниково
+ * 1267-vs-1432 bug).
+ *
+ * The (a,b) terminal floor is enforced by the direct-AS-IS guard: when `directBackbone`
+ * holds the (a,b) edge we return it verbatim, never the chain. But when (a,b) has NO
+ * published edge we must still walk the kniga3 graph — and the audit (ANTI_UNDERCUT_AUDIT.md,
+ * RF-wide harness) found that 38 % of those fallback chains internally undercut a published
+ * direct edge between узлы they pass THROUGH (e.g. the Карелия/СПб ТП chaining south через
+ * an обходная ветвь). That is the same illegal shortcut, just one узел deep.
+ *
+ * Enforcement (source-anchored floor): the узел segment we price is anchored at the source
+ * backbone узел `a`; for EVERY узел `v` the chain reaches, if a published direct edge `a↔v`
+ * exists the chained distance to `v` may not fall below it — so we clamp `nd` UP to
+ * `directBackbone(a,v)` during relaxation. The clamp is monotone (it can only RAISE a
+ * distance), so it can never manufacture a new undercut, never narrows a legitimate
+ * no-published-edge route (those have no direct edge to floor against), and never touches
+ * a route that hits the direct-AS-IS guard (the guard returns before this Dijkstra runs).
+ * Verified oracle-safe: all four km oracles (2444/699/3108/1432) win via the direct-AS-IS
+ * guard at their winning backbone terminal pair (561/2680/2255/1319 are published direct
+ * edges of the bridged endpoints), so none reach this fallback — see computeDistance.test.ts.
  */
 function backboneTerminal(g: CompiledGraph, a: string, b: string): BackboneResult | null {
   if (a === b) return { km: 0, path: [a] };
@@ -272,13 +361,13 @@ function backboneTerminal(g: CompiledGraph, a: string, b: string): BackboneResul
     return { km: direct, path: [a, b] };
   }
 
-  // Dijkstra over kniga3 edges only.
+  // Dijkstra over kniga3 edges only, with the source-anchored anti-undercut floor.
   const dist = new Map<string, number>([[a, 0]]);
   const prev = new Map<string, string>();
-  const pq: Array<[number, string]> = [[0, a]];
-  while (pq.length) {
-    pq.sort((x, y) => x[0] - y[0]);
-    const top = pq.shift();
+  const pq = new MinHeap();
+  pq.push(0, a);
+  while (pq.size) {
+    const top = pq.pop();
     if (!top) break;
     const [d, u] = top;
     if (u === b) break;
@@ -286,11 +375,16 @@ function backboneTerminal(g: CompiledGraph, a: string, b: string): BackboneResul
     const neighbors = g.backboneAdj.get(u);
     if (neighbors) {
       for (const { to, km } of neighbors) {
-        const nd = d + km;
+        let nd = d + km;
+        // Anti-undercut floor: a chain from the source узел `a` to `to` may never be
+        // shorter than the PUBLISHED direct edge a↔to. If it is, the chain used an
+        // обходная/соединительная ветвь — clamp UP to the published distance.
+        const floor = g.directBackbone.get(pairKey(a, to));
+        if (floor != null && nd < floor) nd = floor;
         if (nd < (dist.get(to) ?? Infinity)) {
           dist.set(to, nd);
           prev.set(to, u);
-          pq.push([nd, to]);
+          pq.push(nd, to);
         }
       }
     }
