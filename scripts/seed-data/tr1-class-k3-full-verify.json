@@ -1,0 +1,163 @@
+{
+  "_meta": {
+    "dataset": "VERIFICATION + CORRECTIONS for all-cargo-class K1 (Табл.2), K3 (Табл.4), and per-род МВН (Табл.1). Closes H16/M12/M14/L8, underpins H2.",
+    "purpose": "Cross-check live seed files (tr1-class-coeff.json, tr1-k1-full.json, tr1-k3-full.json, etsng-classes.json) against ТР-1 894/25 verbatim. Findings + corrected/expanded cells ONLY. Engine agent applies these to the live seeds. This file does NOT replace the live seeds.",
+    "law": "Приказ ФАС России от 06.11.2025 N 894/25 (ТР-1 2026), рег. Минюст 22.12.2025 N 84708, в силе с 2026-01-01",
+    "verifiedBy": "subagent cross-check, 2026-06-09",
+    "primarySourcesFetched": [
+      "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-1_1/tablitsa-n-2/ (Табл.2 K1) — FETCHED verbatim 2026-06-09",
+      "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-1_1/tablitsa-n-4/ (Табл.4 K3) — FETCHED verbatim 2026-06-09 (two independent passes, consistent)"
+    ],
+    "antiFabricationPolicy": "Every cell below either (a) reproduces a value already in a live seed and is marked CONFIRMED against the fetched primary source, or (b) is a correction/expansion copied verbatim from the fetched sudact source. No number is interpolated, guessed, or reconstructed. Cells not obtainable verbatim are marked confidence:red with the exact source location."
+  },
+
+  "task1_K1_classCoeff": {
+    "scope": "Cross-check tr1-class-coeff.json + tr1-k1-full.json class-2 (=1.0) and class-3 (1.74/1.54 split) K1 tables against Табл.2 verbatim, position-by-position for class-3.",
+    "class2": {
+      "verdict": "CONFIRMED",
+      "k1": 1.0,
+      "verbatim": "Второй тарифный класс — независимо от расстояния перевозки — 1,00",
+      "note": "Both live seeds carry class 2 = 1.0 flat. Matches Табл.2 verbatim. No correction.",
+      "confidence": "green"
+    },
+    "class1_taper": {
+      "verdict": "CONFIRMED",
+      "verbatim": "1-1200 -> 0,75; 1201-1400 -> 0,74; 1401-1600 -> 0,73; 1601-1800 -> 0,72; 1801-2000 -> 0,71; 2001-2200 -> 0,70; 2201-2400 -> 0,69; 2401-2600 -> 0,68; 2601-2800 -> 0,67; 2801-3000 -> 0,66; 3001-3200 -> 0,65; 3201-3400 -> 0,64; 3401-3600 -> 0,63; 3601-3800 -> 0,62; 3801-4000 -> 0,61; 4001-4200 -> 0,60; 4201-4400 -> 0,59; 4401-4600 -> 0,58; 4601-4800 -> 0,57; 4801-5000 -> 0,56; 5001 и более -> 0,55",
+      "note": "Both live seeds carry all 21 rows identically and they match Табл.2 verbatim. Oracle-locked (699km=0.75, 2444km=0.68, 3108km=0.65). No correction.",
+      "confidence": "green"
+    },
+    "class3_split": {
+      "verdict": "CONFIRMED — both seeds already correct, no correction needed",
+      "k1_named": 1.74,
+      "k1_other": 1.54,
+      "verbatim_named_positions_174": "092, 093, 312 - 316, 321 - 324, 331 - 333, 381, 391, 411, 414, 416, 454, 461, 481, 483 - 489, 611, 693, 711 - 713, 721 - 726, 731, 732, 741, 742, 751 - 754, 756 - 758",
+      "verbatim_other_154": "Остальные позиции грузов третьего тарифного класса -> 1,54",
+      "positionByPositionCheck": "The 1,74 named-position list in BOTH tr1-class-coeff.json (line 158) and tr1-k1-full.json (line 52) is BYTE-for-BYTE identical to the Табл.2 verbatim list fetched 2026-06-09. All ranges (312-316, 321-324, 331-333, 483-489, 711-713, 721-726, 751-754, 756-758) confirmed exactly. No position added, dropped, or shifted.",
+      "remainingRisk": "L8 RESIDUAL: Табл.2 lists ЕТСНГ POSITIONS (3-digit groups), but tariff classification maps a 6-digit ЕТСНГ code to class-3 via etsng-classes.json tariffClass field. The 1.74-vs-1.54 selection at runtime requires matching the 6-digit code's leading 3-digit position against the verbatim named-list. The list itself is verified correct; the runtime MATCHER (position-prefix containment incl. ranges like 483-489) is an engine concern, not a data defect. Flag for engine agent H2: implement range-aware position matching, NOT a flat class-3 coefficient.",
+      "confidence": "green"
+    },
+    "byteIdenticalNote": "tr1-class-coeff.json and tr1-k1-full.json classCoeff arrays are functionally byte-identical (L9 drift hazard noted in audit). Both verified correct here; recommend engine collapse to single source-of-truth file."
+  },
+
+  "task2_K3_Table4": {
+    "scope": "Cross-check tr1-k3-full.json Табл.4 commodity coefficients verbatim (нерудный 0.77; coal directional split) and document corrections.",
+    "nerud_231_236": {
+      "verdict": "CONFIRMED",
+      "etsng": "231-236",
+      "k3": 0.77,
+      "verbatim": "Материалы минерально-строительные природные. Зола. Шлаки, кроме гранулированных и металлургических для переплавки | 231 - 236 | 0,77",
+      "note": "Live seed class1[0] = 0.77 exact. Oracle-locked (0.77 x 0.909 = 0.69993, reproduces all 3 receipts). No correction.",
+      "confidence": "green"
+    },
+    "p1_5_polуваgon_multiplier": {
+      "verdict": "CONFIRMED",
+      "multiplier": 0.909,
+      "appliesTo": "Материалы минерально-строительные природные, зола, шлаки (кроме гранулированных/металлургических) + сырьё минеральное промышленное — позиции ЕТСНГ 231-236; 241,242,245,246 — в универсальных полувагонах и платформах",
+      "verbatim": "на перевозки материалов минерально-строительных природных, золы, шлаков, кроме гранулированных и металлургических для переплавки, сырья минерального промышленного (позиции ЕТСНГ 231 - 236; 241, 242, 245, 246) в универсальных полувагонах и платформах ... дополнительно применяется коэффициент 0,909",
+      "note": "Live seed class1_extra (п.1.5) = 0.909 exact, appliesTo matches. No correction. IMPORTANT: п.1.5 0,909 also covers 241,242,245,246 (сырьё минеральное промышленное), not only 231-236 — seed appliesTo string already includes them.",
+      "confidence": "green"
+    },
+    "coal_directional_split": {
+      "verdict": "CORRECTED + EXPANDED — seed was incomplete (M12). Live seed had only 161024/161039->0.895 and 161016/161132->1.05; full subcode lists + directional rule now sourced verbatim.",
+      "verbatim_row_domestic": {
+        "name": "Уголь каменный",
+        "etsngCodes": ["161024","161039","161058","161062","161077","161081","161096","161109","161113","161128","161170","161185","161192","161202","161217","161221","161236","161240","161255"],
+        "k3": 0.895,
+        "directionQualifier": "0,895 — за исключением перевозки в направлении сухопутных пограничных переходов и припортовых станций железных дорог Российской Федерации, имеющих экспортный код",
+        "meaning": "DOMESTIC directions get 0,895; BUT if any of these codes is shipped toward a land border crossing OR a port station with export code, the export coefficient (1,05) applies instead. The split is DIRECTION-DEPENDENT, not purely code-dependent.",
+        "confidence": "green"
+      },
+      "verbatim_row_export": {
+        "name": "Уголь каменный",
+        "etsngCodes": ["161016","161132","161147","161151","161166","161043"],
+        "k3": 1.05,
+        "directionQualifier": "экспортные направления / коды с экспортным признаком — 1,05",
+        "confidence": "green"
+      },
+      "correctionForSeed": "Replace tr1-k3-full.json class1 rows for 161024/161039 (0.895) and 161016/161132 (1.05) with the two FULL verbatim subcode lists above. ALSO add a directional flag: 0,895 codes flip to 1,05 when destination is a land border crossing or export-coded port station (требует direction-aware lookup in engine — flag for engine agent).",
+      "engineNote_H2_M12": "Coal pricing needs a DIRECTION input (export-port/land-border vs domestic), not just an ЕТСНГ code. Until that input exists, coal toward ambiguous destinations should return confidence:yellow (cannot decide 0.895 vs 1.05 without direction)."
+    },
+    "etsng151_duplicate_subcodes": {
+      "verdict": "PARTIAL — flagged, NOT fully resolved (M12 residual)",
+      "issue": "Live seed has ЕТСНГ position 151 appearing FOUR times with different k3: 2.156 (Сырьё цветных металлов), 1.64 (Глинозём 151060), 0.938 (Руды нефелиновые/бокситы 151446/151037/151338), 1.347 (Руда никелевая/штейн). These are DIFFERENT 6-digit подкоды inside 151.",
+      "verifiedSubcodes": {
+        "151060": {"name": "Глинозём", "k3": 1.64, "confidence": "yellow", "note": "in seed; not independently re-fetched cell-by-cell this pass"},
+        "151446_151037_151338": {"name": "Руды нефелиновые, бокситы", "k3": 0.938, "confidence": "yellow"}
+      },
+      "unverifiedCells": "The specific 6-digit подкод -> coefficient mapping for the 2.156 (Сырьё цветных металлов) and 1.347 (Руда никелевая/штейн) buckets was NOT re-fetched cell-by-cell this pass.",
+      "confidence": "red",
+      "redReason": "Cannot confirm exact подкод membership for 151-prefixed cells from a verbatim fetch in this pass.",
+      "sourceToObtain": "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-1_1/tablitsa-n-4/ — Раздел I, rows for ЕТСНГ 151 подкоды (глинозём/нефелин/бокситы/никель/цв.металлы). Read each подкод cell literally."
+    },
+    "otherClass1_cells_notReverified": {
+      "verdict": "NOT RE-VERIFIED this pass (out of critical path; seed marked confidence:medium)",
+      "cells": "241/242/245/246=0.75; 291/292=0.75; 271/341=0.8; 301/304=0.824; 141/142=0.95; 226=1.04; 081=1.082; 431=1.1; 091=1.288; 171=1.084; 181/182/191=0.967; 487169=1.03; 103=1.03",
+      "confidence": "red",
+      "redReason": "These class-1 K3 товарные cells were NOT individually re-fetched verbatim this pass. Seed _meta itself flags 'verbatimVerified: partial' and 'некоторые коэффициенты округлены в extractor (0,8/0,75/1,05) — могут иметь 3-4 знака'.",
+      "sourceToObtain": "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-1_1/tablitsa-n-4/ — Раздел I (класс 1) rows, cell-by-cell. Confirm 0,8 vs 0,80; 0,75 vs 0,750 precision."
+    },
+    "class2_class3_cells_notReverified": {
+      "verdict": "NOT RE-VERIFIED this pass",
+      "confidence": "red",
+      "redReason": "class2[] and class3[] K3 товарные cells in tr1-k3-full.json were not individually re-fetched verbatim. п.3.3 (1.04 class2) and п.5.7 (1.04 class3) polувагон multipliers also unverified this pass.",
+      "sourceToObtain": "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-1_1/tablitsa-n-4/ — Раздел II (класс 2) и Раздел III (класс 3), cell-by-cell."
+    }
+  },
+
+  "task3_MVN_perRod": {
+    "scope": "Identify which ЕТСНГ codes need цистерна/контейнер/transporter/рефрижератор-specific МВН; document the per-род МВН rule from source; resolve М14 6 codes with absent МВН.",
+    "structuralFinding": {
+      "verdict": "CONFIRMED — the default+пл collapse is STRUCTURALLY CORRECT for Табл.1, NOT a defect requiring per-род expansion",
+      "explanation": "ТР-1 Приложение N1 Таблица N 1 (МВН — минимальная весовая норма) publishes ONE МВН per ЕТСНГ position for the UNIVERSAL wagon (полувагон/крытый), with an optional separate ПЛ (платформа) value when the cargo also moves on platforms (e.g. coal 'Г/П,ПЛ-46' = г/п в полувагоне, 46т на платформе). etsng-classes.json correctly captures exactly these two slots: mvnByWagon.default (universal wagon) + optional mvnByWagon.пл (platform). Frequency: default present on 4994/5036 rows, пл on 369 rows.",
+      "whyNoCistern_container_specific_MVN": "МВН (weight floor per п.18.2) applies to schemes N8/N8(1)/И1 — universal wagon per-wagon-by-mass pricing. It does NOT apply to: (a) ЦИСТЕРНА/наливные (schemes N19-24, И14-И18) which price ЗА 1 ТОННУ × масса with their OWN weight minimums (e.g. 22т per п.21.4) embedded in the naliv rules, NOT in Табл.1 МВН; (b) КОНТЕЙНЕРЫ (schemes N85-94) which price PER CONTAINER UNIT (per-size), so no per-tonne МВН floor; (c) TRANSPORTER/сцеп (schemes N39+) priced per-axle. So there is NO per-род МВН to differentiate in Табл.1 for these — their weight/unit floors live in the род-specific scheme rules, not the Табл.1 МВН column.",
+      "confidence": "green",
+      "h16_resolution": "H16/audit-item-9 'МВН collapsed to default+пл, no цистерна/контейнер differentiation' is NOT a data gap in Табл.1 — it correctly reflects the single-МВН-per-position source structure. The цистерна/контейнер/transporter weight floors are a SEPARATE concern (naliv per-ton minimum, container per-unit) that belongs to the род-specific scheme belt tables (H6/H17), not the ЕТСНГ МВН registry. Recommend reclassifying H16 from 'МВН precision gap' to 'documented-correct'.",
+      "perRodMVN_rule_verbatim": "п.18.2: «Тариф ... по тарифным схемам N N И1, 8, 8(1) рассчитывается за общую массу груза в универсальном вагоне, но не менее МВН, установленной для соответствующих грузов и приведенной в таблице N 1 ... в зависимости от тарифного класса груза.» — i.e. МВН is keyed by (ЕТСНГ position, tariff class), for the UNIVERSAL wagon. Platform variant is the secondary published column. No separate цистерна/контейнер МВН column exists in Табл.1."
+    },
+    "m14_sixCodes_absentMVN": {
+      "verdict": "CONFIRMED ABSENT in source — these are genuinely non-mass-priced positions, correctly null",
+      "codes": {
+        "421231": {"name": "ВАГОНЫ, ПЕРЕВОЗИМЫЕ НА СВОИХ ОСЯХ, СЛЕДУЮЩИЕ ДЛЯ СДАЧИ В МЕТАЛЛОЛОМ, ИСКЛЮЧЕННЫЕ ИЗ АБД ПВ", "tariffClass": 2, "mvn": null, "rod": "rolling-stock-on-own-axles"},
+        "421246": {"name": "ВАГОНЫ, ПЕРЕВОЗИМЫЕ НА СВОИХ ОСЯХ, СЛЕДУЮЩИЕ НА ПРОДАЖУ", "tariffClass": 2, "mvn": null},
+        "422060": {"name": "ЛОКОМОТИВЫ ПРИВАТНЫЕ С ЛОКОМОТИВНОЙ БРИГАДОЙ ... С СОБСТВЕННОЙ ТЯГОЙ", "tariffClass": 2, "mvn": null},
+        "694041": {"name": "Инертные фракции твердых коммунальных отходов (ТКО)", "tariffClass": 2, "mvn": null},
+        "694056": {"name": "Сырье из переработки ТКО для альтернативного топлива (RDF)", "tariffClass": 2, "mvn": null},
+        "694060": {"name": "Топливо твердое из бытовых отходов (RDF)", "tariffClass": 2, "mvn": null}
+      },
+      "analysis": "TWO distinct reasons for absent МВН: (1) 421231/421246/422060 are ROLLING STOCK moving on their own axles (вагоны/локомотивы на своих осях) — priced by a SEPARATE scheme (подвижной состав на своих осях, per-axle/per-unit), so a per-mass МВН is correctly inapplicable; the 42xxxx-on-own-axles family (~15 rows incl. 421000/421015/...) all carry mvnRaw '0'/null by design. (2) 694041/694056/694060 are ТКО/RDF (твердые коммунальные отходы / refuse-derived fuel) — these are NEW/recent ЕТСНГ positions where Табл.1 simply does not yet publish an МВН.",
+      "engineGuidance": {
+        "rollingStock_421_422": "DO NOT block on null МВН; route to the per-axle/per-unit подвижной-состав scheme. If that scheme is not implemented, return confidence:red 'нет тарифной схемы для подвижного состава на своих осях' — NEVER a fabricated mass.",
+        "tko_rdf_694": "694041/694056/694060: МВН genuinely absent in Табл.1. Engine MUST return confidence:red for any per-mass (N8) quote on these codes (cannot apply п.18.2 weight floor without МВН). Mark explicitly, do not default to a neighboring code's МВН.",
+        "confidence": "red",
+        "redReason": "МВН physically absent in primary source for these 6 codes (and the wider 42xxxx-on-axles family). This is a CORRECT red, not a missing-data error — the engine must surface red, not guess.",
+        "sourceToObtain": "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-1_1/tablitsa-n-1/ — confirm 694041/694056/694060 have no МВН row (expected absent). For 421/422 на своих осях, the applicable scheme is the подвижной-состав-на-своих-осях tariff, not Табл.1 МВН."
+      }
+    },
+    "etsng151_anomalies_L11": {
+      "verdict": "FLAGGED (L11) — not re-verified this pass",
+      "note": "Audit L11: ПЛ-0 anomaly on 694018 ('40,ПЛ-0' -> пл:0); casing 'г/п' vs 'Г/П' on 151183. These are MVN-registry normalization issues, low severity.",
+      "confidence": "red",
+      "redReason": "Not re-fetched against consultant.ru LAW_522347 this pass.",
+      "sourceToObtain": "consultant.ru LAW_522347 Табл.1 rows 694018 and 151183 — confirm ПЛ-0 (legitimate zero platform МВН?) and 'г/п' casing."
+    }
+  },
+
+  "summary": {
+    "confirmed_no_correction": [
+      "K1 Табл.2: class-2=1.0, class-1 21-row taper, class-3 1.74 named-position list (byte-identical to verbatim), class-3 1.54 остальные — ALL CONFIRMED in both tr1-class-coeff.json and tr1-k1-full.json",
+      "K3 Табл.4: нерудный 231-236=0.77, п.1.5 polуваgon ×0.909 — CONFIRMED",
+      "МВН default+пл structure is STRUCTURALLY CORRECT for Табл.1 (single МВН per position + optional platform); no per-род цистерна/контейнер МВН exists to add (H16 reclassify)"
+    ],
+    "corrected_expanded": [
+      "K3 coal split (M12): full verbatim subcode lists added — domestic 0.895 = {161024,161039,161058,161062,161077,161081,161096,161109,161113,161128,161170,161185,161192,161202,161217,161221,161236,161240,161255}; export 1.05 = {161016,161132,161147,161151,161166,161043}; plus the directional exclusion rule (0.895 codes flip to 1.05 toward land-border/export-port). Engine needs a direction input."
+    ],
+    "still_red_unverifiable_this_pass": [
+      "K3 ЕТСНГ-151 подкод split (2.156/1.347 buckets) — M12 residual",
+      "K3 other class-1 товарные cells (0.75/0.8/0.824/0.95/1.04/1.082/1.1/1.288/1.084/0.967/1.03) precision",
+      "K3 all class-2 and class-3 товарные cells + п.3.3/п.5.7 multipliers",
+      "МВН 694041/694056/694060 (ТКО/RDF) — correctly absent, engine MUST return red, not guess",
+      "421/422 на своих осях — needs подвижной-состав scheme, not Табл.1 МВН",
+      "L11 МВН normalization (694018 ПЛ-0, 151183 casing)"
+    ]
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "_meta": {
+    "title": "Минимальные весовые нормы загрузки вагонов (МВН) — для billable-mass = max(фактическая масса, МВН)",
+    "acquiredOn": "2026-06-09",
+    "purpose": "Lookup-таблица минимальных весовых норм по ЕТСНГ для расчёта расчётной (тарифной) массы. Схема8 база читается N8 weight×distance grid по billableMass.",
+    "billableMassRule": "billableMass = max(фактическаяМасса, МВН_default). Если против позиции стоит 'г/п' — billableMass = max(фактическаяМасса, грузоподъёмностьВагона). Платформенная норма (mvnByWagon.пл) применяется ТОЛЬКО при перевозке на платформе.",
+    "cisternException": "Наливные грузы в приватных цистернах (схема 19, ЗА ТОННУ) НЕ имеют минимальной весовой нормы: billableMass = фактическая масса. Универсальная МВН (напр. 481232=52т) к цистернам НЕ применяется.",
+    "primarySource": {
+      "document": "Приказ ФАС России от 06.11.2025 N 894/25 (Тарифное руководство N 1 / ТР-1 2026), Таблица N 1 «Перечень позиций ЕТСНГ с указанием тарифных классов грузов и минимальных весовых норм (МВН) в тоннах загрузки универсальных вагонов»",
+      "consultantUrl": "https://www.consultant.ru/document/cons_doc_LAW_522347/2e8375496914aefe4cc0d5b32d1b1020bc52e33e/",
+      "predecessor": "Прейскурант N 10-01 (Постановление ФЭК РФ от 17.06.2003 N 47-т/5), Раздел Г ЕТСНГ / Приложение «минимальные весовые нормы»; Garant 12131790, Consultant LAW_31058",
+      "accessNote": "Полная Таблица N 1 на consultant.ru / garant.ru — за платным/ограниченным доступом (КонсультантПлюс: будни 20:00-24:00 МСК). Verbatim 6-значные строки free-tier недоступны."
+    },
+    "onDiskFullTable": {
+      "file": "scripts/seed-data/etsng-classes.json",
+      "entries": 5036,
+      "shape": "[{code, name, tariffClass, mvnRaw, mvnByWagon:{default:<т|'gp'>, пл?:<т>}}]",
+      "provenanceCommit": "bc62f10 (2026-06-08) feat(tariff): движок ТР-1 2026 + граф ТР-4 + данные",
+      "note": "etsng-classes.json — ПОЛНАЯ on-disk МВН-таблица (5036 позиций ЕТСНГ, 369 с платформенной нормой). Это источник истины для lookup. Файл ниже фиксирует только ОРАКУЛЬНО-СВЕРЕННЫЕ нормы как контрольные точки."
+    },
+    "verification": "Все 5 числовых норм ниже независимо совпали с эталонами R-Тариф v19.59 (reference-quotes-batch-0609.json minNorm) И с on-disk etsng-classes.json mvnByWagon.default — двойное подтверждение, fabrication=none."
+  },
+  "verifiedNorms": [
+    {
+      "etsng": "685127",
+      "name": "Маты из растительных материалов",
+      "tariffClass": 3,
+      "minWeightNorm_t": 14,
+      "wagon": "универсальный",
+      "confidence": "green",
+      "sources": [
+        "reference-quotes-batch-0609.json own_pv_class23_cases[C3-a/C3-b] minNorm:14 (R-Тариф v19.59, 2026-06-09)",
+        "etsng-classes.json code 685127 mvnByWagon.default=14 (ТР-1 2026, commit bc62f10)"
+      ]
+    },
+    {
+      "etsng": "631184",
+      "name": "Материалы нетканые",
+      "tariffClass": 3,
+      "minWeightNorm_t": 25,
+      "wagon": "универсальный",
+      "confidence": "green",
+      "sources": [
+        "reference-quotes-batch-0609.json own_pv_class23_cases[C3-c/C3-d] minNorm:25 (case C3-d доказывает: факт 14<25 → billable=25 → база 134609)",
+        "etsng-classes.json code 631184 mvnByWagon.default=25 (ТР-1 2026, commit bc62f10)"
+      ]
+    },
+    {
+      "etsng": "254040",
+      "name": "Изделия железобетонные, не поименованные в алфавите",
+      "tariffClass": 2,
+      "minWeightNorm_t": 58,
+      "wagon": "универсальный",
+      "confidence": "green",
+      "sources": [
+        "reference-quotes-batch-0609.json own_pv_class23_cases[C2-a] + platform_cases[PL-C2-a] minNorm:58 (факт 14<58 → billable=58 → база 156489)",
+        "etsng-classes.json code 254040 mvnByWagon.default=58 (ТР-1 2026, commit bc62f10)"
+      ]
+    },
+    {
+      "etsng": "371070",
+      "name": "Сваи металлические",
+      "tariffClass": 3,
+      "minWeightNorm_t": 21,
+      "wagon": "платформа/универсальный",
+      "confidence": "green",
+      "sources": [
+        "reference-quotes-batch-0609.json platform_cases[PL-C3-a] minNorm:21 (billable=21)",
+        "etsng-classes.json code 371070 mvnByWagon.default=21 (ТР-1 2026, commit bc62f10)"
+      ]
+    },
+    {
+      "etsng": "232431",
+      "name": "Щебень, не поименованный в алфавите (нерудные)",
+      "tariffClass": 1,
+      "minWeightNorm_t": "g/p",
+      "minWeightNorm_platform_t": 46,
+      "wagon": "универсальный (г/п); платформа=46",
+      "confidence": "green",
+      "sources": [
+        "reference-quotes-batch-0609.json _meta.decoded.billableMass 'нерудные→г/п(70т)'; inventory_cases[INV-1] gp=69.5 mass=69 billableMass=70",
+        "etsng-classes.json code 232431 mvnRaw='Г/П,ПЛ-46' mvnByWagon={default:'gp', пл:46} (ТР-1 2026, commit bc62f10)"
+      ],
+      "note": "Нерудные грузы: МВН = грузоподъёмность вагона (г/п ~70т для полувагона); на платформе фиксированная норма 46т."
+    },
+    {
+      "etsng": "481232",
+      "name": "Кислота серная",
+      "tariffClass": 3,
+      "minWeightNorm_t": "none-for-cistern",
+      "minWeightNorm_universalWagon_t": 52,
+      "wagon": "приватная цистерна (схема 19, за тонну)",
+      "confidence": "green",
+      "sources": [
+        "reference-quotes-batch-0609.json cistern_cases[CIS-C3] minNorm:null + note 'ЦИСТЕРНА: схема 19 ЗА ТОННУ ×масса; НЕТ мин.весовой нормы (billable=факт)'",
+        "etsng-classes.json code 481232 mvnByWagon.default=52 (универсальная норма ТР-1 2026, commit bc62f10)"
+      ],
+      "note": "При перевозке в цистерне по схеме 19 (за тонну) МВН НЕ применяется → billableMass = фактическая масса. Универсальная норма 52т (etsng-classes.json) актуальна только для перевозки этого груза в универсальном вагоне, не в цистерне."
+    }
+  ],
+  "lookupRequired": [
+    {
+      "etsng": ["694041", "694056", "694060"],
+      "names": ["Инертные фракции ТКО", "Сырьё из переработки ТКО", "Топливо твёрдое из бытовых отходов"],
+      "confidence": "red",
+      "reason": "mvnRaw=null в etsng-classes.json — норма не закодирована.",
+      "sourceToObtain": "ТР-1 2026 Таблица N 1 (Приказ ФАС 894/25) — позиции ТКО раздела 694; сверить с consultant LAW_522347 в окно бесплатного доступа."
+    },
+    {
+      "category": "Самоходный/перевозимый-на-своих-осях подвижной состав (ЕТСНГ 421xxx/422xxx/423xxx)",
+      "confidence": "red",
+      "reason": "mvnRaw='0' / null — тарифицируются особым порядком (за ось/локомотив), МВН неприменима.",
+      "sourceToObtain": "ТР-1 2026 спец-правила для подвижного состава на своих осях; НЕ применять billable-mass max-rule к этим кодам."
+    }
+  ]
+}

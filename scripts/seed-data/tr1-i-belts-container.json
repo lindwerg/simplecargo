@@ -1,0 +1,139 @@
+{
+ "_meta": {
+  "dataset": "TR-1 2026 CONTAINER tariff plates — Таблица N24, контейнерные отправки, схемы N85–N94 (Приложение N1). Closes gaps H6/H17 (container schemes had ZERO entries in tr1-i-belts-full.json → all container quotes degraded to RED).",
+  "fetchedAt": "2026-06-09",
+  "asOf": "2026",
+  "sourceOrder": "приказ ФАС России от 06.11.2025 N 894/25 (ТР-1, ред. 13.02.2026), Приложение N1, Таблица N 24 (отправки грузов в контейнерах контейнерной отправкой, подпункт 23.2 пункта 23)",
+  "sources": [
+   "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-1_1/tablitsa-n-24/ (Таблица N24 — VERBATIM-fetched 2026-06-09; A/B coefficients for schemes 85-94 rendered cleanly and confirmed)",
+   "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/ii/ (Приложение N1 разд.II — container scheme index; confirms NO +5% clause inside order body)",
+   "https://www.interfax.ru/russia/1053552 (official-press: +5% container indexation 2026, excl. термические контейнеры)"
+  ],
+  "structureNote": "UNLIKE the И-/N-schemes in tr1-i-belts-full.json (which publish a discrete distance×rate belt GRID with non-linear per-band rates), the container schemes 85-94 publish a CONTINUOUS LINEAR PLATE: тарифная плата = A + B × KL (руб. за контейнер). A = начально-конечные операции (руб./контейнер, fixed). B = движенческие операции (руб./контейнеро-км). KL = тарифное расстояние в км (same distance mechanism as Книга-1). There is therefore NO belt grid to transcribe verbatim — the published belt IS the (A,B) pair. We store the exact (A,B) coefficients so the engine computes A + B×KL to the kopeck at the actual distance. Materializing discrete {distFromKm,distToKm,rateRub} cells would require choosing a representative km per band, which is a rounding choice NOT in the source → would violate the kopeck contract. We do NOT do that.",
+  "unitNote": "rateModel='linearAB' (руб. за контейнер, без НДС). plate = A + B×KL. A in руб./контейнер; B in руб./(контейнеро-км). NOT за вагон, NOT за тонну.",
+  "dimensionNote": "Container DIMENSION (H17): each plate is keyed by containerSize (3т/5т/10т/20ft/40ft) + ownership (общий парк vs собств./аренд.). snapToBelt for containers must select the plate by (containerSize, ownership), then evaluate A + B×KL — it does NOT snap to a distance band. loaded/empty: Таблица N24 covers LOADED (груженые) container отправки only; it makes NO loaded/empty distinction and contains NO separate порожний-пробег coefficient set (verbatim-confirmed). Empty container positioning is NOT in N24 → marked RED below (must come from a separate порожний-пробег table, location flagged).",
+  "containerSizeMap": {
+   "3т": "среднетоннажный 3 тонны",
+   "5т": "среднетоннажный 5 тонн",
+   "10т": "10 тонн",
+   "20ft": "крупнотоннажный, свыше 10 до 30 фут включительно (≈20-футовый)",
+   "40ft": "крупнотоннажный, свыше 30 до 40 фут включительно (≈40-футовый)"
+  },
+  "plus5_2026": {
+   "appliesFor2026": true,
+   "multiplier": 1.05,
+   "excludes": "термические контейнеры (отдельная Таблица N14 — НЕ входит в N85-N94 и НЕ индексируется +5%)",
+   "basis": "Дополнительная индексация тарифов на контейнерные перевозки на 5% в 2026 г. Применяется x1.05 ПОВЕРХ результата плиты A + B×KL (схемы 85-94, нетермические). НЕ внутри тела приказа 894/25 (verbatim-confirmed: разд.II содержит схемы, но НЕ содержит пункта +5%) — это параллельная индексационная мера.",
+   "stacking": "base-table +10% уже зашит в значения A/B Таблицы N24 (базис 2026 с 2025-12-01) — НЕ применять повторно. Применять только x1.05 (нетермические). Targeted +1% (приказ ФАС 88/26, с 2026-03-01) — открытый вопрос, применимость к контейнерной плате не подтверждена byte-verbatim → НЕ применять до подтверждения.",
+   "confidence": "yellow",
+   "confidenceReason": "A/B плиты = green (verbatim Табл.N24). Множитель +5% = sourced-official-press consensus (Interfax/metalinfo/dp.ru), НЕ byte-verbatim из зарегистрированного индексационного приказа — отдельный приказ-индексации, чей рег.номер не выделен бесплатно.",
+   "source": "scripts/seed-data/acq-spec-container.json (plus5_container_indexation_2026)"
+  },
+  "verification": {
+   "coefficientsCrossCheck": "Все 10 пар (A,B) совпали byte-for-byte с tr1-special-rules.json → container.schemeBased.schemes (ранее извлечены WebFetch-summary с пометкой re-verify). Этот файл ПОВЫШАЕТ их статус до verbatim-confirmed (Табл.N24 отрендерилась чисто 2026-06-09).",
+   "method": "Двойная сверка: (1) прямой verbatim-fetch Табл.N24 с sudact; (2) совпадение с существующим seed."
+  },
+  "coverage": "GREEN: A/B плиты для всех 10 груженых схем 85-94 (verbatim). YELLOW: множитель +5% (official-press, не byte-verbatim). RED: порожний пробег контейнеров (отсутствует в N24); термические контейнеры (Табл.N14 — вне scope этого файла).",
+  "gaps": [
+   "RED порожний-пробег: коэффициенты для перевозки ПОРОЖНИХ контейнеров отсутствуют в Табл.N24. Источник для добора: ТР-1 2026 раздел о порожнем пробеге контейнеров (искать в Приложении N1 разд.II рядом со схемами 85-94, либо отдельную таблицу порожнего пробега). НЕ выдуман — помечен red ниже.",
+   "RED термические: схемы для термических/рефрижераторных контейнеров — отдельная Таблица N14 (вне scope; и эти контейнеры исключены из +5%). Источник: https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-1_1/tablitsa-n-14/",
+   "YELLOW +5%: byte-verbatim рег.номер индексационного приказа на +5% не выделен — множитель применять как 1.05 с confidence=yellow."
+  ]
+ },
+
+ "rateModel": "linearAB",
+
+ "belts": [
+  {
+   "scheme": "85", "rateModel": "linearAB", "confidence": "green",
+   "containerSize": "3т", "containerSizeRaw": "3 тонны (среднетоннажный)",
+   "ownership": "общий парк", "loadedState": "груженый",
+   "A_rubPerContainer": 4839, "B_rubPerContainerKm": 6.1887,
+   "unit": "руб. за контейнер, без НДС; плата = A + B×KL",
+   "source": "ТР-1 2026 Табл.N24 (verbatim sudact 2026-06-09)"
+  },
+  {
+   "scheme": "90", "rateModel": "linearAB", "confidence": "green",
+   "containerSize": "3т", "containerSizeRaw": "3 тонны (среднетоннажный)",
+   "ownership": "собств./аренд.", "loadedState": "груженый",
+   "A_rubPerContainer": 4214, "B_rubPerContainerKm": 4.6601,
+   "unit": "руб. за контейнер, без НДС; плата = A + B×KL",
+   "source": "ТР-1 2026 Табл.N24 (verbatim sudact 2026-06-09)"
+  },
+  {
+   "scheme": "86", "rateModel": "linearAB", "confidence": "green",
+   "containerSize": "5т", "containerSizeRaw": "5 тонн (среднетоннажный)",
+   "ownership": "общий парк", "loadedState": "груженый",
+   "A_rubPerContainer": 9341, "B_rubPerContainerKm": 11.9535,
+   "unit": "руб. за контейнер, без НДС; плата = A + B×KL",
+   "source": "ТР-1 2026 Табл.N24 (verbatim sudact 2026-06-09)"
+  },
+  {
+   "scheme": "91", "rateModel": "linearAB", "confidence": "green",
+   "containerSize": "5т", "containerSizeRaw": "5 тонн (среднетоннажный)",
+   "ownership": "собств./аренд.", "loadedState": "груженый",
+   "A_rubPerContainer": 8260, "B_rubPerContainerKm": 9.1319,
+   "unit": "руб. за контейнер, без НДС; плата = A + B×KL",
+   "source": "ТР-1 2026 Табл.N24 (verbatim sudact 2026-06-09)"
+  },
+  {
+   "scheme": "87", "rateModel": "linearAB", "confidence": "green",
+   "containerSize": "10т", "containerSizeRaw": "10 тонн",
+   "ownership": "общий парк", "loadedState": "груженый",
+   "A_rubPerContainer": 13555, "B_rubPerContainerKm": 15.7758,
+   "unit": "руб. за контейнер, без НДС; плата = A + B×KL",
+   "source": "ТР-1 2026 Табл.N24 (verbatim sudact 2026-06-09)"
+  },
+  {
+   "scheme": "92", "rateModel": "linearAB", "confidence": "green",
+   "containerSize": "10т", "containerSizeRaw": "10 тонн",
+   "ownership": "собств./аренд.", "loadedState": "груженый",
+   "A_rubPerContainer": 9535, "B_rubPerContainerKm": 13.6155,
+   "unit": "руб. за контейнер, без НДС; плата = A + B×KL",
+   "source": "ТР-1 2026 Табл.N24 (verbatim sudact 2026-06-09)"
+  },
+  {
+   "scheme": "88", "rateModel": "linearAB", "confidence": "green",
+   "containerSize": "20ft", "containerSizeRaw": "крупнотоннажный, свыше 10 до 30 фут включительно",
+   "ownership": "общий парк", "loadedState": "груженый",
+   "A_rubPerContainer": 23351, "B_rubPerContainerKm": 31.1843,
+   "unit": "руб. за контейнер, без НДС; плата = A + B×KL",
+   "source": "ТР-1 2026 Табл.N24 (verbatim sudact 2026-06-09)"
+  },
+  {
+   "scheme": "93", "rateModel": "linearAB", "confidence": "green",
+   "containerSize": "20ft", "containerSizeRaw": "крупнотоннажный, свыше 10 до 30 фут включительно",
+   "ownership": "собств./аренд.", "loadedState": "груженый",
+   "A_rubPerContainer": 17752, "B_rubPerContainerKm": 27.1829,
+   "unit": "руб. за контейнер, без НДС; плата = A + B×KL",
+   "source": "ТР-1 2026 Табл.N24 (verbatim sudact 2026-06-09)"
+  },
+  {
+   "scheme": "89", "rateModel": "linearAB", "confidence": "green",
+   "containerSize": "40ft", "containerSizeRaw": "крупнотоннажный, свыше 30 до 40 фут включительно",
+   "ownership": "общий парк", "loadedState": "груженый",
+   "A_rubPerContainer": 32624, "B_rubPerContainerKm": 62.3685,
+   "unit": "руб. за контейнер, без НДС; плата = A + B×KL",
+   "source": "ТР-1 2026 Табл.N24 (verbatim sudact 2026-06-09)"
+  },
+  {
+   "scheme": "94", "rateModel": "linearAB", "confidence": "green",
+   "containerSize": "40ft", "containerSizeRaw": "крупнотоннажный, свыше 30 до 40 фут включительно",
+   "ownership": "собств./аренд.", "loadedState": "груженый",
+   "A_rubPerContainer": 23360, "B_rubPerContainerKm": 54.3658,
+   "unit": "руб. за контейнер, без НДС; плата = A + B×KL",
+   "source": "ТР-1 2026 Табл.N24 (verbatim sudact 2026-06-09)"
+  },
+
+  {
+   "scheme": "PORÓZH-RED", "rateModel": "linearAB", "confidence": "red",
+   "containerSize": "*", "containerSizeRaw": "ПОРОЖНИЙ пробег контейнеров (все размеры)",
+   "ownership": "*", "loadedState": "порожний",
+   "A_rubPerContainer": null, "B_rubPerContainerKm": null,
+   "unit": "руб. за контейнер, без НДС; плата = A + B×KL (коэффициенты НЕ опубликованы в Табл.N24)",
+   "placeholder": true,
+   "sourceToObtain": "ТР-1 2026 (приказ ФАС 894/25) Приложение N1 разд.II — таблица/пункт ПОРОЖНЕГО пробега контейнеров (рядом со схемами 85-94). URL-корень: https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/ii/ — найти таблицу порожнего пробега контейнеров. Табл.N24 покрывает только груженые отправки (verbatim-confirmed).",
+   "note": "RED placeholder — NOT fabricated. Empty-container quotes degrade to RED until this is sourced."
+  }
+ ]
+}

@@ -1,0 +1,6126 @@
+{
+  "_meta": {
+    "dataset": "TR-1 2026 base rate belts — own/rented CISTERN naval schemes N19-N24 (Приложение N2, за тонну, по классу груза)",
+    "fetchedAt": "2026-06-07",
+    "extractedAt": "2026-06-09",
+    "task": "H6 + M7 — dedicate per-tonne cistern belt plate N19-N24 (own/rented цистерны наливные) into a standalone file; resolve own-cistern empty-leg scheme question (M7).",
+    "sourceOrder": "приказ ФАС России от 06.11.2025 N 894/25 (ТР-1), Приложение N2",
+    "sources": [
+      "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-2/tarify-na-perevozki-nalivnykh-gruzov_1/ (Схемы N19-N24 — собственные/арендованные цистерны; наливные грузы; ЗА ТОННУ; по классу; РАССТОЯНИЕ)"
+    ],
+    "provenance": "Belt cells re-exported verbatim from repo tr1-i-belts-full.json (same 894/25 Приложение N2 fetch). CROSS-VERIFIED this extraction against sudact.ru primary source on 2026-06-09: head 60 cells (N19-N24 × first 10 bands) match byte-for-byte; mid-band collapse cell 1501-1600 (N19=2762.1, N24=2154.5) matches; tail band 11701-11900 (N19=16496.4, N24=14711.2) matches. ZERO discrepancies.",
+    "unit": "perTonne",
+    "unitNote": "rateRub = ЗА ТОННУ нетто (per net tonne), без НДС. Total загруженного рейса = rateRub × нетто-тонн груза. Schemes N19-N24 распределены ПО КЛАССУ груза (наливные грузы по ЕТСНГ группам 20-22, 43-48 и пр.). Это принципиально отличается от полувагона (N8 — ЗА ВАГОН). Каждый из N19-N24 — отдельный класс/набор позиций наливного груза; маппинг ЕТСНГ→схема определяется классификатором (tr1-classifier-*.json), НЕ этим файлом.",
+    "indexationNote": "Ставки УЖЕ включают индексацию 2026 (новый базис ТР-1 вместо Прейскуранта 10-01). НЕ применять +10% поверх.",
+    "beltStructureNote": "127 поясов расстояния, неравномерные и расширяющиеся: 0-5,6-10,...,1451-1500, далее 1501-1600 (пояс 1501-1550 свёрнут самим официальным грид-ом), 1601-1700,... до 11701-11900. Для расстояния между опубликованными поясами — SNAP к ближайшему поясу, НЕ интерполировать.",
+    "coverage": "762 строки = 127 поясов × 6 схем (N19,N20,N21,N22,N23,N24). 0 null, 0 пропусков.",
+    "M7_resolution": {
+      "auditClaim": "M7 hypothesis: own-cistern empty leg pins scheme 25 (gondola) while cistern empty scheme 29 exists and is unused.",
+      "verdict": "AUDIT HYPOTHESIS IS WRONG ON THE SCHEME NUMBER — scheme N29 is NOT a cistern empty scheme.",
+      "primarySource": "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-2/tarify-na-perevozki-po-infrastrukture/ (Тарифные схемы N25,N25(1),N26,N26(1),N27,N28,N29 — порожний пробег, ЗА ВАГОН)",
+      "facts": "Per Приложение N2 порожний-пробег plate (transcribed in tr1-empty-run-full.meta.json schemeMeta, verified byte-for-byte): N29 = ВАГОНЫ ПАССАЖИРСКИЕ, электро-/дизель-поездов (passenger/EMU/DMU coaches) — NOT cisterns. N26 = цистерны для сжиженных газов с тарой >7,5 т/ось, битумовозы, изотермические, платформы ≥19.6м — это и есть цистерн-релевантная порожняя схема для тяжёлых/спецналивных. N25 = универсальные крытые, полувагоны, СПЕЦ.ВАГОНЫ/ЦИСТЕРНЫ кроме перечисленных в 25(1),26-29 — т.е. обычная порожняя цистерна (нефтепродуктовая) возвращается по N25.",
+      "correctEmptyMapping": "Own/rented порожняя цистерна: N26 если цистерна для сжиж.газов тара>7,5т/ось (или битумовоз/изотерм) ELSE N25 (обычная нефтепродуктовая цистерна). N29 НЕ применяется к цистернам. Это совпадает с примечанием в acq-spec-cistern.json (\"Empty own cistern return: N26 ... else N25\").",
+      "engineAction": "Pinning N25 for a generic own нефтепродуктовая cistern empty leg is CORRECT, not a bug. Adding N29 for cisterns would be WRONG. The only real M7 gap: classifier should route сжиж.газ/битум/изотерм cisterns to N26 (heavier empty rate) rather than N25. N26 belts ALREADY exist in tr1-empty-run-full.json (127 rows, verified N26=[31,124,201,...]). No new empty-run data needs scraping; this is a classifier-routing fix owned by the schemeResolve layer, NOT a missing-belt problem.",
+      "confidence": "green"
+    },
+    "redPlaceholders": "NONE. Every N19-N24 cell is green (primary-source-verified). No fabricated, interpolated, or reconstructed numbers. The ЕТСНГ-класс→схема(N19/.../N24) mapping is OUT OF SCOPE for this file (owned by the classifier) and is deliberately not asserted here."
+  },
+  "belts": [
+    {
+      "scheme": "N19",
+      "distFromKm": 0,
+      "distToKm": 5,
+      "rateRub": 409.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 0,
+      "distToKm": 5,
+      "rateRub": 334.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 0,
+      "distToKm": 5,
+      "rateRub": 467.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 0,
+      "distToKm": 5,
+      "rateRub": 718.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 0,
+      "distToKm": 5,
+      "rateRub": 694.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 0,
+      "distToKm": 5,
+      "rateRub": 3.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 6,
+      "distToKm": 10,
+      "rateRub": 420.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 6,
+      "distToKm": 10,
+      "rateRub": 346,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 6,
+      "distToKm": 10,
+      "rateRub": 482.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 6,
+      "distToKm": 10,
+      "rateRub": 733.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 6,
+      "distToKm": 10,
+      "rateRub": 715.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 6,
+      "distToKm": 10,
+      "rateRub": 14.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 11,
+      "distToKm": 15,
+      "rateRub": 430.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 11,
+      "distToKm": 15,
+      "rateRub": 355.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 11,
+      "distToKm": 15,
+      "rateRub": 495.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 11,
+      "distToKm": 15,
+      "rateRub": 746.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 11,
+      "distToKm": 15,
+      "rateRub": 734.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 11,
+      "distToKm": 15,
+      "rateRub": 22.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 16,
+      "distToKm": 20,
+      "rateRub": 440.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 16,
+      "distToKm": 20,
+      "rateRub": 364.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 16,
+      "distToKm": 20,
+      "rateRub": 508.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 16,
+      "distToKm": 20,
+      "rateRub": 758.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 16,
+      "distToKm": 20,
+      "rateRub": 752.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 16,
+      "distToKm": 20,
+      "rateRub": 31.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 21,
+      "distToKm": 25,
+      "rateRub": 449.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 21,
+      "distToKm": 25,
+      "rateRub": 374.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 21,
+      "distToKm": 25,
+      "rateRub": 521.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 21,
+      "distToKm": 25,
+      "rateRub": 771,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 21,
+      "distToKm": 25,
+      "rateRub": 770.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 21,
+      "distToKm": 25,
+      "rateRub": 40.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 26,
+      "distToKm": 30,
+      "rateRub": 459.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 26,
+      "distToKm": 30,
+      "rateRub": 383.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 26,
+      "distToKm": 30,
+      "rateRub": 534.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 26,
+      "distToKm": 30,
+      "rateRub": 783.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 26,
+      "distToKm": 30,
+      "rateRub": 788.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 26,
+      "distToKm": 30,
+      "rateRub": 49.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 31,
+      "distToKm": 35,
+      "rateRub": 469.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 31,
+      "distToKm": 35,
+      "rateRub": 393.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 31,
+      "distToKm": 35,
+      "rateRub": 547.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 31,
+      "distToKm": 35,
+      "rateRub": 795.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 31,
+      "distToKm": 35,
+      "rateRub": 806.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 31,
+      "distToKm": 35,
+      "rateRub": 58.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 36,
+      "distToKm": 40,
+      "rateRub": 478.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 36,
+      "distToKm": 40,
+      "rateRub": 402.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 36,
+      "distToKm": 40,
+      "rateRub": 560.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 36,
+      "distToKm": 40,
+      "rateRub": 808.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 36,
+      "distToKm": 40,
+      "rateRub": 824.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 36,
+      "distToKm": 40,
+      "rateRub": 67,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 41,
+      "distToKm": 45,
+      "rateRub": 488.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 41,
+      "distToKm": 45,
+      "rateRub": 412.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 41,
+      "distToKm": 45,
+      "rateRub": 573.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 41,
+      "distToKm": 45,
+      "rateRub": 820.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 41,
+      "distToKm": 45,
+      "rateRub": 843,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 41,
+      "distToKm": 45,
+      "rateRub": 75.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 46,
+      "distToKm": 50,
+      "rateRub": 498,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 46,
+      "distToKm": 50,
+      "rateRub": 421.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 46,
+      "distToKm": 50,
+      "rateRub": 586,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 46,
+      "distToKm": 50,
+      "rateRub": 833.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 46,
+      "distToKm": 50,
+      "rateRub": 861.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 46,
+      "distToKm": 50,
+      "rateRub": 84.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 51,
+      "distToKm": 60,
+      "rateRub": 511.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 51,
+      "distToKm": 60,
+      "rateRub": 434.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 51,
+      "distToKm": 60,
+      "rateRub": 604.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 51,
+      "distToKm": 60,
+      "rateRub": 850.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 51,
+      "distToKm": 60,
+      "rateRub": 886.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 51,
+      "distToKm": 60,
+      "rateRub": 96.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 61,
+      "distToKm": 70,
+      "rateRub": 530.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 61,
+      "distToKm": 70,
+      "rateRub": 453.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 61,
+      "distToKm": 70,
+      "rateRub": 630,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 61,
+      "distToKm": 70,
+      "rateRub": 875.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 61,
+      "distToKm": 70,
+      "rateRub": 922.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 61,
+      "distToKm": 70,
+      "rateRub": 114.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 71,
+      "distToKm": 80,
+      "rateRub": 550.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 71,
+      "distToKm": 80,
+      "rateRub": 472.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 71,
+      "distToKm": 80,
+      "rateRub": 655.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 71,
+      "distToKm": 80,
+      "rateRub": 900.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 71,
+      "distToKm": 80,
+      "rateRub": 959.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 71,
+      "distToKm": 80,
+      "rateRub": 132.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 81,
+      "distToKm": 90,
+      "rateRub": 569.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 81,
+      "distToKm": 90,
+      "rateRub": 491.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 81,
+      "distToKm": 90,
+      "rateRub": 681.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 81,
+      "distToKm": 90,
+      "rateRub": 925.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 81,
+      "distToKm": 90,
+      "rateRub": 995.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 81,
+      "distToKm": 90,
+      "rateRub": 149.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 91,
+      "distToKm": 100,
+      "rateRub": 588.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 91,
+      "distToKm": 100,
+      "rateRub": 510.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 91,
+      "distToKm": 100,
+      "rateRub": 707.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 91,
+      "distToKm": 100,
+      "rateRub": 950.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 91,
+      "distToKm": 100,
+      "rateRub": 1031.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 91,
+      "distToKm": 100,
+      "rateRub": 167.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 101,
+      "distToKm": 120,
+      "rateRub": 617.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 101,
+      "distToKm": 120,
+      "rateRub": 538.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 101,
+      "distToKm": 120,
+      "rateRub": 746.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 101,
+      "distToKm": 120,
+      "rateRub": 987.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 101,
+      "distToKm": 120,
+      "rateRub": 1086.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 101,
+      "distToKm": 120,
+      "rateRub": 193.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 121,
+      "distToKm": 140,
+      "rateRub": 656.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 121,
+      "distToKm": 140,
+      "rateRub": 576.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 121,
+      "distToKm": 140,
+      "rateRub": 797.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 121,
+      "distToKm": 140,
+      "rateRub": 1037.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 121,
+      "distToKm": 140,
+      "rateRub": 1158.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 121,
+      "distToKm": 140,
+      "rateRub": 229.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 141,
+      "distToKm": 160,
+      "rateRub": 694.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 141,
+      "distToKm": 160,
+      "rateRub": 614.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 141,
+      "distToKm": 160,
+      "rateRub": 849.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 141,
+      "distToKm": 160,
+      "rateRub": 1087,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 141,
+      "distToKm": 160,
+      "rateRub": 1231.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 141,
+      "distToKm": 160,
+      "rateRub": 264.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 161,
+      "distToKm": 180,
+      "rateRub": 727.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 161,
+      "distToKm": 180,
+      "rateRub": 647.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 161,
+      "distToKm": 180,
+      "rateRub": 894.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 161,
+      "distToKm": 180,
+      "rateRub": 1129.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 161,
+      "distToKm": 180,
+      "rateRub": 1294.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 161,
+      "distToKm": 180,
+      "rateRub": 294.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 181,
+      "distToKm": 200,
+      "rateRub": 759.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 181,
+      "distToKm": 200,
+      "rateRub": 678.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 181,
+      "distToKm": 200,
+      "rateRub": 937,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 181,
+      "distToKm": 200,
+      "rateRub": 1171.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 181,
+      "distToKm": 200,
+      "rateRub": 1354.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 181,
+      "distToKm": 200,
+      "rateRub": 324,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 201,
+      "distToKm": 220,
+      "rateRub": 793.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 201,
+      "distToKm": 220,
+      "rateRub": 711.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 201,
+      "distToKm": 220,
+      "rateRub": 982.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 201,
+      "distToKm": 220,
+      "rateRub": 1215.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 201,
+      "distToKm": 220,
+      "rateRub": 1418.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 201,
+      "distToKm": 220,
+      "rateRub": 355.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 221,
+      "distToKm": 240,
+      "rateRub": 823.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 221,
+      "distToKm": 240,
+      "rateRub": 741,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 221,
+      "distToKm": 240,
+      "rateRub": 1022.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 221,
+      "distToKm": 240,
+      "rateRub": 1253.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 221,
+      "distToKm": 240,
+      "rateRub": 1474.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 221,
+      "distToKm": 240,
+      "rateRub": 382.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 241,
+      "distToKm": 260,
+      "rateRub": 856.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 241,
+      "distToKm": 260,
+      "rateRub": 772.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 241,
+      "distToKm": 260,
+      "rateRub": 1066,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 241,
+      "distToKm": 260,
+      "rateRub": 1295.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 241,
+      "distToKm": 260,
+      "rateRub": 1535.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 241,
+      "distToKm": 260,
+      "rateRub": 412,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 261,
+      "distToKm": 280,
+      "rateRub": 887.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 261,
+      "distToKm": 280,
+      "rateRub": 804,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 261,
+      "distToKm": 280,
+      "rateRub": 1108.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 261,
+      "distToKm": 280,
+      "rateRub": 1336.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 261,
+      "distToKm": 280,
+      "rateRub": 1595.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 261,
+      "distToKm": 280,
+      "rateRub": 441.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 281,
+      "distToKm": 300,
+      "rateRub": 919.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 281,
+      "distToKm": 300,
+      "rateRub": 834.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 281,
+      "distToKm": 300,
+      "rateRub": 1150.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 281,
+      "distToKm": 300,
+      "rateRub": 1376.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 281,
+      "distToKm": 300,
+      "rateRub": 1654.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 281,
+      "distToKm": 300,
+      "rateRub": 469.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 301,
+      "distToKm": 330,
+      "rateRub": 958.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 301,
+      "distToKm": 330,
+      "rateRub": 873.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 301,
+      "distToKm": 330,
+      "rateRub": 1203.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 301,
+      "distToKm": 330,
+      "rateRub": 1427.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 301,
+      "distToKm": 330,
+      "rateRub": 1728.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 301,
+      "distToKm": 330,
+      "rateRub": 505.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 331,
+      "distToKm": 360,
+      "rateRub": 1005.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 331,
+      "distToKm": 360,
+      "rateRub": 919.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 331,
+      "distToKm": 360,
+      "rateRub": 1266.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 331,
+      "distToKm": 360,
+      "rateRub": 1488.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 331,
+      "distToKm": 360,
+      "rateRub": 1817.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 331,
+      "distToKm": 360,
+      "rateRub": 548.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 361,
+      "distToKm": 390,
+      "rateRub": 1052.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 361,
+      "distToKm": 390,
+      "rateRub": 964.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 361,
+      "distToKm": 390,
+      "rateRub": 1328.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 361,
+      "distToKm": 390,
+      "rateRub": 1548.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 361,
+      "distToKm": 390,
+      "rateRub": 1904.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 361,
+      "distToKm": 390,
+      "rateRub": 591.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 391,
+      "distToKm": 420,
+      "rateRub": 1097.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 391,
+      "distToKm": 420,
+      "rateRub": 1009.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 391,
+      "distToKm": 420,
+      "rateRub": 1389.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 391,
+      "distToKm": 420,
+      "rateRub": 1606.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 391,
+      "distToKm": 420,
+      "rateRub": 1990.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 391,
+      "distToKm": 420,
+      "rateRub": 632.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 421,
+      "distToKm": 450,
+      "rateRub": 1148.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 421,
+      "distToKm": 450,
+      "rateRub": 1059.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 421,
+      "distToKm": 450,
+      "rateRub": 1458.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 421,
+      "distToKm": 450,
+      "rateRub": 1673,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 421,
+      "distToKm": 450,
+      "rateRub": 2086.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 421,
+      "distToKm": 450,
+      "rateRub": 679.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 451,
+      "distToKm": 480,
+      "rateRub": 1192.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 451,
+      "distToKm": 480,
+      "rateRub": 1102.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 451,
+      "distToKm": 480,
+      "rateRub": 1517.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 451,
+      "distToKm": 480,
+      "rateRub": 1729.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 451,
+      "distToKm": 480,
+      "rateRub": 2169.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 451,
+      "distToKm": 480,
+      "rateRub": 719.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 481,
+      "distToKm": 510,
+      "rateRub": 1235.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 481,
+      "distToKm": 510,
+      "rateRub": 1145,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 481,
+      "distToKm": 510,
+      "rateRub": 1574.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 481,
+      "distToKm": 510,
+      "rateRub": 1785.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 481,
+      "distToKm": 510,
+      "rateRub": 2250.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 481,
+      "distToKm": 510,
+      "rateRub": 759,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 511,
+      "distToKm": 540,
+      "rateRub": 1286,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 511,
+      "distToKm": 540,
+      "rateRub": 1194.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 511,
+      "distToKm": 540,
+      "rateRub": 1642.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 511,
+      "distToKm": 540,
+      "rateRub": 1850.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 511,
+      "distToKm": 540,
+      "rateRub": 2345.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 511,
+      "distToKm": 540,
+      "rateRub": 805,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 541,
+      "distToKm": 570,
+      "rateRub": 1327.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 541,
+      "distToKm": 570,
+      "rateRub": 1235.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 541,
+      "distToKm": 570,
+      "rateRub": 1698,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 541,
+      "distToKm": 570,
+      "rateRub": 1903.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 541,
+      "distToKm": 570,
+      "rateRub": 2423.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 541,
+      "distToKm": 570,
+      "rateRub": 843,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 571,
+      "distToKm": 600,
+      "rateRub": 1377.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 571,
+      "distToKm": 600,
+      "rateRub": 1284,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 571,
+      "distToKm": 600,
+      "rateRub": 1764.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 571,
+      "distToKm": 600,
+      "rateRub": 1968.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 571,
+      "distToKm": 600,
+      "rateRub": 2517.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 571,
+      "distToKm": 600,
+      "rateRub": 888.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 601,
+      "distToKm": 640,
+      "rateRub": 1425.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 601,
+      "distToKm": 640,
+      "rateRub": 1331.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 601,
+      "distToKm": 640,
+      "rateRub": 1829.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 601,
+      "distToKm": 640,
+      "rateRub": 2030.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 601,
+      "distToKm": 640,
+      "rateRub": 2608.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 601,
+      "distToKm": 640,
+      "rateRub": 932.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 641,
+      "distToKm": 680,
+      "rateRub": 1491.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 641,
+      "distToKm": 680,
+      "rateRub": 1396,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 641,
+      "distToKm": 680,
+      "rateRub": 1918,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 641,
+      "distToKm": 680,
+      "rateRub": 2115.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 641,
+      "distToKm": 680,
+      "rateRub": 2732.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 641,
+      "distToKm": 680,
+      "rateRub": 993.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 681,
+      "distToKm": 720,
+      "rateRub": 1546.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 681,
+      "distToKm": 720,
+      "rateRub": 1449.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 681,
+      "distToKm": 720,
+      "rateRub": 1991.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 681,
+      "distToKm": 720,
+      "rateRub": 2186.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 681,
+      "distToKm": 720,
+      "rateRub": 2836,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 681,
+      "distToKm": 720,
+      "rateRub": 1043.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 721,
+      "distToKm": 760,
+      "rateRub": 1611.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 721,
+      "distToKm": 760,
+      "rateRub": 1513.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 721,
+      "distToKm": 760,
+      "rateRub": 2078.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 721,
+      "distToKm": 760,
+      "rateRub": 2270.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 721,
+      "distToKm": 760,
+      "rateRub": 2958.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 721,
+      "distToKm": 760,
+      "rateRub": 1102.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 761,
+      "distToKm": 800,
+      "rateRub": 1664.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 761,
+      "distToKm": 800,
+      "rateRub": 1565.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 761,
+      "distToKm": 800,
+      "rateRub": 2149.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 761,
+      "distToKm": 800,
+      "rateRub": 2339.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 761,
+      "distToKm": 800,
+      "rateRub": 3058.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 761,
+      "distToKm": 800,
+      "rateRub": 1151.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 801,
+      "distToKm": 840,
+      "rateRub": 1729.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 801,
+      "distToKm": 840,
+      "rateRub": 1629.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 801,
+      "distToKm": 840,
+      "rateRub": 2236.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 801,
+      "distToKm": 840,
+      "rateRub": 2422.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 801,
+      "distToKm": 840,
+      "rateRub": 3180.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 801,
+      "distToKm": 840,
+      "rateRub": 1210.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 841,
+      "distToKm": 880,
+      "rateRub": 1793.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 841,
+      "distToKm": 880,
+      "rateRub": 1692.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 841,
+      "distToKm": 880,
+      "rateRub": 2323.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 841,
+      "distToKm": 880,
+      "rateRub": 2505.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 841,
+      "distToKm": 880,
+      "rateRub": 3301.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 841,
+      "distToKm": 880,
+      "rateRub": 1269.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 881,
+      "distToKm": 920,
+      "rateRub": 1844.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 881,
+      "distToKm": 920,
+      "rateRub": 1741.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 881,
+      "distToKm": 920,
+      "rateRub": 2390.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 881,
+      "distToKm": 920,
+      "rateRub": 2570.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 881,
+      "distToKm": 920,
+      "rateRub": 3396.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 881,
+      "distToKm": 920,
+      "rateRub": 1315.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 921,
+      "distToKm": 960,
+      "rateRub": 1908.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 921,
+      "distToKm": 960,
+      "rateRub": 1804.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 921,
+      "distToKm": 960,
+      "rateRub": 2476.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 921,
+      "distToKm": 960,
+      "rateRub": 2653.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 921,
+      "distToKm": 960,
+      "rateRub": 3517.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 921,
+      "distToKm": 960,
+      "rateRub": 1374,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 961,
+      "distToKm": 1000,
+      "rateRub": 1956.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 961,
+      "distToKm": 1000,
+      "rateRub": 1852.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 961,
+      "distToKm": 1000,
+      "rateRub": 2541.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 961,
+      "distToKm": 1000,
+      "rateRub": 2716.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 961,
+      "distToKm": 1000,
+      "rateRub": 3608.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 961,
+      "distToKm": 1000,
+      "rateRub": 1418.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 1001,
+      "distToKm": 1050,
+      "rateRub": 2028.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 1001,
+      "distToKm": 1050,
+      "rateRub": 1922.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 1001,
+      "distToKm": 1050,
+      "rateRub": 2637.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 1001,
+      "distToKm": 1050,
+      "rateRub": 2808.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 1001,
+      "distToKm": 1050,
+      "rateRub": 3743,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 1001,
+      "distToKm": 1050,
+      "rateRub": 1483.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 1051,
+      "distToKm": 1100,
+      "rateRub": 2107.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 1051,
+      "distToKm": 1100,
+      "rateRub": 1999.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 1051,
+      "distToKm": 1100,
+      "rateRub": 2743.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 1051,
+      "distToKm": 1100,
+      "rateRub": 2910.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 1051,
+      "distToKm": 1100,
+      "rateRub": 3892,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 1051,
+      "distToKm": 1100,
+      "rateRub": 1555.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 1101,
+      "distToKm": 1150,
+      "rateRub": 2168.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 1101,
+      "distToKm": 1150,
+      "rateRub": 2060,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 1101,
+      "distToKm": 1150,
+      "rateRub": 2825.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 1101,
+      "distToKm": 1150,
+      "rateRub": 2989.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 1101,
+      "distToKm": 1150,
+      "rateRub": 4007.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 1101,
+      "distToKm": 1150,
+      "rateRub": 1612.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 1151,
+      "distToKm": 1200,
+      "rateRub": 2247.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 1151,
+      "distToKm": 1200,
+      "rateRub": 2136.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 1151,
+      "distToKm": 1200,
+      "rateRub": 2930.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 1151,
+      "distToKm": 1200,
+      "rateRub": 3090.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 1151,
+      "distToKm": 1200,
+      "rateRub": 4155.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 1151,
+      "distToKm": 1200,
+      "rateRub": 1683.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 1201,
+      "distToKm": 1250,
+      "rateRub": 2306.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 1201,
+      "distToKm": 1250,
+      "rateRub": 2194.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 1201,
+      "distToKm": 1250,
+      "rateRub": 3010,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 1201,
+      "distToKm": 1250,
+      "rateRub": 3167.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 1201,
+      "distToKm": 1250,
+      "rateRub": 4266.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 1201,
+      "distToKm": 1250,
+      "rateRub": 1737.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 1251,
+      "distToKm": 1300,
+      "rateRub": 2384,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 1251,
+      "distToKm": 1300,
+      "rateRub": 2271,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 1251,
+      "distToKm": 1300,
+      "rateRub": 3114,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 1251,
+      "distToKm": 1300,
+      "rateRub": 3267.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 1251,
+      "distToKm": 1300,
+      "rateRub": 4413.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 1251,
+      "distToKm": 1300,
+      "rateRub": 1808.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 1301,
+      "distToKm": 1350,
+      "rateRub": 2440.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 1301,
+      "distToKm": 1350,
+      "rateRub": 2326.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 1301,
+      "distToKm": 1350,
+      "rateRub": 3190.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 1301,
+      "distToKm": 1350,
+      "rateRub": 3340.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 1301,
+      "distToKm": 1350,
+      "rateRub": 4520.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 1301,
+      "distToKm": 1350,
+      "rateRub": 1860.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 1351,
+      "distToKm": 1400,
+      "rateRub": 2517.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 1351,
+      "distToKm": 1400,
+      "rateRub": 2402,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 1351,
+      "distToKm": 1400,
+      "rateRub": 3293.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 1351,
+      "distToKm": 1400,
+      "rateRub": 3439.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 1351,
+      "distToKm": 1400,
+      "rateRub": 4664.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 1351,
+      "distToKm": 1400,
+      "rateRub": 1931,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 1401,
+      "distToKm": 1450,
+      "rateRub": 2594.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 1401,
+      "distToKm": 1450,
+      "rateRub": 2477.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 1401,
+      "distToKm": 1450,
+      "rateRub": 3396,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 1401,
+      "distToKm": 1450,
+      "rateRub": 3538.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 1401,
+      "distToKm": 1450,
+      "rateRub": 4809.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 1401,
+      "distToKm": 1450,
+      "rateRub": 2001.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 1451,
+      "distToKm": 1500,
+      "rateRub": 2648.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 1451,
+      "distToKm": 1500,
+      "rateRub": 2530,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 1451,
+      "distToKm": 1500,
+      "rateRub": 3468,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 1451,
+      "distToKm": 1500,
+      "rateRub": 3608.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 1451,
+      "distToKm": 1500,
+      "rateRub": 4910.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 1451,
+      "distToKm": 1500,
+      "rateRub": 2050.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 1501,
+      "distToKm": 1600,
+      "rateRub": 2762.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 1501,
+      "distToKm": 1600,
+      "rateRub": 2641.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 1501,
+      "distToKm": 1600,
+      "rateRub": 3620.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 1501,
+      "distToKm": 1600,
+      "rateRub": 3755.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 1501,
+      "distToKm": 1600,
+      "rateRub": 5125.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 1501,
+      "distToKm": 1600,
+      "rateRub": 2154.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 1601,
+      "distToKm": 1700,
+      "rateRub": 2888.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 1601,
+      "distToKm": 1700,
+      "rateRub": 2765.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 1601,
+      "distToKm": 1700,
+      "rateRub": 3790,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 1601,
+      "distToKm": 1700,
+      "rateRub": 3918.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 1601,
+      "distToKm": 1700,
+      "rateRub": 5362.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 1601,
+      "distToKm": 1700,
+      "rateRub": 2269.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 1701,
+      "distToKm": 1800,
+      "rateRub": 3011.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 1701,
+      "distToKm": 1800,
+      "rateRub": 2886.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 1701,
+      "distToKm": 1800,
+      "rateRub": 3954.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 1701,
+      "distToKm": 1800,
+      "rateRub": 4077,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 1701,
+      "distToKm": 1800,
+      "rateRub": 5594.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 1701,
+      "distToKm": 1800,
+      "rateRub": 2382.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 1801,
+      "distToKm": 1900,
+      "rateRub": 3160.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 1801,
+      "distToKm": 1900,
+      "rateRub": 3032.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 1801,
+      "distToKm": 1900,
+      "rateRub": 4154.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 1801,
+      "distToKm": 1900,
+      "rateRub": 4269.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 1801,
+      "distToKm": 1900,
+      "rateRub": 5875,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 1801,
+      "distToKm": 1900,
+      "rateRub": 2518.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 1901,
+      "distToKm": 2000,
+      "rateRub": 3278.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 1901,
+      "distToKm": 2000,
+      "rateRub": 3148.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 1901,
+      "distToKm": 2000,
+      "rateRub": 4313.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 1901,
+      "distToKm": 2000,
+      "rateRub": 4422,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 1901,
+      "distToKm": 2000,
+      "rateRub": 6097.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 1901,
+      "distToKm": 2000,
+      "rateRub": 2626.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 2001,
+      "distToKm": 2100,
+      "rateRub": 3393.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 2001,
+      "distToKm": 2100,
+      "rateRub": 3261.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 2001,
+      "distToKm": 2100,
+      "rateRub": 4467.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 2001,
+      "distToKm": 2100,
+      "rateRub": 4570.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 2001,
+      "distToKm": 2100,
+      "rateRub": 6314.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 2001,
+      "distToKm": 2100,
+      "rateRub": 2732,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 2101,
+      "distToKm": 2200,
+      "rateRub": 3539.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 2101,
+      "distToKm": 2200,
+      "rateRub": 3404.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 2101,
+      "distToKm": 2200,
+      "rateRub": 4662.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 2101,
+      "distToKm": 2200,
+      "rateRub": 4758.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 2101,
+      "distToKm": 2200,
+      "rateRub": 6589.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 2101,
+      "distToKm": 2200,
+      "rateRub": 2865.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 2201,
+      "distToKm": 2300,
+      "rateRub": 3650,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 2201,
+      "distToKm": 2300,
+      "rateRub": 3512.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 2201,
+      "distToKm": 2300,
+      "rateRub": 4811.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 2201,
+      "distToKm": 2300,
+      "rateRub": 4901.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 2201,
+      "distToKm": 2300,
+      "rateRub": 6797.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 2201,
+      "distToKm": 2300,
+      "rateRub": 2966.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 2301,
+      "distToKm": 2400,
+      "rateRub": 3757.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 2301,
+      "distToKm": 2400,
+      "rateRub": 3617.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 2301,
+      "distToKm": 2400,
+      "rateRub": 4955,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 2301,
+      "distToKm": 2400,
+      "rateRub": 5040,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 2301,
+      "distToKm": 2400,
+      "rateRub": 6999.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 2301,
+      "distToKm": 2400,
+      "rateRub": 3064.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 2401,
+      "distToKm": 2500,
+      "rateRub": 3900,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 2401,
+      "distToKm": 2500,
+      "rateRub": 3757.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 2401,
+      "distToKm": 2500,
+      "rateRub": 5146.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 2401,
+      "distToKm": 2500,
+      "rateRub": 5224.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 2401,
+      "distToKm": 2500,
+      "rateRub": 7268.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 2401,
+      "distToKm": 2500,
+      "rateRub": 3194.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 2501,
+      "distToKm": 2600,
+      "rateRub": 4002.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 2501,
+      "distToKm": 2600,
+      "rateRub": 3858.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 2501,
+      "distToKm": 2600,
+      "rateRub": 5283.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 2501,
+      "distToKm": 2600,
+      "rateRub": 5356.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 2501,
+      "distToKm": 2600,
+      "rateRub": 7461.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 2501,
+      "distToKm": 2600,
+      "rateRub": 3288.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 2601,
+      "distToKm": 2700,
+      "rateRub": 4102.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 2601,
+      "distToKm": 2700,
+      "rateRub": 3955.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 2601,
+      "distToKm": 2700,
+      "rateRub": 5417.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 2601,
+      "distToKm": 2700,
+      "rateRub": 5485,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 2601,
+      "distToKm": 2700,
+      "rateRub": 7649.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 2601,
+      "distToKm": 2700,
+      "rateRub": 3379.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 2701,
+      "distToKm": 2800,
+      "rateRub": 4241.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 2701,
+      "distToKm": 2800,
+      "rateRub": 4092.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 2701,
+      "distToKm": 2800,
+      "rateRub": 5604.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 2701,
+      "distToKm": 2800,
+      "rateRub": 5665.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 2701,
+      "distToKm": 2800,
+      "rateRub": 7911.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 2701,
+      "distToKm": 2800,
+      "rateRub": 3507.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 2801,
+      "distToKm": 2900,
+      "rateRub": 4336.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 2801,
+      "distToKm": 2900,
+      "rateRub": 4185.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 2801,
+      "distToKm": 2900,
+      "rateRub": 5731.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 2801,
+      "distToKm": 2900,
+      "rateRub": 5787.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 2801,
+      "distToKm": 2900,
+      "rateRub": 8090.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 2801,
+      "distToKm": 2900,
+      "rateRub": 3594,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 2901,
+      "distToKm": 3000,
+      "rateRub": 4428.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 2901,
+      "distToKm": 3000,
+      "rateRub": 4275.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 2901,
+      "distToKm": 3000,
+      "rateRub": 5854.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 2901,
+      "distToKm": 3000,
+      "rateRub": 5905.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 2901,
+      "distToKm": 3000,
+      "rateRub": 8263.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 2901,
+      "distToKm": 3000,
+      "rateRub": 3677.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 3001,
+      "distToKm": 3100,
+      "rateRub": 4564.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 3001,
+      "distToKm": 3100,
+      "rateRub": 4409.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 3001,
+      "distToKm": 3100,
+      "rateRub": 6037,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 3001,
+      "distToKm": 3100,
+      "rateRub": 6081.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 3001,
+      "distToKm": 3100,
+      "rateRub": 8520,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 3001,
+      "distToKm": 3100,
+      "rateRub": 3802.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 3101,
+      "distToKm": 3200,
+      "rateRub": 4701,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 3101,
+      "distToKm": 3200,
+      "rateRub": 4543,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 3101,
+      "distToKm": 3200,
+      "rateRub": 6219.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 3101,
+      "distToKm": 3200,
+      "rateRub": 6257.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 3101,
+      "distToKm": 3200,
+      "rateRub": 8776.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 3101,
+      "distToKm": 3200,
+      "rateRub": 3927.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 3201,
+      "distToKm": 3300,
+      "rateRub": 4837.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 3201,
+      "distToKm": 3300,
+      "rateRub": 4676.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 3201,
+      "distToKm": 3300,
+      "rateRub": 6402.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 3201,
+      "distToKm": 3300,
+      "rateRub": 6433.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 3201,
+      "distToKm": 3300,
+      "rateRub": 9033.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 3201,
+      "distToKm": 3300,
+      "rateRub": 4051.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 3301,
+      "distToKm": 3400,
+      "rateRub": 4973.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 3301,
+      "distToKm": 3400,
+      "rateRub": 4810.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 3301,
+      "distToKm": 3400,
+      "rateRub": 6585.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 3301,
+      "distToKm": 3400,
+      "rateRub": 6609.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 3301,
+      "distToKm": 3400,
+      "rateRub": 9290.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 3301,
+      "distToKm": 3400,
+      "rateRub": 4176.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 3401,
+      "distToKm": 3500,
+      "rateRub": 5110.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 3401,
+      "distToKm": 3500,
+      "rateRub": 4944.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 3401,
+      "distToKm": 3500,
+      "rateRub": 6768.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 3401,
+      "distToKm": 3500,
+      "rateRub": 6785.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 3401,
+      "distToKm": 3500,
+      "rateRub": 9547.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 3401,
+      "distToKm": 3500,
+      "rateRub": 4301.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 3501,
+      "distToKm": 3600,
+      "rateRub": 5246.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 3501,
+      "distToKm": 3600,
+      "rateRub": 5077.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 3501,
+      "distToKm": 3600,
+      "rateRub": 6950.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 3501,
+      "distToKm": 3600,
+      "rateRub": 6961.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 3501,
+      "distToKm": 3600,
+      "rateRub": 9804.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 3501,
+      "distToKm": 3600,
+      "rateRub": 4425.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 3601,
+      "distToKm": 3700,
+      "rateRub": 5382.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 3601,
+      "distToKm": 3700,
+      "rateRub": 5211.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 3601,
+      "distToKm": 3700,
+      "rateRub": 7133.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 3601,
+      "distToKm": 3700,
+      "rateRub": 7137.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 3601,
+      "distToKm": 3700,
+      "rateRub": 10061,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 3601,
+      "distToKm": 3700,
+      "rateRub": 4550.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 3701,
+      "distToKm": 3800,
+      "rateRub": 5519.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 3701,
+      "distToKm": 3800,
+      "rateRub": 5345.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 3701,
+      "distToKm": 3800,
+      "rateRub": 7316.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 3701,
+      "distToKm": 3800,
+      "rateRub": 7313.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 3701,
+      "distToKm": 3800,
+      "rateRub": 10317.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 3701,
+      "distToKm": 3800,
+      "rateRub": 4675.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 3801,
+      "distToKm": 3900,
+      "rateRub": 5655.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 3801,
+      "distToKm": 3900,
+      "rateRub": 5479.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 3801,
+      "distToKm": 3900,
+      "rateRub": 7499.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 3801,
+      "distToKm": 3900,
+      "rateRub": 7489.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 3801,
+      "distToKm": 3900,
+      "rateRub": 10574.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 3801,
+      "distToKm": 3900,
+      "rateRub": 4799.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 3901,
+      "distToKm": 4000,
+      "rateRub": 5791.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 3901,
+      "distToKm": 4000,
+      "rateRub": 5612.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 3901,
+      "distToKm": 4000,
+      "rateRub": 7682.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 3901,
+      "distToKm": 4000,
+      "rateRub": 7665.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 3901,
+      "distToKm": 4000,
+      "rateRub": 10831.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 3901,
+      "distToKm": 4000,
+      "rateRub": 4924.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 4001,
+      "distToKm": 4100,
+      "rateRub": 5928.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 4001,
+      "distToKm": 4100,
+      "rateRub": 5746.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 4001,
+      "distToKm": 4100,
+      "rateRub": 7864.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 4001,
+      "distToKm": 4100,
+      "rateRub": 7841.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 4001,
+      "distToKm": 4100,
+      "rateRub": 11088.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 4001,
+      "distToKm": 4100,
+      "rateRub": 5049.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 4101,
+      "distToKm": 4200,
+      "rateRub": 6064.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 4101,
+      "distToKm": 4200,
+      "rateRub": 5880.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 4101,
+      "distToKm": 4200,
+      "rateRub": 8047.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 4101,
+      "distToKm": 4200,
+      "rateRub": 8017.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 4101,
+      "distToKm": 4200,
+      "rateRub": 11345.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 4101,
+      "distToKm": 4200,
+      "rateRub": 5173.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 4201,
+      "distToKm": 4300,
+      "rateRub": 6201,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 4201,
+      "distToKm": 4300,
+      "rateRub": 6014,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 4201,
+      "distToKm": 4300,
+      "rateRub": 8230.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 4201,
+      "distToKm": 4300,
+      "rateRub": 8193.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 4201,
+      "distToKm": 4300,
+      "rateRub": 11601.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 4201,
+      "distToKm": 4300,
+      "rateRub": 5298.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 4301,
+      "distToKm": 4400,
+      "rateRub": 6337.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 4301,
+      "distToKm": 4400,
+      "rateRub": 6147.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 4301,
+      "distToKm": 4400,
+      "rateRub": 8413.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 4301,
+      "distToKm": 4400,
+      "rateRub": 8369.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 4301,
+      "distToKm": 4400,
+      "rateRub": 11858.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 4301,
+      "distToKm": 4400,
+      "rateRub": 5423.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 4401,
+      "distToKm": 4500,
+      "rateRub": 6473.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 4401,
+      "distToKm": 4500,
+      "rateRub": 6281.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 4401,
+      "distToKm": 4500,
+      "rateRub": 8596,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 4401,
+      "distToKm": 4500,
+      "rateRub": 8545.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 4401,
+      "distToKm": 4500,
+      "rateRub": 12115.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 4401,
+      "distToKm": 4500,
+      "rateRub": 5547.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 4501,
+      "distToKm": 4600,
+      "rateRub": 6610.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 4501,
+      "distToKm": 4600,
+      "rateRub": 6415.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 4501,
+      "distToKm": 4600,
+      "rateRub": 8778.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 4501,
+      "distToKm": 4600,
+      "rateRub": 8721.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 4501,
+      "distToKm": 4600,
+      "rateRub": 12372.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 4501,
+      "distToKm": 4600,
+      "rateRub": 5672.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 4601,
+      "distToKm": 4700,
+      "rateRub": 6746.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 4601,
+      "distToKm": 4700,
+      "rateRub": 6548.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 4601,
+      "distToKm": 4700,
+      "rateRub": 8961.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 4601,
+      "distToKm": 4700,
+      "rateRub": 8897.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 4601,
+      "distToKm": 4700,
+      "rateRub": 12629.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 4601,
+      "distToKm": 4700,
+      "rateRub": 5797.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 4701,
+      "distToKm": 4800,
+      "rateRub": 6882.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 4701,
+      "distToKm": 4800,
+      "rateRub": 6682.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 4701,
+      "distToKm": 4800,
+      "rateRub": 9144.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 4701,
+      "distToKm": 4800,
+      "rateRub": 9073.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 4701,
+      "distToKm": 4800,
+      "rateRub": 12886,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 4701,
+      "distToKm": 4800,
+      "rateRub": 5921.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 4801,
+      "distToKm": 4900,
+      "rateRub": 7019.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 4801,
+      "distToKm": 4900,
+      "rateRub": 6816.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 4801,
+      "distToKm": 4900,
+      "rateRub": 9327.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 4801,
+      "distToKm": 4900,
+      "rateRub": 9249.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 4801,
+      "distToKm": 4900,
+      "rateRub": 13142.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 4801,
+      "distToKm": 4900,
+      "rateRub": 6046.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 4901,
+      "distToKm": 5000,
+      "rateRub": 7155.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 4901,
+      "distToKm": 5000,
+      "rateRub": 6950,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 4901,
+      "distToKm": 5000,
+      "rateRub": 9510,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 4901,
+      "distToKm": 5000,
+      "rateRub": 9425.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 4901,
+      "distToKm": 5000,
+      "rateRub": 13399.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 4901,
+      "distToKm": 5000,
+      "rateRub": 6171.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 5001,
+      "distToKm": 5100,
+      "rateRub": 7291.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 5001,
+      "distToKm": 5100,
+      "rateRub": 7083.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 5001,
+      "distToKm": 5100,
+      "rateRub": 9692.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 5001,
+      "distToKm": 5100,
+      "rateRub": 9601.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 5001,
+      "distToKm": 5100,
+      "rateRub": 13656.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 5001,
+      "distToKm": 5100,
+      "rateRub": 6295.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 5101,
+      "distToKm": 5200,
+      "rateRub": 7428.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 5101,
+      "distToKm": 5200,
+      "rateRub": 7217.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 5101,
+      "distToKm": 5200,
+      "rateRub": 9875.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 5101,
+      "distToKm": 5200,
+      "rateRub": 9777.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 5101,
+      "distToKm": 5200,
+      "rateRub": 13913.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 5101,
+      "distToKm": 5200,
+      "rateRub": 6420.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 5201,
+      "distToKm": 5300,
+      "rateRub": 7564.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 5201,
+      "distToKm": 5300,
+      "rateRub": 7351.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 5201,
+      "distToKm": 5300,
+      "rateRub": 10058.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 5201,
+      "distToKm": 5300,
+      "rateRub": 9953.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 5201,
+      "distToKm": 5300,
+      "rateRub": 14170.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 5201,
+      "distToKm": 5300,
+      "rateRub": 6545.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 5301,
+      "distToKm": 5400,
+      "rateRub": 7701,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 5301,
+      "distToKm": 5400,
+      "rateRub": 7484.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 5301,
+      "distToKm": 5400,
+      "rateRub": 10241.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 5301,
+      "distToKm": 5400,
+      "rateRub": 10129.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 5301,
+      "distToKm": 5400,
+      "rateRub": 14427,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 5301,
+      "distToKm": 5400,
+      "rateRub": 6669.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 5401,
+      "distToKm": 5500,
+      "rateRub": 7837.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 5401,
+      "distToKm": 5500,
+      "rateRub": 7618.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 5401,
+      "distToKm": 5500,
+      "rateRub": 10423.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 5401,
+      "distToKm": 5500,
+      "rateRub": 10305.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 5401,
+      "distToKm": 5500,
+      "rateRub": 14683.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 5401,
+      "distToKm": 5500,
+      "rateRub": 6794.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 5501,
+      "distToKm": 5700,
+      "rateRub": 8041.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 5501,
+      "distToKm": 5700,
+      "rateRub": 7819.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 5501,
+      "distToKm": 5700,
+      "rateRub": 10698.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 5501,
+      "distToKm": 5700,
+      "rateRub": 10569.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 5501,
+      "distToKm": 5700,
+      "rateRub": 15069,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 5501,
+      "distToKm": 5700,
+      "rateRub": 6981.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 5701,
+      "distToKm": 5900,
+      "rateRub": 8314.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 5701,
+      "distToKm": 5900,
+      "rateRub": 8086.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 5701,
+      "distToKm": 5900,
+      "rateRub": 11063.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 5701,
+      "distToKm": 5900,
+      "rateRub": 10921.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 5701,
+      "distToKm": 5900,
+      "rateRub": 15582.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 5701,
+      "distToKm": 5900,
+      "rateRub": 7230.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 5901,
+      "distToKm": 6100,
+      "rateRub": 8587.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 5901,
+      "distToKm": 6100,
+      "rateRub": 8354,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 5901,
+      "distToKm": 6100,
+      "rateRub": 11429.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 5901,
+      "distToKm": 6100,
+      "rateRub": 11273.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 5901,
+      "distToKm": 6100,
+      "rateRub": 16096.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 5901,
+      "distToKm": 6100,
+      "rateRub": 7480.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 6101,
+      "distToKm": 6300,
+      "rateRub": 8860.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 6101,
+      "distToKm": 6300,
+      "rateRub": 8621.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 6101,
+      "distToKm": 6300,
+      "rateRub": 11794.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 6101,
+      "distToKm": 6300,
+      "rateRub": 11625.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 6101,
+      "distToKm": 6300,
+      "rateRub": 16610,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 6101,
+      "distToKm": 6300,
+      "rateRub": 7729.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 6301,
+      "distToKm": 6500,
+      "rateRub": 9132.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 6301,
+      "distToKm": 6500,
+      "rateRub": 8888.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 6301,
+      "distToKm": 6500,
+      "rateRub": 12160.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 6301,
+      "distToKm": 6500,
+      "rateRub": 11977.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 6301,
+      "distToKm": 6500,
+      "rateRub": 17123.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 6301,
+      "distToKm": 6500,
+      "rateRub": 7978.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 6501,
+      "distToKm": 6700,
+      "rateRub": 9405.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 6501,
+      "distToKm": 6700,
+      "rateRub": 9156.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 6501,
+      "distToKm": 6700,
+      "rateRub": 12525.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 6501,
+      "distToKm": 6700,
+      "rateRub": 12329.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 6501,
+      "distToKm": 6700,
+      "rateRub": 17637.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 6501,
+      "distToKm": 6700,
+      "rateRub": 8228.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 6701,
+      "distToKm": 6900,
+      "rateRub": 9678.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 6701,
+      "distToKm": 6900,
+      "rateRub": 9423.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 6701,
+      "distToKm": 6900,
+      "rateRub": 12891.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 6701,
+      "distToKm": 6900,
+      "rateRub": 12681.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 6701,
+      "distToKm": 6900,
+      "rateRub": 18150.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 6701,
+      "distToKm": 6900,
+      "rateRub": 8477.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 6901,
+      "distToKm": 7100,
+      "rateRub": 9951,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 6901,
+      "distToKm": 7100,
+      "rateRub": 9691.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 6901,
+      "distToKm": 7100,
+      "rateRub": 13257.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 6901,
+      "distToKm": 7100,
+      "rateRub": 13033.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 6901,
+      "distToKm": 7100,
+      "rateRub": 18664.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 6901,
+      "distToKm": 7100,
+      "rateRub": 8727,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 7101,
+      "distToKm": 7300,
+      "rateRub": 10223.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 7101,
+      "distToKm": 7300,
+      "rateRub": 9958.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 7101,
+      "distToKm": 7300,
+      "rateRub": 13622.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 7101,
+      "distToKm": 7300,
+      "rateRub": 13385.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 7101,
+      "distToKm": 7300,
+      "rateRub": 19178.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 7101,
+      "distToKm": 7300,
+      "rateRub": 8976.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 7301,
+      "distToKm": 7500,
+      "rateRub": 10496.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 7301,
+      "distToKm": 7500,
+      "rateRub": 10226.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 7301,
+      "distToKm": 7500,
+      "rateRub": 13988.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 7301,
+      "distToKm": 7500,
+      "rateRub": 13737.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 7301,
+      "distToKm": 7500,
+      "rateRub": 19691.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 7301,
+      "distToKm": 7500,
+      "rateRub": 9225.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 7501,
+      "distToKm": 7700,
+      "rateRub": 10769.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 7501,
+      "distToKm": 7700,
+      "rateRub": 10493.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 7501,
+      "distToKm": 7700,
+      "rateRub": 14353.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 7501,
+      "distToKm": 7700,
+      "rateRub": 14089.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 7501,
+      "distToKm": 7700,
+      "rateRub": 20205.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 7501,
+      "distToKm": 7700,
+      "rateRub": 9475,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 7701,
+      "distToKm": 7900,
+      "rateRub": 11041.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 7701,
+      "distToKm": 7900,
+      "rateRub": 10761,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 7701,
+      "distToKm": 7900,
+      "rateRub": 14719.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 7701,
+      "distToKm": 7900,
+      "rateRub": 14441.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 7701,
+      "distToKm": 7900,
+      "rateRub": 20719.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 7701,
+      "distToKm": 7900,
+      "rateRub": 9724.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 7901,
+      "distToKm": 8100,
+      "rateRub": 11314.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 7901,
+      "distToKm": 8100,
+      "rateRub": 11028.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 7901,
+      "distToKm": 8100,
+      "rateRub": 15085,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 7901,
+      "distToKm": 8100,
+      "rateRub": 14793.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 7901,
+      "distToKm": 8100,
+      "rateRub": 21232.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 7901,
+      "distToKm": 8100,
+      "rateRub": 9973.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 8101,
+      "distToKm": 8300,
+      "rateRub": 11587.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 8101,
+      "distToKm": 8300,
+      "rateRub": 11295.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 8101,
+      "distToKm": 8300,
+      "rateRub": 15450.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 8101,
+      "distToKm": 8300,
+      "rateRub": 15145.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 8101,
+      "distToKm": 8300,
+      "rateRub": 21746.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 8101,
+      "distToKm": 8300,
+      "rateRub": 10223,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 8301,
+      "distToKm": 8500,
+      "rateRub": 11860.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 8301,
+      "distToKm": 8500,
+      "rateRub": 11563.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 8301,
+      "distToKm": 8500,
+      "rateRub": 15816.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 8301,
+      "distToKm": 8500,
+      "rateRub": 15407.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 8301,
+      "distToKm": 8500,
+      "rateRub": 22260.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 8301,
+      "distToKm": 8500,
+      "rateRub": 10472.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 8501,
+      "distToKm": 8700,
+      "rateRub": 12132.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 8501,
+      "distToKm": 8700,
+      "rateRub": 11830.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 8501,
+      "distToKm": 8700,
+      "rateRub": 16181.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 8501,
+      "distToKm": 8700,
+      "rateRub": 15849.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 8501,
+      "distToKm": 8700,
+      "rateRub": 22773.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 8501,
+      "distToKm": 8700,
+      "rateRub": 10721.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 8701,
+      "distToKm": 8900,
+      "rateRub": 12405.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 8701,
+      "distToKm": 8900,
+      "rateRub": 12098.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 8701,
+      "distToKm": 8900,
+      "rateRub": 16547.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 8701,
+      "distToKm": 8900,
+      "rateRub": 16201.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 8701,
+      "distToKm": 8900,
+      "rateRub": 23287.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 8701,
+      "distToKm": 8900,
+      "rateRub": 10971,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 8901,
+      "distToKm": 9100,
+      "rateRub": 12678.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 8901,
+      "distToKm": 9100,
+      "rateRub": 12365.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 8901,
+      "distToKm": 9100,
+      "rateRub": 16912.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 8901,
+      "distToKm": 9100,
+      "rateRub": 16553.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 8901,
+      "distToKm": 9100,
+      "rateRub": 23801.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 8901,
+      "distToKm": 9100,
+      "rateRub": 11220.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 9101,
+      "distToKm": 9300,
+      "rateRub": 12951,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 9101,
+      "distToKm": 9300,
+      "rateRub": 12633,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 9101,
+      "distToKm": 9300,
+      "rateRub": 17278.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 9101,
+      "distToKm": 9300,
+      "rateRub": 16905.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 9101,
+      "distToKm": 9300,
+      "rateRub": 24314.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 9101,
+      "distToKm": 9300,
+      "rateRub": 11469.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 9301,
+      "distToKm": 9500,
+      "rateRub": 13223.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 9301,
+      "distToKm": 9500,
+      "rateRub": 12900.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 9301,
+      "distToKm": 9500,
+      "rateRub": 17644,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 9301,
+      "distToKm": 9500,
+      "rateRub": 17257.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 9301,
+      "distToKm": 9500,
+      "rateRub": 24828.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 9301,
+      "distToKm": 9500,
+      "rateRub": 11719.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 9501,
+      "distToKm": 9700,
+      "rateRub": 13496.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 9501,
+      "distToKm": 9700,
+      "rateRub": 13167.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 9501,
+      "distToKm": 9700,
+      "rateRub": 18009.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 9501,
+      "distToKm": 9700,
+      "rateRub": 17609.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 9501,
+      "distToKm": 9700,
+      "rateRub": 25342,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 9501,
+      "distToKm": 9700,
+      "rateRub": 11968.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 9701,
+      "distToKm": 9900,
+      "rateRub": 13769.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 9701,
+      "distToKm": 9900,
+      "rateRub": 13435.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 9701,
+      "distToKm": 9900,
+      "rateRub": 18375.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 9701,
+      "distToKm": 9900,
+      "rateRub": 17961.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 9701,
+      "distToKm": 9900,
+      "rateRub": 25855.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 9701,
+      "distToKm": 9900,
+      "rateRub": 12217.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 9901,
+      "distToKm": 10100,
+      "rateRub": 14041.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 9901,
+      "distToKm": 10100,
+      "rateRub": 13702.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 9901,
+      "distToKm": 10100,
+      "rateRub": 18740.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 9901,
+      "distToKm": 10100,
+      "rateRub": 18313.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 9901,
+      "distToKm": 10100,
+      "rateRub": 26369.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 9901,
+      "distToKm": 10100,
+      "rateRub": 12467.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 10101,
+      "distToKm": 10300,
+      "rateRub": 14314.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 10101,
+      "distToKm": 10300,
+      "rateRub": 13970.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 10101,
+      "distToKm": 10300,
+      "rateRub": 19106.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 10101,
+      "distToKm": 10300,
+      "rateRub": 18665.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 10101,
+      "distToKm": 10300,
+      "rateRub": 26882.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 10101,
+      "distToKm": 10300,
+      "rateRub": 12716.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 10301,
+      "distToKm": 10500,
+      "rateRub": 14587.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 10301,
+      "distToKm": 10500,
+      "rateRub": 14237.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 10301,
+      "distToKm": 10500,
+      "rateRub": 19471.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 10301,
+      "distToKm": 10500,
+      "rateRub": 19017.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 10301,
+      "distToKm": 10500,
+      "rateRub": 27396.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 10301,
+      "distToKm": 10500,
+      "rateRub": 12965.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 10501,
+      "distToKm": 10700,
+      "rateRub": 14860.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 10501,
+      "distToKm": 10700,
+      "rateRub": 14505.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 10501,
+      "distToKm": 10700,
+      "rateRub": 19837.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 10501,
+      "distToKm": 10700,
+      "rateRub": 19369.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 10501,
+      "distToKm": 10700,
+      "rateRub": 27910.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 10501,
+      "distToKm": 10700,
+      "rateRub": 13215.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 10701,
+      "distToKm": 10900,
+      "rateRub": 15132.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 10701,
+      "distToKm": 10900,
+      "rateRub": 14772.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 10701,
+      "distToKm": 10900,
+      "rateRub": 20203,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 10701,
+      "distToKm": 10900,
+      "rateRub": 19721.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 10701,
+      "distToKm": 10900,
+      "rateRub": 28423.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 10701,
+      "distToKm": 10900,
+      "rateRub": 13464.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 10901,
+      "distToKm": 11100,
+      "rateRub": 15405.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 10901,
+      "distToKm": 11100,
+      "rateRub": 15040,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 10901,
+      "distToKm": 11100,
+      "rateRub": 20568.6,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 10901,
+      "distToKm": 11100,
+      "rateRub": 20073.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 10901,
+      "distToKm": 11100,
+      "rateRub": 28937.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 10901,
+      "distToKm": 11100,
+      "rateRub": 13713.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 11101,
+      "distToKm": 11300,
+      "rateRub": 15678.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 11101,
+      "distToKm": 11300,
+      "rateRub": 15307.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 11101,
+      "distToKm": 11300,
+      "rateRub": 20934.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 11101,
+      "distToKm": 11300,
+      "rateRub": 20425.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 11101,
+      "distToKm": 11300,
+      "rateRub": 29451.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 11101,
+      "distToKm": 11300,
+      "rateRub": 13963.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 11301,
+      "distToKm": 11500,
+      "rateRub": 15951,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 11301,
+      "distToKm": 11500,
+      "rateRub": 15574.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 11301,
+      "distToKm": 11500,
+      "rateRub": 21299.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 11301,
+      "distToKm": 11500,
+      "rateRub": 20777.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 11301,
+      "distToKm": 11500,
+      "rateRub": 29964.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 11301,
+      "distToKm": 11500,
+      "rateRub": 14212.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 11501,
+      "distToKm": 11700,
+      "rateRub": 16223.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 11501,
+      "distToKm": 11700,
+      "rateRub": 15842.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 11501,
+      "distToKm": 11700,
+      "rateRub": 21665.3,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 11501,
+      "distToKm": 11700,
+      "rateRub": 21129.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 11501,
+      "distToKm": 11700,
+      "rateRub": 30478.5,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 11501,
+      "distToKm": 11700,
+      "rateRub": 14461.8,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N19",
+      "distFromKm": 11701,
+      "distToKm": 11900,
+      "rateRub": 16496.4,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N20",
+      "distFromKm": 11701,
+      "distToKm": 11900,
+      "rateRub": 16109.7,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N21",
+      "distFromKm": 11701,
+      "distToKm": 11900,
+      "rateRub": 22030.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N22",
+      "distFromKm": 11701,
+      "distToKm": 11900,
+      "rateRub": 21481.9,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N23",
+      "distFromKm": 11701,
+      "distToKm": 11900,
+      "rateRub": 30992.1,
+      "unit": "perTonne",
+      "confidence": "green"
+    },
+    {
+      "scheme": "N24",
+      "distFromKm": 11701,
+      "distToKm": 11900,
+      "rateRub": 14711.2,
+      "unit": "perTonne",
+      "confidence": "green"
+    }
+  ]
+}

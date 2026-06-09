@@ -1,0 +1,242 @@
+{
+  "_meta": {
+    "dataset": "VERIFY-AND-EXTEND of the commodity-coefficient table (ТР-1 Табл.4, K3) for the cargoes in reference-quotes-batch-0609.json, plus the class-3 K1 split (Табл.2) and the ×1.04 class-2/3 surcharges (п.3.3 / п.5.7). Findings + corrections ONLY — this file does NOT replace any live seed.",
+    "law": "Приказ ФАС России от 06.11.2025 N 894/25 (ТР-1 2026), рег. Минюст 22.12.2025 N 84708, в силе с 2026-01-01",
+    "primarySources": [
+      "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-1_1/tablitsa-n-4/ (Табл.4 K3 товарные коэффициенты)",
+      "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-1_1/tablitsa-n-2/ (Табл.2 K1 class coefficient incl. class-3 1.74/1.54 split)"
+    ],
+    "fetchedAt": "2026-06-09",
+    "verifiedBy": "subagent VerifyAndExtend pass, 2026-06-09: Табл.4 fetched 2 independent passes; Табл.2 fetched 1 pass; web cross-search attempted",
+    "antiFabricationPolicy": "Every cell below either (a) reproduces a value already in a live seed and is marked CONFIRMED against the fetched primary source, or (b) is a correction copied from a fetched sudact pass. No number is interpolated, guessed, or reconstructed. Cells the fetch could not return cleanly verbatim are marked confidence:yellow/red with the exact source location.",
+    "extractionCaveat": "The sudact page is fetched through a small summarizer model. The numeric-COLUMN alignment of Табл.4 was inconsistent between passes for some class-3 rows (a coefficient present in pass 1 read as blank in pass 2). Values that were STABLE across both passes are graded green; values that flipped are graded yellow. CODE membership (which ЕТСНГ codes are present/absent) was stable across passes and is trusted.",
+    "referenceBatch": "scripts/seed-data/reference-quotes-batch-0609.json (R-Тариф v19.59 oracle breakdowns)",
+    "liveSeedCrossRef": "scripts/seed-data/tr1-k3-full.json (commodity K3), tr1-class-coeff.json + tr1-class-coeff-corrected.json (K1 class split), tr1-class-k3-full-verify.json (prior verify pass)"
+  },
+
+  "commodityCoef_Table4": {
+    "scope": "Verify K3 товарный коэф for each cargo appearing in the reference batch.",
+
+    "254040_jb_stenovye": {
+      "cargoName": "Изделия (конструкции) железобетонные / Материалы стеновые",
+      "etsngRowCodes": "251, 254",
+      "tariffClass": 2,
+      "k3_reference": 0.91,
+      "k3_verified": 0.91,
+      "verdict": "CONFIRMED",
+      "verbatim": "«Материалы стеновые; Конструкции (сборные), детали и изделия железобетонные | 251, 254 | 0,91» (Раздел II, класс 2)",
+      "matchesLiveSeed": "tr1-k3-full.json class2 carries TWO separate rows: {251 'Материалы стеновые' 0.91} and {254 'Конструкции железобетонные' 0.91}. Source presents them as ONE combined row '251, 254 → 0,91'. Numerically identical; the seed split into two rows is harmless. NOTE for engine: 254040 is class 2, so K1=1.00 (not the 1.54/1.74 class-3 split) — matches reference C2-a/C2-b chains.",
+      "confidence": "green",
+      "stableAcrossPasses": true
+    },
+
+    "631184_legkaya_prom": {
+      "cargoName": "Материалы нетканые (reference label 'продукция лёгкой промышленности'); source row = «Ткани, изделия швейной и трикотажной промышленности»",
+      "etsngRowCodes": "631 - 634",
+      "tariffClass": 3,
+      "k3_reference": 0.75,
+      "k3_verified": 0.75,
+      "verdict": "CONFIRMED-WITH-CAVEAT",
+      "verbatim": "«Ткани, изделия швейной и трикотажной промышленности | 631 - 634 | 0,75» (Раздел III, класс 3) — pass 1 returned 0,75; pass 2 read the coefficient column as blank for this row.",
+      "labelCorrection": "The reference _meta label 'легкая_пром_631184: 0.75' is the operator's PARAPHRASE. The literal Табл.4 row text is «Ткани, изделия швейной и трикотажной промышленности» (codes 631-634). The phrase 'продукция лёгкой промышленности' / 'лёгкой промышленности' does NOT appear literally in Табл.4 (confirmed absent in both passes). 631184 'Материалы нетканые' falls inside the 631-634 range, so 0.75 applies by range membership.",
+      "matchesLiveSeed": "tr1-k3-full.json class3 row {631-634 'Ткани, швейные изделия' 0.75} matches. Reference chain C3-c/C3-d applied legkayaProm_0.75 and the math reproduces the oracle.",
+      "confidence": "yellow",
+      "yellowReason": "Verbatim coefficient 0,75 confirmed in pass 1 but the cell read blank in pass 2 (column-alignment artifact of the page summarizer). Independent web corroboration not obtained. The VALUE is corroborated three ways (pass-1 verbatim + matches live seed + reproduces the R-Тариф oracle), so it is operationally safe, but a clean single-source verbatim re-read is recommended.",
+      "stableAcrossPasses": false,
+      "sourceToConfirm": "Табл.4 Раздел III row '631 - 634' rightmost coefficient column — read literally to confirm 0,75 vs 0,750."
+    },
+
+    "481232_kisloty": {
+      "cargoName": "Кислоты, оксиды, пероксиды и ангидриды (reference 481232 Кислота серная)",
+      "etsngRowCodes": "481",
+      "tariffClass": 3,
+      "k3_reference": 0.81,
+      "k3_verified": 0.81,
+      "verdict": "CONFIRMED",
+      "verbatim": "«Кислоты, оксиды, пероксиды и ангидриды | 481 | 0,81» (Раздел III, класс 3)",
+      "matchesLiveSeed": "tr1-k3-full.json class3 row {481 'Кислоты, оксиды' 0.81} matches exactly. Reference cistern chain CIS-C3 applied kisloty_0.81.",
+      "confidence": "green",
+      "stableAcrossPasses": true
+    },
+
+    "685127_maty": {
+      "cargoName": "Маты из растительных материалов",
+      "etsngRowCodes": "685 (NOT FOUND in Табл.4)",
+      "tariffClass": 3,
+      "k3_reference": 1.04,
+      "k3_verified": "ABSENT — no Табл.4 commodity coefficient for position 685 / маты",
+      "verdict": "CORRECTION — the reference label is MISLEADING",
+      "finding": "Position 685 / 'Маты' / 'растительн' has NO row in Табл.4 in either fetch pass. Therefore there is NO товарный (K3) commodity coefficient for маты 685127.",
+      "criticalCorrection": "The reference _meta field commodityCoef_examples.'маты_раст_685127': 1.04 is a MISLABEL. The 1.04 in the реальной chain is NOT a commodity coefficient — it is the п.5.7 class-3 surcharge (Коэффициент на перевозку грузов 3 класса ×1.04), the SAME 1.04 applied to every class-3 cargo. Inspect reference C3-a/C3-b chains: they go schema8_base → k4 → ownPv_0.9774 → k1_class3_1.54 → class3_1.04 → dopIndex_1.01, with NO separate commodity-coef step. So маты has NO K3 товарный коэф; its only ×1.04 is the universal class-3 surcharge. This matches the engine model (no commodity coef for 685127).",
+      "matchesLiveSeed": "tr1-k3-full.json has NO row for 685 — consistent. Engine should NOT apply any commodity K3 to 685127; only the п.5.7 ×1.04 class-3 surcharge.",
+      "confidence": "green",
+      "greenReason": "ABSENCE is robustly confirmed: position 685 appears in neither pass of Табл.4, and the oracle chain reproduces the value with NO commodity step. The correction (relabel the '1.04 commodity coef' as the п.5.7 class-3 surcharge) is structurally certain.",
+      "stableAcrossPasses": true
+    },
+
+    "371070_svai": {
+      "cargoName": "Сваи металлические",
+      "etsngRowCodes": "371 (NOT FOUND in Табл.4)",
+      "tariffClass": 3,
+      "k3_reference": "none (reference note: 'сваи металлические: коэф груза НЕТ')",
+      "k3_verified": "ABSENT — confirmed no Табл.4 commodity coefficient for position 371 / сваи",
+      "verdict": "CONFIRMED",
+      "finding": "Position 371 / 'Сваи' / 'Конструкции и детали верхнего строения пути' has NO row in Табл.4 in either pass. Reference correctly states 'коэф груза НЕТ'. Reference platform chains PL-C3-a/PL-C3-b apply NO commodity coef (NO_commodity_coef:true), only k1_class3_1.54 and the class3_1.04 surcharge.",
+      "matchesLiveSeed": "tr1-k3-full.json has NO row for 371 — consistent. Engine applies no commodity K3 to 371070; only K1 class-3 1.54 + п.5.7 ×1.04.",
+      "confidence": "green",
+      "stableAcrossPasses": true
+    },
+
+    "232431_nerud": {
+      "cargoName": "Щебень / материалы минерально-строительные природные",
+      "etsngRowCodes": "231 - 236",
+      "tariffClass": 1,
+      "k3_reference": "0.77 × 0.909 = 0.69993",
+      "k3_verified": "0.77 (Табл.4) × 0.909 (п.1.5 полувагон/платформа) = 0.69993",
+      "verdict": "CONFIRMED (re-confirms prior oracle-locked value)",
+      "verbatim_k3": "«Материалы минерально-строительные природные. Зола. Шлаки, кроме гранулированных и металлургических для переплавки | 231 - 236 | 0,77» (Раздел I, класс 1)",
+      "verbatim_p1_5": "«...в универсальных полувагонах и платформах ... дополнительно применяется коэффициент 0,909»",
+      "matchesLiveSeed": "tr1-k3-full.json class1[0] = 0.77; class1_extra п.1.5 = 0.909. Both confirmed. Product 0.69993 is oracle-locked (reproduces N8/prod/Rtariff receipts). Reference inventory chains INV-1/INV-6_20 apply nerud_0.77 then minerals_0.909.",
+      "confidence": "green",
+      "stableAcrossPasses": true
+    }
+  },
+
+  "k1_class3_split_174_vs_154": {
+    "scope": "Confirm the class-3 K1 1.74-vs-1.54 split and which reference cargoes land in which bucket (Табл.2).",
+    "verbatim_174_positions": "092, 093, 312 - 316, 321 - 324, 331 - 333, 381, 391, 411, 414, 416, 454, 461, 481, 483 - 489, 611, 693, 711 - 713, 721 - 726, 731, 732, 741, 742, 751 - 754, 756 - 758",
+    "verbatim_154": "«Остальные позиции грузов третьего тарифного класса → 1,54»",
+    "verbatim_class2": "«Независимо от расстояния перевозки → 1,00» (второй тарифный класс)",
+    "verdict": "CONFIRMED — byte-identical to tr1-class-coeff.json and tr1-class-coeff-corrected.json",
+    "perCargoBucketing": {
+      "481232_kislota_sernaya": { "position": "481", "in174List": true, "k1": 1.74, "note": "481 IS explicitly in the 1.74 list → cistern oracle CIS-C3 correctly uses k1_class3_1.74. CONFIRMED." },
+      "631184_netkanye": { "position": "631", "in174List": false, "k1": 1.54, "note": "631 NOT in 1.74 list (611 IS, but 631 is not) → 1.54. Matches reference C3-c/C3-d k1_class3_1.54." },
+      "371070_svai": { "position": "371", "in174List": false, "k1": 1.54, "note": "371 NOT in 1.74 list → 1.54. Matches reference PL-C3-a/PL-C3-b k1_class3_1.54." },
+      "685127_maty": { "position": "685", "in174List": false, "k1": 1.54, "note": "685 NOT in 1.74 list → 1.54. Matches reference C3-a/C3-b k1_class3_1.54." },
+      "254040_jb": { "position": "254", "in174List": "n/a", "k1": 1.00, "note": "254 is class 2 → K1=1.00 flat, not class-3 split. Matches reference C2-a/C2-b k1_class2_1.00." }
+    },
+    "criticalNote": "The 1.74 split is POSITION-dependent (3-digit ЕТСНГ group), not commodity-category-dependent. Кислота серная 481232 → leading position 481 → in the named list → 1.74. The reference _meta note 'кислота serous is 1.74' is CONFIRMED. All other class-3 reference cargoes (631/371/685) correctly fall to 1.54.",
+    "confidence": "green",
+    "stableAcrossPasses": true,
+    "matchesLiveSeed": "tr1-class-coeff.json (line 158) and tr1-class-coeff-corrected.json (line 148) carry the 1.74 list byte-identically; verified this pass against Табл.2 verbatim — no position added/dropped/shifted."
+  },
+
+  "class2_class3_surcharge_104": {
+    "scope": "Verify the ×1.04 surcharge applied to class-2 (п.3.3) and class-3 (п.5.7) cargoes in полувагон/платформа.",
+    "p3_3_class2": {
+      "multiplier": 1.04,
+      "verbatim": "«...дополнительно применяется коэффициент 1,04» (раздел для грузов второго тарифного класса в полувагонах/платформах)",
+      "verdict": "CONFIRMED",
+      "appliesTo": "Отдельные грузы класса 2 в универсальных полувагонах/платформах (п.3.3 Табл.4)",
+      "matchesLiveSeed": "tr1-k3-full.json class2_extra п.3.3 = 1.04. Reference C2-a/C2-b and PL-C2-a/PL-C2-b apply class2_1.04.",
+      "confidence": "green",
+      "stableAcrossPasses": true
+    },
+    "p5_7_class3": {
+      "multiplier": 1.04,
+      "verbatim": "«...дополнительно применяется коэффициент 1,04» (раздел для грузов третьего тарифного класса в полувагонах/платформах)",
+      "verdict": "CONFIRMED",
+      "appliesTo": "Отдельные грузы класса 3 в универсальных полувагонах/платформах (п.5.7 Табл.4)",
+      "matchesLiveSeed": "tr1-k3-full.json class3_extra п.5.7 = 1.04. Reference C3-a..d, PL-C3-a/b, CIS-C3 apply class3_1.04. This is the SAME 1.04 that the reference _meta mislabeled as the 'маты commodity coef' — see 685127_maty.criticalCorrection.",
+      "confidence": "green",
+      "stableAcrossPasses": true
+    },
+    "scopeCaveat": "VALUE 1.04 confirmed for both п.3.3 and п.5.7 in both passes. The EXACT applicability wording (which specific cargo subsets / wagon types each п. enumerates) was NOT re-fetched cell-by-cell this pass; live seed appliesTo strings are paraphrases. Flagged yellow ONLY for the applicability-scope text, not the 1.04 value.",
+    "scopeConfidence": "yellow",
+    "scopeSourceToConfirm": "Табл.4 п.3.3 and п.5.7 full enumerating text — read literally to confirm the exact cargo/wagon scope each surcharge covers."
+  },
+
+  "coverageMatrix": {
+    "note": "Every cargo in reference-quotes-batch-0609.json mapped to its commodity-coef + K1 verification status.",
+    "rows": [
+      { "cargo": "232431 щебень", "class": 1, "k3": "0.77×0.909", "k3Status": "green/CONFIRMED, already in tr1-k3-full.json", "k1": "class1 distance-taper", "k1Status": "green/oracle-locked" },
+      { "cargo": "254040 жб/стеновые", "class": 2, "k3": 0.91, "k3Status": "green/CONFIRMED, matches tr1-k3-full.json", "k1": 1.00, "k1Status": "green/CONFIRMED" },
+      { "cargo": "631184 нетканые", "class": 3, "k3": 0.75, "k3Status": "yellow/value 0.75 confirmed pass-1 + matches seed + matches oracle; pass-2 cell blank", "k1": 1.54, "k1Status": "green/CONFIRMED (631 not in 1.74 list)" },
+      { "cargo": "481232 кислота серная", "class": 3, "k3": 0.81, "k3Status": "green/CONFIRMED, matches tr1-k3-full.json", "k1": 1.74, "k1Status": "green/CONFIRMED (481 IS in 1.74 list)" },
+      { "cargo": "685127 маты", "class": 3, "k3": "NONE", "k3Status": "green/ABSENT in Табл.4 — reference '1.04 commodity coef' is a MISLABEL of the п.5.7 class-3 surcharge", "k1": 1.54, "k1Status": "green/CONFIRMED (685 not in 1.74 list)" },
+      { "cargo": "371070 сваи металлические", "class": 3, "k3": "NONE", "k3Status": "green/ABSENT in Табл.4 — reference 'коэф груза НЕТ' CONFIRMED", "k1": 1.54, "k1Status": "green/CONFIRMED (371 not in 1.74 list)" }
+    ]
+  },
+
+  "corrections": [
+    {
+      "id": "C1-MATY-MISLABEL",
+      "severity": "MEDIUM",
+      "where": "reference-quotes-batch-0609.json _meta.commodityCoef_examples.'маты_раст_685127': 1.04",
+      "problem": "Labeled as a commodity (K3) coefficient. Табл.4 has NO row for position 685, so маты has NO товарный коэф.",
+      "correction": "The 1.04 is the п.5.7 class-3 surcharge (applied to ALL class-3 cargoes), NOT a commodity coef. The oracle chain C3-a confirms: no separate commodity step exists for маты.",
+      "engineImpact": "NONE if engine already applies only the п.5.7 ×1.04 to 685127 and no commodity K3 (which the chain implies). Verify the engine does not look up a phantom 1.04 commodity coef for 685127.",
+      "doNotEditLiveSeed": "tr1-k3-full.json is already correct (no 685 row). No live-seed edit needed; this is a label clarification of the REFERENCE meta only — and per instructions live seeds are NOT edited here."
+    },
+    {
+      "id": "C2-254-ROW-SHAPE",
+      "severity": "LOW",
+      "where": "tr1-k3-full.json class2 rows for 251 and 254",
+      "problem": "Seed splits '251 Материалы стеновые' and '254 Конструкции железобетонные' into two rows; source presents one combined row '251, 254 → 0,91'.",
+      "correction": "Numerically identical (both 0.91). Cosmetic only; no functional defect.",
+      "engineImpact": "NONE."
+    },
+    {
+      "id": "C3-631-LABEL",
+      "severity": "LOW",
+      "where": "reference _meta 'легкая_пром_631184: 0.75' and tr1-k3-full.json class3 631-634 name 'Ткани, швейные изделия'",
+      "problem": "'лёгкой промышленности' is the operator paraphrase; the literal Табл.4 row text is «Ткани, изделия швейной и трикотажной промышленности» (631-634).",
+      "correction": "Value 0.75 unchanged and correct by range membership (631184 ∈ 631-634). Label clarification only.",
+      "engineImpact": "NONE."
+    }
+  ],
+
+  "alreadyMatchingLiveSeed": [
+    "tr1-k3-full.json class1 231-236 = 0.77 (green)",
+    "tr1-k3-full.json class1_extra п.1.5 = 0.909 (green)",
+    "tr1-k3-full.json class2 251 = 0.91, 254 = 0.91 (green; source combines into one '251,254' row)",
+    "tr1-k3-full.json class3 481 = 0.81 (green)",
+    "tr1-k3-full.json class3 631-634 = 0.75 (yellow — value corroborated 3 ways, one verbatim pass clean, one ambiguous)",
+    "tr1-k3-full.json class2_extra п.3.3 = 1.04 (green value; yellow scope-text)",
+    "tr1-k3-full.json class3_extra п.5.7 = 1.04 (green value; yellow scope-text)",
+    "tr1-class-coeff.json + tr1-class-coeff-corrected.json class-3 1.74 named-position list (green, byte-identical to Табл.2 verbatim)",
+    "tr1-class-coeff.json + tr1-class-coeff-corrected.json class-3 остальные = 1.54 (green)",
+    "tr1-class-coeff.json class-2 = 1.00 flat (green)",
+    "NO live-seed row for 685 (маты) — correct, маты has no K3 (green)",
+    "NO live-seed row for 371 (сваи) — correct, сваи has no K3 (green)"
+  ],
+
+  "redCells_unverifiableThisPass": [
+    {
+      "cell": "Табл.4 class-3 631-634 coefficient exact precision (0,75 vs 0,750)",
+      "confidence": "yellow-not-red",
+      "reason": "0,75 returned verbatim in pass 1 and reproduces the oracle; pass 2 read blank (extraction artifact). Not graded red because three independent corroborations exist.",
+      "sourceToObtain": "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-1_1/tablitsa-n-4/ — Раздел III row '631 - 634' rightmost column, read literally."
+    },
+    {
+      "cell": "Exact enumerating scope text of п.3.3 (class-2 ×1.04) and п.5.7 (class-3 ×1.04)",
+      "confidence": "yellow",
+      "reason": "The 1.04 VALUE is green (stable both passes + reproduces all reference chains). Only the precise cargo/wagon-subset wording of each п. was not re-fetched cell-by-cell.",
+      "sourceToObtain": "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-1_1/tablitsa-n-4/ — п.3.3 and п.5.7 full clause text."
+    }
+  ],
+
+  "summary": {
+    "greenConfirmed": [
+      "254040/251 жб+стеновые K3 = 0,91 (class 2)",
+      "481232 кислоты K3 = 0,81 (class 3)",
+      "231-236 нерудные K3 = 0,77 × п.1.5 0,909 = 0,69993",
+      "685127 маты: NO commodity coef (Табл.4 has no 685 row) — reference '1.04 commodity' is the п.5.7 surcharge",
+      "371070 сваи: NO commodity coef (Табл.4 has no 371 row) — reference 'коэф груза НЕТ' confirmed",
+      "Class-3 K1 split: 1,74 named-position list byte-identical to Табл.2; 481 IS in it (→1.74 кислота); 631/371/685 are NOT (→1.54); 254 is class-2 (→1.00 K1)",
+      "п.3.3 class-2 ×1,04 and п.5.7 class-3 ×1,04 VALUES confirmed"
+    ],
+    "yellow": [
+      "631184 K3 = 0,75: value corroborated 3 ways but one fetch pass read the cell blank — recommend clean verbatim re-read",
+      "Exact enumerating scope wording of п.3.3 / п.5.7 (the 1.04 value itself is green)"
+    ],
+    "corrections": [
+      "C1 (MEDIUM): reference маты '1.04 commodity coef' relabeled as п.5.7 class-3 surcharge — no live seed change (seed already has no 685 row)",
+      "C2 (LOW): seed 251/254 two-row split vs source combined row — cosmetic",
+      "C3 (LOW): 631184 'лёгкая пром' is operator paraphrase of «Ткани, изделия швейной и трикотажной промышленности»"
+    ],
+    "noLiveSeedEdited": true,
+    "noFabrication": "Confirmed — every value traces to a fetched sudact pass and/or an on-disk seed + the R-Тариф oracle chain. Absences (685/371) are confirmed absences, not assumed. Disputed precision marked yellow with source-to-obtain.",
+    "oracleRegression": "No green oracle touched. All findings are consistent with the inventory_cases / own_pv_class23_cases / platform_cases / cistern_cases breakdowns and with the certified golden oracles."
+  }
+}

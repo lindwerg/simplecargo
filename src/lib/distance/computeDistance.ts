@@ -7,8 +7,9 @@
 // ALGORITHM (matches the engine that hits oracle квитанции to the km):
 //   1. Special-distance override (by station ESR pair) wins over everything.
 //   2. Same-station → 0 km.
-//   3. Same-участок shortcut: if origin and dest share an участок bounding узел,
-//      the result is |cumA − cumB| for that common узел — no backbone needed.
+//   3. Shared-узел shortcut: if origin and dest hang off the same bounding узел,
+//      the result is |cumA − cumB| (same участок) or cumA + cumB (adjacent участки
+//      joined at that узел) — MIN over all shared anchors, no backbone needed.
 //   4. Enumerate (origin узел-leg × dest узел-leg) candidates:
 //        leg1 + bridgeOrigin + backboneTerminal + bridgeDest + leg3
 //      The "bridge" hops a peripheral узел (no kniga3 edges) over kniga1 участок
@@ -75,6 +76,28 @@ export interface HubEntry {
 }
 
 /**
+ * ТР-4 узел magistral/обходной/малодеятельный classification (tr4-uzel-class.json).
+ *
+ * Drives the same-участок spur-attachment rule (DISTANCE_ROUTING_SPEC §4 / §7):
+ * ТР-1 2026 §I п.4 «в обход малодеятельных участков и скоростных линий» + ТР-4
+ * Книга-3 общие положения «без учёта обходных и соединительных ветвей в узлах».
+ *
+ *   • class="magistral"     — through-mainline узел (genuine arrival end).
+ *   • class="obhodnoy"      — обходная/соединительная ветвь в узле (e.g. БМО ring).
+ *   • class="malodeyatelny" — малодеятельная/тупиковая ветвь.
+ *   • directional flag      — a узел that IS магистральная by line class but is
+ *                             reached only by overshooting the station and doubling
+ *                             back (e.g. Тверь from the south, Акбаш the long way).
+ *                             Treated as a back-branch FOR THE PURPOSE OF this rule.
+ */
+export interface UzelClass {
+  /** "magistral" | "obhodnoy" | "malodeyatelny" (free string; only "magistral" is special). */
+  readonly class: string;
+  /** When set, the узел is a directional back-branch for the spur-attachment rule. */
+  readonly directional?: string;
+}
+
+/**
  * Pair-level distance override.
  *
  * `a`/`b` MUST be 6-digit station ESR codes — they are matched directly against
@@ -97,6 +120,12 @@ export interface DistanceData {
   readonly graph: UzelGraph;
   readonly hubs: ReadonlyArray<HubEntry>;
   readonly specials: ReadonlyArray<SpecialOverride>;
+  /**
+   * Per-узел ТР-4 classification (esr → UzelClass), from tr4-uzel-class.json.
+   * Optional: when absent or a узел is unclassified, the spur-attachment filter
+   * is a no-op for that group (conservative — never regresses the km oracles).
+   */
+  readonly uzelClass?: ReadonlyMap<string, UzelClass>;
   /** Pre-compiled graph (filled by the repository after first compile). */
   readonly compiled?: CompiledGraph;
 }
@@ -181,6 +210,66 @@ export function compileGraph(
   return { stationLegs, backboneAdj, bridgeAdj, backboneNodes, directBackbone, nodeName };
 }
 
+// ── Min-heap priority queue (Dijkstra) ────────────────────────────────────────
+//
+// A binary min-heap keyed by km. Replaces the previous `pq.sort()`-per-pop pattern
+// (O(V²·logV)) so the узел Dijkstra stays fast even when the anti-undercut floor in
+// backboneTerminal adds extra relaxations — the floor can re-push a node when a
+// later (still-legal) path arrives, and an O(n) sort per pop turned that churn into
+// a timeout on the dense RF/БЧ graph. Lazy deletion (stale entries skipped on pop)
+// keeps it allocation-light and correct.
+class MinHeap {
+  private readonly km: number[] = [];
+  private readonly node: string[] = [];
+
+  get size(): number {
+    return this.km.length;
+  }
+
+  push(km: number, node: string): void {
+    const k = this.km;
+    const n = this.node;
+    k.push(km);
+    n.push(node);
+    let i = k.length - 1;
+    while (i > 0) {
+      const p = (i - 1) >> 1;
+      if (k[p] <= k[i]) break;
+      [k[p], k[i]] = [k[i], k[p]];
+      [n[p], n[i]] = [n[i], n[p]];
+      i = p;
+    }
+  }
+
+  pop(): [number, string] | undefined {
+    const k = this.km;
+    const n = this.node;
+    if (k.length === 0) return undefined;
+    const topKm = k[0];
+    const topNode = n[0];
+    const lastKm = k.pop() as number;
+    const lastNode = n.pop() as string;
+    if (k.length > 0) {
+      k[0] = lastKm;
+      n[0] = lastNode;
+      let i = 0;
+      const len = k.length;
+      for (;;) {
+        const l = 2 * i + 1;
+        const r = l + 1;
+        let s = i;
+        if (l < len && k[l] < k[s]) s = l;
+        if (r < len && k[r] < k[s]) s = r;
+        if (s === i) break;
+        [k[s], k[i]] = [k[i], k[s]];
+        [n[s], n[i]] = [n[i], n[s]];
+        i = s;
+      }
+    }
+    return [topKm, topNode];
+  }
+}
+
 // ── Last-mile bridging ────────────────────────────────────────────────────────
 
 interface BridgeResult {
@@ -194,11 +283,11 @@ function toBackbone(g: CompiledGraph, uzel: string): BridgeResult[] {
     return [{ node: uzel, bridgeKm: 0 }];
   }
   const dist = new Map<string, number>([[uzel, 0]]);
-  const pq: Array<[number, string]> = [[0, uzel]];
+  const pq = new MinHeap();
+  pq.push(0, uzel);
   const reached = new Map<string, number>();
-  while (pq.length) {
-    pq.sort((x, y) => x[0] - y[0]);
-    const top = pq.shift();
+  while (pq.size) {
+    const top = pq.pop();
     if (!top) break;
     const [d, u] = top;
     if (d > (dist.get(u) ?? Infinity)) continue;
@@ -212,7 +301,7 @@ function toBackbone(g: CompiledGraph, uzel: string): BridgeResult[] {
         const nd = d + km;
         if (nd < (dist.get(to) ?? Infinity)) {
           dist.set(to, nd);
-          pq.push([nd, to]);
+          pq.push(nd, to);
         }
       }
     }
@@ -233,7 +322,36 @@ interface BackboneResult {
 
 /**
  * Returns the published kniga3 edge AS-IS if it exists; otherwise falls back to
- * Dijkstra over kniga3 edges only. A published direct edge is NEVER undercut.
+ * Dijkstra over kniga3 edges only. A published direct edge is NEVER undercut —
+ * not just for the (a,b) terminal pair (handled by the direct-AS-IS guard below),
+ * but ALSO for every узел the fallback chain touches.
+ *
+ * ── ANTI-UNDERCUT FLOOR (Решетниково-class generalization, RF-wide) ──────────────
+ *
+ * THE RULE (ТР-4 Книга-3 общие положения): тарифное расстояние is the SHORTEST path
+ * over the designated ТП network «без учёта обходных и соединительных ветвей в узлах».
+ * THE LOAD-BEARING INVARIANT: a chained узел path may NEVER be shorter than a PUBLISHED
+ * direct Книга-3 ТП↔ТП edge between the same two ТП — if it is, the chain slipped through
+ * an обходная/соединительная ветвь and is ILLEGAL (this is exactly the Решетниково
+ * 1267-vs-1432 bug).
+ *
+ * The (a,b) terminal floor is enforced by the direct-AS-IS guard: when `directBackbone`
+ * holds the (a,b) edge we return it verbatim, never the chain. But when (a,b) has NO
+ * published edge we must still walk the kniga3 graph — and the audit (ANTI_UNDERCUT_AUDIT.md,
+ * RF-wide harness) found that 38 % of those fallback chains internally undercut a published
+ * direct edge between узлы they pass THROUGH (e.g. the Карелия/СПб ТП chaining south через
+ * an обходная ветвь). That is the same illegal shortcut, just one узел deep.
+ *
+ * Enforcement (source-anchored floor): the узел segment we price is anchored at the source
+ * backbone узел `a`; for EVERY узел `v` the chain reaches, if a published direct edge `a↔v`
+ * exists the chained distance to `v` may not fall below it — so we clamp `nd` UP to
+ * `directBackbone(a,v)` during relaxation. The clamp is monotone (it can only RAISE a
+ * distance), so it can never manufacture a new undercut, never narrows a legitimate
+ * no-published-edge route (those have no direct edge to floor against), and never touches
+ * a route that hits the direct-AS-IS guard (the guard returns before this Dijkstra runs).
+ * Verified oracle-safe: all four km oracles (2444/699/3108/1432) win via the direct-AS-IS
+ * guard at their winning backbone terminal pair (561/2680/2255/1319 are published direct
+ * edges of the bridged endpoints), so none reach this fallback — see computeDistance.test.ts.
  */
 function backboneTerminal(g: CompiledGraph, a: string, b: string): BackboneResult | null {
   if (a === b) return { km: 0, path: [a] };
@@ -243,13 +361,13 @@ function backboneTerminal(g: CompiledGraph, a: string, b: string): BackboneResul
     return { km: direct, path: [a, b] };
   }
 
-  // Dijkstra over kniga3 edges only.
+  // Dijkstra over kniga3 edges only, with the source-anchored anti-undercut floor.
   const dist = new Map<string, number>([[a, 0]]);
   const prev = new Map<string, string>();
-  const pq: Array<[number, string]> = [[0, a]];
-  while (pq.length) {
-    pq.sort((x, y) => x[0] - y[0]);
-    const top = pq.shift();
+  const pq = new MinHeap();
+  pq.push(0, a);
+  while (pq.size) {
+    const top = pq.pop();
     if (!top) break;
     const [d, u] = top;
     if (u === b) break;
@@ -257,11 +375,16 @@ function backboneTerminal(g: CompiledGraph, a: string, b: string): BackboneResul
     const neighbors = g.backboneAdj.get(u);
     if (neighbors) {
       for (const { to, km } of neighbors) {
-        const nd = d + km;
+        let nd = d + km;
+        // Anti-undercut floor: a chain from the source узел `a` to `to` may never be
+        // shorter than the PUBLISHED direct edge a↔to. If it is, the chain used an
+        // обходная/соединительная ветвь — clamp UP to the published distance.
+        const floor = g.directBackbone.get(pairKey(a, to));
+        if (floor != null && nd < floor) nd = floor;
         if (nd < (dist.get(to) ?? Infinity)) {
           dist.set(to, nd);
           prev.set(to, u);
-          pq.push([nd, to]);
+          pq.push(nd, to);
         }
       }
     }
@@ -277,20 +400,48 @@ function backboneTerminal(g: CompiledGraph, a: string, b: string): BackboneResul
   return { km: total, path };
 }
 
-// ── Same-участок shortcut ─────────────────────────────────────────────────────
+// ── Shared-узел shortcut (same-участок |Δ| + adjacent-section sum) ─────────────
 
-function sameUchastokDistance(
+/**
+ * Resolve the distance when both stations hang off the SAME bounding узел, without
+ * touching the Книга-3 backbone. Two ТР-4 cases share that узел anchor:
+ *
+ *   • SAME участок  (o.uchastok === d.uchastok): both stations lie on one section,
+ *     so the distance is the cumulative-km difference |o.km − d.km| (M21/§3 shortcut).
+ *
+ *   • ADJACENT участки (o.uchastok !== d.uchastok, same o.uzelEsr): the two sections
+ *     meet AT the узел, so the path is station→узел→station = o.km + d.km (M3). There
+ *     is no backbone hop to subtract — the узел IS the join point.
+ *
+ * Both cases can be reachable through several shared anchors on loop/multi-anchor
+ * участки; we therefore evaluate EVERY (o,d) anchor pair that shares a узел and
+ * return the MINIMUM km (M4 — previously this returned the FIRST match, making the
+ * result order-dependent on the kniga1 leg ordering).
+ *
+ * Returns null when origin and dest share no bounding узел (→ backbone enumeration).
+ */
+function sharedUzelDistance(
   oLegs: UzelLeg[],
   dLegs: UzelLeg[],
 ): { km: number; uzel: string } | null {
+  let bestKm = Infinity;
+  let bestUzel = "";
   for (const o of oLegs) {
     for (const d of dLegs) {
-      if (o.uchastok && o.uchastok === d.uchastok && o.uzelEsr === d.uzelEsr) {
-        return { km: Math.abs(o.km - d.km), uzel: `${o.uzelName}(${o.uzelEsr})` };
+      if (o.uzelEsr !== d.uzelEsr) continue;
+      // Same участок → |Δcum|; adjacent участки joined at the узел → sum of legs.
+      const km =
+        o.uchastok && o.uchastok === d.uchastok
+          ? Math.abs(o.km - d.km)
+          : o.km + d.km;
+      if (km < bestKm) {
+        bestKm = km;
+        bestUzel = `${o.uzelName}(${o.uzelEsr})`;
       }
     }
   }
-  return null;
+  if (!isFinite(bestKm)) return null;
+  return { km: bestKm, uzel: bestUzel };
 }
 
 // ── Узел same-radial-line exclusion (ТР-4) ────────────────────────────────────
@@ -343,6 +494,168 @@ function isSameRadialLine(
   const exitLine = resolveHubLine(hub, null, exitName);
   if (entryLine == null || exitLine == null) return false;
   return entryLine === exitLine;
+}
+
+// ── Same-участок spur-attachment filter (ТР-4 п.4 / Книга-3 общие положения) ──
+
+/**
+ * A узел is a "clean магистраль" attachment iff it is class="magistral" AND has no
+ * `directional` back-branch flag. Only such a узел can dominate its same-участок
+ * siblings — see DISTANCE_ROUTING_SPEC §7: Тверь is магистральная by LINE class but
+ * `directional` (reached by overshooting the station from the south and doubling
+ * back), so it must NOT count as the legal through-attachment.
+ */
+function isCleanMagistral(c: UzelClass | undefined): boolean {
+  return c != null && c.class === "magistral" && !c.directional;
+}
+
+/**
+ * Узел is an EXPLICIT back-branch attachment: класс обходной/малодеятельный, OR
+ * магистраль reached only by a directional overshoot-and-return (Тверь/Акбаш).
+ */
+function isBackBranch(c: UzelClass | undefined): boolean {
+  if (c == null) return false;
+  if (c.class === "obhodnoy" || c.class === "malodeyatelny") return true;
+  if (c.class === "magistral" && c.directional) return true;
+  return false;
+}
+
+/**
+ * filterBackBranches — drop the обходные/малодеятельные/directional back-branch spur
+ * legs of a station when a clean магистраль leg of the SAME station exists.
+ *
+ * Rule (class-driven, NO km arithmetic, NO per-route constant):
+ *   1. If the station has ≥1 clean-магистраль leg (isCleanMagistral), DROP every leg
+ *      that is an EXPLICIT back-branch (isBackBranch: обходной / малодеятельный /
+ *      магистраль-but-`directional`).
+ *   2. UNCLASSIFIED legs are NEVER dropped, and the rule does nothing when no clean
+ *      магистраль leg exists — a conservative fallback to the engine's global-MIN so
+ *      unclassified участки (e.g. «ВОЛГОГРАД II КОТЕЛЬНИКОВО») never regress.
+ *
+ * Pinned to ТР-1 2026 §I п.4 «в обход малодеятельных участков и скоростных линий» and
+ * ТР-4 Книга-3 «без учёта обходных и соединительных ветвей в узлах»: the dropped legs
+ * are exactly the обходные/back-branch attachments; the survivor is the through-mainline.
+ *
+ * The decision is station-wide (not strictly per-участок) because a малодеятельная
+ * deadend (Конаково ГРЭС, участок «РЕШЕТНИКОВО КОНАКОВО ГРЭС») can reach the backbone
+ * only by bridging back through the destination узел — an обходной attachment that п.4
+ * forbids once a clean магистраль (Ховрино) approach exists. Only EXPLICITLY classified
+ * узлы are ever dropped, so no unclassified route can be affected.
+ *
+ * Verified: 023202→061108=1432 (keep Ховрино; drop Тверь directional, Поварово II
+ * обходной, Конаково ГРЭС малодеятельный), 771500→648503=699 (keep Алнаши; drop Акбаш
+ * directional), 021609→612709=2444 and 023202→528706=3108 (unclassified / single →
+ * untouched). See computeDistance.test.ts.
+ */
+function filterBackBranches(
+  legs: UzelLeg[],
+  uzelClass: ReadonlyMap<string, UzelClass> | undefined,
+): UzelLeg[] {
+  if (!uzelClass || legs.length < 2) return legs;
+  // Decidable only when a clean магистраль attachment exists for THIS station.
+  const hasCleanMagistral = legs.some((l) => isCleanMagistral(uzelClass.get(l.uzelEsr)));
+  if (!hasCleanMagistral) return legs; // fallback to the engine's global-MIN
+  // Drop EXPLICIT back-branches (обходной / малодеятельный / directional магистраль).
+  // Unclassified legs are never dropped, so unclassified routes can never be affected.
+  return legs.filter((l) => !isBackBranch(uzelClass.get(l.uzelEsr)));
+}
+
+// ── Layer 2: geometric обходной detector (RF-wide generalization) ─────────────
+//
+// RF_ROUTING_GENERALIZATION.md §6.2. A purely data-derived pre-filter that
+// generalizes the ring/branch-junction (mechanism A) обходной case from the 7
+// hand-classified узлы (Layer 1) to ALL RF узлы, WITHOUT inventing a km or a class.
+//
+// It fires ONLY on a same-участок узел W that is simultaneously:
+//   (i)  OFF the physical section — W is NOT «between» the station and any peer
+//        мagistral leg (no peer P with spur(W)+spur(P) ≈ published edge(W,P)); and
+//   (ii) an UNDERCUT — W's spur is shorter than every surviving on-section leg, so
+//        using it would shortcut the legal section end (W is a соединительная/обходная
+//        ветвь в узле — exactly the ТР-4 «без учёта обходных и соединительных ветвей
+//        в узлах» case). When W is not the cheapest, the drop is a no-op and skipped.
+// and only when ≥1 on-section (colinear) peer leg survives (never drop the last
+// leg; never act when there is no mainline alternative — conservative).
+//
+// Monotone-safe by construction: it can only remove a leg that is provably both
+// off-section AND an illegal undercut, so it can never flip a colinear mainline end
+// (Алнаши/Котельниково/Светлоград) and therefore cannot regress 2444/699/3108. On
+// 1432 the oracle узлы (Тверь/Поварово II) are colinear-between peers (spur sums hit
+// the published edge), so Layer 2 does NOT fire there — the certified Layer 1 hand
+// class still drives that route. Proof + RF widening targets in §5/§6 of the spec.
+
+const COLINEAR_BAND_KM = 1; // ТР-4 1 km rounding band for the spur-sum == edge test
+
+/** Published section edge between two узлы: kniga3 direct, else a single kniga1/kniga3 adj hop. */
+function sectionEdgeKm(g: CompiledGraph, a: string, b: string): number | null {
+  if (a === b) return 0;
+  const direct = g.directBackbone.get(pairKey(a, b));
+  if (direct != null) return direct;
+  for (const list of [g.backboneAdj.get(a), g.bridgeAdj.get(a)]) {
+    if (!list) continue;
+    for (const e of list) if (e.to === b) return e.km;
+  }
+  return null;
+}
+
+/**
+ * A leg W is «on-section» (a legitimate mainline end of its участок) iff the station
+ * lies BETWEEN W and some same-участок peer P: spur(W) + spur(P) ≈ published edge(W,P)
+ * within the 1 km band. Such a узел is a genuine section terminal and must be kept.
+ */
+function isOnSection(g: CompiledGraph, w: UzelLeg, group: ReadonlyArray<UzelLeg>): boolean {
+  for (const p of group) {
+    if (p.uzelEsr === w.uzelEsr) continue;
+    const edge = sectionEdgeKm(g, w.uzelEsr, p.uzelEsr);
+    if (edge == null) continue;
+    if (Math.abs(w.km + p.km - edge) <= COLINEAR_BAND_KM) return true;
+  }
+  return false;
+}
+
+/**
+ * filterGeometricObhodnoy — Layer 2 (RF_ROUTING_GENERALIZATION §6.2). Drops a leg W
+ * iff it is OFF-section (no colinear-between peer P with spur(W)+spur(P) ≈ edge(W,P))
+ * AND its spur is SHORTER than every surviving on-section (colinear) leg — i.e. W is
+ * a соединительная/обходная ветвь whose use would undercut the legal section end and
+ * actually move the engine's MIN. When W's spur is not the cheapest, dropping it is a
+ * no-op, so the filter stays inert (never narrows a route it does not change). It
+ * never removes a colinear mainline end and never removes the last leg. Class-agnostic,
+ * km-derived, no new data. Applied AFTER certified Layer 1 in the candidate-prep step.
+ */
+function filterGeometricObhodnoy(g: CompiledGraph, legs: UzelLeg[]): UzelLeg[] {
+  if (legs.length < 2) return legs;
+
+  // Group by участок; the off-section test is meaningful only within one section.
+  const byUchastok = new Map<string, UzelLeg[]>();
+  for (const l of legs) {
+    const key = l.uchastok || "";
+    const arr = byUchastok.get(key);
+    if (arr) arr.push(l);
+    else byUchastok.set(key, [l]);
+  }
+
+  const dropped = new Set<UzelLeg>();
+  for (const group of byUchastok.values()) {
+    if (group.length < 2) continue;
+    const onSection = group.filter((l) => isOnSection(g, l, group));
+    if (onSection.length === 0) continue; // no mainline alternative → conservative, keep all
+    // Among the on-section (colinear-between) legs the engine's MIN already picks the
+    // legal section end. Any leg that is NOT colinear-between any peer is geometrically
+    // OFF the physical section — a соединительная/обходная ветвь в узле (ТР-4 «без учёта
+    // обходных и соединительных ветвей в узлах»). Drop it iff (a) at least one on-section
+    // peer survives AND (b) the off-section leg is SHORTER than every surviving on-section
+    // leg (so dropping it actually changes the MIN — otherwise the drop is a harmless
+    // no-op that we skip to keep the filter inert). This is the unambiguous, fully
+    // edge-derived ring/branch-junction case; it never touches a colinear mainline end.
+    const minOnSection = Math.min(...onSection.map((l) => l.km));
+    for (const w of group) {
+      if (onSection.includes(w)) continue; // colinear mainline end — never drop
+      if (w.km < minOnSection) dropped.add(w); // off-section AND would undercut the legal end
+    }
+  }
+
+  if (dropped.size === 0) return legs;
+  return legs.filter((l) => !dropped.has(l));
 }
 
 // ── ТР-4 rounding ─────────────────────────────────────────────────────────────
@@ -406,20 +719,33 @@ export function computeDistance(input: DistanceInput, data: DistanceData): Dista
     return red(`no kniga1 leg for dest station ${destEsr}`);
   }
 
-  // 3) Same-участок shortcut.
-  const same = sameUchastokDistance(oLegs, dLegs);
+  // 3) Shared-узел shortcut (same участок |Δ| OR adjacent участки joined at узел).
+  const same = sharedUzelDistance(oLegs, dLegs);
   if (same != null) {
     const leg: DistanceLeg = { kind: "backbone", fromEsr: originEsr, toEsr: destEsr, km: same.km };
     return { km: roundKm(same.km), legs: [leg], confidence: "green", warnings };
   }
 
   // 4) Enumerate candidates.
+  //
+  // Same-участок spur-attachment filter (ТР-4 п.4 / Книга-3 общие положения): among a
+  // station's spur legs that share a участок, drop the обходные / малодеятельные /
+  // directional back-branch attachments when a clean магистраль leg of that участок
+  // exists. Class-driven only; unclassified groups are left intact so the calibrated
+  // km oracles (2444/3108) never regress. Applied to both origin and dest legs.
+  // Layer 1 (certified, class-driven): drop the 7 hand-classified back-branches.
+  // Layer 2 (RF-wide geometric): drop any same-участок узел that is geometrically
+  // OFF the physical section AND would undercut the colinear mainline end — the
+  // ring/branch-junction обходной class, generalized from data with no new class.
+  const oLegsFiltered = filterGeometricObhodnoy(g, filterBackBranches([...oLegs], data.uzelClass));
+  const dLegsFiltered = filterGeometricObhodnoy(g, filterBackBranches([...dLegs], data.uzelClass));
+
   let bestKm = Infinity;
   let bestLegs: DistanceLeg[] = [];
   let anyTried = false;
 
-  for (const oLeg of oLegs) {
-    for (const dLeg of dLegs) {
+  for (const oLeg of oLegsFiltered) {
+    for (const dLeg of dLegsFiltered) {
       for (const ob of toBackbone(g, oLeg.uzelEsr)) {
         for (const db of toBackbone(g, dLeg.uzelEsr)) {
           anyTried = true;

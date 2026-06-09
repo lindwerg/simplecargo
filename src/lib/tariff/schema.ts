@@ -37,7 +37,17 @@ export const tariffInputSchema = z.object({
   wagonCount: z.coerce.number().int().positive().optional(),
   /** Wagon model string (e.g. "12-9761-02") — drives innovative 0.9595 lookup from tr1-innovative-models. */
   wagonModel: z.string().trim().optional(),
+  /**
+   * Container size code for контейнерные отправки (schemes N85-94). One of the canonical
+   * sizes in tr1-i-belts-container.json: "3т" | "5т" | "10т" | "20ft" | "40ft". Required
+   * to resolve the per-container linearAB plate (A + B×KL). Absent for non-container wagons.
+   */
+  containerSize: z.string().trim().optional(),
 });
+
+/** Canonical container-size codes (mirror tr1-i-belts-container.json containerSizeMap keys). */
+export const CONTAINER_SIZES = ["3т", "5т", "10т", "20ft", "40ft"] as const;
+export type ContainerSize = (typeof CONTAINER_SIZES)[number];
 
 export type TariffInput = z.infer<typeof tariffInputSchema>;
 
@@ -50,9 +60,18 @@ export interface TariffBreakdown {
   vComponent: number;
   emptyRun: number;
   surcharges: number;
-  preIndex: number; // без НДС, before indexation
+  preIndex: number; // без НДС, before indexation (груженый + порожний leg)
+  /**
+   * Провозная плата без НДС и БЕЗ порожнего пробега (груженая составляющая после стека
+   * коэффициентов, до индексации). This is the R-Тариф «провозная плата» for own wagons —
+   * the порожний пробег is a SEPARATELY-billed charge, not part of провозной платы. Equals
+   * round((iComponent + vComponent) × iStack); for цистерна/контейнер branches it equals the
+   * branch iComponent (which already carries no empty leg). With empty indexations
+   * loadedNoVat × indexFactor is the after-index loaded плата.
+   */
+  loadedNoVat: number; // без НДС, без порожнего, before indexation
   indexFactor: number; // ∏(1 + index_i/100)
-  postIndex: number; // без НДС, after indexation
+  postIndex: number; // без НДС, after indexation (груженый + порожний leg)
   vatRate: number; // 22 domestic / 0 export
   total: number; // с НДС
   tariffClass: FreightClass;

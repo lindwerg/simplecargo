@@ -92,9 +92,11 @@ function makeDataA(): TariffData {
 }
 
 describe("computeTariffPure — Scenario A: КР rzd повагонная class 2", () => {
-  it("resolves to a number (not red) — RESOLVES green", () => {
+  it("resolves to a number — YELLOW (class-2 computed per ТР-1, not oracle-validated)", () => {
     const r = computeTariffPure(INPUT_A, makeDataA());
-    expect(r.confidence).toBe("green");
+    // CONFIDENCE MODEL: only the oracle-validated own-ПВ class-1 нерудные contour is green.
+    // A class-2 КР is computed per the official tables but unvalidated → yellow, never green.
+    expect(r.confidence).toBe("yellow");
     expect(r.total).toBeGreaterThan(0);
     expect(r.tariffClass).toBe(2);
   });
@@ -105,10 +107,12 @@ describe("computeTariffPure — Scenario A: КР rzd повагонная class 
     expect(r.emptyRun).toBe(0);
   });
 
-  it("applies K3=0.876 (огнеупоры class 2)", () => {
+  it("applies K3=0.876 (огнеупоры class 2) + ×1.04 class surcharge + ×1.01 доп.индексация", () => {
     const r = computeTariffPure(INPUT_A, makeDataA());
     // iComponent = 87619 × 1.0 (K1) × 0.876 (K3) × 1.0 (K4) × 1.0 (innovative)
-    expect(r.iComponent).toBeCloseTo(87619 * 0.876, 1);
+    //              × 1.04 (class-2 surcharge п.3.3) × 1.01 (доп.индексация)
+    // Both the ×1.04 and ×1.01 apply to class 2/3 on the universal path (sourced 894/25).
+    expect(r.iComponent).toBeCloseTo(87619 * 0.876 * 1.04 * 1.01, 1);
   });
 
   it("applies 22% НДС last", () => {
@@ -304,9 +308,11 @@ function makeDataC(): TariffData {
 }
 
 describe("computeTariffPure — Scenario C: ПЛ own повагонная class 1, 800 km", () => {
-  it("resolves to a number (not red) — RESOLVES green", () => {
+  it("resolves to a number — YELLOW (ПЛ + generic cargo, outside the validated нерудный contour)", () => {
     const r = computeTariffPure(INPUT_C, makeDataC());
-    expect(r.confidence).toBe("green");
+    // CONFIDENCE MODEL: validated green is own-ПОЛУВАГОН class-1 НЕРУДНЫЕ only. This is a
+    // платформа (not полувагон) carrying generic cargo 999000 (not нерудный) → yellow.
+    expect(r.confidence).toBe("yellow");
     expect(r.total).toBeGreaterThan(0);
     expect(r.tariffClass).toBe(1);
   });
@@ -416,9 +422,10 @@ describe("computeTariffPure — Scenario E: innovative wagon model (0.9595)", ()
     expect(innovative.iComponent).toBeCloseTo(classic.iComponent * 0.9595, 0);
   });
 
-  it("innovative result still resolves (not red)", () => {
+  it("innovative result still resolves (not red) — YELLOW (ПЛ generic, unvalidated)", () => {
     const r = computeTariffPure(INPUT_E, makeDataE());
-    expect(r.confidence).toBe("green");
+    // Same contour as Scenario C (платформа + generic cargo) → yellow, never red.
+    expect(r.confidence).toBe("yellow");
     expect(r.total).toBeGreaterThan(0);
   });
 });

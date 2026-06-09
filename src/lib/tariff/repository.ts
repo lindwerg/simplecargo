@@ -21,6 +21,7 @@ import {
   type ResolvedDistance,
   type TariffData,
 } from "./computeTariff";
+import { loadN8TariffData } from "./n8Data";
 import type {
   EmptyRunBelt,
   K4Row,
@@ -225,6 +226,12 @@ export async function computeTariff(rawInput: TariffInput): Promise<TariffBreakd
     loadK4Rows(),
   ]);
 
+  // Certified own-полувагон class-1 нерудные N8 tables (Прил.N2 grid + Табл.2 + Табл.5).
+  // Injecting these makes the prod entrypoint route the certified contour through the SAME
+  // staged-kopeck chain that reproduces the golden oracles to the kopeck (gap H1 unification).
+  // Same module-singleton tables quoteService/quoteMatrix already use.
+  const n8 = loadN8TariffData();
+
   const data: TariffData = {
     distance: toResolvedDistance(distanceResult),
     etsng: etsngRows,
@@ -239,6 +246,7 @@ export async function computeTariff(rawInput: TariffInput): Promise<TariffBreakd
     k3Rows,
     k4FullRows,
     innovativeModels,
+    n8,
   };
 
   return computeTariffPure(input, data);

@@ -1,0 +1,108 @@
+{
+  "_meta": {
+    "dataset": "ТР-1 2026 — Таблица N 3 «Коэффициенты по отдельным направлениям» (направленческие / географические поправочные множители). DISTINCT from Таблица N 4 (товарный K3, см. tr1-k3-full.json).",
+    "source": "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-1_1/tablitsa-n-3/",
+    "law": "Приказ ФАС России от 06.11.2025 N 894/25 (ТР-1 2026), Приложение N 1, Таблица N 3. Рег. Минюст 22.12.2025 N 84708. В силе с 2026-01-01 (заменил Прейскурант 10-01).",
+    "fetchedAt": "2026-06-09",
+    "asOf": "2026",
+    "confidence": "mixed",
+    "distinctFromTablitsaN4": {
+      "confirmed": true,
+      "basis": "§I п.10 (verbatim, docs/planning/rulebook/prilozhenie-n-1-i.md:148): п.10 называет ОТДЕЛЬНО Табл.2 (коэф. по расстоянию = K1), Табл.3 (направленческие) и Табл.4 (отдельные грузы). Табл.3 = КУДА/ОТКУДА/ЧЕРЕЗ ЧТО (география направления); Табл.4 = ЧТО за груз (товарная поправка K3). Два независимых множителя в п.16.",
+      "note": "В индексе 00-index-prikaz-894-25.md строки 35-37 исторически мапили и N3, и N4 на tr1-k3-full.json — это расхождение имён, не данных. tr1-k3-full.json содержит ТОЛЬКО Табл.4 (товарные). Направленческие Табл.3 жили без своего seed до этого файла."
+    },
+    "placeInChain": "п.16 Раздела II: после базовой ставки (группа И ± группа В), расстоянческого K1 (Табл.2), товарного K3 (Табл.4) и отправочного K4 (Табл.5) направленческий коэффициент Табл.3 применяется как дополнительный безразмерный множитель к тарифной плате — ТОЛЬКО для перевозок, попадающих под одно из перечисленных направлений (Калининград / погранстанции / два лесных маршрута).",
+    "appliesToCommonRfDirections": false,
+    "appliesToCommonRfDirectionsNote": "Для типовой внутрироссийской перевозки между ОБЫЧНЫМИ станциями РФ (в т.ч. щебень/нерудные повагонно) Табл.3 НЕ применяется — эффективный множитель = 1,0. Это подтверждает НУЛЕВОЕ влияние на golden-кейсы SimpleCargo (699/2444/3108 км, batch-0609). Коэффициенты Табл.3 включаются лишь при: (а) калининградском направлении, (б) экспорте/импорте через сухопутные пограничные передаточные станции, (в) лесных маршрутах Ледмозеро-Костомукша-Товарная / Махалино-Хасан.",
+    "verbatimTrust": "Источник снят через fetch-конвейер с малой суммаризирующей моделью. Разделы 1, 2, 4 рендерятся стабильно между проходами (2026-06-09 ×2) и числовых расхождений не дали — VERBATIM-CONFIRMED. Раздел 3 (погранстанции) рендерится НЕСТАБИЛЬНО: между проходами менялись числа (напр. Сера 487169 = 2,5 в одном проходе vs 1,94 в другом; Цемент 281 = 2,2 vs 1,66), терялись заголовки строк, появлялись комбинированные ячейки. КАЖДОЕ число Раздела 3 = UNVERIFIED. НИ ОДНО значение не выдумано; где ячейке нельзя доверять — она помечена, а не заполнена.",
+    "moneyContract": "Числа Разделов 1/2/4 трассируются к verbatim-захвату sudact 894/25 (стабильны между проходами). Раздел 3 НЕ заносить в движок на основании этого захвата — confidence:red, нужен сырой HTML страницы-источника либо сверка с R-Тариф."
+  },
+
+  "section1_kaliningrad_to_network": {
+    "title": "Коэффициенты для перевозок между Калининградской железной дорогой и остальной сетью РЖД",
+    "confidence": "green",
+    "verbatimVerified": true,
+    "appliesWhen": "Перевозка проходит по Калининградской ж.д. при участии остальной сети РЖД (калининградский транзит/анклавное направление).",
+    "multiplierOf": "тарифная плата",
+    "keyedBy": ["distanceKm", "tariffClass"],
+    "note": "Все коэффициенты < 1 — скидка на калининградское направление (компенсация анклавности). Строка для класса 3 в диапазоне 401-1000 имеет развилку: легковые авто (ЕТСНГ 381087) = 0,49; прочие грузы класса 3 = 0,78.",
+    "rows": [
+      { "distanceFromKm": 0,    "distanceToKm": 400,  "distanceLabel": "До 400",      "tariffClass": 1, "coefficient": 0.27 },
+      { "distanceFromKm": 0,    "distanceToKm": 400,  "distanceLabel": "До 400",      "tariffClass": 2, "coefficient": 0.53 },
+      { "distanceFromKm": 0,    "distanceToKm": 400,  "distanceLabel": "До 400",      "tariffClass": 3, "coefficient": 0.76 },
+      { "distanceFromKm": 401,  "distanceToKm": 1000, "distanceLabel": "401-1000",    "tariffClass": 1, "coefficient": 0.48 },
+      { "distanceFromKm": 401,  "distanceToKm": 1000, "distanceLabel": "401-1000",    "tariffClass": 2, "coefficient": 0.63 },
+      { "distanceFromKm": 401,  "distanceToKm": 1000, "distanceLabel": "401-1000",    "tariffClass": 3, "coefficient": 0.78, "exceptEtsng": "381087", "exceptNote": "кроме легковых автомобилей" },
+      { "distanceFromKm": 401,  "distanceToKm": 1000, "distanceLabel": "401-1000",    "tariffClass": 3, "coefficient": 0.49, "onlyEtsng": "381087", "onlyNote": "легковые автомобили" },
+      { "distanceFromKm": 1001, "distanceToKm": 2000, "distanceLabel": "1001-2000",   "tariffClass": 1, "coefficient": 0.68 },
+      { "distanceFromKm": 1001, "distanceToKm": 2000, "distanceLabel": "1001-2000",   "tariffClass": 2, "coefficient": 0.83 },
+      { "distanceFromKm": 1001, "distanceToKm": 2000, "distanceLabel": "1001-2000",   "tariffClass": 3, "coefficient": 0.88 },
+      { "distanceFromKm": 2001, "distanceToKm": null, "distanceLabel": "Свыше 2000",  "tariffClass": 1, "coefficient": 0.78 },
+      { "distanceFromKm": 2001, "distanceToKm": null, "distanceLabel": "Свыше 2000",  "tariffClass": 2, "coefficient": 0.88 },
+      { "distanceFromKm": 2001, "distanceToKm": null, "distanceLabel": "Свыше 2000",  "tariffClass": 3, "coefficient": 0.93 }
+    ]
+  },
+
+  "section2_within_kaliningrad": {
+    "title": "Перевозки в пределах Калининградской железной дороги без участия других дорог РЖД",
+    "confidence": "green",
+    "verbatimVerified": true,
+    "appliesWhen": "Перевозка целиком в пределах Калининградской ж.д. (без участия других дорог РЖД).",
+    "multiplierOf": "тарифная плата",
+    "coefficient": 0.9,
+    "tariffClass": "any",
+    "distanceDependent": false,
+    "note": "Один плоский множитель 0,9 для всех тарифных классов независимо от расстояния перевозки."
+  },
+
+  "section3_border_transfer_stations": {
+    "title": "Коэффициенты для перевозок отдельных грузов через сухопутные пограничные передаточные станции",
+    "confidence": "red",
+    "verbatimVerified": false,
+    "doNotUseInEngine": true,
+    "appliesWhen": "Экспорт/импорт отдельных грузов через сухопутные пограничные передаточные станции (погранпереходы).",
+    "multiplierOf": "тарифная плата",
+    "keyedBy": ["etsng", "rollingStockType", "wagonOwnership"],
+    "warning": "СТРУКТУРА захвачена, ЧИСЛА НЕ СВЕРЕНЫ. Извлечение нестабильно между проходами (см. _meta.verbatimTrust). Повышающие множители (>1) — наценка за экспортно-импортное направление через погранстыки, дифференцированные по роду груза (ЕТСНГ), типу ПС (цистерны/универсальные/спец. платформы/крытые/полувагоны) и принадлежности (общий парк / собственные (арендованные)).",
+    "sourceToObtain": "Сырой HTML Раздела 3 страницы-источника (тот же url), либо сверка с R-Тариф (построен ровно на этом документе). НЕ заносить ни одно значение в движок до сверки.",
+    "candidateRowsUnverified": [
+      { "name": "Сера", "etsng": "487169", "rollingStockType": "цистерны", "wagonOwnership": "общий парк, собственные (арендованные)", "coefficientUnverified": null, "captureNote": "разные проходы дали 2,5 и 1,94 — значение НЕ установлено" },
+      { "name": "Нефть сырая", "etsng": "201", "rollingStockType": "цистерны", "coefficientUnverified": 1.407, "captureNote": "стабильнее, но всё равно UNVERIFIED — сверить по HTML" },
+      { "name": "Бензин", "etsng": "211", "rollingStockType": "цистерны", "coefficientUnverified": 1.309, "captureNote": "UNVERIFIED" },
+      { "name": "Керосин", "etsng": "212", "rollingStockType": "цистерны", "coefficientUnverified": 1.107, "captureNote": "UNVERIFIED" },
+      { "name": "Топливо дизельное", "etsng": "214", "rollingStockType": "цистерны", "coefficientUnverified": 1.412, "captureNote": "UNVERIFIED" },
+      { "name": "Мазут нефтяной и каменноугольный", "etsng": "221", "rollingStockType": "цистерны", "coefficientUnverified": 1.23, "captureNote": "UNVERIFIED" },
+      { "name": "Газы углеводородные сжиженные", "etsng": "226 (кроме 226021/226069/226106)", "coefficientUnverified": 1.35, "captureNote": "UNVERIFIED" },
+      { "name": "Огнеупоры", "etsng": "302,303", "coefficientUnverified": 1.799, "captureNote": "UNVERIFIED" },
+      { "name": "Лесоматериалы круглые, кроме крепёжных", "etsng": "081", "wagonOwnership": "собственные (арендованные)", "coefficientUnverified": 1.668, "captureNote": "UNVERIFIED" },
+      { "name": "Лесоматериалы круглые — на универсальных платформах", "etsng": "081", "rollingStockType": "универсальные платформы", "wagonOwnership": "общий парк, собственные (арендованные)", "coefficientUnverified": 1.045, "captureNote": "UNVERIFIED" },
+      { "name": "Лесоматериалы круглые — спец. платформы для лесоматериалов < 19,6 м", "etsng": "081", "rollingStockType": "спец. платформы для лесоматериалов < 19,6 м", "wagonOwnership": "общий парк, собственные (арендованные)", "coefficientUnverified": 1.045, "captureNote": "UNVERIFIED" },
+      { "name": "Пиломатериалы", "etsng": "091", "wagonOwnership": "собственные (арендованные)", "coefficientUnverified": 1.525, "captureNote": "UNVERIFIED" },
+      { "name": "Пиломатериалы — универсальные крытые вагоны", "etsng": "091", "rollingStockType": "универсальные крытые вагоны", "wagonOwnership": "общий парк, собственные (арендованные)", "coefficientUnverified": 1.355, "captureNote": "UNVERIFIED" },
+      { "name": "Древесина измельчённая", "etsng": "103", "coefficientUnverified": 1.30, "captureNote": "UNVERIFIED" },
+      { "name": "Чугун", "etsng": "311", "coefficientUnverified": 1.66, "captureNote": "UNVERIFIED" },
+      { "name": "Сталь / ферросплавы", "etsng": "312-315,322", "coefficientUnverified": 1.66, "captureNote": "UNVERIFIED" },
+      { "name": "Лом чёрных металлов", "etsng": "316", "coefficientUnverified": 1.56, "captureNote": "UNVERIFIED" },
+      { "name": "Рельсы", "etsng": "321", "coefficientUnverified": 1.30, "captureNote": "UNVERIFIED" },
+      { "name": "Трубы из чёрных металлов", "etsng": "323", "coefficientUnverified": 1.66, "captureNote": "UNVERIFIED" },
+      { "name": "Прочие виды проката", "etsng": "324", "coefficientUnverified": null, "captureNote": "комбинированная ячейка 1,45 / 1,30 — почти наверняка артефакт экстрактора; значение НЕ установлено" },
+      { "name": "Руды и концентраты железные", "etsng": "141", "coefficientUnverified": 1.66, "captureNote": "UNVERIFIED" },
+      { "name": "Цемент", "etsng": "281", "coefficientUnverified": null, "captureNote": "разные проходы дали 2,2 и 1,66 — значение НЕ установлено" }
+    ],
+    "extractorArtifactsDiscarded": "Строки «Независимо от типа … 1,94 / 1,55 / 1,118» и комбинированная «1,45 / 1,30» — результат склейки/потери заголовков экстрактором. НЕ интерпретировать как реальные значения; оставлены только как сигнал «в разделе есть ещё ячейки». Сверять по HTML."
+  },
+
+  "section4_round_timber_named_routes": {
+    "title": "Круглый лес по маршрутам Ледмозеро-Костомукша-Товарная и Махалино-Хасан",
+    "confidence": "yellow",
+    "verbatimVerified": true,
+    "verbatimNote": "Значение 70 и ЕТСНГ 081 стабильны между проходами (VERBATIM-CONFIRMED). Точная формулировка охвата ПС («вагоны / контейнеры / контрейлеры» vs только вагоны) требует сверки по сырому HTML — поэтому confidence yellow, не green.",
+    "appliesWhen": "Перевозка лесоматериалов круглых, кроме крепёжных (ЕТСНГ 081), по маршрутам Ледмозеро-Костомукша-Товарная и Махалино-Хасан.",
+    "multiplierOf": "базовые ставки тарифа (де-факто заградительный/запретительный множитель на вывоз круглого леса этими стыками)",
+    "etsng": "081",
+    "etsngNote": "лесоматериалы круглые, кроме крепёжных",
+    "routes": ["Ледмозеро-Костомукша-Товарная", "Махалино-Хасан"],
+    "rollingStockScope": "вагоны / контейнеры / контрейлеры — TO-CONFIRM по HTML",
+    "coefficient": 70
+  }
+}

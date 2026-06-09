@@ -1,0 +1,93 @@
+{
+  "_meta": {
+    "dataset": "Hunt findings 2026-06-09: (1) registered ФАС приказ for 2026 container +5% indexation; (2) Таблица N10 container типоразмер→scheme map; (3) reefer N30/N31 cell verification. Verbatim-or-flag. NO fabrication.",
+    "fetchedAt": "2026-06-09",
+    "hunter": "subagent (Opus 4.8 1m)",
+    "groundTruthUntouched": "This file is findings-only. It does NOT modify tariff oracles (1067770/187344/82816/101035.52), goldenBatch0609, distances (2444/699/3108/1432), or any rate seed. Confidence model green/yellow/red preserved."
+  },
+
+  "hunt1_container_plus5_order": {
+    "question": "What is the REGISTERED ФАС приказ number for the 2026 container +5% indexation (the value that currently keeps container YELLOW)?",
+    "status": "PARTIAL — registered order IDENTIFIED by title + Минюст registration metadata; operative +5% clause text NOT byte-verbatim accessible (paywalled).",
+    "confidence": "yellow",
+    "finding": {
+      "registeredOrder": "приказ ФАС России от 05.11.2025 N 886/25",
+      "fullTitle": "О внесении изменений в приказ ФАС России от 10 декабря 2015 г. N 1226/15 «Об индексации ставок тарифов, сборов и платы за перевозку грузов и услуги по использованию инфраструктуры при перевозках грузов, выполняемые (оказываемые) ОАО „Российские железные дороги“»",
+      "minustRegistration": "Зарегистрировано в Минюсте России 19.11.2025 N 84208",
+      "minustRegSource": "https://www.consultant.ru/document/cons_doc_LAW_519208/ (КонсультантПлюс landing page — title + Минюст reg.№ rendered free; body behind paywall)",
+      "amends": "приказ ФАС 1226/15 от 10.12.2015 (индексация ставок тарифов РЖД)",
+      "effectiveDate_main10pct": "01.12.2025 (основная индексация +10%)",
+      "container5pct_year": 2026,
+      "container5pct_exclusion": "термические контейнеры исключены из +5%"
+    },
+    "verbatimConfirmed": false,
+    "verbatimGap": "The OPERATIVE TEXT (точная формулировка пункта вводящего коэффициент 1,05 на контейнерные отправки 2026) was NOT obtained byte-verbatim. КонсультантПлюс (cons_doc_LAW_519208) shows only title+метаданные+Минюст-рег; body is paywalled ('available only during scheduled free-access windows'). ppt.ru consolidated 1226/15 (n-1226-15-45415) does NOT yet reflect the 886/25 amendment — its tables stop at 2025 and contain NO 2026 +5% container clause and NO mention of 886/25. publication.pravo.gov.ru fetch failed (certificate verification error).",
+    "whatIsVerbatimVsParaphrase": {
+      "byteVerbatim": ["order number 886/25", "order date 05.11.2025", "title (amends 1226/15)", "Минюст reg 19.11.2025 N 84208"],
+      "officialPressParaphraseOnly": ["the +5% (1.05) magnitude", "the 2026 year", "the термические-контейнеры exclusion"]
+    },
+    "importantCaveat": "Multiple search summaries CONFLATE приказ 886/25 (registered 05.11.2025, Минюст 84208) with the EARLIER ДРАФТ order (проект на regulation.gov.ru, опубликован 17.10.2025, антикоррупц.экспертиза до 24.10.2025) whose пояснительная записка first announced the +5%. These are different documents. 886/25 is the registered indexation order amending 1226/15 — it is the most likely carrier of the registered +5% clause, but the body text was NOT seen, so attribution of the +5% clause SPECIFICALLY to 886/25 is INFERRED from the order's title/scope + press, NOT verbatim-confirmed.",
+    "recommendation": "Container stays YELLOW. Promote to GREEN only after a human reads the operative пункт of 886/25 (or its appendix) byte-verbatim via КонсультантПлюс/ГАРАНТ paid access or publication.pravo.gov.ru by Минюст N 84208, confirming the literal 1,05 coefficient on контейнерные отправки for 2026 and the термические exclusion. The 84208 Минюст number + 886/25 are the precise lookup keys to hand a human.",
+    "sourcesTried": [
+      "https://www.consultant.ru/document/cons_doc_LAW_519208/ (886/25 landing — title+Минюст reg free; BODY PAYWALLED)",
+      "https://www.consultant.ru/document/cons_doc_LAW_519208/92d969e26a4326c5d02fa79b8f9cf4994ee5633b/ (body paywalled, scheduled free windows only)",
+      "https://normativ.kontur.ru/document?moduleId=1&documentId=519208 (HTTP 404)",
+      "https://pravo.ppt.ru/prikaz/fas/n-1226-15-45415 (consolidated 1226/15 — does NOT reflect 886/25, tables stop at 2025, no 2026 +5% clause)",
+      "http://publication.pravo.gov.ru/search (certificate verification error — could not fetch)",
+      "https://www.interfax.ru/russia/1053552 (official-press: +5% draft, Oct 2025)",
+      "https://www.rzd-partner.ru/.../dopindeksatsiyu-tarifov-na-konteynernye-perevozki-na-5-... (draft, no order N)",
+      "https://www.dp.ru/a/2026/01/05/fas-prinjala-dokument--regulirujushhij (Jan 2026, +5% mentioned, no order N)",
+      "https://growex-group.ru/.../fas-predlagaet-indeksirovat-tarify-... (no order N, no project ID)",
+      "https://www.consultant.ru/document/cons_doc_LAW_504677/... (no FAS order, only Mineconom forecast)"
+    ]
+  },
+
+  "hunt2_table_n10_container_scheme_map": {
+    "question": "Find Табл.N10 container типоразмер→scheme map (to promote container reduction).",
+    "status": "PARTIAL — table located & loaded-container core confirmed across TWO independent fetches; empty/own-use scheme cells + coefficients are LLM-extraction (NOT byte-verbatim) and diverged between passes.",
+    "confidence": "green (loaded core 85-94) / yellow (empty+coefficient cells)",
+    "tableLocation": "ТР-1 2026 (приказ ФАС 894/25), Приложение N1, Таблица N 10",
+    "tableTitle": "Тарифные схемы, применяемые при расчете тарифа на перевозку по инфраструктуре РЖД контейнерной отправкой грузов в контейнерах общего парка и собственных (арендованных) контейнерах (подпункт 23.2 пункта 23)",
+    "sourceUrl": "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-1_1/tablitsa-n-10/",
+    "loadedContainerMap_CONFIRMED": {
+      "_note": "Container size → (общий парк loaded scheme / собств.-аренд. loaded scheme). CONFIRMED: both fetches agree, and these match tr1-i-belts-container.json belts[] schemes 85-94 exactly. This is the keying that lets container reduction be promoted: size×ownership→scheme.",
+      "3т (среднетоннажный 3 тонны)": { "obshchiyPark": 85, "sobstvArend": 90 },
+      "5т (среднетоннажный 5 тонн)": { "obshchiyPark": 86, "sobstvArend": 91 },
+      "10т (10 тонн)": { "obshchiyPark": 87, "sobstvArend": 92 },
+      "20ft (крупнотоннажный, св.10 до 30 фут вкл.)": { "obshchiyPark": 88, "sobstvArend": 93 },
+      "40ft (крупнотоннажный, св.30 до 40 фут вкл.)": { "obshchiyPark": 89, "sobstvArend": 94 }
+    },
+    "emptyAndCoefficientCells_NOT_VERBATIM": {
+      "_warning": "These cells DIVERGED between the two WebFetch passes (LLM rendering of an HTML table) — treat as UNVERIFIED leads, NOT seed-grade. DO NOT promote into a rate path without human byte-verbatim sweep of Табл.N10 + Табл.N24 (груженый) / a separate порожний table.",
+      "emptyContainerSchemes_pass1": "3т→? 5т→? 10т→97 20ft→98 40ft→99 (one pass), порожний 90-94 (other pass) — INCONSISTENT, NOT TRUSTED",
+      "loadedCoefficients_pass1": "10т: 1.6 (10-24t), 2.0 (>24t); 20ft: 1.28 (24-28t) / 1.5 (>28t); 40ft: 1.2",
+      "loadedCoefficients_pass2": "10т: 1.6 (10-24t), 2.0 (>24t); 20ft: 1.5 (all); 40ft: 1.2 (all)",
+      "coefficientDivergence": "20ft loaded coefficient differs between passes (1.28/1.5 vs 1.5-only) → NOT verbatim. Must be read by a human from Табл.N10 source before use."
+    },
+    "promotionGuidance": "Container REDUCTION promotion needs the (containerSize→scheme) keying — that loaded core IS confirmed (above) and already matches the seed. To finish: a human must byte-verbatim transcribe Табл.N10's loaded-mass coefficient column + the empty(порожний)-container scheme column from sudact (or garant/cntd mirror), since those cells are LLM-divergent here. The 5 size→scheme rows for LOADED общий-парк/собств. are safe to rely on.",
+    "verbatimConfirmed": false,
+    "sourcesTried": [
+      "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-1_1/tablitsa-n-10/ (fetched x2; loaded 85-94 core stable, empty/coeff cells divergent)",
+      "WebSearch confirmed Табл.N10 = container scheme map (dcvi.tks.ru/document/828078 title, sudact prilozhenie-n-1/ii index)"
+    ]
+  },
+
+  "hunt3_reefer_n30_n31_verify": {
+    "question": "Verify reefer N30/N31 (tr1-i-belts-reefer.json) cell sample against a primary source.",
+    "status": "DONE — VERIFIED byte-for-byte against sudact primary source. No discrepancy.",
+    "confidence": "green (sampled cells); file overall remains amber per its own _meta caveat (not all 127×2 cells human-verified)",
+    "sourceUrl": "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-2/tarify-na-perevozki-gruzov-po_4/",
+    "verbatimConfirmed": true,
+    "sampledCells": [
+      { "belt": "0-5 км",         "N30_source": 105796,  "N30_onDisk": 105796,  "N31_source": 20687,  "N31_onDisk": 20687,  "match": true },
+      { "belt": "91-100 км",      "N30_source": 129274,  "N30_onDisk": 129274,  "N31_source": 27993,  "N31_onDisk": 27993,  "match": true },
+      { "belt": "961-1000 км",    "N30_source": 327001,  "N30_onDisk": 327001,  "N31_source": 83744,  "N31_onDisk": 83744,  "match": true },
+      { "belt": "1451-1500 км",   "N30_source": 431956,  "N30_onDisk": 431956,  "N31_source": 111905, "N31_onDisk": 111905, "match": true },
+      { "belt": "11701-11900 км", "N30_source": 2577987, "N30_onDisk": 2577987, "N31_source": 676168, "N31_onDisk": 676168, "match": true }
+    ],
+    "conclusion": "5/5 sampled cells (incl. first belt, mid belts, boundary 1451-1500, and final belt 11701-11900) match tr1-i-belts-reefer.json EXACTLY for both N30 and N31. The reefer seed is corroborated against the ТР-1 2026 primary source. The file's amber confidence is appropriate (boundary+spot cells verified; full 127-row human sweep still outstanding per its existing caveat).",
+    "sourcesTried": [
+      "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-2/tarify-na-perevozki-gruzov-po_4/ (N30/N31 isothermal table — rendered cleanly, cells confirmed)"
+    ]
+  }
+}
