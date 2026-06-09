@@ -1,11 +1,13 @@
 // Pure rate-expression resolution (RFQ upgrade, Goal 4). NO DB import so it stays
 // unit-testable without env/Postgres. A request/ПСЦ rate may be a flat ₽ amount, an
-// indicative "+X% к тарифу 10-01", or tariff+markup. flat_rub resolves to itself;
-// the tariff-based kinds need a РЖД base (the auto-substituted, indexed 10-01 tariff)
+// indicative "+X% к тарифу", or tariff+markup. flat_rub resolves to itself;
+// the tariff-based kinds need a РЖД base (the auto-substituted, indexed tariff)
 // to resolve into an absolute ₽/wagon snapshot.
+// С 2026 действующий прейскурант — ТР-1 (10-01 отменён), поэтому дефолтная ссылка — "ТР-1";
+// если клиент в запросе назвал конкретный тариф, он приходит в tariffRef и печатается как есть.
 
 const PERCENT_DIVISOR = 100;
-const DEFAULT_TARIFF_REF = "10-01";
+const DEFAULT_TARIFF_REF = "ТР-1";
 const RUB_LOCALE = "ru-RU";
 
 export type RateKind = "flat_rub" | "tariff_indicative" | "tariff_plus_markup";
@@ -14,6 +16,8 @@ export interface RateExpression {
   kind: RateKind;
   flatAmount?: number | null;
   markupPct?: number | null;
+  /** Ссылка на тариф из запроса клиента (напр. "10-01"); без неё — действующий ТР-1. */
+  tariffRef?: string | null;
 }
 
 export interface ResolvedAmount {
@@ -62,7 +66,8 @@ function formatSignedPct(pct: number): string {
 }
 
 // Human-readable label for UI/КП. flat ⇒ "30 000 ₽/ваг"; indicative/markup ⇒
-// "+10% к тарифу 10-01" (or "по тарифу 10-01" when markup is 0/absent).
+// "+10% к тарифу ТР-1" (or "по тарифу ТР-1" when markup is 0/absent). Если в выражении
+// есть tariffRef из запроса клиента — печатаем его вместо дефолтного ТР-1.
 export function formatRateExpression(expr: RateExpression): string {
   if (expr.kind === "flat_rub") {
     if (isFinitePositive(expr.flatAmount)) {
@@ -71,9 +76,10 @@ export function formatRateExpression(expr: RateExpression): string {
     return "—";
   }
 
+  const ref = expr.tariffRef?.trim() || DEFAULT_TARIFF_REF;
   const pct = expr.markupPct ?? 0;
   if (pct === 0) {
-    return `по тарифу ${DEFAULT_TARIFF_REF}`;
+    return `по тарифу ${ref}`;
   }
-  return `${formatSignedPct(pct)}% к тарифу ${DEFAULT_TARIFF_REF}`;
+  return `${formatSignedPct(pct)}% к тарифу ${ref}`;
 }

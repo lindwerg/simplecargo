@@ -127,6 +127,9 @@ export function RequestWorksheet({
   const purchaseN = num(pricePurchase);
   const stoneMargin = saleN !== null && purchaseN !== null ? saleN - purchaseN : null;
 
+  // Целевая ставка клиента из запроса (suggestion-only, D16/H1) — подсказка, не значение.
+  const clientSuggested = num(initial.rateClientSuggested ?? "");
+
   const showTariff = wagons && Boolean(origin.esr) && Boolean(dest.esr);
 
   async function save() {
@@ -254,6 +257,8 @@ export function RequestWorksheet({
               unit="₽ / ваг"
               value={rateClient}
               onChange={setRateClient}
+              suggested={clientSuggested}
+              suggestedLabel="клиент просил"
               disabled={pending}
             />
             <RateInput

@@ -41,6 +41,21 @@ const optionalText = z
   .optional()
   .transform((v) => (v && v.length > 0 ? v : undefined));
 
+// «Очищаемый» текст для PATCH: различает «поле не передано» (undefined → не трогаем)
+// и «поле очищено» (null или '' → пишем NULL в БД). Нужен, чтобы можно было стереть
+// ИНН/заметку — optionalText молча превращает '' в undefined, и updatePartner
+// пропускает поле.
+const clearableText = z
+  .string()
+  .trim()
+  .nullable()
+  .optional()
+  .transform((v) => {
+    if (v === undefined) return undefined;
+    if (v === null || v.length === 0) return null;
+    return v;
+  });
+
 // PURE: canonical form for storage + reverse lookup ("e-mail → company").
 export function normalizeEmail(raw: string): string {
   return raw.trim().toLowerCase();
@@ -65,8 +80,8 @@ export const createPartnerSchema = z.object({
 export const updatePartnerSchema = z.object({
   name: z.string().trim().min(1, "Укажите название компании").optional(),
   roles: z.array(z.enum(PARTNER_ROLES)).min(1, "Выберите хотя бы одну роль").optional(),
-  inn: optionalText,
-  notes: optionalText,
+  inn: clearableText,
+  notes: clearableText,
 });
 
 export const contactSchema = z

@@ -6,6 +6,7 @@ import { updatePartnerSchema } from "@/lib/partners/schema";
 import {
   deletePartner,
   getPartnerDossier,
+  isForeignKeyViolation,
   PartnerError,
   updatePartner,
 } from "@/lib/partners/repository";
@@ -52,7 +53,8 @@ export async function PATCH(request: Request, ctx: Ctx): Promise<Response> {
   }
 }
 
-// DELETE — remove a company (cascades contacts + document rows).
+// DELETE — remove a company (cascades contacts + document rows). A company with
+// history (deals/directions/quotes/invoices) is refused with a 409 by deletePartner.
 export async function DELETE(request: Request, ctx: Ctx): Promise<Response> {
   try {
     await requireWriter(request.headers);
@@ -63,6 +65,13 @@ export async function DELETE(request: Request, ctx: Ctx): Promise<Response> {
   } catch (error: unknown) {
     if (error instanceof AuthError) return apiFail(error.message, error.status);
     if (error instanceof PartnerError) return apiFail(error.message, error.status);
+    // Подстраховка: FK, не учтённый предварительным подсчётом, — тоже дружелюбный 409.
+    if (isForeignKeyViolation(error)) {
+      return apiFail(
+        "У партнёра есть связанные записи — удаление запрещено, связи будут потеряны",
+        409,
+      );
+    }
     console.error("[partners] delete failed:", error instanceof Error ? error.message : error);
     return apiFail("Не удалось удалить партнёра", 500);
   }

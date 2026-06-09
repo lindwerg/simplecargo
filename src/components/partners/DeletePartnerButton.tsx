@@ -10,11 +10,19 @@ export function DeletePartnerButton({ id, name }: { id: string; name: string }) 
   const [busy, setBusy] = useState(false);
 
   async function onDelete() {
-    if (!window.confirm(`Удалить «${name}» вместе с контактами и документами?`)) return;
+    if (
+      !window.confirm(
+        `Удалить «${name}»? Контакты и документы компании будут удалены безвозвратно. ` +
+          "Если у партнёра есть сделки, направления или счета — удаление будет отклонено.",
+      )
+    )
+      return;
     setBusy(true);
     try {
       const resp = await fetch(`/api/partners/${id}`, { method: "DELETE" });
-      const json = await resp.json();
+      const json = await resp.json().catch(() => null);
+      // Показываем причину из ответа API (например, «У партнёра 3 сделки … — удаление
+      // запрещено»), а не генерик-сообщение.
       if (!resp.ok || !json?.success) throw new Error(json?.error ?? "Не удалось удалить");
       router.push("/partners");
       router.refresh();
