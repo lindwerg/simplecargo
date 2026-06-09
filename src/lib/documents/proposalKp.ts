@@ -52,6 +52,8 @@ export interface KpLineInput {
   targetRateKind?: string | null;
   targetRateMarkupPct?: string | number | null;
   targetTariffClass?: number | null;
+  /** Ссылка на тариф из AI-извлечения (напр. "10-01"); без неё КП печатает действующий ТР-1. */
+  targetTariffRef?: string | null;
 }
 
 export interface BuildProposalKpInput {
@@ -95,6 +97,7 @@ function rateText(line: KpLineInput): string {
     const expr: RateExpression = {
       kind: line.targetRateKind,
       markupPct: toNumber(line.targetRateMarkupPct),
+      tariffRef: line.targetTariffRef ?? null,
     };
     return formatRateExpression(expr);
   }

@@ -92,12 +92,12 @@ describe("buildProposalKp — rate text variants", () => {
     expect(model.rows[0].rateText).toMatch(/^30.000 ₽\/ваг$/);
   });
 
-  it("uses formatRateExpression for tariff-plus-markup kinds", () => {
+  it("uses formatRateExpression for tariff-plus-markup kinds (дефолт — ТР-1)", () => {
     const model = buildProposalKp({
       lines: [line({ targetRatePerWagon: null, targetRateKind: "tariff_plus_markup", targetRateMarkupPct: 10 })],
       todayIso: FIXED_ISO,
     });
-    expect(model.rows[0].rateText).toBe("+10% к тарифу 10-01");
+    expect(model.rows[0].rateText).toBe("+10% к тарифу ТР-1");
   });
 
   it("renders по тарифу for a zero-markup tariff kind", () => {
@@ -105,7 +105,22 @@ describe("buildProposalKp — rate text variants", () => {
       lines: [line({ targetRatePerWagon: null, targetRateKind: "tariff_indicative", targetRateMarkupPct: 0 })],
       todayIso: FIXED_ISO,
     });
-    expect(model.rows[0].rateText).toBe("по тарифу 10-01");
+    expect(model.rows[0].rateText).toBe("по тарифу ТР-1");
+  });
+
+  it("пробрасывает targetTariffRef из AI-извлечения в текст ставки", () => {
+    const model = buildProposalKp({
+      lines: [
+        line({
+          targetRatePerWagon: null,
+          targetRateKind: "tariff_indicative",
+          targetRateMarkupPct: 10,
+          targetTariffRef: "10-01",
+        }),
+      ],
+      todayIso: FIXED_ISO,
+    });
+    expect(model.rows[0].rateText).toBe("+10% к тарифу 10-01");
   });
 
   it("falls back to targetRateRaw then по запросу", () => {

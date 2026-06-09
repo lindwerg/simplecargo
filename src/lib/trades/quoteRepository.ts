@@ -16,7 +16,7 @@ import { TradeError, type Tx } from "./repository";
 // A «Запрос» edits ONE primary transport direction and/or ONE primary stone line for a
 // deal from a single worksheet (no per-component CRUD). Lifecycle actions move the deal
 // across the funnel: просчёт → цена дана (quoted) → прошли (won) → Заявка (confirmed) →
-// ГУ/заадресация (active) → Архив (cancelled).
+// ГУ/заадресация (active) → Завершена (completed) | Архив (cancelled).
 
 // ── Types ────────────────────────────────────────────────────────────────────
 export interface CounterpartyRef {
@@ -47,7 +47,7 @@ export interface UpsertDealQuoteInput {
   fraction?: string | null | undefined;
 }
 
-export type LifecycleAction = "quoted" | "won" | "application" | "gu" | "archive";
+export type LifecycleAction = "quoted" | "won" | "application" | "gu" | "complete" | "archive";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 const includesWagons = (t: UpsertDealQuoteInput["cargoType"]): boolean =>
@@ -258,6 +258,12 @@ export async function transitionDealLifecycle(
         patch.guNumber = payload.guNumber.trim();
         patch.status = "active";
         break;
+      case "complete":
+        if (!canTransition(current, "completed")) {
+          throw new TradeError(409, "Недопустимый переход");
+        }
+        patch.status = "completed";
+        break;
       case "archive":
         if (!canTransition(current, "cancelled")) {
           throw new TradeError(409, "Недопустимый переход");
@@ -326,7 +332,7 @@ export const upsertDealQuoteSchema = z.object({
 });
 
 export const dealLifecycleSchema = z.object({
-  action: z.enum(["quoted", "won", "application", "gu", "archive"]),
+  action: z.enum(["quoted", "won", "application", "gu", "complete", "archive"]),
   lostReason: z.string().trim().min(1).optional(),
   guNumber: z.string().trim().min(1).optional(),
 });
