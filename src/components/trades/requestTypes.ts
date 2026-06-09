@@ -21,6 +21,8 @@ export interface RequestWorksheetProps {
     origin: { raw: string; esr: string | null } | null;
     dest: { raw: string; esr: string | null } | null;
     rateClient: string | null;
+    /** Целевая ставка клиента из запроса (suggestion-only) — подсказка у «Ставка клиенту». */
+    rateClientSuggested: string | null;
     rateOwner: string | null;
     wagonCount: number | null;
     priceSale: string | null;
