@@ -13,7 +13,10 @@
 //   Схема25(1)(порожний) = (emptyBase(оси, 60%·L) ± K4[group, 60%·L]) × 1,06(порожний) × 1,01,
 //                          затем × число осей. Порожний пробег = 60% тарифного расстояния.
 //   СхемаВ(scheme) = Вbase(L) × 1,01   // вагонная составляющая, distance-only, класс-независимая.
-//   ИТОГО без НДС = round( Схема8 + Схема25(1) + СхемаВ − 754 ).   // скидка 754 (п.16.x)
+//   ИТОГО без НДС = round( Схема8 + Схема25(1) + СхемаВ − 754 ).
+//     − 754 = R-Тариф «Скидка с общего тарифа на универсальные вагоны» (НЕ Табл.N12/N13/п.28.2;
+//       согласует п.16.5.1 leg-sum с комбинированным И1). PROVEN FLAT vs INV-1/INV-6_20 (753,86/
+//       754,32 → флэт 754 при противоположном знаке K4). См. docs/planning/INVENTORY_754_RESOLUTION.md.
 //
 // K4 — отправочный п.16.7 знаковый max-of-two на СЫРОЙ базе (resolveK4 variant): candCur =
 // base(L)×(k_тек−1), candPrev = base(нижняя_граница)×(k_пред−1); берётся больший по модулю.
@@ -34,7 +37,17 @@ import type { EmptyRunBaseBelt, InventoryTariffData, V4Belt } from "./inventoryD
 /** Доверие к инвентарной строке: red = схема/коэффициент не закреплены, число не выдаём. */
 export type InventoryConfidence = "yellow" | "red";
 
-/** Скидка п.16.x для инвентарного парка (₽ за вагон, после суммы схем). */
+/**
+ * −754 ₽/вагон: R-Тариф строка «Скидка с общего тарифа на универсальные вагоны».
+ * НЕ нумерованное уменьшение ТР-1 (НЕ Табл.N12/N13/п.28.2 — те только контейнер/контрейлер
+ * FCL; для щебня в полувагоне неприменимы). Согласует п.16.5.1 разложение на три ноги
+ * (N8 + порожний 25(1)@60% + группа В) с опубликованным комбинированным тарифом схемы И1
+ * общего парка. PROVEN FLAT и сверено до копейки против двух эталонов R-Тариф (INV-1 110170,
+ * INV-6_20 105804): требуемая скидка 753,86 и 754,32 — обе скобки целого 754 ДО п.15.5 округления,
+ * при ПРОТИВОПОЛОЖНОМ знаке K4 → значит флэт, не формула. confidence: corroborated-by-oracle,
+ * НЕ sourced-by-rule (полное обоснование: docs/planning/INVENTORY_754_RESOLUTION.md).
+ * НЕ выводить формулой (флэт — формула была бы фабрикацией) и НЕ удалять (откроет ошибку 754 ₽/ваг).
+ */
 const INVENTORY_DISCOUNT = 754;
 /** Коэффициент порожнего пробега (×1,06). */
 const C_POROZH = 1.06;
@@ -198,10 +211,16 @@ export function computeInventory(
   const k1 = computeK1N8(data.classCoeff, distKm);
 
   // ── Схема8 (груженый): N8 base ± K4 (СЫРАЯ база) × K1 × 0,77 × 0,909 × 1,01 ───────
+  // п.15.4 PER-STEP kopeck rounding (round01 after each ×coefficient) — mirror the certified
+  // computeTariffN8 chain instead of one float product rounded once. Verified no-op on the
+  // INV-1/INV-6_20 R-Тариф oracles (single-float == per-step → 110170/105804 to the ruble).
   const n8At = (L: number): number => n8base(data.n8Grid, capacityT, L);
   const loadedK4 = k4Correction(data.k4Belts, group, distKm, n8At);
-  const loadedBase = n8base(data.n8Grid, capacityT, distKm) + loadedK4.correction;
-  const loaded = loadedBase * k1 * C_K3_NERUD * C_NERUD_PV_GONDOLA * C_DOP_INDEX;
+  const loadedBase = round01(n8base(data.n8Grid, capacityT, distKm) + loadedK4.correction);
+  let loaded = round01(loadedBase * k1);
+  loaded = round01(loaded * C_K3_NERUD);
+  loaded = round01(loaded * C_NERUD_PV_GONDOLA);
+  loaded = round01(loaded * C_DOP_INDEX);
 
   // ── Схема25(1) (порожний): emptyBase(оси, 60%·L) ± K4 × 1,06 × 1,01 × оси ─────────
   const emptyBelts = data.emptyBeltsByScheme[map.emptyScheme];
@@ -212,18 +231,19 @@ export function computeInventory(
   const emptyDistKm = Math.round(distKm * POROZH_DISTANCE_FRACTION);
   const emptyAtFn = (L: number): number => emptyAt(emptyBelts, map.emptyScheme, axles, L);
   const emptyK4 = k4Correction(data.k4Belts, group, emptyDistKm, emptyAtFn);
-  const emptyPerAxle =
-    (emptyAt(emptyBelts, map.emptyScheme, axles, emptyDistKm) + emptyK4.correction) *
-    C_POROZH *
-    C_DOP_INDEX;
-  const emptyLeg = emptyPerAxle * axles;
+  let emptyPerAxle = round01(
+    emptyAt(emptyBelts, map.emptyScheme, axles, emptyDistKm) + emptyK4.correction,
+  );
+  emptyPerAxle = round01(emptyPerAxle * C_POROZH);
+  emptyPerAxle = round01(emptyPerAxle * C_DOP_INDEX);
+  const emptyLeg = round01(emptyPerAxle * axles);
 
   // ── СхемаВ (вагонная составляющая): Вbase(L) × 1,01 ───────────────────────────────
   const vBelts = data.vBeltsByScheme[map.vScheme];
   if (!vBelts || vBelts.length === 0) {
     return redResult(`Вагонная составляющая ${map.vScheme} не загружена.`);
   }
-  const vLeg = vAt(vBelts, distKm, map.vScheme) * C_DOP_INDEX;
+  const vLeg = round01(vAt(vBelts, distKm, map.vScheme) * C_DOP_INDEX);
 
   // ── ИТОГО без НДС = round( Схема8 + Схема25(1) + СхемаВ − 754 ) ───────────────────
   const inventoryNoVat = Math.round(loaded + emptyLeg + vLeg - INVENTORY_DISCOUNT);

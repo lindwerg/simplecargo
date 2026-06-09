@@ -650,3 +650,180 @@ export function snapEmptyRun(
 
   return { rateRub: belt.rateRub, found: true };
 }
+
+// ── Табл.N3 directional coefficient (направленческий множитель п.16) ─────────────
+// DISTINCT from Табл.N4 commodity K3 (§I п.10). Табл.N3 = WHERE the haul goes
+// (Калининград / погранстанции / два лесных маршрута), NOT what the cargo is. It is an
+// ADDITIONAL п.16.9 multiplier on the tariff plate — but ONLY for hauls that fall under one
+// of the enumerated directions. For a typical inter-RF haul between ordinary stations
+// (incl. all SimpleCargo golden cases 699/2444/3108 + batch-0609) Табл.N3 does NOT apply →
+// effective multiplier = 1.0 (documented no-op). The seed marks the border-station section
+// (section3) confidence:red/doNotUseInEngine — we therefore NEVER apply a section-3 value.
+
+/** A single Табл.N3 directional row, normalised by the seed loader. */
+export interface DirectionalK3Row {
+  /** Stable id of the seed section this row came from (for audit/diagnostics). */
+  readonly section: string;
+  /** Dimensionless multiplier on the tariff plate (< 1 = скидка, > 1 = наценка). */
+  readonly coefficient: number;
+  /** Distance band lower edge (km), if the row is distance-keyed (section 1). */
+  readonly distFromKm?: number | null;
+  /** Distance band upper edge (km, null = unbounded), if distance-keyed. */
+  readonly distToKm?: number | null;
+  /** Tariff class the row applies to ("any" = all classes). */
+  readonly tariffClass?: FreightClass | "any";
+  /** Source confidence as published in the seed (green/yellow/red). */
+  readonly confidence: string;
+}
+
+/** Context needed to decide whether ANY Табл.N3 direction applies to the haul. */
+export interface DirectionalContext {
+  /**
+   * Direction kind flagged by the route resolver, when known. The engine has no route→
+   * direction classifier yet, so this is `undefined` for every current contour → no-op (1.0).
+   * Wired now so a future route classifier only has to populate this field, not the resolver.
+   */
+  readonly direction?: "kaliningrad-network" | "within-kaliningrad" | "border-transfer" | "named-timber-route";
+  readonly distanceKm: number;
+  readonly tariffClass: FreightClass;
+}
+
+export interface DirectionalK3Resolution {
+  /** The multiplier to fold into the tariff plate (1.0 when no direction applies). */
+  readonly coefficient: number;
+  /** True when a real Табл.N3 row was matched (so the caller may flag it). */
+  readonly applies: boolean;
+  readonly confidence: string;
+  readonly warning?: string;
+}
+
+/**
+ * Resolve the Табл.N3 directional coefficient for a haul. Returns 1.0 (applies:false) for
+ * every ordinary inter-RF haul — which is the correct, sourced behaviour: Табл.N3 only fires
+ * on the enumerated directions and the engine cannot yet detect them (ctx.direction undefined).
+ *
+ * When a direction IS flagged: section 3 (border-transfer) is REFUSED (the seed marks every
+ * number unverified/red → we never apply a fabricated value, only flag it red); the other
+ * sections apply their verbatim coefficient. NEVER fabricates: an unmatched/red direction
+ * keeps the multiplier at 1.0 and surfaces a warning rather than inventing a factor.
+ */
+export function resolveDirectionalK3(
+  rows: readonly DirectionalK3Row[],
+  ctx: DirectionalContext,
+): DirectionalK3Resolution {
+  // No route→direction classifier wired yet → ordinary haul → documented no-op.
+  if (!ctx.direction) {
+    return { coefficient: 1.0, applies: false, confidence: "green" };
+  }
+  // Border-transfer (section 3) numbers are seed-flagged unverified (red) → never apply.
+  if (ctx.direction === "border-transfer") {
+    return {
+      coefficient: 1.0,
+      applies: false,
+      confidence: "red",
+      warning:
+        "Табл.N3 погранстанции: коэффициенты раздела 3 не сверены (confidence red) — " +
+        "направленческий множитель НЕ применён, занесите/проверьте оператором.",
+    };
+  }
+  const sectionFor: Record<string, string> = {
+    "kaliningrad-network": "section1_kaliningrad_to_network",
+    "within-kaliningrad": "section2_within_kaliningrad",
+    "named-timber-route": "section4_round_timber_named_routes",
+  };
+  const wantSection = sectionFor[ctx.direction];
+  const candidates = rows.filter((r) => r.section === wantSection);
+  const match = candidates.find((r) => {
+    const classOk =
+      r.tariffClass == null || r.tariffClass === "any" || r.tariffClass === ctx.tariffClass;
+    const distOk =
+      r.distFromKm == null ||
+      (ctx.distanceKm >= (r.distFromKm ?? 0) &&
+        (r.distToKm == null || ctx.distanceKm <= r.distToKm));
+    return classOk && distOk;
+  });
+  if (!match || match.confidence === "red") {
+    return {
+      coefficient: 1.0,
+      applies: false,
+      confidence: match?.confidence ?? "red",
+      warning:
+        `Табл.N3 (${ctx.direction}): подходящая строка не найдена/не сверена — ` +
+        "множитель не применён (1.0), занесите/проверьте оператором.",
+    };
+  }
+  return { coefficient: match.coefficient, applies: true, confidence: match.confidence };
+}
+
+// ── Табл.N12 / N13 уменьшение тарифа (п.16.10) — контейнеры / контрейлеры ─────────
+// «Размер уменьшения тарифа … вычитается» (п.16.10) — an ADDITIVE ruble subtraction (NOT a
+// multiplier) applied to the FCL container (Табл.N12) / контрейлер (Табл.N13) plate BEFORE the
+// п.15.5 whole-ruble round. Inert for щебень/нерудные повагонно (no reduction applies), but
+// mandatory before any FCL container КП. The Табл.N10 size→row mapping is NOT on disk (seed
+// _sizeReference), so we ONLY subtract on an EXACT size-key match; an ambiguous size keeps the
+// reduction UN-applied and flags it (the MONEY CONTRACT forbids guessing a row).
+
+/** A single Табл.N12 reduction row (₽ per container), normalised by the seed loader. */
+export interface ContainerReductionRow {
+  /** Size key as published in Табл.N12 ("3" | "5" | "10" | "свыше 10 по 20 включительно" | "свыше 20"). */
+  readonly sizeKey: string;
+  /** Reduction for own (собственный/арендованный) loaded container, ₽. */
+  readonly ownLoadedRub: number | null;
+  /** Reduction for own empty container, ₽. */
+  readonly ownEmptyRub: number | null;
+  /** Reduction for common-park (общий парк) loaded container, ₽. */
+  readonly commonLoadedRub: number | null;
+}
+
+export interface ContainerReductionResolution {
+  /** Ruble amount to SUBTRACT from the plate before the п.15.5 round (0 when not applied). */
+  readonly reductionRub: number;
+  /** True only when an exact, sourced size-row was matched and subtracted. */
+  readonly applied: boolean;
+  readonly warning?: string;
+}
+
+/**
+ * Resolve the Табл.N12 FCL container reduction (₽) for a контейнерная отправка. Returns
+ * applied:false / 0 ₽ when the container size cannot be mapped to a verbatim Табл.N12 row
+ * (Табл.N10 size→row mapping not on disk) — NEVER fabricates a row. The caller then keeps the
+ * result YELLOW and flags that the п.16.10 reduction was not subtracted, rather than guessing.
+ *
+ * containerSize uses the engine's canonical codes ("3т"|"5т"|"10т"|"20ft"|"40ft"); only the
+ * unambiguous ones map (3т→"3", 5т→"5"). The ft sizes need Табл.N10 to disambiguate
+ * "свыше 10 по 20"/"свыше 20", so they stay un-applied + flagged until that table is acquired.
+ */
+export function resolveContainerReduction(
+  rows: readonly ContainerReductionRow[],
+  containerSize: string | null | undefined,
+  ownership: Ownership,
+): ContainerReductionResolution {
+  if (!containerSize || rows.length === 0) {
+    return { reductionRub: 0, applied: false };
+  }
+  // Only the unambiguous tonne-sizes map verbatim to a Табл.N12 size key.
+  const sizeKeyMap: Record<string, string> = { "3т": "3", "5т": "5", "10т": "10" };
+  const sizeKey = sizeKeyMap[containerSize];
+  if (!sizeKey) {
+    return {
+      reductionRub: 0,
+      applied: false,
+      warning:
+        `Уменьшение Табл.N12 (п.16.10) для типоразмера «${containerSize}» не применено: ` +
+        "маппинг ISO-размера в строку Табл.N12 требует Табл.N10 (не на диске) — " +
+        "не фабрикуем строку, проверьте оператором.",
+    };
+  }
+  const row = rows.find((r) => r.sizeKey === sizeKey);
+  const amount = ownership === "own" ? row?.ownLoadedRub : row?.commonLoadedRub;
+  if (!row || amount == null) {
+    return {
+      reductionRub: 0,
+      applied: false,
+      warning:
+        `Уменьшение Табл.N12 (п.16.10) для «${containerSize}»/${ownership} отсутствует в сиде — ` +
+        "не применено, проверьте оператором.",
+    };
+  }
+  return { reductionRub: amount, applied: true };
+}

@@ -33,6 +33,8 @@ import {
 } from "./coefficients";
 import {
   resolveContainerPlate,
+  resolveContainerReduction,
+  resolveDirectionalK3,
   resolveInnovativeCoef,
   resolveK3,
   resolveK4,
@@ -40,6 +42,8 @@ import {
   resolveSchemes,
   snapEmptyRun,
   snapToBelt,
+  type ContainerReductionRow,
+  type DirectionalK3Row,
   type EmptyRunBelt,
   type InnovativeModel,
   type K3Row,
@@ -202,14 +206,18 @@ function k4BaseDeltaFactor(
   const baseCur = gridBaseAt(distanceKm);
   if (baseCur == null || baseCur === 0) return null;
 
-  const candCur = baseCur * (cur.k - 1);
+  // п.15.4 — round each п.16.7 candidate to целые копейки (mirrors the certified
+  // resolveK4Correction and the per-tonne k4PerTonneBaseDeltaFactor). Verified no-op on the
+  // batch-0609 own-ПВ/платформа oracles (single-float == per-step to the kopeck), but it is
+  // the literal п.15.4 step and keeps the universal weight-grid K4 byte-identical to N8.
+  const candCur = round01(baseCur * (cur.k - 1));
 
   const prevEdge = cur.distFromKm - 1;
   const prev = k4FullRows.find((r) => r.shipmentGroup === shipmentGroup && r.distToKm === prevEdge);
   let candPrev = 0;
   if (prev && prevEdge >= 1) {
     const basePrev = gridBaseAt(prevEdge);
-    if (basePrev != null) candPrev = basePrev * (prev.k - 1);
+    if (basePrev != null) candPrev = round01(basePrev * (prev.k - 1));
   }
 
   const delta = Math.abs(candPrev) >= Math.abs(candCur) ? candPrev : candCur;
@@ -328,6 +336,19 @@ export interface TariffData {
    * absent the universal coefficient-stack path runs unchanged (e.g. synthetic unit fixtures).
    */
   readonly n8?: N8TariffData;
+  /**
+   * Табл.N3 directional rows (направленческие множители п.16.9). Optional — when absent or
+   * empty the directional resolver is a documented no-op (×1.0). Inert for every ordinary
+   * inter-RF haul (no route→direction classifier wired yet); only fires on a flagged
+   * Калининград/погранстанция/лесной-маршрут direction. Loaded by loadDirectionalK3FromSeed.
+   */
+  readonly directionalRows?: readonly DirectionalK3Row[];
+  /**
+   * Табл.N12 FCL container reductions (₽/контейнер, п.16.10). Optional — when absent or empty
+   * no reduction is subtracted and the container path flags it YELLOW (never fabricates a row).
+   * Loaded by loadContainerReductionsFromSeed.
+   */
+  readonly containerReductions?: readonly ContainerReductionRow[];
 }
 
 // ── Canonical полувагон identifiers (the certified own-ПВ N8 contour) ──────────
@@ -498,14 +519,32 @@ export function computeTariffPure(
       return redResult(distanceKm, tariffClass, chargeable, vatRate, warnings);
     }
     // плата = A + B×KL (kopeck-precise inside resolveContainerPlate), then ×1.05 (нетермич.).
-    const iContainer = round2(plate.rateRub * CONTAINER_PLUS5_2026);
+    const plateWithIndex = round2(plate.rateRub * CONTAINER_PLUS5_2026);
+    // ── п.16.10 уменьшение тарифа (Табл.N12) — вычитается ДО п.15.5 округления ──────
+    // FCL контейнерные отправки полными комплектами get a per-container reduction subtracted
+    // before the whole-ruble round. resolveContainerReduction returns 0/applied:false (with a
+    // flag) when the size→Табл.N12 row mapping is not verbatim-sourced (Табл.N10 not on disk) —
+    // we then DO NOT subtract a guessed amount (MONEY CONTRACT); the result stays YELLOW.
+    const reduction = resolveContainerReduction(
+      data.containerReductions ?? [],
+      input.containerSize,
+      input.ownership,
+    );
+    if (reduction.warning) warnings.push(reduction.warning);
+    // Subtract at целые копейки (п.16.10 intermediate), clamp ≥ 0 so a stale/oversized reduction
+    // can never invert the plate into a negative tariff (never fabricates a number either way).
+    const iContainer = round2(Math.max(0, plateWithIndex - reduction.reductionRub));
     const preIndexC = round2(iContainer);
     const factorC = indexFactor(data.indexations, input.asOfDate, tariffClass);
     const postIndexC = round2(iContainer * factorC);
     const totalC = round2(postIndexC * (1 + vatRate / 100));
     warnings.push(
       "Контейнерная отправка: плата A+B×KL (Табл.N24) ×1.05 (доп.индексация 2026, " +
-        "источник — офиц.пресса, не byte-verbatim) — confidence YELLOW, требует сверки оператором.",
+        "источник — офиц.пресса, не byte-verbatim)" +
+        (reduction.applied
+          ? ` − уменьшение Табл.N12 (п.16.10) ${reduction.reductionRub} ₽`
+          : " (уменьшение Табл.N12 п.16.10 НЕ применено — см. предупреждение)") +
+        " — confidence YELLOW, требует сверки оператором.",
     );
     return {
       distanceKm,
@@ -649,7 +688,15 @@ export function computeTariffPure(
     }
     // Цистерна billable = фактическая масса (нет минимальной весовой нормы для наливных).
     const cisternMass = input.actualWeightTons;
-    const ratePerTonne = iBelt.rateRub * perTonneK4 * k1.k1 * k3 * DOP_INDEX_FACTOR;
+    // п.15.4 PER-STEP kopeck rounding on the per-tonne rate — mirror the certified
+    // computeTariffN8 chain (round01 after each ×coefficient). Verified no-op on CIS-C3
+    // (single-float == per-step to the kopeck), closes the literal п.15.4 gap on this path too.
+    let rpt = round01(iBelt.rateRub);
+    rpt = round01(rpt * perTonneK4);
+    rpt = round01(rpt * k1.k1);
+    rpt = round01(rpt * k3);
+    rpt = round01(rpt * DOP_INDEX_FACTOR);
+    const ratePerTonne = rpt;
     // п.15.5 повагонная → провозная плата округляется до целого рубля (half-up). The per-tonne
     // rate × mass is the per-wagon плата; round it to the ruble to match the R-Тариф provNoVat
     // (CIS-C3: 5837.834…/т × 67 = 391134.90 → 391135 ₽). НДС is then applied onto this ruble value.
@@ -732,8 +779,21 @@ export function computeTariffPure(
     const isClass23 = tariffClass === 2 || tariffClass === 3;
     const classSurcharge = isClass23 ? CLASS_SURCHARGE_2_3 : 1;
     const dopIndex = isClass23 ? DOP_INDEX_FACTOR : 1;
-    iComponent =
-      iBaseRate * k1.k1 * k3 * k4Value * innovativeCoef * classSurcharge * dopIndex;
+    // п.15.4 PER-STEP kopeck rounding — mirror the certified computeTariffN8 chain
+    // (computeTariffN8.ts:460–472 round01 after EACH coefficient multiply) instead of one
+    // final round of a single float product. Verified no-op on every batch-0609 own-ПВ/
+    // платформа/цистерна oracle (single-float == per-step to the kopeck) but closes the
+    // literal п.15.4 "в рубль" gap so the universal fallback rounds exactly as R-Тариф does.
+    // Order matches the verbatim chain (… → K1 → commodity → K4 → innov → ×1.04 → ×1.01);
+    // scalar multiplication is order-invariant but the steps are sequenced for audit.
+    let iAcc = round01(iBaseRate);
+    iAcc = round01(iAcc * k1.k1);
+    iAcc = round01(iAcc * k3);
+    iAcc = round01(iAcc * k4Value);
+    iAcc = round01(iAcc * innovativeCoef);
+    iAcc = round01(iAcc * classSurcharge);
+    iAcc = round01(iAcc * dopIndex);
+    iComponent = iAcc;
     // CONFIDENCE MODEL: the universal coefficient-stack path is green ONLY for the
     // oracle-validated own-полувагон class-1 нерудные contour (the same contour the
     // certified N8 chain reproduces to the ruble — both квитанции + R-Тариф). EVERY other
@@ -807,11 +867,34 @@ export function computeTariffPure(
     : 1;
 
   const surcharges = 0; // pass-through доп.сборы (entered, not computed) — §2.6
-  // Груженая составляющая (провозная плата без порожнего): (И+В)×iStack — the own_gondola
+
+  // ── Табл.N3 directional coefficient (направленческий множитель п.16.9) ─────────
+  // An ADDITIONAL multiplier on the tariff plate for hauls that fall under an enumerated
+  // direction (Калининград / погранстанции / лесные маршруты). For every ordinary inter-RF
+  // haul resolveDirectionalK3 returns ×1.0 (applies:false) — a documented no-op that keeps ALL
+  // golden oracles byte-identical. It only fires when a future route classifier flags a
+  // direction; section-3 погранстанции values are seed-red and are NEVER applied (only flagged).
+  const directional = resolveDirectionalK3(data.directionalRows ?? [], {
+    distanceKm,
+    tariffClass,
+  });
+  if (directional.warning) warnings.push(directional.warning);
+  if (directional.applies) {
+    warnings.push(
+      `Применён направленческий коэффициент Табл.N3 ×${directional.coefficient} ` +
+        `(confidence ${directional.confidence}) — проверьте оператором.`,
+    );
+    if (directional.confidence !== "green") {
+      confidenceCeiling = capConfidence(confidenceCeiling, "yellow");
+    }
+  }
+
+  // Груженая составляющая (провозная плата без порожнего): (И+В)×iStack×Табл.N3 — the own_gondola
   // род coef lives in iStack on the universal path, so this carries it. Порожний пробег is a
   // SEPARATELY-billed charge, NOT part of провозной платы — every R-Тариф oracle (82816, and
-  // batch-0609 own-ПВ/платформа) reproduces this loaded leg, never loaded+порожний.
-  const loadedRaw = (iComponent + vComponent) * iStack;
+  // batch-0609 own-ПВ/платформа) reproduces this loaded leg, never loaded+порожний. directional
+  // is ×1.0 for every current contour (applies:false) so this stays byte-identical to the oracles.
+  const loadedRaw = (iComponent + vComponent) * iStack * directional.coefficient;
   const preIndexRaw = loadedRaw + emptyRun * emptyStack + surcharges;
   const preIndex = round2(preIndexRaw);
 

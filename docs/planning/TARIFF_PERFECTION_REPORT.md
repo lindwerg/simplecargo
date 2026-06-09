@@ -16,17 +16,79 @@
 
 | Gate | Result | Evidence |
 |---|---|---|
-| `npx vitest run src/lib/tariff src/lib/distance --reporter=dot` | **223 passed (17 files), 0 failed, 0 skipped** | run 2026-06-09, ~485 ms, setup 0 ms (hermetic, DB-free) |
+| `npx vitest run src/lib/tariff src/lib/distance --reporter=dot` | **238 passed (18 files), 0 failed, 0 skipped** | run 2026-06-09, ~566 ms, setup 0 ms (hermetic, DB-free) |
 | `npx tsc --noEmit --pretty false` | **exit 0, 0 errors** | run 2026-06-09 |
 | Golden oracles to the kopeck | **ALL EXACT** (1067770 / 187344 / 82816 / 101035.52) | see §1 |
 | Batch 2026-06-09 cases to the kopeck | **13/13 GREEN** (INV-1, INV-6_20, C3-a..d, C2-a/b, PL-C2-a/b, PL-C3-a/b, CIS-C3) | see §1.5 CERTIFICATION MATRIX |
+| Distances to the km | **3/3 EXACT** (2444 / 699 / 3108) | `computeDistance.test.ts` |
 | Belt cells added (prior effort) | **10 container plates (verbatim) + 1 RED placeholder** | `tr1-i-belts-container.json` |
+| Reductions seed (this effort) | **Табл.N12 + Табл.N13 verbatim** (byte-verified vs live HTML) | `scripts/seed-data/tr1-reductions.json` |
+| Directional seed (this effort) | **Табл.N3 split from N4** (§1/§2 green, §4 yellow, §3 red/unverified) | `scripts/seed-data/tr1-k3-directional.json` |
 | Fabricated numbers | **ZERO** (attested) | §6 |
 
-**Headline:** The class-1 нерудные own-полувагон path remains certified to the kopeck and is now derived from
-verbatim ТР-1 text (the hard-fitted 699 km uplift `1.0057499686370497` is DELETED — gap C4 closed). The
-computable surface has expanded from "own-ПВ only" to **own-ПВ + own-ПЛ (yellow) + all loaded container schemes
-(green plate, yellow +5%)**, with everything else returning honest RED rather than a confident wrong kopeck.
+**Headline (updated 2026-06-09).** The class-1 нерудные own-полувагон path remains certified to the kopeck and is
+derived from verbatim ТР-1 text (the hard-fitted 699 km uplift `1.0057499686370497` is DELETED — gap C4 closed).
+This effort closed the last per-step-rounding and reduction gaps: **п.15.4 per-step `round01` now runs on the
+universal + цистерна fallback and on all three inventory legs** (proven kopeck-exact no-op vs every oracle);
+**Табл.N12 FCL container reduction is wired at п.16.10** (Табл.N13 контрейлер seeded, awaiting Табл.N11);
+**Табл.N3 directional is a sourced seed** (documented ×1.0 no-op for ordinary RF directions); and the **−754 ₽
+inventory lever is resolved to proven-flat, corroborated-by-oracle** (no longer an unexplained fit). The honest
+ceiling on «1:1 на любом направлении/грузе» is stated in §0.1 below — tariff math is kopeck-exact on every
+certified+computed path, but **distance is NOT solved for any-direction** (one known wrong case, Решетниково), and
+cargo coverage is bounded by the verbatim commodity-coefficient subset.
+
+---
+
+## 0.1. HONEST CERTIFICATION — what «1:1 на любом направлении / грузе» actually holds for (read this first)
+
+The three independent axes do **not** carry the same level of guarantee. Stated without inflation:
+
+### (i) Tariff math — **kopeck-exact on all certified + computed paths**
+
+Given a correct **distance**, **class/МВН**, and a **verbatim commodity coefficient**, the engine reproduces
+R-Тариф **to the kopeck** on every path it certifies: ПВ {1,2,3} + платформа {2,3} + цистерна {3} +
+инвентарный {повагонная, групповая}, plus all loaded container plates. As of this effort the calculation chain
+itself has **no known divergence from ТР-1 §II**: per-step `round01` (п.15.4) now runs on the certified contour,
+the universal + цистерна fallback, the k4 base-delta, and all three inventory legs; the п.15.5 final ruble round,
+п.16.7 max-of-two, п.16.10 Табл.N12 container reduction, and the class/род/commodity/innov coefficient order are
+all in place. **Verdict: the arithmetic is 1:1.** The residual is purely *input data* (the other two axes), not
+the math. Контрейлер reduction (Табл.N13) is the one wired-engine gap, blocked on Табл.N11 base schemes.
+
+### (ii) Distance — **NOT 1:1 for any direction; one known-wrong case (HONEST LIMIT)**
+
+- **GREEN (km-exact, asserted):** the 3 golden routes — 2444 (Возрождение→Гремячая), 699 (Исеть→Наб.Челны),
+  3108 (Элисенваара→Элиста) — plus the 36-test distance suite.
+- **KNOWN WRONG (residual, NOT solved):** **Элисенваара→Решетниково** returns **1267 km**; the legal R-Тариф
+  answer is **1432** (via the Ховрино spur). This is a real undercut. The §4.3 "through-узел same-участок
+  dominance" filter was implemented and live-tested but is **provably wrong in general** — any spur/backbone
+  km-monotone predicate that fixes Решетниково breaks the golden 699 (the two routes are monotonically
+  contradictory). `computeDistance.ts` was therefore **restored to HEAD** rather than ship a wrong filter or a
+  per-route constant. See [`DISTANCE_ROUTING_SPEC.md`](./DISTANCE_ROUTING_SPEC.md) §4.3.
+- **Coverage reality:** "any direction" needs the **full RF узел/spur graph**. Within the well-connected RF
+  backbone the graph yields correct distances (the 3 oracles prove the engine + ТР-4 ТП graph is sound there),
+  but **CIS, exclaves (Калининград), and sparse/малодеятельный sections are NOT solved** and must be flagged,
+  not guessed. Even within RF, the Решетниково class of "which узел of a multi-узел участок is the genuine
+  mainline arrival" is unsolved without an operator-supplied **малодеятельный / магистральный узел attribute**
+  (absent from `kniga1-sections.json` / `uzel-graph.json`). **Verdict: distance is sound on the connected RF
+  backbone, NOT universal; treat any non-oracle long/CIS/exclave route as needing verification.**
+
+### (iii) Cargo (class / МВН / commodity) — **structurally complete, coefficient-coverage bounded**
+
+- **Class + МВН:** resolved from `etsng-classes.json` (**5036 ЕТСНГ positions**), which matches
+  `tr1-min-weight-norms.json` verbatim for the certified subset. The billable-mass floor
+  `max(факт, МВН)` is GREEN for the cargoes whose МВН is pinned (685127→14т, 631184→25т, 254040→58т,
+  371070→21т, нерудные→г/п, цистерна→none). For numeric-МВН роды (полувагон/платформа cls 2/3) the engine
+  raises a **YELLOW «расчётная масса не подтверждена»** when МВН is missing — it does not guess.
+- **Commodity coefficient (Табл.N4):** verified subset only — нерудные 0.69993, жб/стеновые 0.91, лёгкая пром
+  0.75, кислоты 0.81, маты 1.04, сваи none. **Any cargo whose commodity coefficient is NOT in this verbatim
+  subset is YELLOW** (engine emits the sourced subset; unsourced commodity coef → no GREEN). This is the honest
+  cargo ceiling: class/МВН routing is general (5036 positions), but the *per-cargo commodity multiplier* is only
+  as wide as the verbatim Табл.N4 capture. **Verdict: cargo identity is 1:1; per-cargo commodity coefficient is
+  GREEN only on the captured subset, YELLOW elsewhere — never a fabricated coef.**
+
+**Bottom line:** the *engine* is 1:1; "1:1 на любом направлении/грузе" is gated by **distance graph coverage**
+(the binding limit — explicitly NOT solved for any-direction / CIS / exclaves / the Решетниково multi-узел class)
+and by **verbatim commodity-coefficient coverage** (YELLOW outside the captured subset). No axis is overstated.
 
 ---
 
@@ -41,6 +103,10 @@ These are the golden oracles. They are asserted in the test suite and pass to th
 | R-Тариф Элисенваара→Элиста | classic ПВ, 3108 km, K4=1.01 | **82 816 ₽ без НДС → 101 035.52 ₽ с НДС 22%** | EXACT (НДС applied last, kopeck-carried) | `goldenUniversalOracle.test.ts` / `goldenRtariff.test.ts` |
 | Distance Route A | Возрождение (021609) → Гремячая (612709) | **2444 km** | EXACT | `computeDistance.test.ts` |
 | Distance Route B | Исеть (771500) → Наб. Челны (648503) | **699 km** | EXACT | `computeDistance.test.ts` |
+| Distance Route C | Элисенваара (023202) → Элиста (528706) | **3108 km** | EXACT | `computeDistance.test.ts` |
+
+> **Distance residual (NOT certified):** Элисенваара → **Решетниково (061108)** returns **1267 km**, legal = **1432**.
+> Unsolved without an operator малодеятельный/магистральный узел attribute (see §0.1(ii) + `DISTANCE_ROUTING_SPEC.md`).
 
 **What changed to make this MORE certified (not just preserved):**
 
@@ -203,7 +269,11 @@ are NOT fabrication gaps — they are honest "we do not have the verbatim datum 
 | **H6** non-полувагон container schemes had zero belts | **CLOSED (container loaded) / PARTIAL** | 10 container plates (85–94) acquired verbatim; refrigerator/transporter remain RED (see §3) |
 | **H17** per-container dimension not modeled | **CLOSED (loaded)** | Plates keyed by (containerSize, ownership); empty positioning RED |
 | **H19** `effectiveTo` plumbing | **CLOSED** | `IndexationLike.effectiveTo` exists; `isIndexApplicable` skips when expired; `repository.ts` carries it; dedup key excludes it so the windowed row wins |
-| **M1** per-step kopeck rounding | **CLOSED** | round01 per ТР-1 step (16.6/16.7.1/16.7.2/16.8/16.9); see §1 |
+| **M1** per-step kopeck rounding (certified contour) | **CLOSED** | round01 per ТР-1 step (16.6/16.7.1/16.7.2/16.8/16.9); see §1 |
+| **M1b** per-step rounding on **universal + цистерна fallback + inventory** legs | **CLOSED (2026-06-09)** | `computeTariff.ts` universal `iAcc` chain + цистерна `rpt` chain + `k4BaseDeltaFactor` candCur/candPrev; `computeInventory.ts` loaded/empty/В legs — all `round01` per multiply; proven kopeck-exact no-op vs every oracle. Closes the prior universal/inventory DIVERGES in `TR1_ENGINE_CONFORMANCE.md` §A. |
+| **п.16.10** Табл.N12 FCL container reduction | **CLOSED (container path) / SOURCED (N13)** | `tr1-reductions.json` (Табл.N12+N13 verbatim, byte-verified vs live HTML); Табл.N12 wired at п.16.10 in `computeTariff.ts` (subtract before п.15.5, clamp ≥0, YELLOW when size→Табл.N10 not verbatim). Табл.N13 контрейлер seeded, **not wired** (needs Табл.N11 base). |
+| **−754 ₽ inventory lever** | **RESOLVED — proven FLAT, corroborated-by-oracle** | Required reductions 753,86/754,32 bracket 754 with **opposite K4 sign** ⇒ flat, not a formula; ruled out as Табл.N12/N13/п.28.2 + any §II/п.18 clause; re-cited as R-Тариф «Скидка с общего тарифа на универсальные вагоны» conforming the п.16.5.1 leg-sum to combined И1. Standing: corroborated-by-oracle, NOT rule-derived. Full analysis `INVENTORY_754_RESOLUTION.md`. |
+| **Табл.N3 directional** seed (was conflated with N4) | **SOURCED (2026-06-09)** | `tr1-k3-directional.json`: §1 Калининград→сеть + §2 в пределах КЖД **green/verbatim**; §4 named timber routes **yellow**; §3 погранстанции **red/UNVERIFIED** (extractor unstable, deliberately not entered). Documented ×1.0 no-op for ordinary RF directions ⇒ zero effect on golden cases. |
 | **M11** stale "п.16.7 unavailable" comments | **CLOSED** | Rewritten — verbatim text is on disk |
 
 ### HIGH — remaining (not in this effort's scope)
@@ -257,6 +327,22 @@ To promote YELLOW → GREEN and close the operator-blocked RED gaps, the operato
    in `tr1-commodity-coef-verify.json` / ТР-1 Табл.4 before a quote for it can be GREEN; until then such a cargo is
    YELLOW (engine emits the sourced subset only) or RED. The class-3 K1 split (1.54 for сваи/маты vs 1.74 for
    кислота — position-dependent) lives in `tr1-class-coeff.json`; new class-3 cargoes need their K1 position confirmed there.
+10. **Distance — малодеятельный/магистральный узел attribute (BINDING distance limit):** a per-узел (or
+    per-`kniga1-sections.json` row) mainline-vs-обходной designation for multi-узел участки like «ТВЕРЬ ХОВРИНО»
+    and «АКБАШ АЛНАШИ», traceable to ТР-4 (Приказ Минтранса 313/2024) приложение малодеятельных участков or the
+    R-Тариф узел attribute. **Without it the Решетниково class (1267 vs legal 1432) cannot be fixed without
+    breaking the golden 699** — no km-only predicate satisfies both. This is the single biggest blocker to
+    "1:1 на любом направлении". See `DISTANCE_ROUTING_SPEC.md`.
+11. **Distance — full RF + CIS + exclave узел/spur graph:** any-direction certification requires the complete
+    graph; current proof is the 3 RF-backbone oracles. CIS, Калининград (exclave), and малодеятельный/sparse
+    sections are NOT solved and are flagged, not guessed (the Belarus БЧ extractor `extract-by-spurs.mjs` is a
+    data-acquisition step toward this, not a fix).
+12. **Табл.N11 (контрейлер base schemes) + Табл.N10 (container типоразмер map):** Табл.N13 контрейлер reductions
+    are seeded but cannot be subtracted without Табл.N11 base; Табл.N12 container reduction is GREEN only once the
+    ISO-size→Табл.N10 row mapping is verbatim (until then the container reduction is YELLOW-flagged).
+13. **Табл.N3 §3 погранстанции coefficients:** raw HTML / R-Тариф verification of the export-via-погранстык
+    multipliers (the captured values are UNVERIFIED — extractor unstable between passes — and deliberately NOT
+    entered into the engine).
 
 ---
 
@@ -273,6 +359,13 @@ To promote YELLOW → GREEN and close the operator-blocked RED gaps, the operato
   return RED with sourced reasons.
 - **Verify:** zero fabricated values; extractor resolved 675/675 spur targets; all golden oracles confirmed
   passing to the kopeck.
+- **Conformance close-out (2026-06-09):** zero fabricated tariff/distance/coefficient numbers. Табл.N12/N13
+  re-verified byte-for-byte against the live sudact HTML (T12=76629 / T13=73725 bytes) before seeding; per-step
+  `round01` proven a kopeck-exact no-op vs every oracle before shipping (no number moved); the −754 lever was
+  *explained* (proven flat from existing oracle breakdowns), not invented; the Решетниково distance fix was
+  **rejected** rather than shipped with a fabricated узел flag or per-route constant (`computeDistance.ts`
+  restored to HEAD). Табл.N3 §3 погранстанции values left UNVERIFIED and out of the engine. Gate after all edits:
+  **238 tariff/distance tests + tsc exit 0; all 4 oracles + 13 batch + 3 distances EXACT.**
 
 **Aggregate: ZERO fabricated tariff / distance / coefficient / belt numbers across the entire effort.** RED
 placeholders added: empty-container positioning (1, in `tr1-i-belts-container.json`).

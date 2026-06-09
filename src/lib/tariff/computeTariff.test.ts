@@ -206,3 +206,76 @@ describe("computeTariffPure — graceful degradation (never guesses)", () => {
     expect(r.confidence).toBe("red");
   });
 });
+
+describe("computeTariffPure — Табл.N3 directional is a no-op for ordinary hauls (oracle-safe)", () => {
+  it("passing directional rows does NOT change the green own-ПВ class-1 result", () => {
+    const withoutDir = computeTariffPure(BASE_INPUT, makeData());
+    const withDir = computeTariffPure(
+      BASE_INPUT,
+      makeData({
+        directionalRows: [
+          { section: "section1_kaliningrad_to_network", coefficient: 0.27, distFromKm: 0, distToKm: 1200, tariffClass: 1, confidence: "green" },
+          { section: "section2_within_kaliningrad", coefficient: 0.9, tariffClass: "any", confidence: "green" },
+        ],
+      }),
+    );
+    // No route→direction classifier fires → ×1.0 → byte-identical to the no-directional result.
+    expect(withDir.iComponent).toBe(withoutDir.iComponent);
+    expect(withDir.preIndex).toBeCloseTo(withoutDir.preIndex, 6);
+    expect(withDir.total).toBeCloseTo(withoutDir.total, 6);
+    expect(withDir.confidence).toBe("green");
+  });
+});
+
+describe("computeTariffPure — Табл.N12 reduction wired on the container path (п.16.10)", () => {
+  const CONTAINER_INPUT: TariffInput = {
+    ...BASE_INPUT,
+    wagonType: "КН",
+    containerSize: "3т",
+  };
+
+  function containerData(overrides: Partial<TariffData> = {}): TariffData {
+    return makeData({
+      schemeMap: [
+        { wagonType: "КН", ownership: "own", shipmentType: "wagon", iSchemeCode: "N85", vSchemeCode: null },
+      ],
+      rateBelts: [
+        {
+          schemeCode: "N85",
+          distFromKm: 0,
+          distToKm: 5000,
+          rateRub: 0,
+          rateModel: "linearAB",
+          containerSize: "3т",
+          containerOwnership: "собств./аренд.",
+          aRubPerContainer: 10000,
+          bRubPerContainerKm: 10,
+          confidence: "green",
+        },
+      ],
+      ...overrides,
+    });
+  }
+
+  it("subtracts the verbatim 3т own-loaded reduction before the п.15.5 round", () => {
+    // plate = (10000 + 10×800) ×1.05 = 18000 ×1.05 = 18900 ; − 2382 = 16518.
+    const r = computeTariffPure(
+      CONTAINER_INPUT,
+      containerData({
+        containerReductions: [
+          { sizeKey: "3", ownLoadedRub: 2382, ownEmptyRub: 1664, commonLoadedRub: 2491 },
+        ],
+      }),
+    );
+    expect(r.confidence).toBe("yellow"); // containers never green
+    expect(r.iComponent).toBeCloseTo(16518, 2);
+    expect(r.warnings.some((w) => w.includes("Табл.N12"))).toBe(true);
+  });
+
+  it("does NOT subtract (and flags) when no reduction table is provided", () => {
+    const r = computeTariffPure(CONTAINER_INPUT, containerData());
+    // plate ×1.05 = 18900, no reduction subtracted.
+    expect(r.iComponent).toBeCloseTo(18900, 2);
+    expect(r.confidence).toBe("yellow");
+  });
+});

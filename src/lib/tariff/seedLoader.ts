@@ -13,6 +13,8 @@ import type {
   ClassCoeffBelt,
 } from "./coefficients";
 import type {
+  ContainerReductionRow,
+  DirectionalK3Row,
   EmptyRunBelt,
   InnovativeModel,
   K3Row,
@@ -38,6 +40,8 @@ let _k3Rows: readonly K3Row[] | null = null;
 let _k4FullRows: readonly K4FullRow[] | null = null;
 let _innovativeModels: readonly InnovativeModel[] | null = null;
 let _etsngCatalog: readonly EtsngEntry[] | null = null;
+let _directionalRows: readonly DirectionalK3Row[] | null = null;
+let _containerReductions: readonly ContainerReductionRow[] | null = null;
 
 // ── Internal raw shapes ───────────────────────────────────────────────────────
 
@@ -388,6 +392,106 @@ export function loadK4FullRowsFromSeed(): readonly K4FullRow[] {
   }));
 
   return _k4FullRows;
+}
+
+// ── DirectionalK3Row from tr1-k3-directional.json (Табл.N3) ───────────────────
+//
+// Табл.N3 directional coefficients, DISTINCT from Табл.N4 commodity K3. Only the
+// verbatim-confirmed sections are loaded: section 1 (Калининград↔сеть, green, distance×class),
+// section 2 (внутри Калининграда, green, flat 0.9 any-class), section 4 (named timber routes,
+// yellow). Section 3 (погранстанции) is seed-flagged confidence:red / doNotUseInEngine — its
+// numbers are NOT loaded here (the MONEY CONTRACT forbids shipping unverified figures). The
+// resolver (resolveDirectionalK3) returns 1.0 for every ordinary inter-RF haul, so these rows
+// are inert unless a future route classifier flags a Калининград/маршрут direction.
+
+interface RawDirectionalSection1Row {
+  distanceFromKm: number;
+  distanceToKm: number | null;
+  tariffClass: number;
+  coefficient: number;
+}
+
+export function loadDirectionalK3FromSeed(): readonly DirectionalK3Row[] {
+  if (_directionalRows !== null) return _directionalRows;
+
+  const file = loadJson<{
+    section1_kaliningrad_to_network?: { confidence?: string; rows?: RawDirectionalSection1Row[] };
+    section2_within_kaliningrad?: { confidence?: string; coefficient?: number };
+    section4_round_timber_named_routes?: { confidence?: string; coefficient?: number };
+  }>("tr1-k3-directional.json");
+
+  const out: DirectionalK3Row[] = [];
+
+  // Section 1 — distance×class keyed Калининград↔сеть (verbatim green).
+  const s1 = file.section1_kaliningrad_to_network;
+  if (s1?.rows) {
+    for (const r of s1.rows) {
+      out.push({
+        section: "section1_kaliningrad_to_network",
+        coefficient: r.coefficient,
+        distFromKm: r.distanceFromKm,
+        distToKm: r.distanceToKm,
+        tariffClass: (r.tariffClass === 1 ? 1 : r.tariffClass === 3 ? 3 : 2) as FreightClass,
+        confidence: s1.confidence ?? "green",
+      });
+    }
+  }
+
+  // Section 2 — flat 0.9 for any class within Калининградская ж.д. (verbatim green).
+  const s2 = file.section2_within_kaliningrad;
+  if (s2?.coefficient != null) {
+    out.push({
+      section: "section2_within_kaliningrad",
+      coefficient: s2.coefficient,
+      tariffClass: "any",
+      confidence: s2.confidence ?? "green",
+    });
+  }
+
+  // Section 4 — named timber routes (yellow).
+  const s4 = file.section4_round_timber_named_routes;
+  if (s4?.coefficient != null) {
+    out.push({
+      section: "section4_round_timber_named_routes",
+      coefficient: s4.coefficient,
+      tariffClass: "any",
+      confidence: s4.confidence ?? "yellow",
+    });
+  }
+
+  _directionalRows = out;
+  return _directionalRows;
+}
+
+// ── ContainerReductionRow from tr1-reductions.json (Табл.N12, п.16.10) ────────
+//
+// FCL container reductions (₽ per container) — an ADDITIVE subtraction applied before the
+// п.15.5 round. Loaded for the container path's п.16.10 wiring. Контрейлер (Табл.N13) is not
+// loaded into this row shape (separate vehicle-keyed table, контрейлер path not in contour).
+
+interface RawTabl12Row {
+  size: string;
+  obshchiy_park_gruzhenye: number | null;
+  sobstvennye_gruzhenye: number | null;
+  sobstvennye_porozhnie: number | null;
+}
+
+export function loadContainerReductionsFromSeed(): readonly ContainerReductionRow[] {
+  if (_containerReductions !== null) return _containerReductions;
+
+  const file = loadJson<{ tabl12_containers?: { rows?: RawTabl12Row[] } }>(
+    "tr1-reductions.json",
+  );
+  const rows = file.tabl12_containers?.rows ?? [];
+
+  _containerReductions = rows.map((r) => ({
+    sizeKey: r.size,
+    ownLoadedRub: r.sobstvennye_gruzhenye,
+    ownEmptyRub: r.sobstvennye_porozhnie,
+    commonLoadedRub: r.obshchiy_park_gruzhenye,
+  }));
+
+  return _containerReductions;
 }
 
 // ── InnovativeModel from innovative-models ────────────────────────────────────
