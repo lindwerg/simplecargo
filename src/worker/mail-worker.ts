@@ -11,6 +11,7 @@ import { getCursor, setCursor } from "@/lib/mail/cursor";
 import {
   buildIntakeDeps,
   insertQuarantineRow,
+  listStuckProcessingFiles,
   markFileCommitted,
   markFileQuarantined,
   recordIngestedFile,
@@ -38,6 +39,41 @@ function sleep(ms: number, abort: { stopped: boolean }): Promise<void> {
       resolve();
     }
   });
+}
+
+// Startup-sweep: файлы, застрявшие в 'processing' после падения процесса. Один
+// консервативный проход: возвращаем их в 'committed' (письмо снова видно во
+// «Входящих») + warning-карантин, чтобы оператор знал, что ИИ-извлечение не
+// выполнялось. 'quarantined' не трогаем — их разбирает оператор, не зацикливаемся.
+async function sweepStuckProcessing(): Promise<void> {
+  try {
+    const stuck = await listStuckProcessingFiles();
+    if (stuck.length === 0) return;
+    console.warn(`[mail-worker] sweep: ${stuck.length} письма(ем) застряли в 'processing' — возвращаем во «Входящие»`);
+    for (const file of stuck) {
+      try {
+        await insertQuarantineRow(
+          buildQuarantineRow({
+            reason: "PROCESSING_ERROR",
+            sourceFileId: file.id,
+            agentReason:
+              "Воркер был перезапущен во время обработки письма — ИИ-извлечение не выполнено. Письмо возвращено во «Входящие», проверьте вручную.",
+            draft: { from: file.senderEmail, subject: file.filename },
+          }),
+        );
+        await markFileCommitted(file.id);
+        await publishRealtime({ kind: "email", id: file.id });
+      } catch (error: unknown) {
+        console.error(
+          `[mail-worker] sweep: файл ${file.id} не удалось вернуть из 'processing':`,
+          error instanceof Error ? error.message : error,
+        );
+      }
+    }
+    await publishRealtime({ kind: "quarantine" });
+  } catch (error: unknown) {
+    console.error("[mail-worker] sweep упал:", error instanceof Error ? error.message : error);
+  }
 }
 
 async function pollCycle(systemUserId: string): Promise<void> {
@@ -83,8 +119,11 @@ async function pollCycle(systemUserId: string): Promise<void> {
     }
 
     let failedFileId: string | null = null;
+    let failedSha: string | null = null;
+    let originalsStored = false;
     try {
       const sha = crypto.createHash("sha256").update(raw).digest("hex");
+      failedSha = sha;
       const { fileId, isNew } = await recordIngestedFile({
         contentSha256: sha,
         filename: parsed.subject || parsed.messageId || "email",
@@ -93,6 +132,8 @@ async function pollCycle(systemUserId: string): Promise<void> {
         emailDate: parsed.date ?? null,
       });
       failedFileId = fileId;
+      // Дубликат (isNew=false) — оригиналы сохранены при первом приёме письма.
+      if (!isNew) originalsStored = true;
 
       // Address directory (§6.5): sender + cc as incoming.
       const seen: SeenAddress[] = [
@@ -109,6 +150,7 @@ async function pollCycle(systemUserId: string): Promise<void> {
         // Best-effort — a storage hiccup must not lose the email.
         try {
           await storeEmailOriginals({ fileId, sha, raw, parsed });
+          originalsStored = true;
         } catch (storeErr: unknown) {
           console.error(
             `[mail-worker] uid=${uid} не удалось сохранить оригиналы:`,
@@ -134,6 +176,19 @@ async function pollCycle(systemUserId: string): Promise<void> {
     } catch (error: unknown) {
       const detail = error instanceof Error ? error.message : String(error);
       console.error(`[mail-worker] uid=${uid} failed:`, detail);
+      // Сбой случился ДО сохранения оригиналов (например, в upsertKnownEmails) —
+      // досохраняем тело и вложения, чтобы карантин-карточке было что открыть.
+      // Best-effort: сбой сохранения не должен помешать записи в карантин.
+      if (failedFileId && failedSha && !originalsStored) {
+        try {
+          await storeEmailOriginals({ fileId: failedFileId, sha: failedSha, raw, parsed });
+        } catch (storeErr: unknown) {
+          console.error(
+            `[mail-worker] uid=${uid} не удалось сохранить оригиналы перед карантином:`,
+            storeErr instanceof Error ? storeErr.message : storeErr,
+          );
+        }
+      }
       // DON'T silently lose the email: park it in quarantine so the operator can
       // reprocess it, instead of just advancing the cursor into a black hole.
       try {
@@ -220,6 +275,7 @@ async function main(): Promise<void> {
   process.on("SIGINT", stop);
 
   if (financeEnabled) await ensureWebhookRegistered();
+  if (mailEnabled) await sweepStuckProcessing();
 
   // Both jobs share one process; each runs on its own cadence off a monotonic
   // "next due" clock so the tight mail poll never starves the slower finance sync.
