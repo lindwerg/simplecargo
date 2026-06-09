@@ -20,7 +20,9 @@
 | `npx tsc --noEmit --pretty false` | **exit 0, 0 errors** | run 2026-06-09 |
 | Golden oracles to the kopeck | **ALL EXACT** (1067770 / 187344 / 82816 / 101035.52) | see §1 |
 | Batch 2026-06-09 cases to the kopeck | **13/13 GREEN** (INV-1, INV-6_20, C3-a..d, C2-a/b, PL-C2-a/b, PL-C3-a/b, CIS-C3) | see §1.5 CERTIFICATION MATRIX |
-| Distances to the km | **3/3 EXACT** (2444 / 699 / 3108) | `computeDistance.test.ts` |
+| Distances to the km | **4/4 EXACT** (2444 / 699 / 3108 / **Решетниково 1432**) | `computeDistance.test.ts` (40 tests, 3 files) |
+| Решетниково (was the known-wrong residual) | **FIXED → 1432** via class-driven spur-attachment filter (no per-route constant; oracles intact) | see §0.1(ii) + `DISTANCE_COVERAGE.md` |
+| RF узел connectivity | **100% of the 1091 kniga1-referenced RF узлы** in one component (base-only 59.39% → 69.08% of all 1837 nodes after CIS-inclusive overlays) | `DISTANCE_COVERAGE.md` §1 |
 | Belt cells added (prior effort) | **10 container plates (verbatim) + 1 RED placeholder** | `tr1-i-belts-container.json` |
 | Reductions seed (this effort) | **Табл.N12 + Табл.N13 verbatim** (byte-verified vs live HTML) | `scripts/seed-data/tr1-reductions.json` |
 | Directional seed (this effort) | **Табл.N3 split from N4** (§1/§2 green, §4 yellow, §3 red/unverified) | `scripts/seed-data/tr1-k3-directional.json` |
@@ -54,23 +56,39 @@ the universal + цистерна fallback, the k4 base-delta, and all three inve
 all in place. **Verdict: the arithmetic is 1:1.** The residual is purely *input data* (the other two axes), not
 the math. Контрейлер reduction (Табл.N13) is the one wired-engine gap, blocked on Табл.N11 base schemes.
 
-### (ii) Distance — **NOT 1:1 for any direction; one known-wrong case (HONEST LIMIT)**
+### (ii) Distance — **4/4 oracles exact; RF backbone sound; CIS/exclave/sparse NOT solved (HONEST LIMIT)**
 
-- **GREEN (km-exact, asserted):** the 3 golden routes — 2444 (Возрождение→Гремячая), 699 (Исеть→Наб.Челны),
-  3108 (Элисенваара→Элиста) — plus the 36-test distance suite.
-- **KNOWN WRONG (residual, NOT solved):** **Элисенваара→Решетниково** returns **1267 km**; the legal R-Тариф
-  answer is **1432** (via the Ховрино spur). This is a real undercut. The §4.3 "through-узел same-участок
-  dominance" filter was implemented and live-tested but is **provably wrong in general** — any spur/backbone
-  km-monotone predicate that fixes Решетниково breaks the golden 699 (the two routes are monotonically
-  contradictory). `computeDistance.ts` was therefore **restored to HEAD** rather than ship a wrong filter or a
-  per-route constant. See [`DISTANCE_ROUTING_SPEC.md`](./DISTANCE_ROUTING_SPEC.md) §4.3.
-- **Coverage reality:** "any direction" needs the **full RF узел/spur graph**. Within the well-connected RF
-  backbone the graph yields correct distances (the 3 oracles prove the engine + ТР-4 ТП graph is sound there),
-  but **CIS, exclaves (Калининград), and sparse/малодеятельный sections are NOT solved** and must be flagged,
-  not guessed. Even within RF, the Решетниково class of "which узел of a multi-узел участок is the genuine
-  mainline arrival" is unsolved without an operator-supplied **малодеятельный / магистральный узел attribute**
-  (absent from `kniga1-sections.json` / `uzel-graph.json`). **Verdict: distance is sound on the connected RF
-  backbone, NOT universal; treat any non-oracle long/CIS/exclave route as needing verification.**
+- **GREEN (km-exact, asserted):** all **4** golden routes — 2444 (Возрождение→Гремячая), 699 (Исеть→Наб.Челны),
+  3108 (Элисенваара→Элиста), and **1432 (Элисенваара→Решетниково)** — plus the full 40-test distance suite
+  (`computeDistance.test.ts` / `dijkstra.test.ts` / `parseTransit.test.ts`, 3 files).
+- **Решетниково — RESOLVED to 1432 (was 1267, the prior known-wrong residual).** The §4.3 km-monotone "through-
+  узел dominance" predicate was correctly **falsified** (it cannot satisfy both Решетниково and the golden 699 —
+  the routes are monotonically contradictory). The shipped fix is **class-driven, not km-arithmetic and not a
+  per-route constant**: a per-узел ТР-4 classification (`tr4-uzel-class.json`) marks each competing same-участок
+  spur узел as `magistral` / `obhodnoy` / `malodeyatelny` (+ a `directional` overshoot flag), and
+  `computeDistance.ts:filterBackBranches` drops EXPLICIT back-branch legs (обходной / малодеятельный / directional
+  магистраль) only when a clean магистраль leg of that station survives. Решетниково now routes via Ховрино
+  (21+1319+92 = 1432), dropping Тверь-62 (directional overshoot), Поварово II-58 (БМО обходной) and Конаково ГРЭС
+  (малодеятельная тупиковая ветвь); Наб.Челны keeps Алнаши (магистраль) → 699 intact. Each classified узел traces
+  to a primary topological source (ТР-4 Книга-3 общие положения, РЖД 28/р классификация линий, ТП membership in
+  `kniga3-backbone.json`). See [`DISTANCE_ROUTING_SPEC.md`](./DISTANCE_ROUTING_SPEC.md) §7 + [`DISTANCE_COVERAGE.md`](./DISTANCE_COVERAGE.md).
+- **HONEST classification ceiling:** the fix is driven by a **hand-curated 7-узел table** covering exactly the
+  competing узлы on the tested routes' contested участки (ТВЕРЬ ХОВРИНО, АКБАШ АЛНАШИ). The full pообъектный
+  пeречень малодеятельных/обходных узлов is an **internal RZD registry (28/р specialization, Приказ Минтранса
+  313/2024)** with **no open verbatim list** — so the filter is *correct where узлы are classified* and degrades
+  to the conservative global-MIN no-op (never dropping unclassified legs) everywhere else. Any new multi-узел
+  участок where the cheap leg is an unclassified обходной remains a latent undercut until its узлы are classified.
+  This is flagged, not fabricated.
+- **Coverage reality:** RF узел connectivity is **100% across the 1091 kniga1-referenced RF узлы** — all sit in
+  the single big component both before and after the Книга-1 overlay merge (the overlay refines участки, it does
+  not bridge islands, so it is connectivity-neutral: 157 components / biggest 1269 unchanged). Base-only
+  connectivity was **59.39%** (1091/1837), rising to **69.08%** (1269/1837) once CIS-inclusive overlays are
+  counted. The residual **30.92% (568 nodes / 156 small components)** is **ENTIRELY CIS/foreign** — Ukraine (202),
+  Donbass (23), Crimea (17), Moldova (13), Georgia (13), Armenia (8), plus Baltic/Kazakhstan/Caucasus fragments
+  and 49 singletons — i.e. **out of scope for the RF target**. **CIS, Калининград exclave, Sakhalin/ferry, and
+  sparse/малодеятельный sections are NOT solved** and must be flagged, not guessed. **Verdict: distance is sound
+  and 1:1 on the connected RF backbone (4/4 oracles incl. the previously-broken Решетниково); it is NOT universal
+  — treat any CIS / exclave / ferry / unclassified-multi-узел route as needing verification.**
 
 ### (iii) Cargo (class / МВН / commodity) — **structurally complete, coefficient-coverage bounded**
 
@@ -104,9 +122,12 @@ These are the golden oracles. They are asserted in the test suite and pass to th
 | Distance Route A | Возрождение (021609) → Гремячая (612709) | **2444 km** | EXACT | `computeDistance.test.ts` |
 | Distance Route B | Исеть (771500) → Наб. Челны (648503) | **699 km** | EXACT | `computeDistance.test.ts` |
 | Distance Route C | Элисенваара (023202) → Элиста (528706) | **3108 km** | EXACT | `computeDistance.test.ts` |
+| Distance Route D | Элисенваара (023202) → Решетниково (061108) | **1432 km** (via Ховрино, not the 1267 Тверь-62 shortcut) | EXACT | `computeDistance.test.ts` |
 
-> **Distance residual (NOT certified):** Элисенваара → **Решетниково (061108)** returns **1267 km**, legal = **1432**.
-> Unsolved without an operator малодеятельный/магистральный узел attribute (see §0.1(ii) + `DISTANCE_ROUTING_SPEC.md`).
+> **Решетниково — now CERTIFIED at 1432** (was the known-wrong 1267 residual). Fixed by the class-driven
+> spur-attachment filter (`tr4-uzel-class.json` + `computeDistance.ts:filterBackBranches`); no per-route constant,
+> oracles intact. The *general* малодеятельный/обходной classification is still bounded to a hand-curated 7-узел
+> table — unclassified multi-узел участки degrade to the conservative no-op (see §0.1(ii) + `DISTANCE_COVERAGE.md`).
 
 **What changed to make this MORE certified (not just preserved):**
 

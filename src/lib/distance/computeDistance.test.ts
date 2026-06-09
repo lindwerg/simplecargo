@@ -21,6 +21,7 @@ import {
   type Kniga1Row,
   type UzelGraph,
   type HubEntry,
+  type UzelClass,
 } from "./computeDistance";
 import type { DistanceInput } from "./schema";
 
@@ -63,12 +64,27 @@ describe("computeDistance — GOLDEN ORACLE (real квитанции)", () => {
   const specialFile = loadJson<{ overrides: Array<{ a: string; b: string; km: number }> }>(
     "special-distances.json",
   );
+  // ТР-4 узел classification (tr4-uzel-class.json) — drives the same-участок
+  // spur-attachment filter. Mirror repository.ts's loadUzelClass() so this golden
+  // suite exercises the same rule the runtime engine uses.
+  const classFile = loadJson<{ uzly?: Record<string, { class: string; directional?: string }> }>(
+    "tr4-uzel-class.json",
+  );
+  const uzelClass = new Map<string, UzelClass>();
+  for (const [esr, entry] of Object.entries(classFile.uzly ?? {})) {
+    if (!entry || typeof entry.class !== "string") continue;
+    uzelClass.set(esr, {
+      class: entry.class,
+      ...(entry.directional ? { directional: entry.directional } : {}),
+    });
+  }
   const compiled = compileGraph(kniga1, graph);
   const data: DistanceData = {
     kniga1,
     graph,
     hubs: hubFile.hubs ?? [],
     specials: specialFile.overrides ?? [],
+    uzelClass,
     compiled,
   };
 
@@ -81,6 +97,25 @@ describe("computeDistance — GOLDEN ORACLE (real квитанции)", () => {
   it("Route B: Исеть(771500) → Набережные Челны(648503) = 699 km", () => {
     const result = run({ originEsr: "771500", destEsr: "648503" }, data);
     expect(result.km).toBe(699);
+    expect(result.confidence).toBe("green");
+  });
+
+  it("Route C: Элисенваара(023202) → Элиста(528706) = 3108 km", () => {
+    const result = run({ originEsr: "023202", destEsr: "528706" }, data);
+    expect(result.km).toBe(3108);
+    expect(result.confidence).toBe("green");
+  });
+
+  // Решетниково spur-attachment fix (DISTANCE_ROUTING_SPEC §4 / §7): the dest station
+  // sits on участок «ТВЕРЬ ХОВРИНО» between three colinear узлы (Тверь-62, Поварово II-58,
+  // Ховрино-92). Arriving from the south via Ховрино is the R-Тариф legal attachment
+  // (21 + 1319 + 92 = 1432). The cheaper Тверь(62)/Поварово II(58) legs are обходные
+  // back-branches forbidden by ТР-1 §I п.4 «в обход малодеятельных участков». The
+  // tr4-uzel-class filter drops them (Тверь directional, Поварово II obhodnoy), leaving
+  // the clean магистраль Ховрино. Same-route money quote = R-Тариф v19.59.
+  it("Route D: Элисенваара(023202) → Решетниково(061108) = 1432 km (Ховрино, not Тверь-62)", () => {
+    const result = run({ originEsr: "023202", destEsr: "061108" }, data);
+    expect(result.km).toBe(1432);
     expect(result.confidence).toBe("green");
   });
 });
@@ -248,6 +283,72 @@ describe("computeDistance — unit (synthetic fixtures)", () => {
     const g = compileGraph(kniga1Rows, { nodes: [], edges: [] });
     const result = run({ originEsr: "SA", destEsr: "SB" }, makeData(g));
     expect(result.km).toBe(1); // 0.5 rounds up to 1
+  });
+
+  it("same-участок filter keeps the clean магистраль узел, drops obhodnoy/directional", () => {
+    // Dest station SD hangs off three узлы of one участок UCH:
+    //   M (magistral, far backbone 300, spur 92)  ← legal through-attachment
+    //   O (obhodnoy,  near backbone 200, spur 58)  ← dropped
+    //   T (magistral+directional, backbone 180, spur 62) ← dropped (directional)
+    // Origin SO → узел UO, with UO→{T,O,M} backbone edges 180/200/300.
+    // Without the filter the engine grabs T: 10 + 180 + 62 = 252.
+    // With the filter only M survives: 10 + 300 + 92 = 402.
+    const kniga1Rows: Kniga1Row[] = [
+      { esr: "SO", name: "O", uzelEsr: "UO", uzelName: "UO", km: 10, uchastok: "UCHO" },
+      { esr: "SD", name: "D", uzelEsr: "M", uzelName: "Mag", km: 92, uchastok: "UCH" },
+      { esr: "SD", name: "D", uzelEsr: "O", uzelName: "Obh", km: 58, uchastok: "UCH" },
+      { esr: "SD", name: "D", uzelEsr: "T", uzelName: "Dir", km: 62, uchastok: "UCH" },
+    ];
+    const g = compileGraph(kniga1Rows, {
+      nodes: [
+        { esr: "UO", name: "UO" },
+        { esr: "M", name: "Mag" },
+        { esr: "O", name: "Obh" },
+        { esr: "T", name: "Dir" },
+      ],
+      edges: [
+        { aEsr: "UO", bEsr: "T", km: 180, uchastok: "", source: "kniga3" },
+        { aEsr: "UO", bEsr: "O", km: 200, uchastok: "", source: "kniga3" },
+        { aEsr: "UO", bEsr: "M", km: 300, uchastok: "", source: "kniga3" },
+      ],
+    });
+    const uzelClass = new Map<string, UzelClass>([
+      ["M", { class: "magistral" }],
+      ["O", { class: "obhodnoy" }],
+      ["T", { class: "magistral", directional: "northEndOfUchastok" }],
+    ]);
+    const data: DistanceData = {
+      kniga1: [], graph: { nodes: [], edges: [] }, hubs: [], specials: [], uzelClass, compiled: g,
+    };
+    const result = run({ originEsr: "SO", destEsr: "SD" }, data);
+    expect(result.km).toBe(402); // 10 + 300 + 92, NOT 252 (Тверь-style back-branch)
+    expect(result.confidence).toBe("green");
+  });
+
+  it("same-участок filter is a no-op when the group has no clean магистраль (keeps MIN)", () => {
+    // Both dest узлы unclassified (like «ВОЛГОГРАД II КОТЕЛЬНИКОВО») → keep both → MIN.
+    const kniga1Rows: Kniga1Row[] = [
+      { esr: "SO", name: "O", uzelEsr: "UO", uzelName: "UO", km: 10, uchastok: "UCHO" },
+      { esr: "SD", name: "D", uzelEsr: "A", uzelName: "A", km: 165, uchastok: "UCH" },
+      { esr: "SD", name: "D", uzelEsr: "B", uzelName: "B", km: 21, uchastok: "UCH" },
+    ];
+    const g = compileGraph(kniga1Rows, {
+      nodes: [
+        { esr: "UO", name: "UO" }, { esr: "A", name: "A" }, { esr: "B", name: "B" },
+      ],
+      edges: [
+        { aEsr: "UO", bEsr: "A", km: 100, uchastok: "", source: "kniga3" },
+        { aEsr: "UO", bEsr: "B", km: 1000, uchastok: "", source: "kniga3" },
+      ],
+    });
+    // A reachable but no direct B path used → A leg: 10+100+165=275; B leg:10+1000+21=1031.
+    const data: DistanceData = {
+      kniga1: [], graph: { nodes: [], edges: [] }, hubs: [], specials: [],
+      uzelClass: new Map(), compiled: g,
+    };
+    const result = run({ originEsr: "SO", destEsr: "SD" }, data);
+    expect(result.km).toBe(275); // MIN preserved, filter did not fire
+    expect(result.confidence).toBe("green");
   });
 
   it("hub adder is applied when hub узел is mid-path", () => {

@@ -76,6 +76,28 @@ export interface HubEntry {
 }
 
 /**
+ * ТР-4 узел magistral/обходной/малодеятельный classification (tr4-uzel-class.json).
+ *
+ * Drives the same-участок spur-attachment rule (DISTANCE_ROUTING_SPEC §4 / §7):
+ * ТР-1 2026 §I п.4 «в обход малодеятельных участков и скоростных линий» + ТР-4
+ * Книга-3 общие положения «без учёта обходных и соединительных ветвей в узлах».
+ *
+ *   • class="magistral"     — through-mainline узел (genuine arrival end).
+ *   • class="obhodnoy"      — обходная/соединительная ветвь в узле (e.g. БМО ring).
+ *   • class="malodeyatelny" — малодеятельная/тупиковая ветвь.
+ *   • directional flag      — a узел that IS магистральная by line class but is
+ *                             reached only by overshooting the station and doubling
+ *                             back (e.g. Тверь from the south, Акбаш the long way).
+ *                             Treated as a back-branch FOR THE PURPOSE OF this rule.
+ */
+export interface UzelClass {
+  /** "magistral" | "obhodnoy" | "malodeyatelny" (free string; only "magistral" is special). */
+  readonly class: string;
+  /** When set, the узел is a directional back-branch for the spur-attachment rule. */
+  readonly directional?: string;
+}
+
+/**
  * Pair-level distance override.
  *
  * `a`/`b` MUST be 6-digit station ESR codes — they are matched directly against
@@ -98,6 +120,12 @@ export interface DistanceData {
   readonly graph: UzelGraph;
   readonly hubs: ReadonlyArray<HubEntry>;
   readonly specials: ReadonlyArray<SpecialOverride>;
+  /**
+   * Per-узел ТР-4 classification (esr → UzelClass), from tr4-uzel-class.json.
+   * Optional: when absent or a узел is unclassified, the spur-attachment filter
+   * is a no-op for that group (conservative — never regresses the km oracles).
+   */
+  readonly uzelClass?: ReadonlyMap<string, UzelClass>;
   /** Pre-compiled graph (filled by the repository after first compile). */
   readonly compiled?: CompiledGraph;
 }
@@ -374,6 +402,70 @@ function isSameRadialLine(
   return entryLine === exitLine;
 }
 
+// ── Same-участок spur-attachment filter (ТР-4 п.4 / Книга-3 общие положения) ──
+
+/**
+ * A узел is a "clean магистраль" attachment iff it is class="magistral" AND has no
+ * `directional` back-branch flag. Only such a узел can dominate its same-участок
+ * siblings — see DISTANCE_ROUTING_SPEC §7: Тверь is магистральная by LINE class but
+ * `directional` (reached by overshooting the station from the south and doubling
+ * back), so it must NOT count as the legal through-attachment.
+ */
+function isCleanMagistral(c: UzelClass | undefined): boolean {
+  return c != null && c.class === "magistral" && !c.directional;
+}
+
+/**
+ * Узел is an EXPLICIT back-branch attachment: класс обходной/малодеятельный, OR
+ * магистраль reached only by a directional overshoot-and-return (Тверь/Акбаш).
+ */
+function isBackBranch(c: UzelClass | undefined): boolean {
+  if (c == null) return false;
+  if (c.class === "obhodnoy" || c.class === "malodeyatelny") return true;
+  if (c.class === "magistral" && c.directional) return true;
+  return false;
+}
+
+/**
+ * filterBackBranches — drop the обходные/малодеятельные/directional back-branch spur
+ * legs of a station when a clean магистраль leg of the SAME station exists.
+ *
+ * Rule (class-driven, NO km arithmetic, NO per-route constant):
+ *   1. If the station has ≥1 clean-магистраль leg (isCleanMagistral), DROP every leg
+ *      that is an EXPLICIT back-branch (isBackBranch: обходной / малодеятельный /
+ *      магистраль-but-`directional`).
+ *   2. UNCLASSIFIED legs are NEVER dropped, and the rule does nothing when no clean
+ *      магистраль leg exists — a conservative fallback to the engine's global-MIN so
+ *      unclassified участки (e.g. «ВОЛГОГРАД II КОТЕЛЬНИКОВО») never regress.
+ *
+ * Pinned to ТР-1 2026 §I п.4 «в обход малодеятельных участков и скоростных линий» and
+ * ТР-4 Книга-3 «без учёта обходных и соединительных ветвей в узлах»: the dropped legs
+ * are exactly the обходные/back-branch attachments; the survivor is the through-mainline.
+ *
+ * The decision is station-wide (not strictly per-участок) because a малодеятельная
+ * deadend (Конаково ГРЭС, участок «РЕШЕТНИКОВО КОНАКОВО ГРЭС») can reach the backbone
+ * only by bridging back through the destination узел — an обходной attachment that п.4
+ * forbids once a clean магистраль (Ховрино) approach exists. Only EXPLICITLY classified
+ * узлы are ever dropped, so no unclassified route can be affected.
+ *
+ * Verified: 023202→061108=1432 (keep Ховрино; drop Тверь directional, Поварово II
+ * обходной, Конаково ГРЭС малодеятельный), 771500→648503=699 (keep Алнаши; drop Акбаш
+ * directional), 021609→612709=2444 and 023202→528706=3108 (unclassified / single →
+ * untouched). See computeDistance.test.ts.
+ */
+function filterBackBranches(
+  legs: UzelLeg[],
+  uzelClass: ReadonlyMap<string, UzelClass> | undefined,
+): UzelLeg[] {
+  if (!uzelClass || legs.length < 2) return legs;
+  // Decidable only when a clean магистраль attachment exists for THIS station.
+  const hasCleanMagistral = legs.some((l) => isCleanMagistral(uzelClass.get(l.uzelEsr)));
+  if (!hasCleanMagistral) return legs; // fallback to the engine's global-MIN
+  // Drop EXPLICIT back-branches (обходной / малодеятельный / directional магистраль).
+  // Unclassified legs are never dropped, so unclassified routes can never be affected.
+  return legs.filter((l) => !isBackBranch(uzelClass.get(l.uzelEsr)));
+}
+
 // ── ТР-4 rounding ─────────────────────────────────────────────────────────────
 
 function roundKm(km: number): number {
@@ -443,12 +535,21 @@ export function computeDistance(input: DistanceInput, data: DistanceData): Dista
   }
 
   // 4) Enumerate candidates.
+  //
+  // Same-участок spur-attachment filter (ТР-4 п.4 / Книга-3 общие положения): among a
+  // station's spur legs that share a участок, drop the обходные / малодеятельные /
+  // directional back-branch attachments when a clean магистраль leg of that участок
+  // exists. Class-driven only; unclassified groups are left intact so the calibrated
+  // km oracles (2444/3108) never regress. Applied to both origin and dest legs.
+  const oLegsFiltered = filterBackBranches([...oLegs], data.uzelClass);
+  const dLegsFiltered = filterBackBranches([...dLegs], data.uzelClass);
+
   let bestKm = Infinity;
   let bestLegs: DistanceLeg[] = [];
   let anyTried = false;
 
-  for (const oLeg of oLegs) {
-    for (const dLeg of dLegs) {
+  for (const oLeg of oLegsFiltered) {
+    for (const dLeg of dLegsFiltered) {
       for (const ob of toBackbone(g, oLeg.uzelEsr)) {
         for (const db of toBackbone(g, dLeg.uzelEsr)) {
           anyTried = true;

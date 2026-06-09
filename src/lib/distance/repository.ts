@@ -12,7 +12,15 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 import { computeDistance, compileGraph } from "./computeDistance";
-import type { DistanceData, HubEntry, Kniga1Row, SpecialOverride, UzelEdge, UzelGraph } from "./computeDistance";
+import type {
+  DistanceData,
+  HubEntry,
+  Kniga1Row,
+  SpecialOverride,
+  UzelClass,
+  UzelEdge,
+  UzelGraph,
+} from "./computeDistance";
 import { distanceInputSchema, type DistanceInput, type DistanceResult } from "./schema";
 
 // ── Seed-data path ────────────────────────────────────────────────────────────
@@ -106,6 +114,77 @@ function loadGapFill2(): UzelEdge[] {
   }));
 }
 
+/** Raw row shape of uzel-graph-kniga1.json (full kniga1 участок узел-adjacency). */
+interface Kniga1AdjRow {
+  readonly aEsr: string;
+  readonly bEsr: string;
+  readonly km: number;
+  readonly uchastok?: string;
+  readonly source?: string;
+}
+
+/**
+ * Loads the full Книга-1 узел-adjacency overlay (uzel-graph-kniga1.json). Every edge
+ * is one участок узел-pair whose length is derived directly from kniga1-sections km
+ * values: the authoritative узел-as-station endpoint km when present, else the minimum
+ * (km_toA + km_toB) over the stations recording both bounding узлы. No invented km.
+ * Each pair is deduped to its shortest (most direct) span. compileGraph keeps the
+ * shortest edge per pair, so these are harmless where the base graph already has the
+ * pair and additive where it does not. Missing/empty file is tolerated.
+ */
+function loadKniga1Adjacency(): UzelEdge[] {
+  let rows: Kniga1AdjRow[];
+  try {
+    rows = loadJson<Kniga1AdjRow[]>("uzel-graph-kniga1.json");
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(rows)) return [];
+  return rows.map((r) => ({
+    aEsr: r.aEsr,
+    bEsr: r.bEsr,
+    km: r.km,
+    uchastok: r.uchastok ?? "kniga1-uzeladj",
+    source: r.source ?? "kniga1-uzeladj",
+  }));
+}
+
+/** Raw shape of one узел entry in tr4-uzel-class.json (under `uzly`). */
+interface Tr4UzelClassEntry {
+  readonly class: string;
+  readonly directional?: string;
+}
+
+/** Raw file shape of tr4-uzel-class.json. */
+interface Tr4UzelClassFile {
+  readonly uzly?: Readonly<Record<string, Tr4UzelClassEntry>>;
+}
+
+/**
+ * Loads the ТР-4 узел classification (tr4-uzel-class.json) into an esr→UzelClass map.
+ * Drives the same-участок spur-attachment filter in computeDistance (ТР-1 §I п.4 /
+ * ТР-4 Книга-3 общие положения). Missing/empty file is tolerated (returns an empty
+ * map) so the filter degrades to the conservative no-op fallback. No invented km.
+ */
+function loadUzelClass(): Map<string, UzelClass> {
+  const map = new Map<string, UzelClass>();
+  let file: Tr4UzelClassFile;
+  try {
+    file = loadJson<Tr4UzelClassFile>("tr4-uzel-class.json");
+  } catch {
+    return map;
+  }
+  const uzly = file.uzly ?? {};
+  for (const [esr, entry] of Object.entries(uzly)) {
+    if (!entry || typeof entry.class !== "string") continue;
+    map.set(esr, {
+      class: entry.class,
+      ...(entry.directional ? { directional: entry.directional } : {}),
+    });
+  }
+  return map;
+}
+
 // ── Module-level singleton (compiled once on first call) ──────────────────────
 
 let cachedData: DistanceData | null = null;
@@ -124,9 +203,10 @@ function getData(): DistanceData {
   const cisFill = loadCisFill();
   const gapFill = loadGapFill();
   const gapFill2 = loadGapFill2();
+  const kniga1Adj = loadKniga1Adjacency();
   const graph: UzelGraph = {
     nodes: baseGraph.nodes,
-    edges: [...baseGraph.edges, ...cisFill, ...gapFill, ...gapFill2],
+    edges: [...baseGraph.edges, ...cisFill, ...gapFill, ...gapFill2, ...kniga1Adj],
   };
 
   // hub-distances.json shape: { hubs: [{ hub, km, esr, lines? }] }
@@ -150,9 +230,11 @@ function getData(): DistanceData {
     km: s.km,
   }));
 
+  const uzelClass = loadUzelClass();
+
   const compiled = compileGraph(kniga1, graph);
 
-  cachedData = { kniga1, graph, hubs, specials, compiled };
+  cachedData = { kniga1, graph, hubs, specials, uzelClass, compiled };
   return cachedData;
 }
 

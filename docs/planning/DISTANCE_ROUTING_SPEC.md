@@ -232,7 +232,23 @@ instead of raw `dLegs` (and symmetrically for `oLegs` if desired).
 
 ---
 
-## 7. IMPLEMENTATION OUTCOME (2026-06-09) — §4.3 predicate FALSIFIED, status PARTIAL
+## 7. IMPLEMENTATION OUTCOME — §4.3 km-predicate FALSIFIED, class-driven fix SHIPPED (status RESOLVED for tested routes)
+
+> **STATUS UPDATE (later 2026-06-09):** the blocker below was resolved. The km-monotone §4.3 predicate stays
+> falsified (correctly), but the **class-driven discriminator** it pointed to was sourced and shipped:
+> `scripts/seed-data/tr4-uzel-class.json` carries a per-узел `magistral` / `obhodnoy` / `malodeyatelny` (+
+> `directional`) classification for the contested узлы, and `computeDistance.ts:filterBackBranches` drops EXPLICIT
+> back-branch legs only when a clean магистраль leg of the same station survives. **Result: Решетниково = 1432
+> (via Ховрино) AND golden 699 (via Алнаши) both pass — asserted in `computeDistance.test.ts` Route D, 40/40
+> green.** No per-route constant, no fabricated km. The classification is a **hand-curated 7-узел table** (the
+> competing узлы on ТВЕРЬ ХОВРИНО / АКБАШ АЛНАШИ), each row sourced to ТР-4 Книга-3 общие положения + РЖД 28/р +
+> ТП membership in `kniga3-backbone.json`. The **full пообъектный перечень малодеятельных** remains an internal
+> RZD registry with no open verbatim list, so unclassified multi-узел участки degrade to the conservative
+> global-MIN no-op (latent-undercut risk flagged, never filled with a guess). See `DISTANCE_COVERAGE.md`.
+>
+> The original PARTIAL analysis is preserved verbatim below for the falsification record.
+
+### 7.0 (historical) — §4.3 predicate FALSIFIED, status PARTIAL
 
 The §4.3 «through-узел» predicate (drop leg `U` when a same-участок leg `W` has
 **both** larger backbone AND larger spur) was implemented and run against the live
