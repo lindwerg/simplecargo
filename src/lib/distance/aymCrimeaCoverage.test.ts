@@ -21,4 +21,11 @@ describe("АЯМ / Crimea coverage (newly wired, additive overlays)", () => {
     expect(r.km).toBeLessThan(3000);
     expect(r.confidence).toBe("green");
   });
+
+  it("Красный Сокол(022207) → Бологое-Московское(050009) = 801 km (выверенный оплатой якорь; legal freight, обход Сапсан-хода)", async () => {
+    const r = await resolveDistance({ originEsr: "022207", destEsr: "050009", emptyRun: false });
+    expect(r.km).toBe(801);
+    expect(r.confidence).toBe("green");
+  });
+
 });

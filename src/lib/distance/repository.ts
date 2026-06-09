@@ -116,6 +116,42 @@ function loadCisBackbone(): UzelEdge[] {
   return out;
 }
 
+/** Raw row shape of kniga3-full.json (complete ТР-4 Книга-3 ТП↔ТП adjacency). */
+interface Kniga3FullRow {
+  readonly aEsr?: string;
+  readonly bEsr?: string;
+  readonly km?: number;
+  readonly source?: string;
+}
+
+/**
+ * Loads the COMPLETE ТР-4 Книга-3 ТП↔ТП adjacency (kniga3-full.json) as kniga3-source
+ * узел edges. This is the merge of the existing kniga3-backbone.json with every
+ * kniga3-edges-batch-*.json acquired from the published tr4.info per-ТП adjacency pages
+ * (/tp/<esr>, cited per edge in the batch source field). Every km is copied verbatim from
+ * a fetched primary source — none invented/interpolated. Where a batch page published a
+ * shorter ТП↔ТП distance than the backbone for the same pair, compileGraph keeps the
+ * SHORTEST edge, so the merged set is purely additive precision over the backbone and
+ * cannot move any RF route upward — the 4 km + 17 tariff + АЯМ/Crimea oracles stay exact
+ * (verified in the test). Missing/empty file is tolerated (returns []). Mirrors
+ * loadCisBackbone: same shape, same source tag, appended to the узел-graph edges.
+ */
+function loadKniga3Full(): UzelEdge[] {
+  let rows: Kniga3FullRow[];
+  try {
+    rows = loadJson<Kniga3FullRow[]>("kniga3-full.json");
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(rows)) return [];
+  const out: UzelEdge[] = [];
+  for (const r of rows) {
+    if (!r.aEsr || !r.bEsr || r.km == null) continue;
+    out.push({ aEsr: r.aEsr, bEsr: r.bEsr, km: r.km, uchastok: "kniga3-full", source: "kniga3" });
+  }
+  return out;
+}
+
 /** Raw row shape of uzel-graph-gapfill.json (RF connectivity gap-bridge edges). */
 interface GapFillRow {
   readonly aEsr: string;
@@ -424,6 +460,7 @@ function getData(): DistanceData {
   // the per-administration section sums per the interstate segmentation rule).
   const cisFill = loadCisFill();
   const cisBackbone = loadCisBackbone();
+  const kniga3Full = loadKniga3Full();
   const gapFill = loadGapFill();
   const gapFill2 = loadGapFill2();
   const kniga1Adj = loadKniga1Adjacency();
@@ -433,6 +470,7 @@ function getData(): DistanceData {
       ...baseGraph.edges,
       ...cisFill,
       ...cisBackbone,
+      ...kniga3Full,
       ...gapFill,
       ...gapFill2,
       ...kniga1Adj,
