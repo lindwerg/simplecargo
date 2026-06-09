@@ -16,7 +16,8 @@ export interface QuarantineRowInsert {
     | QuarantineReason
     | "CARRIER_QUOTE_MANUAL"
     | "UNSUPPORTED_ATTACHMENT"
-    | "PROCESSING_ERROR";
+    | "PROCESSING_ERROR"
+    | "DISLOCATION_MANUAL";
   agentReason: string | null; // ИИ-объяснение оператору
   rawRowJson: unknown; // сериализованный черновик для дозаноса без LLM
 }
@@ -32,6 +33,8 @@ const RULE_BY_REASON: Record<AnyReason, { ruleId: string; severity: "ERROR" | "W
   UNSUPPORTED_ATTACHMENT: { ruleId: "E-06", severity: "INFO" },
   // письмо упало при обработке (транзиентный сбой LLM/БД) — НЕ теряем, кладём сюда
   PROCESSING_ERROR: { ruleId: "E-07", severity: "ERROR" },
+  // дислокация не привязалась автоматически (0 или >1 привязок по ящику) — вручную
+  DISLOCATION_MANUAL: { ruleId: "E-08", severity: "INFO" },
 };
 
 export function buildQuarantineRow(params: {

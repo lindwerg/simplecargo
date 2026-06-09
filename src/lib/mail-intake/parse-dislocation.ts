@@ -28,6 +28,9 @@ export function isValidWagonNumber(num: string): boolean {
   return control === Number(num[7]);
 }
 
+// «ВЫГРУЖЕН/РАЗГРУЖЕН» содержит подстроку «ГРУЖ» — проверяем ДО LOADED_RE,
+// иначе выгруженный вагон считается гружёным. Выгружен = порожний (loaded=false).
+const UNLOADED_RE = /(ВЫГРУЖ|РАЗГРУЖ)/i;
 const LOADED_RE = /(ГРУЖ|ПОГРУЖ|ЗАГРУЖ|загруж|погруж|груж)/i;
 const EMPTY_RE = /(ПОРОЖ|порож|\bПОР\b|\bпор\b)/i;
 const MAX_LINES = 50_000; // защита от гигантских вставок
@@ -44,8 +47,8 @@ export function parseDislocation(text: string): DislocationSummary {
     const tokens = line.match(/\d{8}/g);
     if (!tokens) continue;
     let loadedState: boolean | null = null;
-    if (LOADED_RE.test(line)) loadedState = true;
-    else if (EMPTY_RE.test(line)) loadedState = false;
+    if (UNLOADED_RE.test(line) || EMPTY_RE.test(line)) loadedState = false;
+    else if (LOADED_RE.test(line)) loadedState = true;
 
     for (const token of tokens) {
       if (!isValidWagonNumber(token) || seen.has(token)) continue;

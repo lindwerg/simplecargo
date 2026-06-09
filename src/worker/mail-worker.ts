@@ -127,7 +127,7 @@ async function pollCycle(systemUserId: string): Promise<void> {
         // документы и т.п. иначе не триггерили realtime).
         await publishRealtime({ kind: "email", id: fileId });
         console.log(
-          `[mail-worker] uid=${uid} ${outcome.classification.bodyKind} → req=${outcome.createdRequestId ?? "—"} inv=${outcome.invoiceIds.length} quote=${outcome.carrierQuotesMatched} quar=${outcome.quarantinedCount}`,
+          `[mail-worker] uid=${uid} ${outcome.classification.bodyKind} → req=${outcome.createdRequestId ?? "—"} inv=${outcome.invoiceIds.length} quote=${outcome.carrierQuotesMatched} dislok=${outcome.dislocationDirectionId ? `${outcome.dislocationWagons} ваг.` : "—"} quar=${outcome.quarantinedCount}`,
         );
       }
       processedUids.push(uid);

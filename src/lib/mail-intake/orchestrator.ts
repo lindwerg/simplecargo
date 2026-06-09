@@ -7,7 +7,12 @@ import type { ExtractInput, ExtractionResult } from "@/lib/requests/schema";
 import { resultToRequestInput } from "./result-to-request";
 import { decideRfqDisposition } from "./thresholds";
 import { buildQuarantineRow } from "./quarantine-map";
-import { EXTRACTABLE_KINDS, type ClassifyResult, type MailPartKind } from "./classify-schema";
+import {
+  EXTRACTABLE_KINDS,
+  effectiveEmailKind,
+  type ClassifyResult,
+  type MailPartKind,
+} from "./classify-schema";
 import type { IntakeDeps, IntakeOutcome } from "./ports";
 import type { ParsedEmail } from "./types";
 
@@ -69,6 +74,8 @@ export async function processEmail(email: ParsedEmail, deps: IntakeDeps): Promis
     carrierQuotesMatched: 0,
     quarantinedCount: 0,
     ignored: false,
+    dislocationDirectionId: null,
+    dislocationWagons: 0,
   };
 
   const parts = await collectParts(email, classification, deps);
@@ -198,10 +205,49 @@ export async function processEmail(email: ParsedEmail, deps: IntakeDeps): Promis
     }
   }
 
+  // ── dislocation → авто-роутинг по привязке ящика владельца ───────────────────
+  // direction_owner_bindings.inbound_mailbox — PRIMARY routing key (P3): ровно одна
+  // активная привязка по нормализованному отправителю → письмо линкуется и вагоны
+  // раскладываются сами (тот же код, что у кнопки «Дислокация в направление»).
+  // 0 или >1 совпадений → карантин DISLOCATION_MANUAL с подсказкой-кандидатами;
+  // кнопка в UI остаётся fallback.
+  let dislocationHandled = false;
+  if (effectiveEmailKind(classification).kind === "dislocation") {
+    dislocationHandled = true;
+    const mailbox = email.from.trim().toLowerCase();
+    const candidates = await deps.ports.findDislocationBindings(mailbox);
+    if (candidates.length === 1) {
+      const applied = await deps.ports.applyDislocation(candidates[0].directionId);
+      outcome.dislocationDirectionId = candidates[0].directionId;
+      outcome.dislocationWagons = applied.total;
+    } else {
+      const hint =
+        candidates.length === 0
+          ? `Дислокация от ${mailbox}: активная привязка владельца по ящику не найдена — привяжите письмо к направлению вручную`
+          : `Дислокация от ${mailbox}: ящик привязан к ${candidates.length} направлениям (${candidates
+              .map((c) => c.directionLabel)
+              .join("; ")}) — выберите направление вручную`;
+      await deps.ports.quarantine(
+        buildQuarantineRow({
+          reason: "DISLOCATION_MANUAL",
+          sourceFileId: deps.ports.sourceFileId,
+          agentReason: hint,
+          draft: {
+            from: email.from,
+            subject: email.subject,
+            candidates,
+          },
+        }),
+      );
+      outcome.quarantinedCount += 1;
+    }
+  }
+
   if (
     rfqInputs.length === 0 &&
     invoiceInputs.length === 0 &&
-    quoteInputs.length === 0
+    quoteInputs.length === 0 &&
+    !dislocationHandled
   ) {
     outcome.ignored = true;
   }

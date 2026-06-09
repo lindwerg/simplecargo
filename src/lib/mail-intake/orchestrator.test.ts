@@ -26,17 +26,24 @@ function emptyExtraction(lines: ExtractionResult["lines"] = []): ExtractionResul
 }
 
 function ports(
-  opts: { quoteMatches?: boolean } = {},
+  opts: {
+    quoteMatches?: boolean;
+    dislocationBindings?: { directionId: string; directionLabel: string }[];
+  } = {},
 ): IntakePorts & {
   created: unknown[];
   invoices: unknown[];
   quarantined: unknown[];
   quoteMatchCalls: unknown[];
+  dislocationLookups: string[];
+  dislocationApplied: string[];
 } {
   const created: unknown[] = [];
   const invoices: unknown[] = [];
   const quarantined: unknown[] = [];
   const quoteMatchCalls: unknown[] = [];
+  const dislocationLookups: string[] = [];
+  const dislocationApplied: string[] = [];
   return {
     systemUserId: "system-user",
     sourceFileId: "file-1",
@@ -44,6 +51,8 @@ function ports(
     invoices,
     quarantined,
     quoteMatchCalls,
+    dislocationLookups,
+    dislocationApplied,
     async createRequest(input) {
       created.push(input);
       return { id: "req-1", requestNumber: "R-2026-0001" };
@@ -61,6 +70,14 @@ function ports(
       return opts.quoteMatches
         ? { matched: true, updatedCount: 1, requestId: "req-1" }
         : { matched: false, updatedCount: 0, requestId: null };
+    },
+    async findDislocationBindings(mailbox) {
+      dislocationLookups.push(mailbox);
+      return opts.dislocationBindings ?? [];
+    },
+    async applyDislocation(directionId) {
+      dislocationApplied.push(directionId);
+      return { total: 2, loaded: 1, empty: 1, savedToBinding: true };
     },
   };
 }
@@ -235,8 +252,10 @@ describe("processEmail orchestrator", () => {
     expect((p.quarantined[0] as { reasonCode: string }).reasonCode).toBe("CARRIER_QUOTE_MANUAL");
   });
 
-  it("archives a dislocation report без извлечения (ignored, no request/invoice/quarantine)", async () => {
-    const p = ports();
+  it("авто-разбирает дислокацию при ровно одной активной привязке ящика (без LLM-извлечения)", async () => {
+    const p = ports({
+      dislocationBindings: [{ directionId: "dir-1", directionLabel: "Качканар → Дёма" }],
+    });
     const extractRequest = vi.fn();
     const extractInvoice = vi.fn();
     const convertAttachment = vi.fn();
@@ -256,6 +275,7 @@ describe("processEmail orchestrator", () => {
     );
     const out = await processEmail(
       email({
+        from: "Dispatcher@Owner.RU", // нормализация: lower-case перед поиском привязки
         subject: "Дислок",
         text: "сводка по вагонам во вложении",
         attachments: [
@@ -269,14 +289,81 @@ describe("processEmail orchestrator", () => {
       }),
       d,
     );
-    expect(out.ignored).toBe(true);
+    expect(out.ignored).toBe(false);
     expect(out.classification.bodyKind).toBe("dislocation");
+    expect(out.dislocationDirectionId).toBe("dir-1");
+    expect(out.dislocationWagons).toBe(2);
+    expect(p.dislocationLookups).toEqual(["dispatcher@owner.ru"]);
+    expect(p.dislocationApplied).toEqual(["dir-1"]);
     expect(extractRequest).not.toHaveBeenCalled();
     expect(extractInvoice).not.toHaveBeenCalled();
     expect(convertAttachment).not.toHaveBeenCalled(); // вложение не конвертируется в извлечение
     expect(p.created).toHaveLength(0);
     expect(p.invoices).toHaveLength(0);
     expect(p.quarantined).toHaveLength(0);
+  });
+
+  it("дислокация без привязки ящика → карантин DISLOCATION_MANUAL с подсказкой", async () => {
+    const p = ports({ dislocationBindings: [] });
+    const d = deps(
+      {
+        classify: async () =>
+          classifyResultSchema.parse({ bodyKind: "dislocation", bodyConfidence: 0.9 }),
+      },
+      p,
+    );
+    const out = await processEmail(email({ from: "unknown@owner.ru", text: "дислокация" }), d);
+    expect(out.ignored).toBe(false);
+    expect(out.dislocationDirectionId).toBeNull();
+    expect(p.dislocationApplied).toHaveLength(0);
+    expect(p.quarantined).toHaveLength(1);
+    const row = p.quarantined[0] as { reasonCode: string; agentReason: string };
+    expect(row.reasonCode).toBe("DISLOCATION_MANUAL");
+    expect(row.agentReason).toContain("unknown@owner.ru");
+    expect(row.agentReason).toContain("не найдена");
+  });
+
+  it("дислокация при нескольких привязках ящика → карантин с кандидатами в тексте", async () => {
+    const p = ports({
+      dislocationBindings: [
+        { directionId: "dir-1", directionLabel: "Качканар → Дёма" },
+        { directionId: "dir-2", directionLabel: "Инская → Кузнецк" },
+      ],
+    });
+    const d = deps(
+      {
+        classify: async () =>
+          classifyResultSchema.parse({
+            bodyKind: "other",
+            bodyConfidence: 0,
+            // тип определяется по вложению (effectiveEmailKind), тело пустое — частый случай
+            attachments: [{ index: 0, kind: "dislocation", confidence: 0.9, reason: "сводка" }],
+          }),
+      },
+      p,
+    );
+    const out = await processEmail(
+      email({
+        from: "shared@owner.ru",
+        text: "",
+        attachments: [
+          {
+            filename: "dislocation.xlsx",
+            contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            size: 100,
+            content: Buffer.from("x"),
+          },
+        ],
+      }),
+      d,
+    );
+    expect(out.dislocationDirectionId).toBeNull();
+    expect(p.dislocationApplied).toHaveLength(0);
+    expect(p.quarantined).toHaveLength(1);
+    const row = p.quarantined[0] as { reasonCode: string; agentReason: string };
+    expect(row.reasonCode).toBe("DISLOCATION_MANUAL");
+    expect(row.agentReason).toContain("Качканар → Дёма");
+    expect(row.agentReason).toContain("Инская → Кузнецк");
   });
 
   it("ignores a plain 'thank you' email (no LLM extraction calls)", async () => {

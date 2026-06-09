@@ -14,6 +14,8 @@ describe("buildQuarantineRow", () => {
     expect(buildQuarantineRow({ reason: "ROLE_KIND_CONFLICT" }).ruleId).toBe("E-03");
     expect(buildQuarantineRow({ reason: "NO_LINES_EXTRACTED" }).ruleId).toBe("E-04");
     expect(buildQuarantineRow({ reason: "CARRIER_QUOTE_MANUAL" }).ruleId).toBe("E-05");
+    expect(buildQuarantineRow({ reason: "DISLOCATION_MANUAL" }).ruleId).toBe("E-08");
+    expect(buildQuarantineRow({ reason: "DISLOCATION_MANUAL" }).severity).toBe("INFO");
   });
 
   it("never emits a tier/severity outside the schema CHECK sets", () => {
@@ -24,6 +26,7 @@ describe("buildQuarantineRow", () => {
       "NO_LINES_EXTRACTED",
       "CARRIER_QUOTE_MANUAL",
       "UNSUPPORTED_ATTACHMENT",
+      "DISLOCATION_MANUAL",
     ] as const;
     for (const reason of reasons) {
       const row = buildQuarantineRow({ reason });
