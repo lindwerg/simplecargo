@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Archive, BadgeCheck, FileCheck2, Hash, Trophy } from "lucide-react";
+import { Archive, BadgeCheck, CheckCircle2, FileCheck2, Hash, Trophy } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/ErrorState";
@@ -19,6 +19,7 @@ type LifecyclePayload =
   | { action: "won" }
   | { action: "application" }
   | { action: "gu"; guNumber: string }
+  | { action: "complete" }
   | { action: "archive"; lostReason: string };
 
 const ACTION_ERROR = "Не удалось обновить статус.";
@@ -43,6 +44,7 @@ export function RequestLifecyclePanel({ dealId, status }: RequestLifecyclePanelP
 
   const isDraft = status === "draft";
   const isConfirmed = status === "confirmed";
+  const isActive = status === "active";
   const isTerminal = TERMINAL.has(status);
 
   async function run(payload: LifecyclePayload) {
@@ -114,6 +116,16 @@ export function RequestLifecyclePanel({ dealId, status }: RequestLifecyclePanelP
         >
           <Hash />
           Есть ГУ
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          className="text-success hover:text-success"
+          disabled={pending || !isActive}
+          onClick={() => run({ action: "complete" })}
+        >
+          <CheckCircle2 />
+          Завершить сделку
         </Button>
         <Button
           size="sm"
