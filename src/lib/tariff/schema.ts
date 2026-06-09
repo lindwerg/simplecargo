@@ -37,7 +37,17 @@ export const tariffInputSchema = z.object({
   wagonCount: z.coerce.number().int().positive().optional(),
   /** Wagon model string (e.g. "12-9761-02") — drives innovative 0.9595 lookup from tr1-innovative-models. */
   wagonModel: z.string().trim().optional(),
+  /**
+   * Container size code for контейнерные отправки (schemes N85-94). One of the canonical
+   * sizes in tr1-i-belts-container.json: "3т" | "5т" | "10т" | "20ft" | "40ft". Required
+   * to resolve the per-container linearAB plate (A + B×KL). Absent for non-container wagons.
+   */
+  containerSize: z.string().trim().optional(),
 });
+
+/** Canonical container-size codes (mirror tr1-i-belts-container.json containerSizeMap keys). */
+export const CONTAINER_SIZES = ["3т", "5т", "10т", "20ft", "40ft"] as const;
+export type ContainerSize = (typeof CONTAINER_SIZES)[number];
 
 export type TariffInput = z.infer<typeof tariffInputSchema>;
 

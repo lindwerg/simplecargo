@@ -7,8 +7,9 @@
 // ALGORITHM (matches the engine that hits oracle квитанции to the km):
 //   1. Special-distance override (by station ESR pair) wins over everything.
 //   2. Same-station → 0 km.
-//   3. Same-участок shortcut: if origin and dest share an участок bounding узел,
-//      the result is |cumA − cumB| for that common узел — no backbone needed.
+//   3. Shared-узел shortcut: if origin and dest hang off the same bounding узел,
+//      the result is |cumA − cumB| (same участок) or cumA + cumB (adjacent участки
+//      joined at that узел) — MIN over all shared anchors, no backbone needed.
 //   4. Enumerate (origin узел-leg × dest узел-leg) candidates:
 //        leg1 + bridgeOrigin + backboneTerminal + bridgeDest + leg3
 //      The "bridge" hops a peripheral узел (no kniga3 edges) over kniga1 участок
@@ -277,20 +278,48 @@ function backboneTerminal(g: CompiledGraph, a: string, b: string): BackboneResul
   return { km: total, path };
 }
 
-// ── Same-участок shortcut ─────────────────────────────────────────────────────
+// ── Shared-узел shortcut (same-участок |Δ| + adjacent-section sum) ─────────────
 
-function sameUchastokDistance(
+/**
+ * Resolve the distance when both stations hang off the SAME bounding узел, without
+ * touching the Книга-3 backbone. Two ТР-4 cases share that узел anchor:
+ *
+ *   • SAME участок  (o.uchastok === d.uchastok): both stations lie on one section,
+ *     so the distance is the cumulative-km difference |o.km − d.km| (M21/§3 shortcut).
+ *
+ *   • ADJACENT участки (o.uchastok !== d.uchastok, same o.uzelEsr): the two sections
+ *     meet AT the узел, so the path is station→узел→station = o.km + d.km (M3). There
+ *     is no backbone hop to subtract — the узел IS the join point.
+ *
+ * Both cases can be reachable through several shared anchors on loop/multi-anchor
+ * участки; we therefore evaluate EVERY (o,d) anchor pair that shares a узел and
+ * return the MINIMUM km (M4 — previously this returned the FIRST match, making the
+ * result order-dependent on the kniga1 leg ordering).
+ *
+ * Returns null when origin and dest share no bounding узел (→ backbone enumeration).
+ */
+function sharedUzelDistance(
   oLegs: UzelLeg[],
   dLegs: UzelLeg[],
 ): { km: number; uzel: string } | null {
+  let bestKm = Infinity;
+  let bestUzel = "";
   for (const o of oLegs) {
     for (const d of dLegs) {
-      if (o.uchastok && o.uchastok === d.uchastok && o.uzelEsr === d.uzelEsr) {
-        return { km: Math.abs(o.km - d.km), uzel: `${o.uzelName}(${o.uzelEsr})` };
+      if (o.uzelEsr !== d.uzelEsr) continue;
+      // Same участок → |Δcum|; adjacent участки joined at the узел → sum of legs.
+      const km =
+        o.uchastok && o.uchastok === d.uchastok
+          ? Math.abs(o.km - d.km)
+          : o.km + d.km;
+      if (km < bestKm) {
+        bestKm = km;
+        bestUzel = `${o.uzelName}(${o.uzelEsr})`;
       }
     }
   }
-  return null;
+  if (!isFinite(bestKm)) return null;
+  return { km: bestKm, uzel: bestUzel };
 }
 
 // ── Узел same-radial-line exclusion (ТР-4) ────────────────────────────────────
@@ -406,8 +435,8 @@ export function computeDistance(input: DistanceInput, data: DistanceData): Dista
     return red(`no kniga1 leg for dest station ${destEsr}`);
   }
 
-  // 3) Same-участок shortcut.
-  const same = sameUchastokDistance(oLegs, dLegs);
+  // 3) Shared-узел shortcut (same участок |Δ| OR adjacent участки joined at узел).
+  const same = sharedUzelDistance(oLegs, dLegs);
   if (same != null) {
     const leg: DistanceLeg = { kind: "backbone", fromEsr: originEsr, toEsr: destEsr, km: same.km };
     return { km: roundKm(same.km), legs: [leg], confidence: "green", warnings };

@@ -12,7 +12,7 @@
     ],
     "ownershipMap": { "own": "собственный", "rzd": "общий парк РЖД" },
     "shipmentMap": { "wagon": "повагонная", "group": "групповая", "route": "маршрутная" },
-    "engineNote": "Engine certified в-рубль so far ONLY for own-ПВ class-1 (N8 path). Cases marked engineCoverage='proven' must match to ₽0. 'fitted' cases stress the 3 fitted levers (SHORT_HAUL_BOUNDARY_UPLIFT, C_OWN_PV_CLASS1=0.9346, C_INNOVATIVE=0.9595). 'gap' cases (rzd В-component, крытый/платформа/цистерна/хоппер, class 2/3) are expected to be approximate or RED — they tell us where to build next.",
+    "engineNote": "Engine certified в-рубль (GREEN) so far ONLY for own-ПВ class-1 (N8 path). engineCoverage values: 'proven' = must match to ₽0; 'fitted' = stresses the C_OWN_PV_CLASS1=0.9346 / C_INNOVATIVE=0.9595 levers (NB: SHORT_HAUL_BOUNDARY_UPLIFT was DELETED — 699km is now derived from verbatim п.16.5-16.9, gap C4 closed); 'yellow' = engine NOW returns a real number from a verbatim ТР-1 table but it is NOT yet R-Тариф-certified at that point — match promotes to GREEN (own ПЛ inventory C44, own ПВ class-2/3 bridges C45/C46, container loaded plates C41-C43 via A+B×KL ×1.05); 'gap' = engine returns RED (no number) because the scheme/coefficient is not pinned (цистерна C47, reefer container C48, КР крытый) — collect the R-Тариф reference to build it next.",
     "stationPool": {
       "021609": "Возрождение (Окт)",
       "612709": "Гремячая (Прив)",
@@ -274,6 +274,54 @@
       "origin": { "name": "Красное (стык БЧ)", "esr": "171401", "road": "Смол" }, "dest": { "name": "Исеть", "esr": "771500", "road": "Сверд" },
       "cargo": "Удобрения органические", "etsngCode": "078005", "freightClass": 2, "wagonType": "ПВ", "ownership": "own", "wagonModel": "кроме перечисленных", "shipmentType": "group", "wagonCount": 6, "weightTonsPerWagon": 68, "axles": 4, "asOfDate": "2026-06-07", "traffic": "import",
       "note": "GAP: IMPORT traffic from БЧ border (reverse corridor). class-2 удобрения own ПВ. Tests import НДС/coef + reverse-direction distance symmetry vs C40-mirror.",
+      "ref_distanceKm": null, "ref_perWagonProvoznaya_noVat": null, "ref_perWagonWithVat": null, "ref_per1tNoVat": null, "ref_notes": "" },
+
+    { "id": "C41", "group": "container-loaded-20ft-rzd", "engineCoverage": "yellow", "lever": "CONTAINER_AB_PLATE",
+      "origin": { "name": "Возрождение", "esr": "021609", "road": "Окт" }, "dest": { "name": "Гремячая", "esr": "612709", "road": "Прив" },
+      "cargo": "Контейнер 20-фут груженый (генеральный груз)", "etsngCode": "232395", "freightClass": 1, "wagonType": "КН", "containerSize": "20ft", "ownership": "rzd", "wagonModel": "крупнотоннажный 20 фут, общий парк (схема 88)", "shipmentType": "wagon", "wagonCount": 1, "weightTonsPerWagon": 20, "axles": 4, "asOfDate": "2026-06-07", "traffic": "domestic",
+      "note": "NEW YELLOW: container scheme 88 (20ft, общ.парк) — плита A=23351 + B=31.1843×KL, затем ×1.05 (+5% 2026, нетермич.). Движок выдаёт ₽ за КОНТЕЙНЕР. Certifies linearAB plate + +5%. ВНИМАНИЕ: за контейнер, НЕ за вагон — впишите per-container плиту R-Тарифа в ref_perWagonProvoznaya_noVat.",
+      "ref_distanceKm": null, "ref_perWagonProvoznaya_noVat": null, "ref_perWagonWithVat": null, "ref_per1tNoVat": null, "ref_notes": "" },
+
+    { "id": "C42", "group": "container-loaded-40ft-own", "engineCoverage": "yellow", "lever": "CONTAINER_AB_PLATE",
+      "origin": { "name": "Элисенваара", "esr": "023202", "road": "Окт" }, "dest": { "name": "Элиста", "esr": "528706", "road": "СКВ" },
+      "cargo": "Контейнер 40-фут груженый (генеральный груз)", "etsngCode": "232395", "freightClass": 1, "wagonType": "КН", "containerSize": "40ft", "ownership": "own", "wagonModel": "крупнотоннажный 40 фут, собств./аренд. (схема 94)", "shipmentType": "wagon", "wagonCount": 1, "weightTonsPerWagon": 25, "axles": 4, "asOfDate": "2026-06-07", "traffic": "domestic",
+      "note": "NEW YELLOW: container scheme 94 (40ft, собств./аренд.) дальнее плечо 3108km. Плита A+B×KL ×1.05. Tests собственный-container plate vs общий-парк (схемы 88/89). За контейнер.",
+      "ref_distanceKm": null, "ref_perWagonProvoznaya_noVat": null, "ref_perWagonWithVat": null, "ref_per1tNoVat": null, "ref_notes": "" },
+
+    { "id": "C43", "group": "container-loaded-5t-rzd", "engineCoverage": "yellow", "lever": "CONTAINER_AB_PLATE",
+      "origin": { "name": "Исеть", "esr": "771500", "road": "Сверд" }, "dest": { "name": "Набережные Челны", "esr": "648503", "road": "Кбш" },
+      "cargo": "Среднетоннажный контейнер 5т груженый", "etsngCode": "232395", "freightClass": 1, "wagonType": "КН", "containerSize": "5т", "ownership": "rzd", "wagonModel": "среднетоннажный 5т, общий парк (схема 86)", "shipmentType": "wagon", "wagonCount": 1, "weightTonsPerWagon": 5, "axles": 4, "asOfDate": "2026-06-07", "traffic": "domestic",
+      "note": "NEW YELLOW: container scheme 86 (5т, общ.парк) короткое плечо 699km. Плита A=9341 + B=11.9535×KL ×1.05. Tests среднетоннажную плиту на коротком расстоянии. За контейнер.",
+      "ref_distanceKm": null, "ref_perWagonProvoznaya_noVat": null, "ref_perWagonWithVat": null, "ref_per1tNoVat": null, "ref_notes": "" },
+
+    { "id": "C44", "group": "inventory-PL-class1", "engineCoverage": "yellow", "lever": "C_NERUD_PV_PLATFORM",
+      "origin": { "name": "Исеть", "esr": "771500", "road": "Сверд" }, "dest": { "name": "Элиста", "esr": "528706", "road": "СКВ" },
+      "cargo": "Пиломатериалы", "etsngCode": "091008", "freightClass": 1, "wagonType": "ПЛ", "ownership": "rzd", "wagonModel": "кроме перечисленных", "shipmentType": "group", "wagonCount": 8, "weightTonsPerWagon": 50, "axles": 4, "asOfDate": "2026-06-07", "traffic": "domestic",
+      "note": "NEW YELLOW: inventory-park ПЛАТФОРМА (общий парк) — И1(2D)+В1, п.1.5 ×0,909 применяется к ПЛ (Табл.4 называет «полувагонах И ПЛАТФОРМАХ»). Движок выдаёт И+В ₽ как yellow «проверяется». Certifies platform shares C_NERUD_PV. 3012km.",
+      "ref_distanceKm": null, "ref_perWagonProvoznaya_noVat": null, "ref_perWagonWithVat": null, "ref_per1tNoVat": null, "ref_notes": "" },
+
+    { "id": "C45", "group": "own-PV-class2-bridge", "engineCoverage": "yellow", "lever": "K1_CLASS2",
+      "origin": { "name": "Возрождение", "esr": "021609", "road": "Окт" }, "dest": { "name": "Набережные Челны", "esr": "648503", "road": "Кбш" },
+      "cargo": "Удобрения минеральные", "etsngCode": "078005", "freightClass": 2, "wagonType": "ПВ", "ownership": "own", "wagonModel": "кроме перечисленных", "shipmentType": "group", "wagonCount": 6, "weightTonsPerWagon": 68, "axles": 4, "asOfDate": "2026-06-07", "traffic": "domestic",
+      "note": "NEW YELLOW (bridge): own ПВ class-2 на доверенной N8-цепочке — ТА ЖЕ схема/коэф что у proven path КРОМЕ K1 class-2 (=1.0) + K3 class-2. Certifies class-2 K1 belt. 1944km.",
+      "ref_distanceKm": null, "ref_perWagonProvoznaya_noVat": null, "ref_perWagonWithVat": null, "ref_per1tNoVat": null, "ref_notes": "" },
+
+    { "id": "C46", "group": "own-PV-class3-bridge", "engineCoverage": "yellow", "lever": "K1_CLASS3",
+      "origin": { "name": "Исеть", "esr": "771500", "road": "Сверд" }, "dest": { "name": "Гремячая", "esr": "612709", "road": "Прив" },
+      "cargo": "Лом черных металлов", "etsngCode": "316001", "freightClass": 3, "wagonType": "ПВ", "ownership": "own", "wagonModel": "кроме перечисленных", "shipmentType": "group", "wagonCount": 10, "weightTonsPerWagon": 70, "axles": 4, "asOfDate": "2026-06-07", "traffic": "domestic",
+      "note": "NEW YELLOW (bridge): own ПВ class-3 (лом) на доверенной N8-цепочке — ТА ЖЕ схема/коэф КРОМЕ K1 class-3. Лучший единичный кейс для сертификации class-3 K1 belts на доверенном пути. 2177km.",
+      "ref_distanceKm": null, "ref_perWagonProvoznaya_noVat": null, "ref_perWagonWithVat": null, "ref_per1tNoVat": null, "ref_notes": "" },
+
+    { "id": "C47", "group": "red-cisterna-class2", "engineCoverage": "gap", "lever": null,
+      "origin": { "name": "Возрождение", "esr": "021609", "road": "Окт" }, "dest": { "name": "Элиста", "esr": "528706", "road": "СКВ" },
+      "cargo": "Бензин автомобильный", "etsngCode": "211007", "freightClass": 2, "wagonType": "ЦС", "ownership": "own", "wagonModel": "кроме перечисленных", "shipmentType": "wagon", "wagonCount": 1, "weightTonsPerWagon": 60, "axles": 4, "asOfDate": "2026-06-07", "traffic": "domestic",
+      "note": "STILL RED: цистерна own class-2 — номер 1D-схемы не закреплён в ТР-1 Табл.N7 → движок возвращает RED (честно), НЕ число. Чистый сбор эталона для цистерны. 3069km. Оператор: прогнать в R-Тарифе для построения эталона.",
+      "ref_distanceKm": null, "ref_perWagonProvoznaya_noVat": null, "ref_perWagonWithVat": null, "ref_per1tNoVat": null, "ref_notes": "" },
+
+    { "id": "C48", "group": "red-reefer-container", "engineCoverage": "gap", "lever": null,
+      "origin": { "name": "Элисенваара", "esr": "023202", "road": "Окт" }, "dest": { "name": "Набережные Челны", "esr": "648503", "road": "Кбш" },
+      "cargo": "Скоропортящийся груз (рефрижераторный контейнер)", "etsngCode": "044009", "freightClass": 2, "wagonType": "КН", "containerSize": "40ft-реф", "ownership": "own", "wagonModel": "рефрижераторный/термический контейнер", "shipmentType": "wagon", "wagonCount": 1, "weightTonsPerWagon": 22, "axles": 4, "asOfDate": "2026-06-07", "traffic": "domestic",
+      "note": "STILL RED: термический/рефрижераторный контейнер — отдельная Табл.N14 (вне scope; исключён из +5%). Движок возвращает RED. Источник для добора: sudact .../prilozhenie-n-1_1/tablitsa-n-14/. Оператор: прогнать в R-Тарифе для построения эталона реф-контейнера.",
       "ref_distanceKm": null, "ref_perWagonProvoznaya_noVat": null, "ref_perWagonWithVat": null, "ref_per1tNoVat": null, "ref_notes": "" }
   ]
 }

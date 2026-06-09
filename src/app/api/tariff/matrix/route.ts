@@ -16,6 +16,7 @@ const matrixSchema = z.object({
   classicCapacityT: z.coerce.number().positive("Г/п > 0").optional(),
   innovativeCapacityT: z.coerce.number().positive("Г/п > 0").optional(),
   ownerCoeff: z.coerce.number().positive("Коэффициент > 0").optional(),
+  wagonType: z.string().trim().min(1).max(8).optional(),
 });
 
 // POST — матрица «обычный/инновационный × группы» для маршрута: 5 групп ТР-1 × оба типа

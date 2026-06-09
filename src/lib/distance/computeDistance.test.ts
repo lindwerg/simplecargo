@@ -131,6 +131,39 @@ describe("computeDistance — unit (synthetic fixtures)", () => {
     expect(result.confidence).toBe("green");
   });
 
+  it("adjacent участки joined at a shared узел sum the two legs (M3)", () => {
+    // SA on UCH1 (cum 12) and SB on UCH2 (cum 8), both bounded by узел U1 — the
+    // sections meet AT the узел, so the path is SA→U1→SB = 12 + 8 = 20. No backbone
+    // edge exists (узел graph empty), so this MUST be resolved by the shared-узел
+    // shortcut, not fall through to red.
+    const kniga1Rows: Kniga1Row[] = [
+      { esr: "SA", name: "A", uzelEsr: "U1", uzelName: "UzelA", km: 12, uchastok: "UCH1" },
+      { esr: "SB", name: "B", uzelEsr: "U1", uzelName: "UzelA", km: 8, uchastok: "UCH2" },
+    ];
+    const g = compileGraph(kniga1Rows, { nodes: [], edges: [] });
+    const result = run({ originEsr: "SA", destEsr: "SB" }, makeData(g));
+    expect(result.km).toBe(20);
+    expect(result.confidence).toBe("green");
+  });
+
+  it("takes MIN over multiple shared-узел anchors, not the first match (M4)", () => {
+    // SA has two legs: узел U1 (cum 50) and узел U2 (cum 5, same участок UCHX).
+    // SB has two legs: узел U1 (cum 60) and узел U2 (cum 9, same участок UCHX).
+    // Via U1 (adjacent, different uchastok): 50 + 60 = 110.
+    // Via U2 (same участок UCHX): |5 - 9| = 4.  MIN = 4 (the SECOND anchor pair).
+    // A first-match implementation would wrongly return the U1 candidate (110).
+    const kniga1Rows: Kniga1Row[] = [
+      { esr: "SA", name: "A", uzelEsr: "U1", uzelName: "N1", km: 50, uchastok: "UCH1" },
+      { esr: "SA", name: "A", uzelEsr: "U2", uzelName: "N2", km: 5, uchastok: "UCHX" },
+      { esr: "SB", name: "B", uzelEsr: "U1", uzelName: "N1", km: 60, uchastok: "UCH2" },
+      { esr: "SB", name: "B", uzelEsr: "U2", uzelName: "N2", km: 9, uchastok: "UCHX" },
+    ];
+    const g = compileGraph(kniga1Rows, { nodes: [], edges: [] });
+    const result = run({ originEsr: "SA", destEsr: "SB" }, makeData(g));
+    expect(result.km).toBe(4);
+    expect(result.confidence).toBe("green");
+  });
+
   it("returns confidence='red' when no backbone path connects узлы", () => {
     // SA→U1 and SB→U2 exist, and U1/U2 are backbone nodes (connected to U3 respectively),
     // but there is NO path from U1 to U2 through the backbone.

@@ -160,7 +160,9 @@ describe("computeTariffPure — RZD-owned wagon path uses В, not порожни
     });
 
     const r = computeTariffPure({ ...BASE_INPUT, ownership: "rzd" }, data);
-    expect(r.confidence).toBe("green");
+    // CONFIDENCE MODEL: rzd-owned (общий парк) is outside the validated own-ПВ class-1
+    // нерудные green contour → computed but unvalidated = yellow.
+    expect(r.confidence).toBe("yellow");
     expect(r.vComponent).toBe(18000);
     expect(r.emptyRun).toBe(0); // no порожний for RZD wagon
   });

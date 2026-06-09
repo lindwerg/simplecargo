@@ -92,9 +92,11 @@ function makeDataA(): TariffData {
 }
 
 describe("computeTariffPure — Scenario A: КР rzd повагонная class 2", () => {
-  it("resolves to a number (not red) — RESOLVES green", () => {
+  it("resolves to a number — YELLOW (class-2 computed per ТР-1, not oracle-validated)", () => {
     const r = computeTariffPure(INPUT_A, makeDataA());
-    expect(r.confidence).toBe("green");
+    // CONFIDENCE MODEL: only the oracle-validated own-ПВ class-1 нерудные contour is green.
+    // A class-2 КР is computed per the official tables but unvalidated → yellow, never green.
+    expect(r.confidence).toBe("yellow");
     expect(r.total).toBeGreaterThan(0);
     expect(r.tariffClass).toBe(2);
   });
@@ -304,9 +306,11 @@ function makeDataC(): TariffData {
 }
 
 describe("computeTariffPure — Scenario C: ПЛ own повагонная class 1, 800 km", () => {
-  it("resolves to a number (not red) — RESOLVES green", () => {
+  it("resolves to a number — YELLOW (ПЛ + generic cargo, outside the validated нерудный contour)", () => {
     const r = computeTariffPure(INPUT_C, makeDataC());
-    expect(r.confidence).toBe("green");
+    // CONFIDENCE MODEL: validated green is own-ПОЛУВАГОН class-1 НЕРУДНЫЕ only. This is a
+    // платформа (not полувагон) carrying generic cargo 999000 (not нерудный) → yellow.
+    expect(r.confidence).toBe("yellow");
     expect(r.total).toBeGreaterThan(0);
     expect(r.tariffClass).toBe(1);
   });
@@ -416,9 +420,10 @@ describe("computeTariffPure — Scenario E: innovative wagon model (0.9595)", ()
     expect(innovative.iComponent).toBeCloseTo(classic.iComponent * 0.9595, 0);
   });
 
-  it("innovative result still resolves (not red)", () => {
+  it("innovative result still resolves (not red) — YELLOW (ПЛ generic, unvalidated)", () => {
     const r = computeTariffPure(INPUT_E, makeDataE());
-    expect(r.confidence).toBe("green");
+    // Same contour as Scenario C (платформа + generic cargo) → yellow, never red.
+    expect(r.confidence).toBe("yellow");
     expect(r.total).toBeGreaterThan(0);
   });
 });

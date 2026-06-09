@@ -1,0 +1,1812 @@
+{
+  "_meta": {
+    "dataset": "TR-1 2026 base rate belts — refrigerator/isothermal own & general-fleet schemes N30/N31 (Приложение N2). Closes gap H6 (refrigerator belts).",
+    "fetchedAt": "2026-06-09",
+    "sourceOrder": "приказ ФАС России от 06.11.2025 N 894/25 (ТР-1), Приложение N2; «Тарифы на перевозки грузов по инфраструктуре РЖД в специализированных изотермических вагонах (Тарифные схемы N N 30 - 31, за один вагон, в рублях)»",
+    "sources": [
+      "https://sudact.ru/law/prikaz-fas-rossii-ot-06112025-n-89425/prilozhenie-n-1/prilozhenie-n-2/tarify-na-perevozki-gruzov-po_4/ (Схемы N30-N31 — изотермические/рефрижераторные вагоны; за вагон; РАССТОЯНИЕ)"
+    ],
+    "schemeMapping": {
+      "N30": "Изотермический/рефрижераторный ОБЩЕГО ПАРКА (ГРРБС), п.22.1-22.2 (И-часть). Привязка вагона: РФ ownership=rzd. Источник: tr1-scheme-classifier-extended.json rows[63-65].",
+      "N31": "Изотермический/рефрижераторный СОБСТВЕННЫЙ/АРЕНДОВАННЫЙ, п.22.2. Привязка вагона: РФ ownership=own. Порожний → N26. Источник: tr1-scheme-classifier-extended.json rows[60-62]."
+    },
+    "indexationNote": "Ставки УЖЕ включают индексацию 2026 (+10% с 2025-12-01). ТР-1 2026 — новый базис вместо Прейскуранта 10-01. НЕ применять +10% поверх.",
+    "shapeNote": "weightT = null — обе схемы N30/N31 зависят ТОЛЬКО от пояса расстояния (distance-only), не от веса. Структура идентична N9-N13.",
+    "unitNote": "rateRub = ЗА ВАГОН, без НДС.",
+    "beltStructureNote": "127 поясов расстояния, идентичны канонической сетке N9-N13/N8 (0-5,6-10,...,1451-1500, далее 1551-1600 свёрнут как 1501-1600, ...,11701-11900). Boundaries сверены строка-в-строку с N9 (0 расхождений). Между опубликованными поясами — SNAP к ближайшему, НЕ интерполировать.",
+    "verification": {
+      "method": "Дважды независимо выгружено через WebFetch с того же первоисточника sudact.ru. Все 9 spot-check ячеек (включая граничные 1451-1500, свёрнутый 1501-1600, нерегулярный переход 5401-5500→5501-5700, последний 11701-11900) совпали побитово между двумя выгрузками.",
+      "structural": "127/127 границ поясов совпадают с канонической N9; N30 и N31 строго монотонно возрастают по всем поясам; все значения — целые рубли.",
+      "caveat": "Числа транскрибированы через LLM-выгрузку HTML-таблицы первоисточника, НЕ покопеечно сверены человеком построчно по 127 ячейкам. Граничные/spot-check ячейки сверены двойной выгрузкой. Для покопеечного производственного КП по рефрижераторам рекомендуется ручная построчная сверка по sudact.ru."
+    },
+    "confidence": "amber",
+    "coverage": {
+      "N30": "127 (127 поясов × 1, distance-only, за вагон)",
+      "N31": "127"
+    },
+    "relatedFiles": {
+      "mainBeltFile": "tr1-i-belts-full.json (N8/N8(1)/И1/И2-И7/И14-И18/N9-N13/N19-N24)",
+      "note": "Этот файл — дополнение для рефрижераторных N30/N31, которые НЕ были в tr1-i-belts-full.json. Крытый/платформа (специализированные собств. N9-N13) УЖЕ полны в tr1-i-belts-full.json (127 поясов каждая, distance-only, за вагон) — проверено."
+    }
+  },
+  "belts": [
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 0,
+      "distToKm": 5,
+      "rateRub": 105796
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 6,
+      "distToKm": 10,
+      "rateRub": 107311
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 11,
+      "distToKm": 15,
+      "rateRub": 108573
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 16,
+      "distToKm": 20,
+      "rateRub": 109835
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 21,
+      "distToKm": 25,
+      "rateRub": 111097
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 26,
+      "distToKm": 30,
+      "rateRub": 112360
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 31,
+      "distToKm": 35,
+      "rateRub": 113622
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 36,
+      "distToKm": 40,
+      "rateRub": 114884
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 41,
+      "distToKm": 45,
+      "rateRub": 116146
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 46,
+      "distToKm": 50,
+      "rateRub": 117409
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 51,
+      "distToKm": 60,
+      "rateRub": 119176
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 61,
+      "distToKm": 70,
+      "rateRub": 121700
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 71,
+      "distToKm": 80,
+      "rateRub": 124225
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 81,
+      "distToKm": 90,
+      "rateRub": 126749
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 91,
+      "distToKm": 100,
+      "rateRub": 129274
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 101,
+      "distToKm": 120,
+      "rateRub": 133061
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 121,
+      "distToKm": 140,
+      "rateRub": 138110
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 141,
+      "distToKm": 160,
+      "rateRub": 143159
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 161,
+      "distToKm": 180,
+      "rateRub": 147803
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 181,
+      "distToKm": 200,
+      "rateRub": 152351
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 201,
+      "distToKm": 220,
+      "rateRub": 157055
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 221,
+      "distToKm": 240,
+      "rateRub": 161436
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 241,
+      "distToKm": 260,
+      "rateRub": 166021
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 261,
+      "distToKm": 280,
+      "rateRub": 170557
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 281,
+      "distToKm": 300,
+      "rateRub": 175046
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 301,
+      "distToKm": 330,
+      "rateRub": 180684
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 331,
+      "distToKm": 360,
+      "rateRub": 187453
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 361,
+      "distToKm": 390,
+      "rateRub": 194151
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 391,
+      "distToKm": 420,
+      "rateRub": 200777
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 421,
+      "distToKm": 450,
+      "rateRub": 207850
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 451,
+      "distToKm": 480,
+      "rateRub": 214369
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 481,
+      "distToKm": 510,
+      "rateRub": 220817
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 511,
+      "distToKm": 540,
+      "rateRub": 227818
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 541,
+      "distToKm": 570,
+      "rateRub": 234158
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 571,
+      "distToKm": 600,
+      "rateRub": 241124
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 601,
+      "distToKm": 640,
+      "rateRub": 248512
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 641,
+      "distToKm": 680,
+      "rateRub": 257752
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 681,
+      "distToKm": 720,
+      "rateRub": 266158
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 721,
+      "distToKm": 760,
+      "rateRub": 275350
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 761,
+      "distToKm": 800,
+      "rateRub": 283613
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 801,
+      "distToKm": 840,
+      "rateRub": 292758
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 841,
+      "distToKm": 880,
+      "rateRub": 301903
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 881,
+      "distToKm": 920,
+      "rateRub": 309975
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 921,
+      "distToKm": 960,
+      "rateRub": 319072
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 961,
+      "distToKm": 1000,
+      "rateRub": 327001
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 1001,
+      "distToKm": 1050,
+      "rateRub": 337182
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 1051,
+      "distToKm": 1100,
+      "rateRub": 348493
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 1101,
+      "distToKm": 1150,
+      "rateRub": 358464
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 1151,
+      "distToKm": 1200,
+      "rateRub": 369717
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 1201,
+      "distToKm": 1250,
+      "rateRub": 379509
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 1251,
+      "distToKm": 1300,
+      "rateRub": 390701
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 1301,
+      "distToKm": 1350,
+      "rateRub": 400315
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 1351,
+      "distToKm": 1400,
+      "rateRub": 411448
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 1401,
+      "distToKm": 1450,
+      "rateRub": 422581
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 1451,
+      "distToKm": 1500,
+      "rateRub": 431956
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 1501,
+      "distToKm": 1600,
+      "rateRub": 448566
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 1601,
+      "distToKm": 1700,
+      "rateRub": 468747
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 1701,
+      "distToKm": 1800,
+      "rateRub": 488689
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 1801,
+      "distToKm": 1900,
+      "rateRub": 510597
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 1901,
+      "distToKm": 2000,
+      "rateRub": 530182
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 2001,
+      "distToKm": 2100,
+      "rateRub": 549528
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 2101,
+      "distToKm": 2200,
+      "rateRub": 571198
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 2201,
+      "distToKm": 2300,
+      "rateRub": 590187
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 2301,
+      "distToKm": 2400,
+      "rateRub": 608937
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 2401,
+      "distToKm": 2500,
+      "rateRub": 630369
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 2501,
+      "distToKm": 2600,
+      "rateRub": 648762
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 2601,
+      "distToKm": 2700,
+      "rateRub": 666916
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 2701,
+      "distToKm": 2800,
+      "rateRub": 688109
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 2801,
+      "distToKm": 2900,
+      "rateRub": 705906
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 2901,
+      "distToKm": 3000,
+      "rateRub": 723465
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 3001,
+      "distToKm": 3100,
+      "rateRub": 744420
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 3101,
+      "distToKm": 3200,
+      "rateRub": 765375
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 3201,
+      "distToKm": 3300,
+      "rateRub": 786330
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 3301,
+      "distToKm": 3400,
+      "rateRub": 807285
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 3401,
+      "distToKm": 3500,
+      "rateRub": 828240
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 3501,
+      "distToKm": 3600,
+      "rateRub": 849195
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 3601,
+      "distToKm": 3700,
+      "rateRub": 870150
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 3701,
+      "distToKm": 3800,
+      "rateRub": 891105
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 3801,
+      "distToKm": 3900,
+      "rateRub": 912060
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 3901,
+      "distToKm": 4000,
+      "rateRub": 933016
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 4001,
+      "distToKm": 4100,
+      "rateRub": 953971
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 4101,
+      "distToKm": 4200,
+      "rateRub": 974926
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 4201,
+      "distToKm": 4300,
+      "rateRub": 995881
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 4301,
+      "distToKm": 4400,
+      "rateRub": 1016836
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 4401,
+      "distToKm": 4500,
+      "rateRub": 1037791
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 4501,
+      "distToKm": 4600,
+      "rateRub": 1058746
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 4601,
+      "distToKm": 4700,
+      "rateRub": 1079701
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 4701,
+      "distToKm": 4800,
+      "rateRub": 1100656
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 4801,
+      "distToKm": 4900,
+      "rateRub": 1121611
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 4901,
+      "distToKm": 5000,
+      "rateRub": 1142566
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 5001,
+      "distToKm": 5100,
+      "rateRub": 1163521
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 5101,
+      "distToKm": 5200,
+      "rateRub": 1184476
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 5201,
+      "distToKm": 5300,
+      "rateRub": 1205431
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 5301,
+      "distToKm": 5400,
+      "rateRub": 1226386
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 5401,
+      "distToKm": 5500,
+      "rateRub": 1247341
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 5501,
+      "distToKm": 5700,
+      "rateRub": 1278774
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 5701,
+      "distToKm": 5900,
+      "rateRub": 1320684
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 5901,
+      "distToKm": 6100,
+      "rateRub": 1362594
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 6101,
+      "distToKm": 6300,
+      "rateRub": 1404504
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 6301,
+      "distToKm": 6500,
+      "rateRub": 1446414
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 6501,
+      "distToKm": 6700,
+      "rateRub": 1488324
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 6701,
+      "distToKm": 6900,
+      "rateRub": 1530234
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 6901,
+      "distToKm": 7100,
+      "rateRub": 1572145
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 7101,
+      "distToKm": 7300,
+      "rateRub": 1614055
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 7301,
+      "distToKm": 7500,
+      "rateRub": 1655965
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 7501,
+      "distToKm": 7700,
+      "rateRub": 1697875
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 7701,
+      "distToKm": 7900,
+      "rateRub": 1739785
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 7901,
+      "distToKm": 8100,
+      "rateRub": 1781695
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 8101,
+      "distToKm": 8300,
+      "rateRub": 1823605
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 8301,
+      "distToKm": 8500,
+      "rateRub": 1865515
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 8501,
+      "distToKm": 8700,
+      "rateRub": 1907425
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 8701,
+      "distToKm": 8900,
+      "rateRub": 1949335
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 8901,
+      "distToKm": 9100,
+      "rateRub": 1991246
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 9101,
+      "distToKm": 9300,
+      "rateRub": 2033156
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 9301,
+      "distToKm": 9500,
+      "rateRub": 2075066
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 9501,
+      "distToKm": 9700,
+      "rateRub": 2116976
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 9701,
+      "distToKm": 9900,
+      "rateRub": 2158886
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 9901,
+      "distToKm": 10100,
+      "rateRub": 2200796
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 10101,
+      "distToKm": 10300,
+      "rateRub": 2242706
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 10301,
+      "distToKm": 10500,
+      "rateRub": 2284616
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 10501,
+      "distToKm": 10700,
+      "rateRub": 2326526
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 10701,
+      "distToKm": 10900,
+      "rateRub": 2368437
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 10901,
+      "distToKm": 11100,
+      "rateRub": 2410347
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 11101,
+      "distToKm": 11300,
+      "rateRub": 2452257
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 11301,
+      "distToKm": 11500,
+      "rateRub": 2494167
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 11501,
+      "distToKm": 11700,
+      "rateRub": 2536077
+    },
+    {
+      "scheme": "N30",
+      "weightT": null,
+      "distFromKm": 11701,
+      "distToKm": 11900,
+      "rateRub": 2577987
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 0,
+      "distToKm": 5,
+      "rateRub": 20687
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 6,
+      "distToKm": 10,
+      "rateRub": 21158
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 11,
+      "distToKm": 15,
+      "rateRub": 21551
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 16,
+      "distToKm": 20,
+      "rateRub": 21944
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 21,
+      "distToKm": 25,
+      "rateRub": 22337
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 26,
+      "distToKm": 30,
+      "rateRub": 22730
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 31,
+      "distToKm": 35,
+      "rateRub": 23122
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 36,
+      "distToKm": 40,
+      "rateRub": 23515
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 41,
+      "distToKm": 45,
+      "rateRub": 23908
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 46,
+      "distToKm": 50,
+      "rateRub": 24301
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 51,
+      "distToKm": 60,
+      "rateRub": 24850
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 61,
+      "distToKm": 70,
+      "rateRub": 25636
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 71,
+      "distToKm": 80,
+      "rateRub": 26422
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 81,
+      "distToKm": 90,
+      "rateRub": 27207
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 91,
+      "distToKm": 100,
+      "rateRub": 27993
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 101,
+      "distToKm": 120,
+      "rateRub": 29171
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 121,
+      "distToKm": 140,
+      "rateRub": 30742
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 141,
+      "distToKm": 160,
+      "rateRub": 32313
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 161,
+      "distToKm": 180,
+      "rateRub": 33667
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 181,
+      "distToKm": 200,
+      "rateRub": 34970
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 201,
+      "distToKm": 220,
+      "rateRub": 36356
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 221,
+      "distToKm": 240,
+      "rateRub": 37569
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 241,
+      "distToKm": 260,
+      "rateRub": 38891
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 261,
+      "distToKm": 280,
+      "rateRub": 40188
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 281,
+      "distToKm": 300,
+      "rateRub": 41459
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 301,
+      "distToKm": 330,
+      "rateRub": 43062
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 331,
+      "distToKm": 360,
+      "rateRub": 44987
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 361,
+      "distToKm": 390,
+      "rateRub": 46874
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 391,
+      "distToKm": 420,
+      "rateRub": 48723
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 421,
+      "distToKm": 450,
+      "rateRub": 50812
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 451,
+      "distToKm": 480,
+      "rateRub": 52603
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 481,
+      "distToKm": 510,
+      "rateRub": 54356
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 511,
+      "distToKm": 540,
+      "rateRub": 56406
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 541,
+      "distToKm": 570,
+      "rateRub": 58102
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 571,
+      "distToKm": 600,
+      "rateRub": 60133
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 601,
+      "distToKm": 640,
+      "rateRub": 62106
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 641,
+      "distToKm": 680,
+      "rateRub": 64788
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 681,
+      "distToKm": 720,
+      "rateRub": 67024
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 721,
+      "distToKm": 760,
+      "rateRub": 69681
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 761,
+      "distToKm": 800,
+      "rateRub": 71839
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 801,
+      "distToKm": 840,
+      "rateRub": 74470
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 841,
+      "distToKm": 880,
+      "rateRub": 77102
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 881,
+      "distToKm": 920,
+      "rateRub": 79158
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 921,
+      "distToKm": 960,
+      "rateRub": 81764
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 961,
+      "distToKm": 1000,
+      "rateRub": 83744
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 1001,
+      "distToKm": 1050,
+      "rateRub": 86646
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 1051,
+      "distToKm": 1100,
+      "rateRub": 89871
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 1101,
+      "distToKm": 1150,
+      "rateRub": 92378
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 1151,
+      "distToKm": 1200,
+      "rateRub": 95571
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 1201,
+      "distToKm": 1250,
+      "rateRub": 97982
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 1251,
+      "distToKm": 1300,
+      "rateRub": 101144
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 1301,
+      "distToKm": 1350,
+      "rateRub": 103459
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 1351,
+      "distToKm": 1400,
+      "rateRub": 106588
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 1401,
+      "distToKm": 1450,
+      "rateRub": 109717
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 1451,
+      "distToKm": 1500,
+      "rateRub": 111905
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 1501,
+      "distToKm": 1600,
+      "rateRub": 116551
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 1601,
+      "distToKm": 1700,
+      "rateRub": 121692
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 1701,
+      "distToKm": 1800,
+      "rateRub": 126706
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 1801,
+      "distToKm": 1900,
+      "rateRub": 132773
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 1901,
+      "distToKm": 2000,
+      "rateRub": 137595
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 2001,
+      "distToKm": 2100,
+      "rateRub": 142289
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 2101,
+      "distToKm": 2200,
+      "rateRub": 148228
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 2201,
+      "distToKm": 2300,
+      "rateRub": 152731
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 2301,
+      "distToKm": 2400,
+      "rateRub": 157105
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 2401,
+      "distToKm": 2500,
+      "rateRub": 162917
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 2501,
+      "distToKm": 2600,
+      "rateRub": 167100
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 2601,
+      "distToKm": 2700,
+      "rateRub": 171156
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 2701,
+      "distToKm": 2800,
+      "rateRub": 176840
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 2801,
+      "distToKm": 2900,
+      "rateRub": 180703
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 2901,
+      "distToKm": 3000,
+      "rateRub": 184440
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 3001,
+      "distToKm": 3100,
+      "rateRub": 189996
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 3101,
+      "distToKm": 3200,
+      "rateRub": 195552
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 3201,
+      "distToKm": 3300,
+      "rateRub": 201108
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 3301,
+      "distToKm": 3400,
+      "rateRub": 206665
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 3401,
+      "distToKm": 3500,
+      "rateRub": 212221
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 3501,
+      "distToKm": 3600,
+      "rateRub": 217777
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 3601,
+      "distToKm": 3700,
+      "rateRub": 223333
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 3701,
+      "distToKm": 3800,
+      "rateRub": 228890
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 3801,
+      "distToKm": 3900,
+      "rateRub": 234446
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 3901,
+      "distToKm": 4000,
+      "rateRub": 240002
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 4001,
+      "distToKm": 4100,
+      "rateRub": 245558
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 4101,
+      "distToKm": 4200,
+      "rateRub": 251115
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 4201,
+      "distToKm": 4300,
+      "rateRub": 256671
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 4301,
+      "distToKm": 4400,
+      "rateRub": 262227
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 4401,
+      "distToKm": 4500,
+      "rateRub": 267783
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 4501,
+      "distToKm": 4600,
+      "rateRub": 273340
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 4601,
+      "distToKm": 4700,
+      "rateRub": 278896
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 4701,
+      "distToKm": 4800,
+      "rateRub": 284452
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 4801,
+      "distToKm": 4900,
+      "rateRub": 290008
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 4901,
+      "distToKm": 5000,
+      "rateRub": 295565
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 5001,
+      "distToKm": 5100,
+      "rateRub": 301121
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 5101,
+      "distToKm": 5200,
+      "rateRub": 306677
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 5201,
+      "distToKm": 5300,
+      "rateRub": 312233
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 5301,
+      "distToKm": 5400,
+      "rateRub": 317790
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 5401,
+      "distToKm": 5500,
+      "rateRub": 323346
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 5501,
+      "distToKm": 5700,
+      "rateRub": 331680
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 5701,
+      "distToKm": 5900,
+      "rateRub": 342793
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 5901,
+      "distToKm": 6100,
+      "rateRub": 353905
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 6101,
+      "distToKm": 6300,
+      "rateRub": 365018
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 6301,
+      "distToKm": 6500,
+      "rateRub": 376130
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 6501,
+      "distToKm": 6700,
+      "rateRub": 387243
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 6701,
+      "distToKm": 6900,
+      "rateRub": 398355
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 6901,
+      "distToKm": 7100,
+      "rateRub": 409468
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 7101,
+      "distToKm": 7300,
+      "rateRub": 420580
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 7301,
+      "distToKm": 7500,
+      "rateRub": 431693
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 7501,
+      "distToKm": 7700,
+      "rateRub": 442805
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 7701,
+      "distToKm": 7900,
+      "rateRub": 453918
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 7901,
+      "distToKm": 8100,
+      "rateRub": 465030
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 8101,
+      "distToKm": 8300,
+      "rateRub": 476143
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 8301,
+      "distToKm": 8500,
+      "rateRub": 487255
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 8501,
+      "distToKm": 8700,
+      "rateRub": 498368
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 8701,
+      "distToKm": 8900,
+      "rateRub": 509480
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 8901,
+      "distToKm": 9100,
+      "rateRub": 520593
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 9101,
+      "distToKm": 9300,
+      "rateRub": 531705
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 9301,
+      "distToKm": 9500,
+      "rateRub": 542818
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 9501,
+      "distToKm": 9700,
+      "rateRub": 553930
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 9701,
+      "distToKm": 9900,
+      "rateRub": 565043
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 9901,
+      "distToKm": 10100,
+      "rateRub": 576156
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 10101,
+      "distToKm": 10300,
+      "rateRub": 587268
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 10301,
+      "distToKm": 10500,
+      "rateRub": 598381
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 10501,
+      "distToKm": 10700,
+      "rateRub": 609493
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 10701,
+      "distToKm": 10900,
+      "rateRub": 620606
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 10901,
+      "distToKm": 11100,
+      "rateRub": 631718
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 11101,
+      "distToKm": 11300,
+      "rateRub": 642831
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 11301,
+      "distToKm": 11500,
+      "rateRub": 653943
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 11501,
+      "distToKm": 11700,
+      "rateRub": 665056
+    },
+    {
+      "scheme": "N31",
+      "weightT": null,
+      "distFromKm": 11701,
+      "distToKm": 11900,
+      "rateRub": 676168
+    }
+  ]
+}

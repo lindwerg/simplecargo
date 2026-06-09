@@ -10,10 +10,12 @@ import { StationField, type StationValue } from "@/components/common/StationFiel
 interface MatrixCell {
   tariffNoVat: number;
   tariffWithVat: number;
-  inventoryNoVat: number;
-  inventoryWithVat: number;
-  provisionNoVat: number;
-  provisionWithVat: number;
+  inventoryNoVat: number | null;
+  inventoryWithVat: number | null;
+  provisionNoVat: number | null;
+  provisionWithVat: number | null;
+  inventoryConfidence: "yellow" | "red";
+  inventoryRedReason: string | null;
 }
 interface MatrixRow {
   band: string;
@@ -33,6 +35,7 @@ interface MatrixResult {
   classicCapacityT: number;
   innovativeCapacityT: number;
   ownerCoeff: number;
+  wagonType: string;
   vatRate: number;
   rows: MatrixRow[];
   warnings: string[];
@@ -58,7 +61,18 @@ interface VoiceResponse {
   matrix: MatrixResult | null;
 }
 
-const rub = (n: number): string => `${Math.round(n).toLocaleString("ru-RU")} ₽`;
+const rub = (n: number | null): string =>
+  n === null ? "—" : `${Math.round(n).toLocaleString("ru-RU")} ₽`;
+
+/** Первая red-причина по матрице (одна на тип вагона — все ячейки несут одну причину). */
+function invRedReason(matrix: MatrixResult): string | null {
+  for (const r of matrix.rows) {
+    if (r.classic.inventoryConfidence === "red" && r.classic.inventoryRedReason) {
+      return r.classic.inventoryRedReason;
+    }
+  }
+  return null;
+}
 
 const LEG_RU: Record<string, string> = {
   "spur-origin": "Подвоз к ТП (отпр.)",
@@ -88,6 +102,7 @@ export function VoiceQuote() {
   const [classicCapT, setClassicCapT] = React.useState("70");
   const [innovCapT, setInnovCapT] = React.useState("75");
   const [ownerCoeff, setOwnerCoeff] = React.useState("1.15");
+  const [wagonType, setWagonType] = React.useState("ПВ");
 
   const [recording, setRecording] = React.useState(false);
   const [parsing, setParsing] = React.useState(false);
@@ -191,6 +206,7 @@ export function VoiceQuote() {
           classicCapacityT: Number(classicCapT) || undefined,
           innovativeCapacityT: Number(innovCapT) || undefined,
           ownerCoeff: ownerCoeff === "" ? undefined : Number(ownerCoeff),
+          wagonType: wagonType || undefined,
         }),
       });
       const json = await res.json();
@@ -269,6 +285,20 @@ export function VoiceQuote() {
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <StationField label="Откуда" value={origin} onChange={setOrigin} />
         <StationField label="Куда" value={dest} onChange={setDest} />
+      </div>
+      <div className="mt-3">
+        <label className="flex flex-col gap-1.5">
+          <span className="text-2xs text-text-tertiary">Род вагона (инвентарный/предоставление)</span>
+          <select
+            className={cn(fieldClass, "appearance-none")}
+            value={wagonType}
+            onChange={(e) => setWagonType(e.target.value)}
+          >
+            <option value="ПВ">Полувагон (ПВ) — И1 + В4</option>
+            <option value="ПЛ">Платформа (ПЛ) — И1 + В1</option>
+            <option value="КР">Крытый (КР) — без коэф. п.1.5, не выдаётся</option>
+          </select>
+        </label>
       </div>
       <div className="mt-3 grid grid-cols-3 gap-3">
         <label className="flex flex-col gap-1.5">
@@ -370,9 +400,16 @@ function MatrixView({
         <>
           <div className="rounded-[var(--radius-sm)] border border-accent/30 bg-accent-quiet p-2 text-2xs text-text-secondary">
             <span className="font-medium text-accent">⚠ Инвентарный тариф и предоставление — «проверяется».</span>{" "}
-            Считаются из официальных таблиц И1+В4, но НЕ сверены до рубля с R-Тарифом общего парка.
-            Собственный тариф (нижняя строка) — выверен. Ставка предоставления = инвентарный × {matrix.ownerCoeff}.
+            Считаются из официальных таблиц И+В (род вагона: {matrix.wagonType}), но НЕ сверены до рубля
+            с R-Тарифом общего парка. Собственный тариф (нижняя строка) — выверен. Ставка
+            предоставления = инвентарный × {matrix.ownerCoeff}.
           </div>
+          {invRedReason(matrix) && (
+            <div className="rounded-[var(--radius-sm)] border border-danger/30 bg-surface-2 p-2 text-2xs text-text-secondary">
+              <span className="font-medium text-danger">Инвентарный для «{matrix.wagonType}» не выдан:</span>{" "}
+              {invRedReason(matrix)}
+            </div>
+          )}
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-2xs text-text-tertiary">
               Крупным — <span className="text-accent">предоставление</span>; ниже — инвентарный (И+В); внизу — собственный тариф
@@ -458,3 +495,4 @@ function Cell({ cell, withVat }: { cell: MatrixCell; withVat: boolean }) {
     </td>
   );
 }
+

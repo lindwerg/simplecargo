@@ -32,8 +32,14 @@ export interface V4Belt {
 export interface InventoryTariffData {
   /** И1 grid (₽ за вагон), 2D (weightT × distance). Same shape as N8Cell. */
   readonly i1Grid: readonly N8Cell[];
-  /** В4 belts (₽ за вагон), distance-only, класс-независимая. */
+  /** В4 belts (₽ за вагон), distance-only, класс-независимая. KEPT for backward-compat (ПВ path). */
   readonly v4Belts: readonly V4Belt[];
+  /**
+   * ВСЕ вагонные составляющие В-парка, по схеме (В1..В15). Все distance-only, класс-независимые
+   * (см. tr1-v-belts-full.meta.json). Позволяет провизию для платформы (В1)/крытого (В3) и т.д.
+   * без интерполяции — снап к опубликованному поясу. Источник: tr1-v-belts-full.json (verbatim).
+   */
+  readonly vBeltsByScheme: Readonly<Record<string, readonly V4Belt[]>>;
   /** K1 class-coefficient belts (Табл.2) — same table as N8. */
   readonly classCoeff: readonly N8ClassCoeffBelt[];
   /** K4 отправочный belts (Табл.5) — same table as N8. */
@@ -42,7 +48,7 @@ export interface InventoryTariffData {
 
 let cached: InventoryTariffData | null = null;
 
-/** Load (and memoize) the inventory-park (И1 + В4) tables. Throws if a seed file is missing. */
+/** Load (and memoize) the inventory-park (И1 + В) tables. Throws if a seed file is missing. */
 export function loadInventoryTariffData(): InventoryTariffData {
   if (cached) return cached;
 
@@ -51,11 +57,17 @@ export function loadInventoryTariffData(): InventoryTariffData {
   const cls = loadJson<{ classCoeff: N8ClassCoeffBelt[] }>("tr1-k1-full.json");
   const k4 = loadJson<{ distanceCorr: N8K4Belt[] }>("tr1-k4-corrected.json");
 
+  // Group every В-scheme (В1..В15-8) into a snap-able belt list. distOnly, класс-независимые.
+  const vBeltsByScheme: Record<string, V4Belt[]> = {};
+  for (const b of vFile) {
+    const list = vBeltsByScheme[b.scheme] ?? (vBeltsByScheme[b.scheme] = []);
+    list.push({ distFromKm: b.distFromKm, distToKm: b.distToKm, rateRub: b.rateRub });
+  }
+
   cached = {
     i1Grid: iFile.belts.filter((b) => b.scheme === "И1"),
-    v4Belts: vFile
-      .filter((b) => b.scheme === "В4")
-      .map((b) => ({ distFromKm: b.distFromKm, distToKm: b.distToKm, rateRub: b.rateRub })),
+    v4Belts: vBeltsByScheme["В4"] ?? [],
+    vBeltsByScheme,
     classCoeff: cls.classCoeff,
     k4Belts: k4.distanceCorr,
   };

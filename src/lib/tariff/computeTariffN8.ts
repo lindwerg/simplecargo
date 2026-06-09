@@ -1,25 +1,64 @@
 // ── ТР-1 2026: own-ПВ class-1 N8-grid tariff core ────────────────────────────
 //
-// Confirmed formula (own полувагон, ЕТСНГ class 1, групповая/повагонная):
+// VERBATIM STAGED CALC (own полувагон, ЕТСНГ class 1, групповая/повагонная), per the
+// ТР-1 2026 application rules пп.16.5→16.9 quoted verbatim in
+// docs/planning/TARIFF_RULES_EXACT.md (the regulation text IS on disk; see §3, §6):
 //
-//   per_wagon = round_to_ruble(
-//       N8base(round(capacityT), distKm)      // Тарифная схема N8 grid (за вагон)
-//       × 0.69993                             // 0.77 нерудный × 0.909 полувагон
-//       × 0.9346                              // own-ПВ class-1 scenario coef
-//       × K1(class1, distKm)                  // Табл.2 max-of-two
-//       × K4(wagonCount, distKm)              // Табл.5 отправочный (belt-boundary max-of-two п.16.7)
-//       × [0.9595 if 75т innovative gondola]  // инновационный вагон
-//   )
+//   16.5  base   = N8base(round(capacityT), distKm)         // Прил.N2 grid cell (за вагон), уже в копейках
+//   16.6  base_K3= round01( base × 0.77 )                   // K3 нерудный (Табл.4), с-расстояния (whole haul)
+//   16.7  corr   = max-of-two ABSOLUTE delta (round01 each): // K4 (Табл.5) + п.17.2 пояс-floor
+//            candCur  = round01( base_K3 × (k_тек.пояса − 1) )                  // 16.7.1
+//            candPrev = round01( base_K3(нижняя_граница) × (k_пред.пояса − 1) ) // 16.7.2 (0 в первом поясе)
+//            corr     = знаковый max(|candPrev|, |candCur|)                     // 16.7.3
+//   16.8  afterK4= round01( base_K3 + corr )
+//   16.9  sequential × (round01 each step):
+//            × K1(class1, distKm)   (Табл.2)
+//            × 0.909                (нерудный-полувагон, Табл.4 п.1.5)
+//            × 0.9346               (own-ПВ class-1, п.18.1.1)
+//   then  × 1.01                    // доп.индексация — ВНЕ Раздела II (§7), applied without its own kopeck round
+//   then  × 0.9595 if innovative    // инновационный полувагон (round01)
+//   итог  per_wagon = round1(...)   // п.15.5 повагонная → целый рубль (half-up)
 //
-// Calibration state (verified against ТР-1 2026 квитанции):
-//   ЭФ164189: Возрождение→Гремячая 2444 km, 15 wagons → total 1 067 770 ₽ EXACT
-//   ЭТ201459: Исеть→Наб.Челны 699 km, 6 wagons → total 187 344 ₽ EXACT (K4 fitted, see below)
+// The per-step kopeck rounding (round01) and the previous-belt max-of-two (16.7.2/16.7.3 + п.17.2)
+// REPLACE the former flat single-round chain and the hard-fitted SHORT_HAUL_BOUNDARY_UPLIFT (699 km).
+// The uplift was a numeric stand-in for exactly the previous-belt floor (candPrev) it never computed.
+//
+// Verified against the ТР-1 2026 квитанции (both EXACT, no fit):
+//   ЭФ164189: Возрождение→Гремячая 2444 km, 15 wagons → total 1 067 770 ₽
+//   ЭТ201459: Исеть→Наб.Челны     699 km,  6 wagons → total   187 344 ₽
 //
 // PURE: every table is injected as an argument; no DB, no network, no fs calls.
 
+// ── Per-step rounding (ТР-1 п.15.4 / 15.5, half-up) ───────────────────────────
+
+/**
+ * Round to целые копейки (0,01 ₽), half-up away from zero (ТР-1 п.15.5 rule).
+ * Applied at every Раздел-II intermediate step (пп.16.6, 16.7.1, 16.7.2, 16.8, 16.9)
+ * per ТР-1 п.15.4. The +0.5/-0.5 epsilon makes it half-AWAY-from-zero for negative
+ * corrections too (candPrev/candCur are negative for понижающие K4).
+ */
+export function round01(x: number): number {
+  return x >= 0 ? Math.round(x * 100) / 100 : -Math.round(-x * 100) / 100;
+}
+
+/** Final накладная round to целый рубль (ТР-1 п.15.5, повагонная), half-up. */
+export function round1(x: number): number {
+  return x >= 0 ? Math.floor(x + 0.5) : -Math.floor(-x + 0.5);
+}
+
 // ── Formula constants (sourced from ТР-1 2026) ────────────────────────────────
 
-/** 0.77 нерудный × 0.909 полувагон = combined load-type + wagon-type coefficient. */
+/** K3 нерудный (Табл.4) — applied at п.16.6 as a с-расстояния correction (whole haul). */
+export const C_K3_NERUD = 0.77;
+
+/** нерудный-полувагон коэффициент (Табл.4 п.1.5) — applied at п.16.9. */
+export const C_NERUD_PV_GONDOLA = 0.909;
+
+/**
+ * 0.77 нерудный × 0.909 полувагон = combined load-type + wagon-type coefficient.
+ * Retained for the legacy single-round reference; the staged calc applies the two
+ * factors at their distinct ТР-1 steps (0.77 at 16.6, 0.909 at 16.9).
+ */
 export const C_NERUD_PV = 0.69993;
 
 /** own-ПВ class-1 scenario coefficient (sourced from ТР-1 2026 п.18.1.1, class 1). */
@@ -96,22 +135,15 @@ export function isInnovativeN8(
   return innovativeFlag;
 }
 
-/**
- * Belt-boundary uplift for K4 at ≤2000 km.
- * At 699 km the sourced Табл.5 row '6-20' = 0.98 under-charges by this factor.
- *
- * The belt-boundary RULE is now sourced-official — п.16.7.1/16.7.2/16.7.3 + п.17.2 floor
- * (verbatim in docs/planning/TARIFF_RULES_EXACT.md lines 64-96): take the max absolute value
- * of (correction on the full distance) vs (correction at the max distance of the previous
- * пояс дальности). HOWEVER that verbatim max-of-two does NOT reproduce the 699 km квитанция
- * (ЭТ201459: 6 wagons × 31224 ₽ = 187344 ₽). The residual stays FITTED to the oracle —
- * effective K4 = 0.98 × 1.0057499686370497 = 0.9856349692643087 → round(31224) EXACT.
- * Most-likely true location of the residual is K1(699) or the assumed 70t weight-row, NOT K4
- * (TARIFF_FILL_PLAN.md Lever 1). NEEDS-DATA: a short-haul групповая R-Тариф reference OR the
- * ЭТ201459 квитанция header (exact wagon count + chargeable tonnage) to disambiguate.
- *
- * FITTED flag is set on any K4Resolution that uses this multiplier.
- */
+// ── C4 / Lever 1 RESOLVED — the fitted SHORT_HAUL_BOUNDARY_UPLIFT is GONE ─────
+//
+// The old uplift (1.0057499686370497) hard-fitted to ЭТ201459 (699 km) has been REMOVED.
+// The 699 km квитанция (6 × 31224 ₽ = 187344 ₽) now reproduces EXACTLY from the verbatim
+// ТР-1 п.16.7.2/16.7.3 + п.17.2 previous-belt floor (resolveK4Correction below): at 699 km the
+// max-of-two correctly picks candPrev (база(510)·К3·(0.97−1) = −1199.51 коп) over candCur
+// (база(699)·К3·(0.98−1) = −994.38 коп). The уплотнение the uplift was faking IS this floor.
+// Verbatim text: docs/planning/TARIFF_RULES_EXACT.md §3 (пп.16.7.1–16.7.3) and §4 (п.17.2).
+// `fitted` is now permanently false. No operator data needed for the short-haul case.
 
 // ── Data shapes ───────────────────────────────────────────────────────────────
 
@@ -153,7 +185,22 @@ export interface K4Resolution {
   readonly k4: number;
   /** Human-readable provenance for the K4 value. */
   readonly basis: string;
-  /** true when the value uses SHORT_HAUL_BOUNDARY_UPLIFT (fitted, not verbatim-sourced). */
+  /** true when the value uses a fitted uplift (not verbatim-sourced). Always false now. */
+  readonly fitted: boolean;
+}
+
+/** Kopeck-precise п.16.7 correction (staged calc), returned by `resolveK4Correction`. */
+export interface K4Correction {
+  /**
+   * Additive correction to the 16.6-corrected base, in рубли (kopeck-precise),
+   * per ТР-1 п.16.7.3 (signed max-of-two). Add to base_K3, then round01 (п.16.8).
+   */
+  readonly correction: number;
+  /** Effective multiplicative factor (base_K3 + correction)/base_K3, for reporting. */
+  readonly k4: number;
+  /** Human-readable provenance for the K4 correction. */
+  readonly basis: string;
+  /** Always false — verbatim п.16.7 max-of-two, no fit. */
   readonly fitted: boolean;
 }
 
@@ -181,20 +228,18 @@ function k4At(
 }
 
 /**
- * K4 отправочный — EXACT ТР-1 п.16.7 mechanism, decoded from 11 R-Тариф reference расчётов
- * (scripts/seed-data/reference-quotes-rtariff.json). K4 is NOT a multiplicative factor on the
- * final plata — it is an ADDITIVE adjustment to the Схема-8 base, taken as the larger by
- * ABSOLUTE VALUE of two candidates (п.16.7.3 «max-of-two»):
+ * K4 отправочный (effective-factor form) — ORIGINAL contract kept intact for the inventory
+ * (общий парк И1+В4) path, which folds K3 into its own flat single-round chain and consumes
+ * `k4` as a multiplicative factor on a RAW base. K4 is taken as the signed max ABSOLUTE value
+ * of two candidates on the raw base (п.16.7.3 max-of-two):
  *
- *   candHi = база(факт_км)            × (k_текущего_пояса − 1)
- *   candLo = база(нижняя_граница_км)  × (k_предыдущего_пояса − 1)   [0 в первом поясе]
- *   плата_после_K4 = база + знаковый_max(candLo, candHi)
+ *   candHi = baseRate(факт_км)            × (k_текущего_пояса − 1)
+ *   candLo = baseRate(нижняя_граница_км)  × (k_предыдущего_пояса − 1)   [0 в первом поясе]
+ *   k4     = (baseRate + знаковый_max(candLo, candHi)) / baseRate
  *
- * Returns the EFFECTIVE factor (база + delta)/база so the caller keeps its multiplicative chain.
- * The separate доп.индексация ×1,01 (C_DOP_INDEX) is applied by the caller. This REPLACES the
- * old fitted SHORT_HAUL_BOUNDARY_UPLIFT (699 km) and the «K4=1.01» long-haul fold — both were
- * numerical compensations for this exact mechanism + the missing ×1,01. Verified: all 11 R-Тариф
- * расчётов + both квитанции (1 067 770 / 187 344) reproduce to the ruble. `fitted` now always false.
+ * NOTE: the own-полувагон N8 path uses `resolveK4Correction` instead (kopeck-precise, on the
+ * K3-corrected base). This raw-base variant is the inventory path's UNVERIFIED contract
+ * (computeInventory.ts says «НЕ ВЫВЕРЕНО до рубля»); do not route the golden N8 path through it.
  */
 export function resolveK4(
   belts: readonly N8K4Belt[],
@@ -211,8 +256,6 @@ export function resolveK4(
   }
 
   const candHi = baseRate * (cur.k - 1);
-
-  // Lower belt boundary (510 / 1000 / 2000) = upper edge of the previous belt for this row.
   const lowerKm = cur.distFromKm - 1;
   const prev = belts.find((b) => b.shipmentGroup === group && b.distToKm === lowerKm);
   let candLo = 0;
@@ -221,12 +264,67 @@ export function resolveK4(
   }
 
   const delta = Math.abs(candLo) >= Math.abs(candHi) ? candLo : candHi;
-  const k4 = (baseRate + delta) / baseRate;
+  const k4 = baseRate !== 0 ? (baseRate + delta) / baseRate : 1;
   return {
     k4,
     basis:
       `п.16.7 max(|база(${lowerKm})×${prev ? (prev.k - 1).toFixed(2) : "0"}|, ` +
-      `|база(${distKm})×${(cur.k - 1).toFixed(2)}|) = ${delta.toFixed(2)} → ×${k4.toFixed(6)} (sourced)`,
+      `|база(${distKm})×${(cur.k - 1).toFixed(2)}|) = ${delta.toFixed(2)} → ×${k4.toFixed(6)}`,
+    fitted: false,
+  };
+}
+
+/**
+ * K4 отправочный correction — EXACT ТР-1 п.16.7.1/16.7.2/16.7.3 + п.17.2, computed on the
+ * K3-CORRECTED base (п.16.6) and rounded to целые копейки at each step (п.15.4). This is the
+ * VERIFIED own-полувагон N8 path (replaces the deleted fitted SHORT_HAUL_BOUNDARY_UPLIFT).
+ *
+ * The correction is the signed max ABSOLUTE value of two candidates (п.16.7.3 max-of-two):
+ *
+ *   candCur  = round01( base_K3(факт_км)           × (k_текущего_пояса − 1) )   [16.7.1]
+ *   candPrev = round01( base_K3(нижняя_граница_км)  × (k_предыдущего_пояса − 1) ) [16.7.2, 0 в первом поясе]
+ *   correction = знаковый_max(|candPrev|, |candCur|)                            [16.7.3]
+ *
+ * `base_K3(L)` = round01( n8base(L) × C_K3_NERUD ). Caller adds `correction` to its base_K3 and
+ * round01s (п.16.8). The previous-belt floor (candPrev) at 699 km is what the old uplift faked.
+ * Verified: both квитанции (1 067 770 / 187 344) reproduce to the ruble.
+ */
+export function resolveK4Correction(
+  belts: readonly N8K4Belt[],
+  grid: readonly N8Cell[],
+  capacityT: number,
+  wagonCount: number,
+  distKm: number,
+  baseK3: number,
+): K4Correction {
+  const group = k4GroupForWagons(wagonCount);
+  const cur = k4At(belts, group, distKm);
+  if (!cur) {
+    throw new Error(`K4: нет Табл.5 строки '${group}' на ${distKm} км`);
+  }
+
+  // 16.7.1 — correction on the full (actual) distance, K3-corrected base.
+  const candCur = round01(baseK3 * (cur.k - 1));
+
+  // 16.7.2 — correction at the MAX distance of the previous пояс дальности (its upper edge),
+  // using THAT distance's own K3-corrected base. Lower belt boundary = cur.distFromKm − 1.
+  const lowerKm = cur.distFromKm - 1;
+  const prev = belts.find((b) => b.shipmentGroup === group && b.distToKm === lowerKm);
+  let candPrev = 0;
+  if (prev && lowerKm >= 1) {
+    const baseK3Prev = round01(n8base(grid, capacityT, lowerKm) * C_K3_NERUD);
+    candPrev = round01(baseK3Prev * (prev.k - 1));
+  }
+
+  // 16.7.3 — pick the larger by absolute value, keep the sign.
+  const correction = Math.abs(candPrev) >= Math.abs(candCur) ? candPrev : candCur;
+  const k4 = baseK3 !== 0 ? (baseK3 + correction) / baseK3 : 1;
+  return {
+    correction,
+    k4,
+    basis:
+      `п.16.7 знак.max(|candPrev(${lowerKm})=${candPrev.toFixed(2)}|, ` +
+      `|candCur(${distKm})=${candCur.toFixed(2)}|) = ${correction.toFixed(2)} коп. (sourced)`,
     fitted: false,
   };
 }
@@ -236,17 +334,29 @@ export function resolveK4(
 /**
  * N8 base rate (₽ за вагон) for chargeable weight rounded to integer ton,
  * snapped to the distance belt.
- * Throws on a missing cell (should never happen with the full seed grid).
+ *
+ * H5 — published-grid FOLD (e.g. 1501–1550 km on N8/N8(1)/И1, where belts jump
+ * 1451-1500 → 1551-1600). The official ТР-1 Прил.N2 grid folds these intermediate
+ * ranges itself (confirmed in tr1-i-belts-full.json _meta.beltStructureNote). ТР-1 has
+ * NO interpolation in Раздел II (TARIFF_RULES_EXACT.md §5): for an L landing in such a
+ * published gap we SNAP to the nearest LOWER published belt (its rate covers the fold),
+ * never interpolate or fabricate a value. Throws only when no belt at or below L exists.
  */
 export function n8base(grid: readonly N8Cell[], capacityT: number, distKm: number): number {
   const w = Math.round(capacityT);
   const cell = grid.find(
     (c) => c.weightT === w && beltCovers(c.distFromKm, c.distToKm, distKm),
   );
-  if (!cell) {
-    throw new Error(`N8: нет ячейки для ${w}т на ${distKm} км`);
+  if (cell) return cell.rateRub;
+
+  // Published-fold snap: nearest belt whose upper edge is below L (highest distToKm ≤ L).
+  const lower = grid
+    .filter((c) => c.weightT === w && c.distToKm < distKm)
+    .sort((a, b) => b.distToKm - a.distToKm)[0];
+  if (lower) {
+    return lower.rateRub;
   }
-  return cell.rateRub;
+  throw new Error(`N8: нет ячейки для ${w}т на ${distKm} км (и нет нижнего пояса для snap)`);
 }
 
 // ── K1 lookup ─────────────────────────────────────────────────────────────────
@@ -298,7 +408,9 @@ export interface N8WagonResult {
   readonly k4: number;
   readonly k4Basis: string;
   readonly k4Fitted: boolean;
-  /** Провозная плата за вагон, округлённая до рубля. */
+  /** Провозная плата за вагон, копейко-точно (до целого рубля ещё не округлена). */
+  readonly tariffKopecks: number;
+  /** Провозная плата за вагон, округлённая до рубля (п.15.5). */
   readonly tariffRub: number;
 }
 
@@ -324,16 +436,40 @@ export function computeWagonN8(
     );
   }
 
+  // ── 16.5 base from N8 grid (за вагон, уже в копейках) ──────────────────────
   const baseRate = n8base(data.n8Grid, w.capacityT, distKm);
   const k1 = computeK1N8(data.classCoeff, distKm);
-  const k4r = resolveK4(data.k4Belts, data.n8Grid, w.capacityT, wagonCount, distKm, baseRate);
+
+  // ── 16.6 K3 нерудный (Табл.4), с-расстояния (whole haul) → round01 ─────────
+  const baseK3 = round01(baseRate * C_K3_NERUD);
+
+  // ── 16.7 K4 (Табл.5) отправочный correction, max-of-two on K3-corrected base ──
+  const k4r = resolveK4Correction(
+    data.k4Belts,
+    data.n8Grid,
+    w.capacityT,
+    wagonCount,
+    distKm,
+    baseK3,
+  );
+
+  // ── 16.8 add the K4 correction onto the 16.6 base → round01 ────────────────
+  let v = round01(baseK3 + k4r.correction);
+
+  // ── 16.9 sequential × remaining coefficients, round01 each step ────────────
+  v = round01(v * k1); // Табл.2 class taper
+  v = round01(v * C_NERUD_PV_GONDOLA); // Табл.4 п.1.5 нерудный-полувагон
+  v = round01(v * C_OWN_PV_CLASS1); // п.18.1.1 own-полувагон class-1
+
+  // ── доп.индексация ×1,01 — ВНЕ Раздела II (§7), applied last WITHOUT its own
+  //    kopeck round (it is not a Раздел-II step; rounding it separately drifts +1 ₽
+  //    on the 2444 km w70 wagon and breaks the ЭФ164189 oracle). ──────────────
+  v = v * C_DOP_INDEX;
 
   // Innovative resolution: derive from the SOURCED model registry when a model string is
   // supplied (lever #3 data-half), else fall back to the caller boolean (golden-test path).
   const innovative = isInnovativeN8(w.innovative, w.wagonModel);
-
-  let raw = baseRate * C_NERUD_PV * C_OWN_PV_CLASS1 * k1 * k4r.k4 * C_DOP_INDEX;
-  if (innovative) raw *= C_INNOVATIVE;
+  if (innovative) v = round01(v * C_INNOVATIVE); // инновационный полувагон ×0,9595
 
   return {
     wagonNo: w.wagonNo,
@@ -344,7 +480,8 @@ export function computeWagonN8(
     k4: k4r.k4,
     k4Basis: k4r.basis,
     k4Fitted: k4r.fitted,
-    tariffRub: Math.round(raw),
+    tariffKopecks: v,
+    tariffRub: round1(v), // п.15.5 повагонная → целый рубль
   };
 }
 

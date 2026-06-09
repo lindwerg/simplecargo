@@ -56,6 +56,8 @@ interface PinnedClassifierRow {
    */
   emptyLengthGuardM?: number | null;
   computable: boolean;
+  /** Classifier row confidence as published in the seed (high/medium/low). */
+  confidence?: string;
 }
 
 interface RawBelt {
@@ -122,6 +124,10 @@ export function loadSchemeMapFromSeed(): readonly WagonSchemeRow[] {
     // Only include rows that have a computable iScheme (iBeltScheme present).
     // Non-computable rows (containers/transporters without belt data) are kept so the
     // engine can degrade gracefully (scheme found in map but no belt → yellow/red).
+    // M5: propagate the source `computable` flag + row confidence so the orchestrator can
+    // surface the REAL root cause instead of a generic belt-miss. Belt resolution remains
+    // authoritative — a backed belt found for a род flagged computable:false still prices
+    // (capped yellow), an unbacked/red belt surfaces red regardless of the flag.
     rows.push({
       wagonType: r.wagonCode,
       ownership,
@@ -130,6 +136,8 @@ export function loadSchemeMapFromSeed(): readonly WagonSchemeRow[] {
       vSchemeCode: r.vBeltScheme ?? null,
       emptySchemeCode: r.emptyScheme ?? null,
       emptyLengthGuardM: r.emptyLengthGuardM ?? null,
+      computable: r.computable,
+      confidence: r.confidence ?? null,
     });
   }
 
@@ -146,6 +154,38 @@ const PER_TONNE_SCHEMES = new Set([
 
 // ── RateBelt from i-belts-full + v-belts-full ─────────────────────────────────
 
+// ── Raw shapes for the род-specific plates (Phase-1 acquired) ─────────────────
+
+interface RawReeferBelt {
+  scheme: string;
+  weightT?: number | null;
+  distFromKm: number;
+  distToKm: number;
+  rateRub: number | null;
+}
+
+interface RawTransporterBelt {
+  scheme: string;
+  axleCount?: number[] | null;
+  weightT?: number | null;
+  distFromKm: number;
+  distToKm: number;
+  rateRub: number | null;
+  unit?: string;
+  confidence?: string;
+}
+
+interface RawContainerBelt {
+  scheme: string;
+  rateModel?: string;
+  confidence?: string;
+  containerSize?: string;
+  ownership?: string;
+  loadedState?: string;
+  A_rubPerContainer?: number | null;
+  B_rubPerContainerKm?: number | null;
+}
+
 export function loadRateBeltsFromSeed(): readonly RateBelt[] {
   if (_rateBelts !== null) return _rateBelts;
 
@@ -154,17 +194,22 @@ export function loadRateBeltsFromSeed(): readonly RateBelt[] {
 
   const out: RateBelt[] = [];
 
+  // Base И-belts (N8/И1 2D grids + distance-only И/N schemes). Cistern schemes И14-И18 /
+  // N19-N24 in this file are за-тонну; everything else is за-вагон (M8 explicit unit).
   for (const b of iBeltsFile.belts) {
+    const isPerTonne = PER_TONNE_SCHEMES.has(b.scheme);
     out.push({
       schemeCode: b.scheme,
       distFromKm: b.distFromKm,
       distToKm: b.distToKm,
       rateRub: b.rateRub,
       weightT: b.weightT ?? null,
-      perTonne: PER_TONNE_SCHEMES.has(b.scheme),
+      perTonne: isPerTonne,
+      unit: isPerTonne ? "perTonne" : "perWagon",
     });
   }
 
+  // В-belts (RZD wagon component, distance-only, за-вагон).
   for (const b of vBeltsRaw) {
     out.push({
       schemeCode: b.scheme,
@@ -173,6 +218,68 @@ export function loadRateBeltsFromSeed(): readonly RateBelt[] {
       rateRub: b.rateRub,
       weightT: null,
       perTonne: false,
+      unit: "perWagon",
+    });
+  }
+
+  // H6 — own/rented cistern naval schemes N19-N24 (Приложение N2, ЗА ТОННУ, по классу груза)
+  // are ALREADY present in tr1-i-belts-full.json (and marked per-tonne via PER_TONNE_SCHEMES
+  // above), so they are NOT re-loaded here from the dedicated tr1-i-belts-cistern.json — doing
+  // so would duplicate every cistern cell. The dedicated file is the M7 standalone extraction.
+
+  // H6 — refrigerator/isothermal schemes N30 (общий парк) / N31 (собств./аренд.) — за-вагон,
+  // distance-only. Backed cells from tr1-i-belts-reefer.json.
+  const reeferFile = loadJson<{ belts: RawReeferBelt[] }>("tr1-i-belts-reefer.json");
+  for (const b of reeferFile.belts) {
+    out.push({
+      schemeCode: b.scheme,
+      distFromKm: b.distFromKm,
+      distToKm: b.distToKm,
+      rateRub: b.rateRub as number,
+      weightT: b.weightT ?? null,
+      perTonne: false,
+      unit: "perWagon",
+      confidence: "green",
+    });
+  }
+
+  // H6/H17 — transporter schemes N39+ (per-axle + степень негабаритности). Rates in the
+  // acquired plate are NULL placeholders flagged confidence:"red" (not yet sourced verbatim) —
+  // they are carried so the engine surfaces the real root cause and stays RED, never fabricates.
+  const transporterFile = loadJson<{ belts: RawTransporterBelt[] }>("tr1-i-belts-transporter.json");
+  for (const b of transporterFile.belts) {
+    out.push({
+      schemeCode: b.scheme,
+      distFromKm: b.distFromKm,
+      distToKm: b.distToKm,
+      rateRub: (b.rateRub ?? null) as number,
+      weightT: null,
+      perTonne: false,
+      unit: "perTransporter",
+      axleCount: b.axleCount ?? null,
+      confidence: b.confidence ?? null,
+    });
+  }
+
+  // H6/H17 — container linearAB plates N85-94 (Табл.N24). Each plate is keyed by
+  // (containerSize, ownership) and evaluated as A + B×KL — NOT a distance band.
+  const containerFile = loadJson<{ belts: RawContainerBelt[] }>("tr1-i-belts-container.json");
+  for (const b of containerFile.belts) {
+    if (b.rateModel !== "linearAB") continue; // skip the RED порожний placeholder row
+    out.push({
+      schemeCode: b.scheme,
+      distFromKm: 0,
+      distToKm: 9_999_999,
+      rateRub: 0, // not used for linearAB; the plate is evaluated as A + B×KL
+      weightT: null,
+      perTonne: false,
+      unit: "perContainer",
+      rateModel: "linearAB",
+      containerSize: b.containerSize ?? null,
+      containerOwnership: b.ownership ?? null,
+      aRubPerContainer: b.A_rubPerContainer ?? null,
+      bRubPerContainerKm: b.B_rubPerContainerKm ?? null,
+      confidence: b.confidence ?? "green",
     });
   }
 

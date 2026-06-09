@@ -28,6 +28,15 @@ export interface WagonSchemeRow {
    * selector can switch to the long-wagon scheme without re-touching the seed.
    */
   readonly emptyLengthGuardM?: number | null;
+  /**
+   * M5 — source-flagged computability of this род. The pinned classifier sets
+   * `computable:false` for роды whose belt tables were not acquired (e.g. transporter
+   * placeholder rates). Carried so the resolver can surface the real root cause and the
+   * orchestrator can gate confidence to red instead of emitting a generic belt-miss.
+   */
+  readonly computable?: boolean;
+  /** M5 — classifier row confidence (high/medium/low) as published in the seed. */
+  readonly confidence?: string | null;
 }
 
 export interface SchemeResolution {
@@ -37,6 +46,16 @@ export interface SchemeResolution {
   readonly emptySchemeCode?: string | null;
   readonly found: boolean;
   readonly warning?: string;
+  /**
+   * M5 — classifier provenance propagated from the pinned classifier row into resolution,
+   * so the orchestrator can surface the REAL root cause + gate confidence instead of a
+   * generic belt-miss. `computable:false` means the source flagged this род as not
+   * price-computable (no belt data acquired) → the engine must NOT fabricate a number.
+   * `confidence` is the classifier's own row confidence (high/medium/low) — distinct from
+   * the per-belt confidence resolved later in snapToBelt.
+   */
+  readonly computable?: boolean;
+  readonly confidence?: string | null;
 }
 
 /**
@@ -79,10 +98,21 @@ export function resolveSchemes(
     vSchemeCode: row.vSchemeCode,
     emptySchemeCode: row.emptySchemeCode ?? null,
     found: true,
+    computable: row.computable ?? true,
+    confidence: row.confidence ?? null,
   };
 }
 
 // ── rate-belt snap ───────────────────────────────────────────────────────────────
+
+/**
+ * Per-belt billing unit (M8 — explicit unit field per belt cell). `weightT=null` is shared
+ * by both за-вагон (И2-И7, N9-N13, рефрижератор N30/31) and за-тонну (И14-И18, N19-N24
+ * цистерны) schemes, so "null⇒per-tonne" mis-bills. Every belt now declares its unit
+ * explicitly. Containers carry their own linearAB plate (`unit:"perContainer"`), transporters
+ * `perTransporter`.
+ */
+export type BeltUnit = "perWagon" | "perTonne" | "perContainer" | "perTransporter";
 
 export interface RateBelt {
   readonly schemeCode: string;
@@ -95,8 +125,30 @@ export interface RateBelt {
    * true when the ставка is per-tonne (ЗА ТОННУ), not per-wagon.
    * Applies to nalivnye schemes И14-И18 (RZD cisterns) and N19-N24 (own cisterns).
    * The engine multiplies rateRub × chargeableTons when this flag is set.
+   * Retained for backward compatibility; `unit` is authoritative when present.
    */
   readonly perTonne?: boolean | null;
+  /** M8 — explicit billing unit. Authoritative; `perTonne` is the legacy mirror of "perTonne". */
+  readonly unit?: BeltUnit;
+  /**
+   * Per-belt confidence as published in the source plate. `null`/`"red"` rateRub means the
+   * cell is an unbacked placeholder (e.g. transporter rates not yet acquired) → the engine
+   * must NOT price it. Used to gate the result confidence (green/yellow/red) downstream.
+   */
+  readonly confidence?: string | null;
+  // ── Container linearAB plate (H6/H17, schemes N85-94) ───────────────────────────
+  /** "linearAB" for container plates: плата = A + B×KL (₽ за контейнер). Absent for grid belts. */
+  readonly rateModel?: "linearAB" | "belt";
+  /** Container size dimension ("3т"|"5т"|"10т"|"20ft"|"40ft") — container belt key (H17). */
+  readonly containerSize?: string | null;
+  /** Container ownership dimension ("общий парк"|"собств./аренд.") — container belt key. */
+  readonly containerOwnership?: string | null;
+  /** A = начально-конечные операции (₽/контейнер, fixed) for linearAB plates. */
+  readonly aRubPerContainer?: number | null;
+  /** B = движенческие операции (₽/контейнеро-км) for linearAB plates. */
+  readonly bRubPerContainerKm?: number | null;
+  /** Transporter axle-count dimension ([4,6] etc.) — transporter belt key (H6/H17). */
+  readonly axleCount?: readonly number[] | null;
 }
 
 export interface BeltResolution {
@@ -105,6 +157,10 @@ export interface BeltResolution {
   readonly perTonne: boolean;
   readonly found: boolean;
   readonly warning?: string;
+  /** Resolved billing unit of the matched belt (M8). undefined when found:false. */
+  readonly unit?: BeltUnit;
+  /** Per-belt confidence of the matched cell (used to cap the result confidence). */
+  readonly confidence?: string | null;
 }
 
 /**
@@ -134,7 +190,18 @@ export function snapToBelt(
   );
 
   let belt: RateBelt | undefined;
-  if (hasWeightDimension && chargeableWeightT != null) {
+  if (hasWeightDimension) {
+    // M6 FIX: a weight-dimension scheme (N8/И1) REQUIRES a weight tier. A null/undefined
+    // chargeableWeightT used to silently fall through to the distance-only branch and snap
+    // the FIRST belt of any weight tier — a wrong-tier mis-bill. Refuse instead of fabricating.
+    if (chargeableWeightT == null) {
+      return {
+        rateRub: 0,
+        perTonne: false,
+        found: false,
+        warning: `Схема ${schemeCode} требует весовой пояс (нет загрузки в тоннах) — расчёт невозможен`,
+      };
+    }
     const w = Math.round(chargeableWeightT);
     belt = belts.find(
       (b) =>
@@ -168,7 +235,98 @@ export function snapToBelt(
     }
   }
 
-  return { rateRub: belt.rateRub, perTonne: belt.perTonne === true, found: true };
+  // Anti-fabrication: a belt whose rate is an unbacked placeholder (null rate, or a cell
+  // flagged confidence:"red" — e.g. transporter schemes N39+ whose rates were not acquired)
+  // must NOT be priced. Surface red, never a confident wrong kopeck.
+  if (belt.rateRub == null || belt.confidence === "red") {
+    return {
+      rateRub: 0,
+      perTonne: false,
+      found: false,
+      confidence: "red",
+      warning:
+        `Ставка для схемы ${schemeCode} на ${distanceKm} км не выверена ` +
+        `(нет первоисточника ТР-1 Прил.N2) — цену занесите вручную`,
+    };
+  }
+
+  // M8: resolve the explicit billing unit. `unit` is authoritative; fall back to the legacy
+  // perTonne flag, else default per-wagon.
+  const unit: BeltUnit =
+    belt.unit ?? (belt.perTonne === true ? "perTonne" : "perWagon");
+  return {
+    rateRub: belt.rateRub,
+    perTonne: unit === "perTonne",
+    found: true,
+    unit,
+    confidence: belt.confidence ?? null,
+  };
+}
+
+// ── Container linearAB plate resolution (H6/H17, schemes N85-94) ───────────────────
+
+export interface ContainerPlateResolution {
+  readonly rateRub: number; // computed плата = A + B×KL (₽ за контейнер, без НДС)
+  readonly found: boolean;
+  readonly confidence?: string | null;
+  readonly warning?: string;
+}
+
+/**
+ * Resolve the per-container плата for a контейнерная отправка via the linearAB plate
+ * (Таблица N24, schemes N85-94). The container plate is keyed by (containerSize, ownership)
+ * — NOT by a distance band — and evaluated as A + B×KL to the kopeck at the actual distance.
+ *
+ * NEVER fabricates: a missing (size, ownership) plate or a red/null-coefficient cell returns
+ * found:false so the orchestrator surfaces red. The +5% 2026 container indexation and НДС are
+ * applied by the orchestrator, not here. Empty-container positioning is NOT in N24 → no plate.
+ */
+export function resolveContainerPlate(
+  belts: readonly RateBelt[],
+  containerSize: string | null | undefined,
+  ownership: Ownership,
+  distanceKm: number,
+): ContainerPlateResolution {
+  if (!containerSize) {
+    return {
+      rateRub: 0,
+      found: false,
+      warning: "Контейнерная отправка: не указан типоразмер контейнера (3т/5т/10т/20ft/40ft)",
+    };
+  }
+  // Container plates publish ownership as "общий парк" (rzd) | "собств./аренд." (own).
+  const ownLabel = ownership === "own" ? "собств./аренд." : "общий парк";
+  const plate = belts.find(
+    (b) =>
+      b.rateModel === "linearAB" &&
+      b.containerSize === containerSize &&
+      b.containerOwnership === ownLabel,
+  );
+  if (!plate) {
+    return {
+      rateRub: 0,
+      found: false,
+      warning: `Нет контейнерной плиты (${containerSize}, ${ownLabel}) — расчёт невозможен`,
+    };
+  }
+  if (
+    plate.confidence === "red" ||
+    plate.aRubPerContainer == null ||
+    plate.bRubPerContainerKm == null
+  ) {
+    return {
+      rateRub: 0,
+      found: false,
+      confidence: "red",
+      warning:
+        `Контейнерная плита (${containerSize}, ${ownLabel}) не выверена ` +
+        "(напр. порожний пробег контейнера отсутствует в Табл.N24) — занесите вручную",
+    };
+  }
+  // плата = A + B×KL, kopeck-precise (round to целые копейки, ТР-1 п.15.4).
+  const raw = plate.aRubPerContainer + plate.bRubPerContainerKm * distanceKm;
+  const rateRub = Math.round(raw * 100) / 100;
+  return { rateRub, found: true, confidence: plate.confidence ?? "green" };
 }
 
 // ── K4 отправочный (повагонная / групповая / маршрутная) ─────────────────────────
