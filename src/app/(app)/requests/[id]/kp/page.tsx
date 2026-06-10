@@ -32,7 +32,8 @@ export default async function RequestKpPage({ params, searchParams }: Ctx) {
   const scoped = data.lines.filter((l) => requested.has(l.id));
   const selectedLines = scoped.length > 0 ? scoped : data.lines;
 
-  // Stamp "КП по этому плечу выпущено" — guards against silently double-issuing.
+  // Stamp "КП по этому плечу выпущено" — только первый выпуск; повторный просмотр
+  // страницы дату не двигает (UPDATE срабатывает лишь при kp_issued_at IS NULL).
   await markLinesKpIssued(id, selectedLines.map((l) => l.id));
 
   // This page is allowed to be non-deterministic; only the pure builder avoids the clock.

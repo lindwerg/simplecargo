@@ -6,6 +6,9 @@
   --rail-carrier: var(--color-warn);
   --rail-quarry: oklch(62% 0.085 55);
   --rail-quarry-quiet: oklch(62% 0.085 55 / 0.14);
+  /* «Прочие» (собственники, экспедиторы и пр.) — спокойный фиолетовый. */
+  --rail-other: oklch(58% 0.09 295);
+  --rail-other-quiet: oklch(58% 0.09 295 / 0.14);
 }
 
 /* Quarry role badge — earthy tint (no semantic token for quarries). */
@@ -14,7 +17,7 @@
   background: var(--rail-quarry-quiet);
 }
 
-/* ── Filter cards (Клиенты / Перевозчики / Карьеры) ───────────────────────── */
+/* ── Filter cards (Клиенты / Перевозчики / Карьеры / Прочие) ──────────────── */
 .partner-filters {
   display: grid;
   grid-template-columns: 1fr;
@@ -22,7 +25,12 @@
 }
 @media (min-width: 640px) {
   .partner-filters {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .partner-filters {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
@@ -53,6 +61,10 @@
 .partner-filter--quarry {
   --rail: var(--rail-quarry);
   --rail-quiet: var(--rail-quarry-quiet);
+}
+.partner-filter--other {
+  --rail: var(--rail-other);
+  --rail-quiet: var(--rail-other-quiet);
 }
 .partner-filter:hover {
   transform: translateY(-2px);
@@ -133,6 +145,7 @@
 .partner-strip--client { --rail: var(--rail-client); }
 .partner-strip--carrier { --rail: var(--rail-carrier); }
 .partner-strip--quarry { --rail: var(--rail-quarry); }
+.partner-strip--other { --rail: var(--rail-other); }
 .partner-strip:hover {
   transform: translateX(2px);
   background: var(--color-surface-3);

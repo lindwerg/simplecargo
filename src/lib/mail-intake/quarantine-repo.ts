@@ -4,7 +4,7 @@
 // emails that crashed mid-processing (PROCESSING_ERROR). Until this existed the
 // queue was write-only and items piled up invisibly (AUTONOMY_AUDIT §6).
 
-import { desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 
 import { db } from "@/lib/db/client";
 import { ingestedFiles } from "@/lib/db/schema/ingest";
@@ -122,9 +122,29 @@ export async function resolveQuarantine(
       resolvedAt: new Date(),
     })
     .where(eq(quarantineRows.id, id))
-    .returning({ id: quarantineRows.id, reviewAction: quarantineRows.reviewAction });
+    .returning({
+      id: quarantineRows.id,
+      reviewAction: quarantineRows.reviewAction,
+      sourceFileId: quarantineRows.sourceFileId,
+    });
 
   if (!updated[0]) throw new QuarantineError(404, "Запись карантина не найдена");
+
+  // Письмо НЕ должно исчезать навсегда: разобранный карантин возвращает связанный
+  // ingested_files из 'quarantined' в 'committed', чтобы письмо снова было видно
+  // во «Входящих» (listInbox показывает только committed). Оператор пометил
+  // «разобрал» — этого достаточно и для «не наш формат».
+  if (updated[0].sourceFileId) {
+    const restored = await db
+      .update(ingestedFiles)
+      .set({ status: "committed" })
+      .where(
+        and(eq(ingestedFiles.id, updated[0].sourceFileId), eq(ingestedFiles.status, "quarantined")),
+      )
+      .returning({ id: ingestedFiles.id });
+    if (restored[0]) await publishRealtime({ kind: "email", id: restored[0].id });
+  }
+
   await publishRealtime({ kind: "quarantine" });
   return { id: updated[0].id, reviewAction: action };
 }

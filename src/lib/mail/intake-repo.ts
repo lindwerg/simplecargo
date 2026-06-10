@@ -6,6 +6,8 @@ import { and, asc, eq, inArray, sql } from "drizzle-orm";
 
 import { db } from "@/lib/db/client";
 import { users } from "@/lib/db/schema/auth";
+import { directions } from "@/lib/db/schema/directions";
+import { directionOwnerBindings } from "@/lib/db/schema/directionBindings";
 import { ingestedFiles } from "@/lib/db/schema/ingest";
 import { inboundInvoices } from "@/lib/db/schema/inboundInvoices";
 import { quarantineRows } from "@/lib/db/schema/quarantine";
@@ -19,8 +21,14 @@ import { extractFromInput } from "@/lib/requests/extraction";
 import { extractInvoice } from "@/lib/mail-intake/invoice-extract";
 import { extractCarrierQuote } from "@/lib/mail-intake/carrier-quote-extract";
 import { attachmentToExtractInput } from "@/lib/mail-intake/to-extract-input";
+import { applyDislocationToDirection } from "@/lib/mail-intake/apply-dislocation";
 import type { IntakeDeps } from "@/lib/mail-intake/ports";
-import type { CarrierQuoteMatchInput, CarrierQuoteMatchResult, InvoiceSaveInput } from "@/lib/mail-intake/ports";
+import type {
+  CarrierQuoteMatchInput,
+  CarrierQuoteMatchResult,
+  DislocationBindingCandidate,
+  InvoiceSaveInput,
+} from "@/lib/mail-intake/ports";
 import type { QuarantineRowInsert } from "@/lib/mail-intake/quarantine-map";
 import { publishRealtime } from "@/lib/realtime/notify";
 
@@ -110,6 +118,21 @@ export async function markFileQuarantined(fileId: string): Promise<void> {
     .update(ingestedFiles)
     .set({ status: "quarantined" })
     .where(sql`${ingestedFiles.id} = ${fileId}`);
+}
+
+// Startup-sweep: письма, застрявшие в 'processing' (воркер упал посреди разбора).
+// На старте воркера никакая обработка не идёт, поэтому все такие ряды — сироты.
+export async function listStuckProcessingFiles(): Promise<
+  { id: string; filename: string | null; senderEmail: string | null }[]
+> {
+  return db
+    .select({
+      id: ingestedFiles.id,
+      filename: ingestedFiles.filename,
+      senderEmail: ingestedFiles.senderEmail,
+    })
+    .from(ingestedFiles)
+    .where(and(eq(ingestedFiles.status, "processing"), eq(ingestedFiles.sourceType, "E")));
 }
 
 // ── inbound invoice (pending) ────────────────────────────────────────────────
@@ -239,6 +262,42 @@ export async function matchCarrierQuote(
   return { matched: true, updatedCount: ids.length, requestId: candidates[0].requestId };
 }
 
+// ── dislocation → активные owner-привязки по ящику отправителя ───────────────
+// inbound_mailbox — PRIMARY routing key (idx_dir_owner_bind_mailbox). Считаем
+// только привязки активных по жизненному циклу направлений (open|active): на
+// закрытое/отменённое направление дислокации уже не раскладываем.
+export async function findDislocationBindings(
+  mailbox: string,
+): Promise<DislocationBindingCandidate[]> {
+  if (!mailbox) return [];
+  const rows = await db
+    .select({
+      directionId: directionOwnerBindings.directionId,
+      label: directions.displayName,
+      origin: directions.stationOriginRaw,
+      dest: directions.stationDestRaw,
+    })
+    .from(directionOwnerBindings)
+    .innerJoin(directions, eq(directionOwnerBindings.directionId, directions.id))
+    .where(
+      and(
+        eq(directionOwnerBindings.inboundMailbox, mailbox),
+        eq(directionOwnerBindings.status, "active"),
+        inArray(directions.status, ["open", "active"]),
+      ),
+    );
+  // Несколько активных привязок одного ящика к ОДНОМУ направлению (split-лоты) —
+  // один кандидат: роутинг однозначен, схлопываем по directionId.
+  const byDirection = new Map<string, DislocationBindingCandidate>();
+  for (const r of rows) {
+    if (!byDirection.has(r.directionId)) {
+      const label = r.label ?? ([r.origin, r.dest].filter(Boolean).join(" → ") || "Направление");
+      byDirection.set(r.directionId, { directionId: r.directionId, directionLabel: label });
+    }
+  }
+  return [...byDirection.values()];
+}
+
 // ── system user (createRequestWithLines needs a valid users.id FK) ───────────
 export async function resolveSystemUserId(): Promise<string> {
   const rows = await db.select({ id: users.id }).from(users).orderBy(asc(users.createdAt)).limit(1);
@@ -282,6 +341,21 @@ export function buildIntakeDeps(opts: {
           await publishRealtime({ kind: "request", id: res.requestId });
         }
         return res;
+      },
+      findDislocationBindings,
+      async applyDislocation(directionId) {
+        if (!opts.sourceFileId) {
+          // Без файла письма разбирать нечего — оркестратор сюда не попадёт
+          // (sourceFileId создаётся до processEmail), но порт обязан быть тотальным.
+          return { total: 0, loaded: 0, empty: 0, savedToBinding: false };
+        }
+        const res = await applyDislocationToDirection(opts.sourceFileId, directionId);
+        return {
+          total: res.summary.total,
+          loaded: res.summary.loaded,
+          empty: res.summary.empty,
+          savedToBinding: res.savedToBinding,
+        };
       },
     },
   };

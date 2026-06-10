@@ -59,6 +59,20 @@ export interface CarrierQuoteMatchResult {
   requestId: string | null;
 }
 
+// Кандидат авто-роутинга дислокации: активная owner-привязка, чей inbound_mailbox
+// совпал с нормализованным адресом отправителя (PRIMARY routing key, P3).
+export interface DislocationBindingCandidate {
+  directionId: string;
+  directionLabel: string;
+}
+
+export interface DislocationApplyResult {
+  total: number; // всего распознанных вагонов
+  loaded: number; // гружёных
+  empty: number; // порожних
+  savedToBinding: boolean; // номера дописаны в expected_wagon_ids
+}
+
 export interface IntakePorts {
   systemUserId: string;
   sourceFileId: string | null; // ingestedFiles row for this email (worker creates)
@@ -71,6 +85,11 @@ export interface IntakePorts {
   // Close the sourcing loop: attach an inbound carrier quote to the polled
   // request_owner_quotes rows it answers. matched=false → caller quarantines.
   matchCarrierQuote(input: CarrierQuoteMatchInput): Promise<CarrierQuoteMatchResult>;
+  // Дислокация: активные owner-привязки по нормализованному ящику отправителя.
+  findDislocationBindings(mailbox: string): Promise<DislocationBindingCandidate[]>;
+  // Дислокация: линк письма + разбор вагонов + expected_wagon_ids + wagon_movements
+  // (см. apply-dislocation.ts; письмо берётся по ports.sourceFileId).
+  applyDislocation(directionId: string): Promise<DislocationApplyResult>;
 }
 
 export interface IntakeDeps {
@@ -91,4 +110,6 @@ export interface IntakeOutcome {
   carrierQuotesMatched: number;
   quarantinedCount: number;
   ignored: boolean;
+  dislocationDirectionId: string | null; // направление, куда авто-привязалась дислокация
+  dislocationWagons: number; // распознанных вагонов при авто-привязке
 }
