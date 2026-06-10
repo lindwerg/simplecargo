@@ -52,7 +52,17 @@ function rowsToEdges(n: string, src: string, ua: string): UzelEdge[] {
     }));
 }
 
-function buildByRuleData(applySkorostnye: boolean): DistanceData {
+interface ByRuleOpts {
+  /** Apply the §2 скоростные-линии exclusion (Москва–СПб Сапсан main-line edges). */
+  readonly applySkorostnye: boolean;
+  /** Merge the FULL official RZD open-data base (kniga3-official.json) as kniga3 edges. */
+  readonly withOfficialBase?: boolean;
+  /** Also ban the binding-shortcut Хийтola↔Окуловка edge (normally skipped — not itself HS). */
+  readonly banBinding?: boolean;
+}
+
+function buildByRuleData(opts: boolean | ByRuleOpts): DistanceData {
+  const o: ByRuleOpts = typeof opts === "boolean" ? { applySkorostnye: opts } : opts;
   const kniga1Base = J<Kniga1Row[]>("kniga1-sections.json");
   const transit = (tryJ<Kniga1Row[]>("kniga1-transit-attach.json") ?? []).filter(
     (r) => r && r.esr && r.uzelEsr && r.km != null,
@@ -62,11 +72,15 @@ function buildByRuleData(applySkorostnye: boolean): DistanceData {
   const cf = (tryJ<Array<{ aEsr?: string; bEsr?: string; km?: number }>>("uzel-graph-cisfill.json") ?? [])
     .filter((r) => r.aEsr && r.bEsr && r.km != null)
     .map((r) => ({ aEsr: String(r.aEsr), bEsr: String(r.bEsr), km: Number(r.km), uchastok: "styk", source: "kniga3" }));
+  // Full official RZD open-data base — only when withOfficialBase (mirrors the gated
+  // DISTANCE_KNIGA3_OFFICIAL loader in repository.ts). 99 127 directed-deduped ТП pairs.
+  const official: UzelEdge[] = o.withOfficialBase ? rowsToEdges("kniga3-official.json", "kniga3", "kniga3-official") : [];
   const edges: UzelEdge[] = [
     ...baseGraph.edges,
     ...cf,
     ...rowsToEdges("kniga3-backbone-cis.priority.json", "kniga3", "cis"),
     ...rowsToEdges("kniga3-full.json", "kniga3", "k3full"),
+    ...official,
     ...rowsToEdges("uzel-graph-gapfill.json", "gapfill", "gf"),
     ...rowsToEdges("uzel-graph-gapfill2.json", "gapfill2", "gf2"),
     ...rowsToEdges("uzel-graph-kniga1.json", "kniga1-uzeladj", "k1adj"),
@@ -91,9 +105,9 @@ function buildByRuleData(applySkorostnye: boolean): DistanceData {
   const skFile = tryJ<{ edges?: Array<{ aEsr?: string; bEsr?: string; binding_shortcut?: boolean }> }>(
     "tr4-skorostnye-edges.json",
   );
-  const skorostnye: SkorostnayaEdge[] = applySkorostnye
+  const skorostnye: SkorostnayaEdge[] = o.applySkorostnye
     ? (skFile?.edges ?? [])
-        .filter((r) => r.aEsr && r.bEsr && !r.binding_shortcut)
+        .filter((r) => r.aEsr && r.bEsr && (o.banBinding ? true : !r.binding_shortcut))
         .map((r) => ({ aEsr: String(r.aEsr), bEsr: String(r.bEsr) }))
     : [];
   const compiled = compileGraph(kniga1, graph, skorostnye);
@@ -148,6 +162,68 @@ describe("АЯМ / Crimea coverage (newly wired, additive overlays)", () => {
     // NOT YET 801 from the rule alone — the anchor (special-distances.json) supplies 801.
     expect(byRule.km).not.toBe(801);
     expect(byRule.confidence).toBe("green");
+  });
+
+  // ── FULL official base + §2 exclusion (the prompt's KEY TEST) ───────────────────
+  //
+  // Wire the COMPLETE official RZD open-data base (kniga3-official.json, 99 127 ТП pairs
+  // over 13 369 ТП) ON, apply the §2 скоростные-линии exclusion, and measure КС→Бологое
+  // BY RULE (anchor disabled). The prompt asks: does the full base + exclusion now reach
+  // ~801?  HONEST, MEASURED ANSWER: NO — it computes 539, the SAME undercut, because the
+  // official base supplies BOTH the direct Хийтola(022404)↔Окуловка(053703)=429 edge AND
+  // an alternate reconstruction Хийтola↔Ручьи(038101)=166 + Ручьи↔Окуловка=263 = 429, so
+  // banning the Сапсан main-line edges (and even the binding shortcut) just re-routes for
+  // the identical 429+70 = 539. There is NO ~801 bypass corridor even in the 13 369-ТП
+  // base — exactly the VERIFICATION_CRITICAL finding in tr4-skorostnye-edges.json. Per the
+  // no-fabrication / no-oracle-regression mandate the anchor 022207/050009=801 MUST STAY.
+  // This test PINS that reality so a future primary-source corridor acquisition that makes
+  // the rule reach 801 will visibly flip the assertion.
+  it("by-RULE + FULL official base (anchor OFF): КС(022207)→Бологое(050009) still computes 539, NOT 801 — no 801-corridor exists even in 13 369 ТП", () => {
+    const withBase = buildByRuleData({ applySkorostnye: true, withOfficialBase: true });
+    const byRule = computeDistance({ originEsr: "022207", destEsr: "050009", emptyRun: false }, withBase);
+    expect(byRule.km).toBe(539);
+    expect(byRule.km).not.toBe(801);
+    expect(byRule.confidence).toBe("green");
+
+    // Banning the binding shortcut (Хийтola↔Окуловка) as well still does not reach 801 —
+    // the route re-routes Хийтola→Ручьи→Окуловка for the same 429 (anti-undercut floor).
+    const withBaseBan = buildByRuleData({ applySkorostnye: true, withOfficialBase: true, banBinding: true });
+    const byRuleBan = computeDistance({ originEsr: "022207", destEsr: "050009", emptyRun: false }, withBaseBan);
+    expect(byRuleBan.km).toBe(539);
+    expect(byRuleBan.km).not.toBe(801);
+  });
+
+  // ── Official-base oracle regression guard (why the loader stays GATED OFF) ───────
+  //
+  // The full official base is additive shortest-per-pair. Wired live it INTRODUCES network
+  // shortcuts the curated узел graph deliberately omits and REGRESSES three квитанция-verified
+  // km oracles (2444→834, 3108→3095, 1432→930). This test DOCUMENTS the regression so the
+  // DISTANCE_KNIGA3_OFFICIAL gate is never flipped on by accident — the engine MUST keep the
+  // base OFF in production until §2 routing can be re-applied on top of it. (699 stays exact.)
+  it("FULL official base REGRESSES квитанция oracles (proves the loader must stay gated OFF)", () => {
+    const withBase = buildByRuleData({ applySkorostnye: true, withOfficialBase: true });
+    const o2444 = computeDistance({ originEsr: "021609", destEsr: "612709", emptyRun: false }, withBase);
+    const o3108 = computeDistance({ originEsr: "023202", destEsr: "528706", emptyRun: false }, withBase);
+    const o1432 = computeDistance({ originEsr: "023202", destEsr: "061108", emptyRun: false }, withBase);
+    const o699 = computeDistance({ originEsr: "771500", destEsr: "648503", emptyRun: false }, withBase);
+    // Measured regressions — these are exactly why the official base may NOT be wired live:
+    expect(o2444.km).toBeLessThan(2444); // 834 (−1610): additive shortcut
+    expect(o3108.km).toBeLessThan(3108); // 3095 (−13)
+    expect(o1432.km).toBeLessThan(1432); // 930 (−502)
+    expect(o699.km).toBe(699); // 699 survives — the only oracle the base does not move
+  });
+
+  // ── Oracles stay EXACT in production config (official base OFF) ──────────────────
+  //
+  // The HARD CONSTRAINT: with the gate OFF (prod default) the 4 km oracles are all exact and
+  // no route is stranded. This is the certified shipping configuration. (АЯМ/Crimea coverage
+  // is asserted via the real prod loader in the two resolveDistance tests above.)
+  it("PROD config (official base OFF): 4 km oracles EXACT", () => {
+    const prod = buildByRuleData({ applySkorostnye: true, withOfficialBase: false });
+    expect(computeDistance({ originEsr: "021609", destEsr: "612709", emptyRun: false }, prod).km).toBe(2444);
+    expect(computeDistance({ originEsr: "771500", destEsr: "648503", emptyRun: false }, prod).km).toBe(699);
+    expect(computeDistance({ originEsr: "023202", destEsr: "528706", emptyRun: false }, prod).km).toBe(3108);
+    expect(computeDistance({ originEsr: "023202", destEsr: "061108", emptyRun: false }, prod).km).toBe(1432);
   });
 
 });

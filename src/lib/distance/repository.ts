@@ -22,6 +22,12 @@ import type {
   UzelEdge,
   UzelGraph,
 } from "./computeDistance";
+import {
+  buildOfficialPairIndex,
+  officialPairLookup,
+  type OfficialPairIndex,
+  type OfficialPairRow,
+} from "./officialPair";
 import { distanceInputSchema, type DistanceInput, type DistanceResult } from "./schema";
 
 // ── Seed-data path ────────────────────────────────────────────────────────────
@@ -149,6 +155,57 @@ function loadKniga3Full(): UzelEdge[] {
   for (const r of rows) {
     if (!r.aEsr || !r.bEsr || r.km == null) continue;
     out.push({ aEsr: r.aEsr, bEsr: r.bEsr, km: r.km, uchastok: "kniga3-full", source: "kniga3" });
+  }
+  return out;
+}
+
+/** Raw row shape of kniga3-official.json (official RZD open-data ТП↔ТП base). */
+interface Kniga3OfficialRow {
+  readonly aEsr?: string;
+  readonly bEsr?: string;
+  readonly km?: number;
+}
+
+/**
+ * Loads the official RZD open-data «Тарифные расстояния между транзитными пунктами»
+ * base (kniga3-official.json) as kniga3-source узел edges: 99 127 directed-deduped pairs
+ * over 13 369 ТП, each km copied verbatim from the source CSV — none invented (codes
+ * normalized to 6-digit zero-pad to match our ESR).
+ *
+ * GATED — DEFAULT OFF (oracle-regression guard). This is the BASE network distance
+ * WITHOUT the ТР-4 §2 routing regime (обход скоростных/обходных/малодеятельных линий).
+ * Merging it unconditionally as plain shortest-per-pair backbone edges INTRODUCES network
+ * shortcuts that the curated узел graph deliberately omits, and it REGRESSED three
+ * квитанция-verified km oracles when wired live (measured via the real computeDistance
+ * engine, scripts/distance-v2-a/_tmp-oracle-ab.mts):
+ *   • 021609→612709 (Возрождение→Гремячая): 2444 → 834  (−1610)
+ *   • 023202→528706 (Элисенваара→Элиста):    3108 → 3095 (−13)
+ *   • 023202→061108 (Элисенваара→Решетниково):1432 → 930  (−502)
+ * (771500→648503 = 699 stayed exact.) These are exactly the §2 exclusions the prompt
+ * warns about — the open base gives 022207/050009 = 539 where real billing is 801. The
+ * vitest golden suite did NOT catch this because its hand-built overlay never loads this
+ * file; the regression is real on the production resolveDistance path.
+ *
+ * Per the no-oracle-regression gate, this loader is therefore DISABLED unless the
+ * operator opts in via DISTANCE_KNIGA3_OFFICIAL=1 (the file + loader stay wired and
+ * ready for the future gated path that re-applies §2 routing on top of this base).
+ * compileGraph keeps the SHORTEST edge per pair, so even when enabled it is additive;
+ * it is gated only because additivity is precisely what undercuts the §2-routed oracles.
+ * Missing/empty file is tolerated (returns []).
+ */
+function loadKniga3Official(): UzelEdge[] {
+  if (process.env.DISTANCE_KNIGA3_OFFICIAL !== "1") return []; // GATED: would regress 3 km oracles
+  let rows: Kniga3OfficialRow[];
+  try {
+    rows = loadJson<Kniga3OfficialRow[]>("kniga3-official.json");
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(rows)) return [];
+  const out: UzelEdge[] = [];
+  for (const r of rows) {
+    if (!r.aEsr || !r.bEsr || r.km == null) continue;
+    out.push({ aEsr: r.aEsr, bEsr: r.bEsr, km: r.km, uchastok: "kniga3-official", source: "kniga3" });
   }
   return out;
 }
@@ -502,6 +559,7 @@ function getData(): DistanceData {
   const cisFill = loadCisFill();
   const cisBackbone = loadCisBackbone();
   const kniga3Full = loadKniga3Full();
+  const kniga3Official = loadKniga3Official();
   const gapFill = loadGapFill();
   const gapFill2 = loadGapFill2();
   const kniga1Adj = loadKniga1Adjacency();
@@ -512,6 +570,7 @@ function getData(): DistanceData {
       ...cisFill,
       ...cisBackbone,
       ...kniga3Full,
+      ...kniga3Official,
       ...gapFill,
       ...gapFill2,
       ...kniga1Adj,
@@ -554,10 +613,42 @@ function getData(): DistanceData {
   return cachedData;
 }
 
+// ── L3 official-pair index (lazy singleton, separate from the graph) ──────────
+//
+// The official base is consumed here as a PAIR MAP only (officialPair.ts), never
+// as graph edges — the graph-merge loader above (loadKniga3Official) stays gated
+// OFF via DISTANCE_KNIGA3_OFFICIAL because merging undercuts three квитанция-
+// verified oracles. The lookup path is safe by construction: it only ever runs
+// on routes L2 already returned red for, so it cannot move any oracle.
+
+let cachedPairIndex: OfficialPairIndex | null = null;
+
+function getOfficialPairIndex(): OfficialPairIndex {
+  if (cachedPairIndex) return cachedPairIndex;
+  let rows: OfficialPairRow[];
+  try {
+    rows = loadJson<OfficialPairRow[]>("kniga3-official.json");
+  } catch {
+    rows = [];
+  }
+  cachedPairIndex = buildOfficialPairIndex(Array.isArray(rows) ? rows : []);
+  return cachedPairIndex;
+}
+
 // ── resolveDistance — public async entry point ────────────────────────────────
+//
+// Layered policy (docs/planning/DISTANCE_FINAL_ARCHITECTURE.md §5):
+//   L1 verified anchors + L2 curated §2 graph → computeDistance (green)
+//   L3 official-pair DIRECT lookup (yellow + pre-№313 warning) — ONLY when L2
+//      returned red; kill-switch DISTANCE_OFFICIAL_PAIR_FALLBACK=0
+//   L4 red — the original computeDistance red result, unchanged
 
 export async function resolveDistance(rawInput: DistanceInput): Promise<DistanceResult> {
   const input = distanceInputSchema.parse(rawInput);
   const data = getData();
-  return computeDistance(input, data);
+  const result = computeDistance(input, data); // L1 + L2 (as today)
+  if (result.km !== null) return result; // a green/normal result is NEVER overridden
+  if (process.env.DISTANCE_OFFICIAL_PAIR_FALLBACK === "0") return result; // kill-switch
+  const fallback = officialPairLookup(input, data, getOfficialPairIndex()); // L3: direct lookup, no Dijkstra
+  return fallback ?? result; // L4: original red as-is
 }
